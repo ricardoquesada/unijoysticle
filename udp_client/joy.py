@@ -53,6 +53,6 @@ index = 0
 
 while True:
     sock.sendto(chr(joyport) + chr(values[index]) , (UDP_IP, UDP_PORT))
-    time.sleep(0.05)
+    time.sleep(1/25)        # 60Hz
     index = index + 1
     index = index % len(values)

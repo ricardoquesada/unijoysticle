@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="x6l-MX-dx6">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--Game View Controller-->
+        <scene sceneID="tXr-a1-R10">
+            <objects>
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="c64controller" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
+                        <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
+                    </layoutGuides>
+                    <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Text in Game View Controller" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sda-Pp-mIN">
+                                <rect key="frame" x="45" y="402" width="208" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="sda-Pp-mIN"/>
+                            </mask>
+                        </variation>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="gQr-Pq-aTS">
+            <objects>
+                <viewController id="x6l-MX-dx6" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="F4Y-fa-4PB"/>
+                        <viewControllerLayoutGuide type="bottom" id="VcS-Je-SPg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="bUt-cJ-XLM">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qhu-sM-cCU" userLabel="ControllerType">
+                                <rect key="frame" x="92.5" y="84" width="415" height="29"/>
+                                <segments>
+                                    <segment title="D-Pad"/>
+                                    <segment title="Accelerometer"/>
+                                    <segment title="Mouse"/>
+                                    <segment title="Paddle"/>
+                                </segments>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="bs4-un-2AR" userLabel="ControllerPort">
+                                <rect key="frame" x="252.5" y="132" width="95" height="29"/>
+                                <segments>
+                                    <segment title="Joy 1"/>
+                                    <segment title="Joy 2"/>
+                                </segments>
+                            </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgg-JH-N6W">
+                                <rect key="frame" x="245.5" y="204" width="109" height="30"/>
+                                <state key="normal" title="Discover Server"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cze-kl-of4">
+                                <rect key="frame" x="252.5" y="248" width="94" height="30"/>
+                                <state key="normal" title="Start Joystick"/>
+                                <connections>
+                                    <segue destination="BV1-FR-VrT" kind="presentation" id="y7O-4v-QmG"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="qhu-sM-cCU" secondAttribute="trailing" constant="20" id="BZf-0g-0OY"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="64" id="ErU-gX-ZPQ"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="H7A-gm-Glj"/>
+                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="14" id="H7G-jb-A8N"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="20" id="LZq-xI-4U1"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bs4-un-2AR" secondAttribute="centerX" id="g8p-RL-3HW"/>
+                            <constraint firstItem="bs4-un-2AR" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="20" id="lGy-Xj-jPT"/>
+                            <constraint firstItem="bs4-un-2AR" firstAttribute="leading" secondItem="cze-kl-of4" secondAttribute="leading" id="lST-qW-SYZ"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="req-U3-giG"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="bs4-un-2AR" secondAttribute="bottom" constant="44" id="uFZ-jT-0E7"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y0I-hO-vnh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="211" y="-507"/>
+        </scene>
+    </scenes>
+</document>
