@@ -27,8 +27,8 @@ extern "C" {  //required for read Vdd Voltage
 }
 
 int status = WL_IDLE_STATUS;
-const char* ssid = "queque2";           //  your network SSID (name)
-const char* pass = "locopajaro";        // your network password
+const char* ssid = "queque2";           // my WiFi network
+const char* pass = "locopajaro";        // my super secret password. Use to join my WiFi network.
 const unsigned int localPort = 6464;    // local port to listen for UDP packets
 
 MDNSResponder mdns;                     // announce Joystick service
