@@ -12,7 +12,15 @@ import CoreMotion
 
 class GameScene: SKScene {
 
-    var dpadSprite: SKNode?
+    // assign nodes to buttons
+    enum JoyBits: UInt8 {
+        case Top    = 0b00000001
+        case Bottom = 0b00000010
+        case Left   = 0b00000100
+        case Right  = 0b00001000
+        case Fire   = 0b00010000
+    }
+
     var joyState: UInt8 = 0
     var joyControl: UInt8 = 1
 
@@ -47,15 +55,6 @@ class GameScene: SKScene {
 
         if inet_pton(AF_INET, self.ipAddress, &toAddress.sin_addr) == 1 {
             print("initialization Ok")
-        }
-
-        // assign nodes to buttons
-        enum JoyBits: UInt8 {
-            case Top    = 0b00000001
-            case Bottom = 0b00000010
-            case Left   = 0b00000100
-            case Right  = 0b00001000
-            case Fire   = 0b00010000
         }
 
         let names_bits = [ "SKSpriteNode_topleft": JoyBits.Top.rawValue | JoyBits.Left.rawValue,
@@ -140,15 +139,28 @@ class GameScene: SKScene {
 
     override func update(currentTime: CFTimeInterval) {
 
-        // send joy status every update since UDP doesn't have resend and it is possible
-        // that some packets are lost
-        sendState()
-
         self.labelX!.text = String(format:"x = %.2f", accelFilter.x)
         self.labelY!.text = String(format:"y = %.2f", accelFilter.y)
         self.labelZ!.text = String(format:"z = %.2f", accelFilter.z)
 
         print("min: \(zMin), max: \(zMax)")
+
+        // accel Z (up and down) controls joy left & right for the unicycle game
+        // Accel.Z > 0 == Joy Left
+        // Accel.Z < 0 == Joy Right
+        let threshold = 0.25
+        if (joyState & JoyBits.Left.rawValue == JoyBits.Left.rawValue) && (accelFilter.z < -threshold) {
+            joyState &= ~JoyBits.Left.rawValue
+            joyState |= JoyBits.Right.rawValue
+        }
+        else if (joyState & JoyBits.Right.rawValue == JoyBits.Left.rawValue) && (accelFilter.z > threshold) {
+            joyState &= ~JoyBits.Right.rawValue
+            joyState |= JoyBits.Left.rawValue
+        }
+
+        // send joy status every update since UDP doesn't have resend and it is possible
+        // that some packets are lost
+        sendState()
     }
 
     func enableTouch(location: CGPoint) {
