@@ -11,10 +11,19 @@ import SpriteKit
 
 class GameViewController: UIViewController {
 
+    var selectedScene:String? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        var scene:SKScene? = nil
 
-        if let scene = GameScene(fileNamed:"GameScene") {
+        if selectedScene == "DPadScene" {
+            scene = DPadScene(fileNamed: "DPadScene")
+        } else {
+            scene = UniGamesScene(fileNamed: "UniGamesScene")
+        }
+        
+        if scene != nil {
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
@@ -24,21 +33,11 @@ class GameViewController: UIViewController {
             skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
+            scene!.scaleMode = .AspectFill
             
             skView.presentScene(scene)
-        }
-    }
-
-    override func shouldAutorotate() -> Bool {
-        return true
-    }
-
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return .AllButUpsideDown
         } else {
-            return .All
+            print("Invalid scene")
         }
     }
 
