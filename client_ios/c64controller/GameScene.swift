@@ -7,6 +7,8 @@
 //
 
 import SpriteKit
+import CoreMotion
+
 
 class GameScene: SKScene {
 
@@ -20,14 +22,17 @@ class GameScene: SKScene {
     let fd = socket(AF_INET, SOCK_DGRAM, 0)     // DGRAM makes it UDP
     var toAddress = sockaddr_in()
     var buttons: [SKNode:UInt8] = [:]
+    var motionManager = CMMotionManager()
 
-    enum JoyBits: UInt8 {
-        case Top    = 0b00000001
-        case Bottom = 0b00000010
-        case Left   = 0b00000100
-        case Right  = 0b00001000
-        case Fire   = 0b00010000
-    }
+    // accel tmp
+    var labelX:SKLabelNode? = nil
+    var labelY:SKLabelNode? = nil
+    var labelZ:SKLabelNode? = nil
+    var zMax:Double = -100
+    var zMin:Double = 100
+    let accelFilter = HighpassFilter(sampleRate: 60, cutoffFrequency: 5.0)
+
+    let operationQueue = NSOperationQueue()
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -35,6 +40,7 @@ class GameScene: SKScene {
              print("Item \(index + 1): \(value)")
         }
 
+        // setup ip address
         toAddress.sin_len = UInt8(sizeofValue(toAddress))
         toAddress.sin_family = sa_family_t(AF_INET)
         toAddress.sin_port = in_port_t(Int16(6464).bigEndian)
@@ -43,45 +49,50 @@ class GameScene: SKScene {
             print("initialization Ok")
         }
 
-        // left column
-        let topleft = childNodeWithName("SKSpriteNode_topleft")
-        assert(topleft != nil, "invalid topleft")
-        buttons[topleft!] = JoyBits.Top.rawValue | JoyBits.Left.rawValue
+        // assign nodes to buttons
+        enum JoyBits: UInt8 {
+            case Top    = 0b00000001
+            case Bottom = 0b00000010
+            case Left   = 0b00000100
+            case Right  = 0b00001000
+            case Fire   = 0b00010000
+        }
 
-        let left = childNodeWithName("SKSpriteNode_left")
-        assert(left != nil, "invalid left")
-        buttons[left!] =  JoyBits.Left.rawValue
+        let names_bits = [ "SKSpriteNode_topleft": JoyBits.Top.rawValue | JoyBits.Left.rawValue,
+                           "SKSpriteNode_left": JoyBits.Left.rawValue,
+                           "SKSpriteNode_bottomleft": JoyBits.Bottom.rawValue | JoyBits.Left.rawValue,
+                            "SKSpriteNode_top": JoyBits.Top.rawValue,
+                            "SKSpriteNode_bottom": JoyBits.Bottom.rawValue,
+                            "SKSpriteNode_topright": JoyBits.Top.rawValue | JoyBits.Right.rawValue,
+                            "SKSpriteNode_right": JoyBits.Right.rawValue,
+                            "SKSpriteNode_bottomright": JoyBits.Bottom.rawValue | JoyBits.Right.rawValue,
+                            "SKSpriteNode_fire": JoyBits.Fire.rawValue]
 
-        let bottomleft = childNodeWithName("SKSpriteNode_bottomleft")
-        assert(bottomleft != nil, "invalid bottomleft")
-        buttons[bottomleft!] =  JoyBits.Bottom.rawValue | JoyBits.Left.rawValue
+        for (key,value) in names_bits {
+            let node = childNodeWithName(key)
+            assert(node != nil, "Invalid name")
+            buttons[node!] = value
+        }
 
-        // center column
-        let top = childNodeWithName("SKSpriteNode_top")
-        assert(top != nil, "invalid top")
-        buttons[top!] = JoyBits.Top.rawValue
+        // accelerometer stuff
+        if motionManager.accelerometerAvailable == true {
 
-        let bottom = childNodeWithName("SKSpriteNode_bottom")
-        assert(bottom != nil, "invalid bottom")
-        buttons[bottom!] =  JoyBits.Bottom.rawValue
+            accelFilter.adaptive = true
+            labelX = childNodeWithName("SKLabelNode_x") as! SKLabelNode?
+            labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
+            labelZ = childNodeWithName("SKLabelNode_z") as! SKLabelNode?
 
-        // right column
-        let topright = childNodeWithName("SKSpriteNode_topright")
-        assert(topright != nil, "invalid topright")
-        buttons[topright!] = JoyBits.Top.rawValue | JoyBits.Right.rawValue
+            motionManager.accelerometerUpdateInterval = 1/60
+            motionManager.startAccelerometerUpdatesToQueue(operationQueue, withHandler:{
+                data, error in
 
-        let right = childNodeWithName("SKSpriteNode_right")
-        assert(right != nil, "invalid right")
-        buttons[right!] =  JoyBits.Right.rawValue
+                self.accelFilter.addAcceleration(data!.acceleration)
 
-        let bottomright = childNodeWithName("SKSpriteNode_bottomright")
-        assert(bottomright != nil, "invalid bottomright")
-        buttons[bottomright!] =  JoyBits.Bottom.rawValue | JoyBits.Right.rawValue
-
-        // fire
-        let fire = childNodeWithName("SKSpriteNode_fire")
-        assert(fire != nil, "invalid fire")
-        buttons[fire!] =  JoyBits.Fire.rawValue
+                self.zMin = min(data!.acceleration.z, self.zMin)
+                self.zMax = max(data!.acceleration.z, self.zMax)
+            })
+            
+        }
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -131,8 +142,13 @@ class GameScene: SKScene {
 
         // send joy status every update since UDP doesn't have resend and it is possible
         // that some packets are lost
-
         sendState()
+
+        self.labelX!.text = String(format:"x = %.2f", accelFilter.x)
+        self.labelY!.text = String(format:"y = %.2f", accelFilter.y)
+        self.labelZ!.text = String(format:"z = %.2f", accelFilter.z)
+
+        print("min: \(zMin), max: \(zMax)")
     }
 
     func enableTouch(location: CGPoint) {
