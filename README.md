@@ -7,6 +7,6 @@ The Uni-Joysti-Cle is a __revolutionary__ device that allows you to play [your f
 
 This repository contains:
 
-* the [firmware](https://github.com/ricardoquesada/unijoysticle/tree/master/server_cpp) that runs on the Wi-Fi receiver
+* the [firmware](https://github.com/ricardoquesada/unijoysticle/tree/master/esp8266_firmware) that runs on the Wi-Fi receiver
 * the [iOS client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_ios) that sends the packets to the Wi-Fi receiver
 
