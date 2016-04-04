@@ -68,19 +68,19 @@
 		50CCB4261CA5C215002CFD1E /* c64controller */ = {
 			isa = PBXGroup;
 			children = (
+				50CCB4371CA5C215002CFD1E /* Info.plist */,
+				50CCB4321CA5C215002CFD1E /* Assets.xcassets */,
+				50B023001CB0AFA900C2917F /* AccelerometerFilter.swift */,
 				50CCB4271CA5C215002CFD1E /* AppDelegate.swift */,
 				50CCB4291CA5C215002CFD1E /* DPadScene.sks */,
 				50CCB42B1CA5C215002CFD1E /* DPadScene.swift */,
+				50CCB42D1CA5C215002CFD1E /* GameViewController.swift */,
+				50CCB4341CA5C215002CFD1E /* LaunchScreen.storyboard */,
+				50CCB42F1CA5C215002CFD1E /* Main.storyboard */,
+				50B023081CB1631500C2917F /* MainViewController.swift */,
+				50B023041CB154B600C2917F /* NetworkConnection.swift */,
 				50B023061CB1599E00C2917F /* UniGamesScene.sks */,
 				50B023021CB1540400C2917F /* UniGamesScene.swift */,
-				50CCB42D1CA5C215002CFD1E /* GameViewController.swift */,
-				50CCB42F1CA5C215002CFD1E /* Main.storyboard */,
-				50CCB4321CA5C215002CFD1E /* Assets.xcassets */,
-				50CCB4341CA5C215002CFD1E /* LaunchScreen.storyboard */,
-				50CCB4371CA5C215002CFD1E /* Info.plist */,
-				50B023001CB0AFA900C2917F /* AccelerometerFilter.swift */,
-				50B023041CB154B600C2917F /* NetworkConnection.swift */,
-				50B023081CB1631500C2917F /* MainViewController.swift */,
 			);
 			path = c64controller;
 			sourceTree = "<group>";

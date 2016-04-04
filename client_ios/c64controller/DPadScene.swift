@@ -25,7 +25,7 @@ class DPadScene: SKScene {
     var buttons: [SKNode:UInt8] = [:]
 
     // network
-    let net = NetworkConnection(ipAddress: "10.0.0.24", port: 6464)
+    let net = NetworkConnection(ipAddress: "10.0.1.4", port: 6464)
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
