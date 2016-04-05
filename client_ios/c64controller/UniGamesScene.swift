@@ -34,6 +34,7 @@ class UniGamesScene: SKScene {
     var labelY:SKLabelNode? = nil
     var labelZ:SKLabelNode? = nil
     var labelState:SKLabelNode? = nil
+    var labelBack:SKLabelNode? = nil
     var zMax:Double = -100
     var zMin:Double = 100
     let accelFilter = HighpassFilter(sampleRate: 60, cutoffFrequency: 5.0)
@@ -50,6 +51,7 @@ class UniGamesScene: SKScene {
             labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
             labelZ = childNodeWithName("SKLabelNode_z") as! SKLabelNode?
             labelState = childNodeWithName("SKLabelNode_state") as! SKLabelNode?
+            labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
 
             motionManager.accelerometerUpdateInterval = 1/60
             motionManager.startAccelerometerUpdatesToQueue(operationQueue, withHandler:{
@@ -103,5 +105,16 @@ class UniGamesScene: SKScene {
         // send joy status every update since UDP doesn't have resend and it is possible
         // that some packets are lost
         net.sendState(joyControl, joyState)
+    }
+
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch in touches {
+            let location = touch.locationInNode(self)
+            if labelBack!.frame.contains(location) {
+                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: { 
+                    print("finished")
+                })
+            }
+        }
     }
 }

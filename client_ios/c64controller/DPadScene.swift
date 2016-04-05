@@ -24,6 +24,8 @@ class DPadScene: SKScene {
 
     var buttons: [SKNode:UInt8] = [:]
 
+    var labelBack:SKLabelNode? = nil
+
     // network
     let net = NetworkConnection(ipAddress: "10.0.1.4", port: 6464)
 
@@ -48,12 +50,22 @@ class DPadScene: SKScene {
             assert(node != nil, "Invalid name")
             buttons[node!] = value
         }
+
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
 
         for touch in touches {
+
+            let location = touch.locationInNode(self)
+            if labelBack!.frame.contains(location) {
+                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: {
+                    print("finished")
+                })
+            }
+
 
             enableTouch(touch.locationInNode(self))
 

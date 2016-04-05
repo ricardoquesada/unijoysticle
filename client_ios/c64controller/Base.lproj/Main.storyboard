@@ -51,14 +51,7 @@
                                 <rect key="frame" x="93" y="84" width="415" height="29"/>
                                 <segments>
                                     <segment title="D-Pad"/>
-                                    <segment title="Accelerometer"/>
-                                </segments>
-                            </segmentedControl>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="bs4-un-2AR" userLabel="ControllerPort">
-                                <rect key="frame" x="253" y="132" width="95" height="29"/>
-                                <segments>
-                                    <segment title="Joy 1"/>
-                                    <segment title="Joy 2"/>
+                                    <segment title="Uni-Joysti-Cle"/>
                                 </segments>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgg-JH-N6W">
@@ -75,15 +68,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bs4-un-2AR" secondAttribute="centerX" id="AEC-dl-So4"/>
-                            <constraint firstItem="bs4-un-2AR" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="20" id="Efc-UK-oPu"/>
-                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="bs4-un-2AR" secondAttribute="bottom" constant="44" id="G9d-pW-4ZP"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="Hoa-gu-8MY"/>
-                            <constraint firstItem="bs4-un-2AR" firstAttribute="leading" secondItem="cze-kl-of4" secondAttribute="leading" id="L9u-Vz-DU6"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="64" id="au1-W9-1Sq"/>
-                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="14" id="gkl-7S-kU2"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="73" id="iwg-fS-KxI"/>
-                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="vcF-su-gOJ"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="10c-9E-Zpe"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="64" id="Mo5-WI-uep"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="73" id="mq6-qI-r2i"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="92" id="qn0-pQ-XzC"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="Qgg-JH-N6W" secondAttribute="centerX" id="sbK-Mt-mGf"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="vvQ-yL-zxp"/>
+                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="14" id="x3c-y4-F8u"/>
                         </constraints>
                     </view>
                 </viewController>
