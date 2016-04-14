@@ -71,6 +71,9 @@ void setup()
     Serial.println("Connected to wifi");
     Serial.print("Udp server started at port ");
     Serial.println(localPort);
+
+    delay(2000);
+
     Udp.begin(localPort);
 
     if (mdns.begin("c64joy", WiFi.localIP()))
