@@ -27,7 +27,7 @@ class DPadScene: SKScene {
     var labelBack:SKLabelNode? = nil
 
     // network
-    let net = NetworkConnection(ipAddress: "10.0.1.4", port: 6464)
+    let net = NetworkConnection()
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */

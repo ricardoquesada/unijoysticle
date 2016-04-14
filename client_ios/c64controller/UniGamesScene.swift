@@ -25,7 +25,7 @@ class UniGamesScene: SKScene {
     var joyControl: UInt8 = 1
 
     // network
-    let net = NetworkConnection(ipAddress: "10.0.1.4", port: 6464)
+    let net = NetworkConnection()
 
     var motionManager = CMMotionManager()
 

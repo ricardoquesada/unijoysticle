@@ -13,7 +13,7 @@ class NetworkConnection {
     let fd = socket(AF_INET, SOCK_DGRAM, 0)     // DGRAM makes it UDP
     var toAddress = sockaddr_in()
 
-    init(ipAddress:String, port:UInt16) {
+    init(ipAddress:String = "10.0.0.16", port:UInt16 = 6464) {
         // setup ip address
         toAddress.sin_len = UInt8(sizeofValue(toAddress))
         toAddress.sin_family = sa_family_t(AF_INET)
