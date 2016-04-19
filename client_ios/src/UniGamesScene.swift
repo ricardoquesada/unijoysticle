@@ -90,15 +90,26 @@ class UniGamesScene: SKScene {
         print(self.labelState!.text)
 //        print(self.rotationRate);
 
-        // accel Z (up and down) controls joy Up & Down for the unicycle game
-        // Accel.Z > 0 == Joy Up
-        // Accel.Z < 0 == Joy Down
-        let threshold = 0.5
-        if (rotationRate.x < -threshold) {
+        let movementThreshold = 0.8
+        let buttonThreshold = 4.0
+
+        // Jumping? The press button
+        if (rotationRate.x < -buttonThreshold) {
+            joyState |= JoyBits.Fire.rawValue
+        }
+        // hold it pressed until jump starts descend
+        if (((joyState & JoyBits.Up.rawValue) == JoyBits.Up.rawValue) && rotationRate.x > 0.05) {
+            joyState &= ~JoyBits.Fire.rawValue
+        }
+
+        // rotationRate.x (up and down) controls joy Up & Down for the unicycle game
+        // rotationRate.x > 0 == Joy down
+        // rotationRate.x < 0 == Joy up
+        if (rotationRate.x < -movementThreshold) {
             joyState &= ~JoyBits.Down.rawValue
             joyState |= JoyBits.Up.rawValue
         }
-        else if (rotationRate.x > threshold) {
+        else if (rotationRate.x > movementThreshold) {
             joyState &= ~JoyBits.Up.rawValue
             joyState |= JoyBits.Down.rawValue
         }
@@ -110,11 +121,11 @@ class UniGamesScene: SKScene {
         // accel X (left and right) controls joy Left & Right for the unicycle game
         // Accel.X > 0 == Joy Right
         // Accel.X < 0 == Joy Left
-        if (rotationRate.z < -threshold) {
+        if (rotationRate.z < -movementThreshold) {
             joyState &= ~JoyBits.Left.rawValue
             joyState |= JoyBits.Right.rawValue
         }
-        else if (rotationRate.z > threshold) {
+        else if (rotationRate.z > movementThreshold) {
             joyState &= ~JoyBits.Right.rawValue
             joyState |= JoyBits.Left.rawValue
         }
