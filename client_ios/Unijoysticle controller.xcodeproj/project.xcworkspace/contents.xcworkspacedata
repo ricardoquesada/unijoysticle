@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:c64controller.xcodeproj">
+      location = "self:/Users/riq/progs/unijoysticle/client_ios/Unijoysticle controller.xcodeproj">
    </FileRef>
 </Workspace>

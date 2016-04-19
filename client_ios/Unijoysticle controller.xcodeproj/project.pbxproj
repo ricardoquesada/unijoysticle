@@ -1,0 +1,354 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05831CC6642C0080240F /* AccelerometerFilter.swift */; };
+		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
+		50DD05991CC6642C0080240F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05851CC6642C0080240F /* Assets.xcassets */; };
+		50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05861CC6642C0080240F /* LaunchScreen.storyboard */; };
+		50DD059B1CC6642C0080240F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05881CC6642C0080240F /* Main.storyboard */; };
+		50DD059C1CC6642C0080240F /* DPadScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD058A1CC6642C0080240F /* DPadScene.sks */; };
+		50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058B1CC6642C0080240F /* DPadScene.swift */; };
+		50DD059E1CC6642C0080240F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058C1CC6642C0080240F /* GameViewController.swift */; };
+		50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058E1CC6642C0080240F /* MainViewController.swift */; };
+		50DD05A11CC6642C0080240F /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058F1CC6642C0080240F /* NetworkConnection.swift */; };
+		50DD05A21CC6642C0080240F /* icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05911CC6642C0080240F /* icon-120.png */; };
+		50DD05A31CC6642C0080240F /* icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05921CC6642C0080240F /* icon-180.png */; };
+		50DD05A41CC6642C0080240F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05931CC6642C0080240F /* icon.png */; };
+		50DD05A51CC6642C0080240F /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05941CC6642C0080240F /* splash_screen.png */; };
+		50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniGamesScene.sks */; };
+		50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniGamesScene.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unijoysticle controller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50DD05831CC6642C0080240F /* AccelerometerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccelerometerFilter.swift; sourceTree = "<group>"; };
+		50DD05841CC6642C0080240F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		50DD05851CC6642C0080240F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		50DD05871CC6642C0080240F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		50DD05891CC6642C0080240F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		50DD058A1CC6642C0080240F /* DPadScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DPadScene.sks; sourceTree = "<group>"; };
+		50DD058B1CC6642C0080240F /* DPadScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPadScene.swift; sourceTree = "<group>"; };
+		50DD058C1CC6642C0080240F /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		50DD058D1CC6642C0080240F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		50DD058E1CC6642C0080240F /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		50DD058F1CC6642C0080240F /* NetworkConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
+		50DD05911CC6642C0080240F /* icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-120.png"; sourceTree = "<group>"; };
+		50DD05921CC6642C0080240F /* icon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-180.png"; sourceTree = "<group>"; };
+		50DD05931CC6642C0080240F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		50DD05941CC6642C0080240F /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_screen.png; sourceTree = "<group>"; };
+		50DD05951CC6642C0080240F /* UniGamesScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniGamesScene.sks; sourceTree = "<group>"; };
+		50DD05961CC6642C0080240F /* UniGamesScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniGamesScene.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		50CCB4211CA5C214002CFD1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		50CCB41B1CA5C214002CFD1E = {
+			isa = PBXGroup;
+			children = (
+				50DD05821CC6642C0080240F /* src */,
+				50CCB4251CA5C214002CFD1E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		50CCB4251CA5C214002CFD1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		50DD05821CC6642C0080240F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				50DD05831CC6642C0080240F /* AccelerometerFilter.swift */,
+				50DD05841CC6642C0080240F /* AppDelegate.swift */,
+				50DD05851CC6642C0080240F /* Assets.xcassets */,
+				50DD05861CC6642C0080240F /* LaunchScreen.storyboard */,
+				50DD05881CC6642C0080240F /* Main.storyboard */,
+				50DD058A1CC6642C0080240F /* DPadScene.sks */,
+				50DD058B1CC6642C0080240F /* DPadScene.swift */,
+				50DD058C1CC6642C0080240F /* GameViewController.swift */,
+				50DD058D1CC6642C0080240F /* Info.plist */,
+				50DD058E1CC6642C0080240F /* MainViewController.swift */,
+				50DD058F1CC6642C0080240F /* NetworkConnection.swift */,
+				50DD05901CC6642C0080240F /* raw */,
+				50DD05951CC6642C0080240F /* UniGamesScene.sks */,
+				50DD05961CC6642C0080240F /* UniGamesScene.swift */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		50DD05901CC6642C0080240F /* raw */ = {
+			isa = PBXGroup;
+			children = (
+				50DD05911CC6642C0080240F /* icon-120.png */,
+				50DD05921CC6642C0080240F /* icon-180.png */,
+				50DD05931CC6642C0080240F /* icon.png */,
+				50DD05941CC6642C0080240F /* splash_screen.png */,
+			);
+			path = raw;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		50CCB4231CA5C214002CFD1E /* Unijoysticle controller */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "Unijoysticle controller" */;
+			buildPhases = (
+				50CCB4201CA5C214002CFD1E /* Sources */,
+				50CCB4211CA5C214002CFD1E /* Frameworks */,
+				50CCB4221CA5C214002CFD1E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Unijoysticle controller";
+			productName = c64controller;
+			productReference = 50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		50CCB41C1CA5C214002CFD1E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Ricardo Quesada";
+				TargetAttributes = {
+					50CCB4231CA5C214002CFD1E = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
+			};
+			buildConfigurationList = 50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "Unijoysticle controller" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 50CCB41B1CA5C214002CFD1E;
+			productRefGroup = 50CCB4251CA5C214002CFD1E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				50CCB4231CA5C214002CFD1E /* Unijoysticle controller */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		50CCB4221CA5C214002CFD1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50DD05A31CC6642C0080240F /* icon-180.png in Resources */,
+				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
+				50DD05A51CC6642C0080240F /* splash_screen.png in Resources */,
+				50DD05991CC6642C0080240F /* Assets.xcassets in Resources */,
+				50DD05A21CC6642C0080240F /* icon-120.png in Resources */,
+				50DD05A41CC6642C0080240F /* icon.png in Resources */,
+				50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */,
+				50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */,
+				50DD059C1CC6642C0080240F /* DPadScene.sks in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		50CCB4201CA5C214002CFD1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50DD059E1CC6642C0080240F /* GameViewController.swift in Sources */,
+				50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */,
+				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
+				50DD05A11CC6642C0080240F /* NetworkConnection.swift in Sources */,
+				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
+				50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */,
+				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		50DD05861CC6642C0080240F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				50DD05871CC6642C0080240F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		50DD05881CC6642C0080240F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				50DD05891CC6642C0080240F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		50CCB44E1CA5C215002CFD1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		50CCB44F1CA5C215002CFD1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		50CCB4511CA5C215002CFD1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.c64controller;
+				PRODUCT_NAME = "Unijoysticle controller";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		50CCB4521CA5C215002CFD1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.c64controller;
+				PRODUCT_NAME = "Unijoysticle controller";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "Unijoysticle controller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50CCB44E1CA5C215002CFD1E /* Debug */,
+				50CCB44F1CA5C215002CFD1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "Unijoysticle controller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50CCB4511CA5C215002CFD1E /* Debug */,
+				50CCB4521CA5C215002CFD1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 50CCB41C1CA5C214002CFD1E /* Project object */;
+}
