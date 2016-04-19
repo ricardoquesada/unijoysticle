@@ -9,7 +9,7 @@
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="c64controller" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="Unijoysticle_controller" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
                         <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
@@ -38,7 +38,7 @@
         <!--Main View Controller-->
         <scene sceneID="gQr-Pq-aTS">
             <objects>
-                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="c64controller" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="Unijoysticle_controller" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="F4Y-fa-4PB"/>
                         <viewControllerLayoutGuide type="bottom" id="VcS-Je-SPg"/>
