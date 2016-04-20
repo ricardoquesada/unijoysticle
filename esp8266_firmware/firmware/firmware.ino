@@ -34,14 +34,28 @@ const unsigned int localPort = 6464;    // local port to listen for UDP packets
 MDNSResponder mdns;                     // announce Joystick service
 
 // believe or not, they are not ordered
-static const int pinsPort0[] = {D1, D2, D3, D4, D5};
+static const int pinsPort0[] = {D0, D1, D2, D3, D5};
 static const int pinsPort1[] = {D6, D7, D8, D9, D10};
 static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
+static const int INTERNAL_LED = D4; // At least on LoLin
 
 byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
+
+static void fatalError()
+{
+  Serial.println("Fatal error. Reboot please");
+  pinMode(INTERNAL_LED, OUTPUT);
+  while(1) {
+    // report error
+    delay(500);
+    digitalWrite(INTERNAL_LED, LOW);
+    delay(500);
+    digitalWrite(INTERNAL_LED, HIGH);
+  }
+}
 
 void setup()
 {
@@ -76,8 +90,15 @@ void setup()
 
     Udp.begin(localPort);
 
-    if (mdns.begin("c64joy", WiFi.localIP()))
-        Serial.println("MDNS responder started");
+    if (mdns.begin("unijoysticle", WiFi.localIP())) {
+      Serial.println("MDNS responder started");
+    }
+    else
+    {
+      fatalError();
+    }
+
+    mdns.addService("remote", "udp", 6464);
 
     for (int i=0; i<TOTAL_PINS; i++)
     {
@@ -86,10 +107,6 @@ void setup()
         pinMode(pinsPort1[i], OUTPUT);
         digitalWrite(pinsPort1[i], LOW);
     }
-
-    // Internal LED in LoLin
-    pinMode(D0, OUTPUT);
-    digitalWrite(D0, HIGH);  // turn it off
 }
 
 void loop()
