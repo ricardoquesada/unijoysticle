@@ -8,26 +8,10 @@
 
 import SpriteKit
 
-class DPadScene: SKScene {
-
-    // assign nodes to buttons
-    enum JoyBits: UInt8 {
-        case Top    = 0b00000001
-        case Bottom = 0b00000010
-        case Left   = 0b00000100
-        case Right  = 0b00001000
-        case Fire   = 0b00010000
-    }
-
-    var joyState: UInt8 = 0
-    var joyControl: UInt8 = 1
+class DPadScene: ControllerScene {
 
     var buttons: [SKNode:UInt8] = [:]
-
     var labelBack:SKLabelNode? = nil
-
-    // network
-    let net = NetworkConnection()
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -35,14 +19,14 @@ class DPadScene: SKScene {
              print("Item \(index + 1): \(value)")
         }
 
-        let names_bits = [ "SKSpriteNode_topleft": JoyBits.Top.rawValue | JoyBits.Left.rawValue,
+        let names_bits = [ "SKSpriteNode_topleft": JoyBits.Up.rawValue | JoyBits.Left.rawValue,
                            "SKSpriteNode_left": JoyBits.Left.rawValue,
-                           "SKSpriteNode_bottomleft": JoyBits.Bottom.rawValue | JoyBits.Left.rawValue,
-                            "SKSpriteNode_top": JoyBits.Top.rawValue,
-                            "SKSpriteNode_bottom": JoyBits.Bottom.rawValue,
-                            "SKSpriteNode_topright": JoyBits.Top.rawValue | JoyBits.Right.rawValue,
+                           "SKSpriteNode_bottomleft": JoyBits.Down.rawValue | JoyBits.Left.rawValue,
+                            "SKSpriteNode_top": JoyBits.Up.rawValue,
+                            "SKSpriteNode_bottom": JoyBits.Down.rawValue,
+                            "SKSpriteNode_topright": JoyBits.Up.rawValue | JoyBits.Right.rawValue,
                             "SKSpriteNode_right": JoyBits.Right.rawValue,
-                            "SKSpriteNode_bottomright": JoyBits.Bottom.rawValue | JoyBits.Right.rawValue,
+                            "SKSpriteNode_bottomright": JoyBits.Down.rawValue | JoyBits.Right.rawValue,
                             "SKSpriteNode_fire": JoyBits.Fire.rawValue]
 
         for (key,value) in names_bits {
@@ -66,10 +50,9 @@ class DPadScene: SKScene {
                 })
             }
 
-
             enableTouch(touch.locationInNode(self))
 
-            net.sendState(joyControl, joyState)
+            sendJoyState()
         }
     }
 
@@ -79,7 +62,7 @@ class DPadScene: SKScene {
             disableTouch(touch.previousLocationInNode(self))
             enableTouch(touch.locationInNode(self))
 
-            net.sendState(joyControl, joyState)
+            sendJoyState()
         }
     }
 
@@ -89,7 +72,7 @@ class DPadScene: SKScene {
             disableTouch(touch.previousLocationInNode(self))
             disableTouch(touch.locationInNode(self))
 
-            net.sendState(joyControl, joyState)
+            sendJoyState()
         }
     }
 
@@ -100,17 +83,11 @@ class DPadScene: SKScene {
                 disableTouch(touch.previousLocationInNode(self))
                 disableTouch(touch.locationInNode(self))
 
-                net.sendState(joyControl, joyState)
+                sendJoyState()
             }
         }
     }
 
-    override func update(currentTime: CFTimeInterval) {
-
-        // send joy status every update since UDP doesn't have resend and it is possible
-        // that some packets are lost
-        net.sendState(joyControl, joyState)
-    }
 
     func enableTouch(location: CGPoint) {
         for (node, bitmaks) in buttons {

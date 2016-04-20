@@ -10,7 +10,8 @@ import UIKit
 
 class MainViewController: UIViewController {
 
-    @IBOutlet weak var segmentControl: UISegmentedControl!
+    @IBOutlet weak var controllerSegment: UISegmentedControl!
+    @IBOutlet weak var joystickSegment: UISegmentedControl!
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 
@@ -18,13 +19,15 @@ class MainViewController: UIViewController {
 
             var sceneToLoad = "DPadScene"
 
-            if (segmentControl.selectedSegmentIndex == 0) {
+            if (controllerSegment.selectedSegmentIndex == 0) {
                 sceneToLoad = "DPadScene"
             } else {
-                sceneToLoad = "UniGamesScene"
+                sceneToLoad = "UniJoystiCleScene"
             }
 
-            (segue.destinationViewController as! GameViewController).selectedScene = sceneToLoad
+            let gameViewController = segue.destinationViewController as! GameViewController
+            gameViewController.selectedScene = sceneToLoad
+            gameViewController.selectedJoystick = UInt8(joystickSegment.selectedSegmentIndex)
         }
     }
 

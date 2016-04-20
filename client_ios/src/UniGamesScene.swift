@@ -9,22 +9,7 @@
 import SpriteKit
 import CoreMotion
 
-class UniGamesScene: SKScene {
-
-    // assign nodes to buttons
-    enum JoyBits: UInt8 {
-        case Up     = 0b00000001
-        case Down   = 0b00000010
-        case Left   = 0b00000100
-        case Right  = 0b00001000
-        case Fire   = 0b00010000
-    }
-
-    var joyState: UInt8 = 0
-    var joyControl: UInt8 = 1
-
-    // network
-    let net = NetworkConnection()
+class UniGamesScene: ControllerScene {
 
     var motionManager = CMMotionManager()
     var rotationRate = CMRotationRate();
@@ -91,14 +76,14 @@ class UniGamesScene: SKScene {
 //        print(self.rotationRate);
 
         let movementThreshold = 0.8
-        let buttonThreshold = 4.0
+        let buttonThreshold = 3.8
 
         // Jumping? The press button
-        if (rotationRate.x < -buttonThreshold) {
+        if rotationRate.x < -buttonThreshold {
             joyState |= JoyBits.Fire.rawValue
         }
         // hold it pressed until jump starts descend
-        if (((joyState & JoyBits.Up.rawValue) == JoyBits.Up.rawValue) && rotationRate.x > 0.05) {
+        else if rotationRate.x >= 0 {
             joyState &= ~JoyBits.Fire.rawValue
         }
 
@@ -136,7 +121,7 @@ class UniGamesScene: SKScene {
 
         // send joy status every update since UDP doesn't have resend and it is possible
         // that some packets are lost
-        net.sendState(joyControl, joyState)
+        super.update(currentTime)
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

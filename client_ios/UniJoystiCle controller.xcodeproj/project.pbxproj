@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
 		509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* ServerViewController.swift */; };
 		50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05831CC6642C0080240F /* AccelerometerFilter.swift */; };
 		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
@@ -17,7 +18,6 @@
 		50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058B1CC6642C0080240F /* DPadScene.swift */; };
 		50DD059E1CC6642C0080240F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058C1CC6642C0080240F /* GameViewController.swift */; };
 		50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058E1CC6642C0080240F /* MainViewController.swift */; };
-		50DD05A11CC6642C0080240F /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD058F1CC6642C0080240F /* NetworkConnection.swift */; };
 		50DD05A21CC6642C0080240F /* icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05911CC6642C0080240F /* icon-120.png */; };
 		50DD05A31CC6642C0080240F /* icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05921CC6642C0080240F /* icon-180.png */; };
 		50DD05A41CC6642C0080240F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05931CC6642C0080240F /* icon.png */; };
@@ -27,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
 		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle controller.temp_caseinsensitive_rename.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50DD05831CC6642C0080240F /* AccelerometerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccelerometerFilter.swift; sourceTree = "<group>"; };
@@ -39,7 +40,6 @@
 		50DD058C1CC6642C0080240F /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		50DD058D1CC6642C0080240F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50DD058E1CC6642C0080240F /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		50DD058F1CC6642C0080240F /* NetworkConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
 		50DD05911CC6642C0080240F /* icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-120.png"; sourceTree = "<group>"; };
 		50DD05921CC6642C0080240F /* icon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-180.png"; sourceTree = "<group>"; };
 		50DD05931CC6642C0080240F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
@@ -80,6 +80,7 @@
 			children = (
 				50DD05901CC6642C0080240F /* raw */,
 				50DD05851CC6642C0080240F /* Assets.xcassets */,
+				508EF7601CC7F08E0082E38D /* ControllerScene.swift */,
 				50DD05831CC6642C0080240F /* AccelerometerFilter.swift */,
 				50DD05841CC6642C0080240F /* AppDelegate.swift */,
 				50DD05861CC6642C0080240F /* LaunchScreen.storyboard */,
@@ -89,7 +90,6 @@
 				50DD058C1CC6642C0080240F /* GameViewController.swift */,
 				50DD058D1CC6642C0080240F /* Info.plist */,
 				50DD058E1CC6642C0080240F /* MainViewController.swift */,
-				50DD058F1CC6642C0080240F /* NetworkConnection.swift */,
 				50DD05951CC6642C0080240F /* UniGamesScene.sks */,
 				50DD05961CC6642C0080240F /* UniGamesScene.swift */,
 				509B16BD1CC73CBF00A7426C /* ServerViewController.swift */,
@@ -189,7 +189,7 @@
 				50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */,
 				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
 				509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */,
-				50DD05A11CC6642C0080240F /* NetworkConnection.swift in Sources */,
+				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
