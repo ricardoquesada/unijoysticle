@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
                BuildableName = "Unijoysticle controller.app"
-               BlueprintName = "Unijoysticle controller"
-               ReferencedContainer = "container:Unijoysticle controller.xcodeproj">
+               BlueprintName = "UniJoystiCle controller"
+               ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,8 +34,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
             BuildableName = "Unijoysticle controller.app"
-            BlueprintName = "Unijoysticle controller"
-            ReferencedContainer = "container:Unijoysticle controller.xcodeproj">
+            BlueprintName = "UniJoystiCle controller"
+            ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -57,8 +57,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
             BuildableName = "Unijoysticle controller.app"
-            BlueprintName = "Unijoysticle controller"
-            ReferencedContainer = "container:Unijoysticle controller.xcodeproj">
+            BlueprintName = "UniJoystiCle controller"
+            ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -76,8 +76,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
             BuildableName = "Unijoysticle controller.app"
-            BlueprintName = "Unijoysticle controller"
-            ReferencedContainer = "container:Unijoysticle controller.xcodeproj">
+            BlueprintName = "UniJoystiCle controller"
+            ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

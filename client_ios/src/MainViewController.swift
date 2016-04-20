@@ -10,17 +10,24 @@ import UIKit
 
 class MainViewController: UIViewController {
 
+    @IBOutlet weak var segmentControl: UISegmentedControl!
+
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 
-        var sceneToLoad = "DPadScene"
-        let segment:UISegmentedControl = view.viewWithTag(10) as! UISegmentedControl
+        if ((segue.destinationViewController as? GameViewController) != nil) {
 
-        if (segment.selectedSegmentIndex == 0) {
-            sceneToLoad = "DPadScene"
-        } else {
-            sceneToLoad = "UniGamesScene"
+            var sceneToLoad = "DPadScene"
+
+            if (segmentControl.selectedSegmentIndex == 0) {
+                sceneToLoad = "DPadScene"
+            } else {
+                sceneToLoad = "UniGamesScene"
+            }
+
+            (segue.destinationViewController as! GameViewController).selectedScene = sceneToLoad
         }
+    }
 
-        (segue.destinationViewController as! GameViewController).selectedScene = sceneToLoad
+    @IBAction func prepareForUnwind(segue: UIStoryboardSegue) {
     }
 }

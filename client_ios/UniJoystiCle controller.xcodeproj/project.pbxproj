@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* ServerViewController.swift */; };
 		50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05831CC6642C0080240F /* AccelerometerFilter.swift */; };
 		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
 		50DD05991CC6642C0080240F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05851CC6642C0080240F /* Assets.xcassets */; };
@@ -26,7 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unijoysticle controller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
+		50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle controller.temp_caseinsensitive_rename.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50DD05831CC6642C0080240F /* AccelerometerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccelerometerFilter.swift; sourceTree = "<group>"; };
 		50DD05841CC6642C0080240F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50DD05851CC6642C0080240F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,7 +70,7 @@
 		50CCB4251CA5C214002CFD1E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */,
+				50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +92,7 @@
 				50DD058F1CC6642C0080240F /* NetworkConnection.swift */,
 				50DD05951CC6642C0080240F /* UniGamesScene.sks */,
 				50DD05961CC6642C0080240F /* UniGamesScene.swift */,
+				509B16BD1CC73CBF00A7426C /* ServerViewController.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -108,9 +111,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		50CCB4231CA5C214002CFD1E /* Unijoysticle controller */ = {
+		50CCB4231CA5C214002CFD1E /* UniJoystiCle controller */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "Unijoysticle controller" */;
+			buildConfigurationList = 50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "UniJoystiCle controller" */;
 			buildPhases = (
 				50CCB4201CA5C214002CFD1E /* Sources */,
 				50CCB4211CA5C214002CFD1E /* Frameworks */,
@@ -120,9 +123,9 @@
 			);
 			dependencies = (
 			);
-			name = "Unijoysticle controller";
+			name = "UniJoystiCle controller";
 			productName = c64controller;
-			productReference = 50CCB4241CA5C214002CFD1E /* Unijoysticle controller.app */;
+			productReference = 50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -140,7 +143,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "Unijoysticle controller" */;
+			buildConfigurationList = 50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "UniJoystiCle controller" */;
 			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -153,7 +156,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				50CCB4231CA5C214002CFD1E /* Unijoysticle controller */,
+				50CCB4231CA5C214002CFD1E /* UniJoystiCle controller */,
 			);
 		};
 /* End PBXProject section */
@@ -185,6 +188,7 @@
 				50DD059E1CC6642C0080240F /* GameViewController.swift in Sources */,
 				50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */,
 				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
+				509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */,
 				50DD05A11CC6642C0080240F /* NetworkConnection.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */,
@@ -307,8 +311,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.c64controller;
-				PRODUCT_NAME = "Unijoysticle controller";
+				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.unijoysticle;
+				PRODUCT_NAME = "UniJoystiCle controller.temp_caseinsensitive_rename";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -321,8 +325,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.c64controller;
-				PRODUCT_NAME = "Unijoysticle controller";
+				PRODUCT_BUNDLE_IDENTIFIER = retro.moe.unijoysticle;
+				PRODUCT_NAME = "UniJoystiCle controller.temp_caseinsensitive_rename";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -330,7 +334,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "Unijoysticle controller" */ = {
+		50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "UniJoystiCle controller" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				50CCB44E1CA5C215002CFD1E /* Debug */,
@@ -339,7 +343,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "Unijoysticle controller" */ = {
+		50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "UniJoystiCle controller" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				50CCB4511CA5C215002CFD1E /* Debug */,

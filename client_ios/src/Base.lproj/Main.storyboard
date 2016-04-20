@@ -9,13 +9,13 @@
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="Unijoysticle_controller" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
                         <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
                     </layoutGuides>
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Text in Game View Controller" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sda-Pp-mIN">
@@ -31,35 +31,41 @@
                             </mask>
                         </variation>
                     </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="143" y="-331"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="gQr-Pq-aTS">
             <objects>
-                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="Unijoysticle_controller" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="F4Y-fa-4PB"/>
                         <viewControllerLayoutGuide type="bottom" id="VcS-Je-SPg"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="bUt-cJ-XLM">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qhu-sM-cCU" userLabel="ControllerType">
-                                <rect key="frame" x="93" y="84" width="415" height="29"/>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qhu-sM-cCU" userLabel="ControllerType">
+                                <rect key="frame" x="93" y="84" width="383" height="29"/>
                                 <segments>
                                     <segment title="D-Pad"/>
                                     <segment title="Uni-Joysti-Cle"/>
                                 </segments>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgg-JH-N6W">
-                                <rect key="frame" x="246" y="204" width="109" height="30"/>
-                                <state key="normal" title="Discover Server"/>
+                                <rect key="frame" x="441" y="28" width="105" height="30"/>
+                                <state key="normal" title="Server Address"/>
+                                <connections>
+                                    <segue destination="joe-hk-MZf" kind="presentation" id="pPO-NT-AWO"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cze-kl-of4">
-                                <rect key="frame" x="253" y="248" width="94" height="30"/>
+                                <rect key="frame" x="237" y="159" width="94" height="30"/>
                                 <state key="normal" title="Start Joystick"/>
                                 <connections>
                                     <segue destination="BV1-FR-VrT" kind="show" identifier="start" id="y7O-4v-QmG"/>
@@ -68,19 +74,88 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="10c-9E-Zpe"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="64" id="Mo5-WI-uep"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="73" id="mq6-qI-r2i"/>
-                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="92" id="qn0-pQ-XzC"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="Qgg-JH-N6W" secondAttribute="centerX" id="sbK-Mt-mGf"/>
-                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="vvQ-yL-zxp"/>
-                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="14" id="x3c-y4-F8u"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="8" symbolic="YES" id="0z6-7K-CNd"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="26" id="DUL-Zo-uBi"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="Jqx-FD-30q"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="73" id="P05-3C-c7K"/>
+                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="47" id="TTk-iW-KnJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Qgg-JH-N6W" secondAttribute="trailing" constant="2" id="W4W-Jb-wep"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="hEp-Uk-cxK"/>
                         </constraints>
                     </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="segmentControl" destination="qhu-sM-cCU" id="44M-9X-He1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="y0I-hO-vnh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="211" y="-507"/>
+            <point key="canvasLocation" x="433" y="-837"/>
+        </scene>
+        <!--Server View Controller-->
+        <scene sceneID="jcM-7B-vDM">
+            <objects>
+                <viewController id="joe-hk-MZf" userLabel="Server View Controller" customClass="ServerViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="OnJ-DI-Yd4"/>
+                        <viewControllerLayoutGuide type="bottom" id="6Nk-v0-Dhc"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="d0Q-pg-smN">
+                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="10.0.0.64" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="60g-lg-kbs">
+                                <rect key="frame" x="236" y="92" width="227" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="227" id="PJG-1f-baW"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="joe-hk-MZf" id="rFT-36-kYF"/>
+                                </connections>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Manual IP Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PFQ-zr-7ds">
+                                <rect key="frame" x="79" y="96" width="142" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W3z-Hv-mMO">
+                                <rect key="frame" x="26" y="20" width="34" height="30"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <segue destination="UOz-EB-SuM" kind="unwind" unwindAction="prepareForUnwind:" id="zMv-iy-You"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vje-t8-gf5">
+                                <rect key="frame" x="236" y="157" width="96" height="30"/>
+                                <state key="normal" title="Auto Discover"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="W3z-Hv-mMO" firstAttribute="top" secondItem="OnJ-DI-Yd4" secondAttribute="bottom" id="DdW-6w-XHe"/>
+                            <constraint firstItem="60g-lg-kbs" firstAttribute="top" secondItem="OnJ-DI-Yd4" secondAttribute="bottom" constant="72" id="d72-nv-map"/>
+                            <constraint firstItem="W3z-Hv-mMO" firstAttribute="leading" secondItem="d0Q-pg-smN" secondAttribute="leadingMargin" constant="6" id="gLu-zm-4KK"/>
+                            <constraint firstItem="PFQ-zr-7ds" firstAttribute="centerY" secondItem="60g-lg-kbs" secondAttribute="centerY" id="lBd-fj-rOg"/>
+                            <constraint firstItem="60g-lg-kbs" firstAttribute="leading" secondItem="PFQ-zr-7ds" secondAttribute="trailing" constant="15" id="lv1-u6-cgE"/>
+                            <constraint firstItem="60g-lg-kbs" firstAttribute="leading" secondItem="Vje-t8-gf5" secondAttribute="leading" id="sfC-e2-n7A"/>
+                            <constraint firstItem="Vje-t8-gf5" firstAttribute="top" secondItem="60g-lg-kbs" secondAttribute="bottom" constant="35" id="tcH-A2-GTA"/>
+                            <constraint firstItem="Vje-t8-gf5" firstAttribute="centerX" secondItem="d0Q-pg-smN" secondAttribute="centerX" id="xKn-ib-ITU"/>
+                        </constraints>
+                    </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="ipaddress" destination="60g-lg-kbs" id="pQZ-HD-jNK"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1h5-E9-xfj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="UOz-EB-SuM" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="753" y="-331"/>
         </scene>
     </scenes>
 </document>
