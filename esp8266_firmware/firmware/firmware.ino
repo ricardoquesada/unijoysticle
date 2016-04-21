@@ -1,4 +1,6 @@
 /****************************************************************************
+http://retro.moe/unijoysticle
+
 Copyright 2016 Ricardo Quesada
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,20 +27,15 @@ limitations under the License.
 #include <WiFiUDP.h>
 #include <ESP8266mDNS.h>
 
-extern "C" {  //required for read Vdd Voltage
-#include "user_interface.h"
-    // uint16 readvdd33(void);
-}
-
-int status = WL_IDLE_STATUS;
 #if ACCESS_POINT_MODE
 const char* ssid = "unijoysticle";
 #else
-const char* ssid = "queque2";           // my WiFi network
-const char* pass = "locopajaro";        // my super secret password. Use to join my WiFi network.
-#endif // ACCESS_POINT_MODE
+const char* ssid = "some_ssid";         // EDIT: put your SSID here
+const char* pass = "thepassword";       // EDIT: put your password here
+#endif // !ACCESS_POINT_MODE
 
 enum {
+    // possible errors. Use nubmer >=2
     ERROR_CANNOT_CONNECT = 2,
     ERROR_MDNS_FAIL = 3,
 };
@@ -141,12 +138,10 @@ void loop()
                 digitalWrite(pins[i], LOW);
         }
 
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write("Answer from ESP8266 ChipID#");
-        Udp.print(system_get_chip_id());
-        Udp.write("#IP of ESP8266#");
-        Udp.println(WiFi.localIP());
-        Udp.endPacket();
+        // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        // Udp.write("#IP of ESP8266#");
+        // Udp.println(WiFi.localIP());
+        // Udp.endPacket();
 
         // Serial.println(received_command);
         // Serial.println();

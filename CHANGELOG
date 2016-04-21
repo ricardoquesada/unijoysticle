@@ -1,0 +1,13 @@
+v0.2 - 2016-??-??
+
+- [NEW] - ESP8266 firmware users AP mode by default.
+          Uses SSID "unijosyticle" + last 2 bytes of mac address
+- [NEW] - iOS Client: Can be configured to use either joystick port
+- [NEW] - iOS Client: Auto-discover ESP8266 firmware using mDNS
+- [NEW] - iOS Client: Unijoysticle mode also supports up, down and fire (jump)
+
+
+v0.1 - 2016-04-06
+
+Initial release:
+  - a lot of hacks

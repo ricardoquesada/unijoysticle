@@ -29,6 +29,7 @@
 /* Begin PBXFileReference section */
 		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
 		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
+		50BEF5091CC94B3D00505A7F /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGELOG; path = ../CHANGELOG; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle controller.temp_caseinsensitive_rename.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50DD05831CC6642C0080240F /* AccelerometerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccelerometerFilter.swift; sourceTree = "<group>"; };
 		50DD05841CC6642C0080240F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -62,6 +63,7 @@
 		50CCB41B1CA5C214002CFD1E = {
 			isa = PBXGroup;
 			children = (
+				50BEF5091CC94B3D00505A7F /* CHANGELOG */,
 				50DD05821CC6642C0080240F /* src */,
 				50CCB4251CA5C214002CFD1E /* Products */,
 			);
