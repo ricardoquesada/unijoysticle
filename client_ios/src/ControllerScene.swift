@@ -10,35 +10,41 @@ import SpriteKit
 import CFNetwork
 
 class NetworkConnection {
+
+    static var addresses:[String:sockaddr_in] = [:]
+
     // ip address
     let fd = socket(AF_INET, SOCK_DGRAM, 0)     // DGRAM makes it UDP
     var toAddress = sockaddr_in()
     let serverPort:UInt16 = 6464
 
-    init?(ipAddress:String = "unijoysticle.local") {
-        // setup ip address
-        toAddress.sin_len = UInt8(sizeofValue(toAddress))
-        toAddress.sin_family = sa_family_t(AF_INET)
-        toAddress.sin_port = in_port_t(serverPort.bigEndian)
+    init?(serverName:String = "unijoysticle.local") {
+        // Use CFHost instead of inet_pton, since we need to use mDNS
+        if let addr = NetworkConnection.addresses[serverName] {
+            self.toAddress = addr
+        } else {
+            let hostRef = CFHostCreateWithName(nil, serverName).takeRetainedValue()
+            let resolved = CFHostStartInfoResolution(hostRef, CFHostInfoType.Addresses, nil)
+            if resolved {
+                var success: DarwinBoolean = false
+                if let addresses = CFHostGetAddressing(hostRef, &success)?.takeUnretainedValue() as NSArray? {
+                    let dataFirst = addresses.firstObject!
+                    var addr = sockaddr()
+                    dataFirst.getBytes(&addr, length:sizeof(sockaddr))
+                    let addr4 = withUnsafePointer(&addr) { UnsafePointer<sockaddr_in>($0).memory }
 
-//        if inet_pton(AF_INET, ipAddress, &toAddress.sin_addr) == 1 {
-//            print("initialization Ok")
-//        } else {
-        let hostRef = CFHostCreateWithName(nil, ipAddress).takeRetainedValue()
-        let resolved = CFHostStartInfoResolution(hostRef, CFHostInfoType.Addresses, nil)
-        if resolved {
-            var success: DarwinBoolean = false
-            if let addresses = CFHostGetAddressing(hostRef, &success)?.takeUnretainedValue() as NSArray? {
-                let dataFirst = addresses.firstObject!
-                var addr = sockaddr()
-                dataFirst.getBytes(&addr, length:sizeof(sockaddr))
-                let addr4 = withUnsafePointer(&addr) { UnsafePointer<sockaddr_in>($0).memory }
-                toAddress.sin_addr = addr4.sin_addr
+                    self.toAddress.sin_len = UInt8(sizeofValue(self.toAddress))
+                    self.toAddress.sin_family = sa_family_t(AF_INET)
+                    self.toAddress.sin_addr = addr4.sin_addr
+                    self.toAddress.sin_port = in_port_t(serverPort.bigEndian)
+
+                    NetworkConnection.addresses[serverName] = self.toAddress
+                } else {
+                    return nil
+                }
             } else {
                 return nil
             }
-        } else {
-            return nil
         }
     }
 

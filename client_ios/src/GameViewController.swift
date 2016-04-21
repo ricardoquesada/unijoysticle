@@ -28,7 +28,7 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
         if serverValue != nil {
             serverAddr = serverValue as! String
         }
-        let netConnection = NetworkConnection(ipAddress: serverAddr)
+        let netConnection = NetworkConnection(serverName: serverAddr)
         if netConnection == nil {
             let alert = UIAlertView(title: "Invalid server", message: "Server not found: " + serverAddr, delegate: self, cancelButtonTitle: "Ok", otherButtonTitles: "")
             alert.show()
