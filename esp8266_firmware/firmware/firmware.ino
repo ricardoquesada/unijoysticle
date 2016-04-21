@@ -16,6 +16,10 @@ limitations under the License.
 
 // based on http://www.esp8266.com/viewtopic.php?f=29&t=2222
 
+// set it to 1 (default) to create its own WiFi network
+// set it to 0 to connect to an existing WiFi network
+#define ACCESS_POINT_MODE 1
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
@@ -27,8 +31,18 @@ extern "C" {  //required for read Vdd Voltage
 }
 
 int status = WL_IDLE_STATUS;
+#if ACCESS_POINT_MODE
+const char* ssid = "unijoysticle";
+#else
 const char* ssid = "queque2";           // my WiFi network
 const char* pass = "locopajaro";        // my super secret password. Use to join my WiFi network.
+#endif // ACCESS_POINT_MODE
+
+enum {
+    ERROR_CANNOT_CONNECT = 2,
+    ERROR_MDNS_FAIL = 3,
+};
+
 const unsigned int localPort = 6464;    // local port to listen for UDP packets
 
 MDNSResponder mdns;                     // announce Joystick service
@@ -44,41 +58,13 @@ byte packetBuffer[512];             //buffer to hold incoming and outgoing packe
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP Udp;
 
-static void fatalError()
-{
-  Serial.println("Fatal error. Reboot please");
-  pinMode(INTERNAL_LED, OUTPUT);
-  while(1) {
-    // report error
-    delay(500);
-    digitalWrite(INTERNAL_LED, LOW);
-    delay(500);
-    digitalWrite(INTERNAL_LED, HIGH);
-  }
-}
-
 void setup()
 {
     // Open serial communications and wait for port to open:
     Serial.begin(9600);
 
     // setting up Station AP
-    WiFi.begin(ssid, pass);
-
-    // Wait for connect to AP
-    Serial.print("[Connecting]");
-    Serial.print(ssid);
-    int tries=0;
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-        tries++;
-        if (tries > 30) {
-            Serial.println("Could not connect. Check SSID and password");
-            break;
-        }
-    }
-    Serial.println();
+    setupWiFi();
 
     printWifiStatus();
 
@@ -91,14 +77,14 @@ void setup()
     Udp.begin(localPort);
 
     if (mdns.begin("unijoysticle", WiFi.localIP())) {
-      Serial.println("MDNS responder started");
+        Serial.println("MDNS responder started");
     }
     else
     {
-      fatalError();
+        fatalError(ERROR_MDNS_FAIL);
     }
 
-    mdns.addService("remote", "udp", 6464);
+    // mdns.addService("remote", "udp", localPort);
 
     for (int i=0; i<TOTAL_PINS; i++)
     {
@@ -170,14 +156,69 @@ void loop()
     }
 }
 
+static void fatalError(int times)
+{
+    Serial.println("Fatal error. Reboot please");
+    pinMode(INTERNAL_LED, OUTPUT);
+    while(1) {
+        // report error
+        for (int i=0; i<times; i++) {
+            delay(400);
+            digitalWrite(INTERNAL_LED, LOW);
+            delay(400);
+            digitalWrite(INTERNAL_LED, HIGH);
+        }
+        delay(1000);
+    }
+}
+
+static void setupWiFi()
+{
+#if ACCESS_POINT_MODE
+    Serial.print("[Creating AP]");
+    WiFi.mode(WIFI_AP);
+
+    uint8_t mac[WL_MAC_ADDR_LENGTH];
+    WiFi.softAPmacAddress(mac);
+    char buf[50];
+    memset(buf, 0, sizeof(buf)-1);
+    snprintf(buf, sizeof(buf)-1, "%s-%x%x", ssid, mac[WL_MAC_ADDR_LENGTH-2], mac[WL_MAC_ADDR_LENGTH-1]);
+    WiFi.softAP(buf);
+    Serial.print("SSID:");
+    Serial.println(buf);
+
+#else
+    Serial.print("[Connecting]");
+    WiFi.begin(ssid, pass);
+    int tries=0;
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+        tries++;
+        if (tries > 30) {
+            Serial.println("Could not connect. Check SSID and password");
+            fatalError(ERROR_CANNOT_CONNET);
+        }
+    }
+    Serial.println();
+#endif
+}
+
 void printWifiStatus()
 {
+#if ACCESS_POINT_MODE
+    Serial.println(WiFi.softAPgetStationNum());
+    // print your WiFi shield's IP address:
+    IPAddress ip = WiFi.softAPIP();
+    Serial.print("Local IP Address: ");
+    Serial.println(ip);
+#else
     // print the SSID of the network you're attached to:
     Serial.print("SSID: ");
     Serial.println(WiFi.SSID());
-
     // print your WiFi shield's IP address:
     IPAddress ip = WiFi.localIP();
-    Serial.print("IP Address: ");
+    Serial.print("Local IP Address: ");
     Serial.println(ip);
+#endif
 }
