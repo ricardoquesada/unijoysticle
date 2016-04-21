@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import CFNetwork
 
 class NetworkConnection {
     // ip address
@@ -20,10 +21,23 @@ class NetworkConnection {
         toAddress.sin_family = sa_family_t(AF_INET)
         toAddress.sin_port = in_port_t(serverPort.bigEndian)
 
-        if inet_pton(AF_INET, ipAddress, &toAddress.sin_addr) == 1 {
-            print("initialization Ok")
+//        if inet_pton(AF_INET, ipAddress, &toAddress.sin_addr) == 1 {
+//            print("initialization Ok")
+//        } else {
+        let hostRef = CFHostCreateWithName(nil, ipAddress).takeRetainedValue()
+        let resolved = CFHostStartInfoResolution(hostRef, CFHostInfoType.Addresses, nil)
+        if resolved {
+            var success: DarwinBoolean = false
+            if let addresses = CFHostGetAddressing(hostRef, &success)?.takeUnretainedValue() as NSArray? {
+                let dataFirst = addresses.firstObject!
+                var addr = sockaddr()
+                dataFirst.getBytes(&addr, length:sizeof(sockaddr))
+                let addr4 = withUnsafePointer(&addr) { UnsafePointer<sockaddr_in>($0).memory }
+                toAddress.sin_addr = addr4.sin_addr
+            } else {
+                return nil
+            }
         } else {
-            print("Could not resolve server address: ", ipAddress)
             return nil
         }
     }
