@@ -138,8 +138,10 @@ class UniGamesScene: ControllerScene {
         for touch in touches {
             let location = touch.locationInNode(self)
             if labelBack!.frame.contains(location) {
-                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: { 
-                    print("finished")
+                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: {
+                    // reset state to avoid having the joystick pressed
+                    self.joyState = 0
+                    self.sendJoyState()
                 })
             }
         }

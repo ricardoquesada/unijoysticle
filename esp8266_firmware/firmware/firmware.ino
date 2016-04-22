@@ -44,11 +44,10 @@ const unsigned int localPort = 6464;    // local port to listen for UDP packets
 
 MDNSResponder mdns;                     // announce Joystick service
 
-// believe or not, they are not ordered
-static const int pinsPort0[] = {D0, D1, D2, D3, D5};
-static const int pinsPort1[] = {D6, D7, D8, D9, D10};
+static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
+static const int pinsPort0[] = {D0, D1, D2, D3, D4};
+static const int pinsPort1[] = {D5, D6, D7, D8, D9};
 static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
-static const int INTERNAL_LED = D4; // At least on LoLin
 
 byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
@@ -112,7 +111,7 @@ void loop()
     if (noBytes == 2)
     {
         // DEBUG: turn on internal LED
-        digitalWrite(D0, LOW);
+        // digitalWrite(INTERNAL_LED, LOW);
 
         // Serial.print(millis() / 1000);
         // Serial.print(":Packet of ");
@@ -147,7 +146,7 @@ void loop()
         // Serial.println();
 
         // DEBUG: turn off internal LED
-        digitalWrite(D0, HIGH);
+        // digitalWrite(INTERNAL_LED, HIGH);
     }
 }
 

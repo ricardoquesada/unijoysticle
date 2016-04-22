@@ -1,10 +1,15 @@
 v0.2 - 2016-??-??
 
-- [NEW] - ESP8266 firmware users AP mode by default.
+- [NEW] - ESP8266 device: supports 2 joysticks (uses three 4066 ICs instead of two)
+- [NEW] - ESP8266 firmware uses AP mode by default.
           Uses SSID "unijosyticle" + last 2 bytes of mac address
 - [NEW] - iOS Client: Can be configured to use either joystick port
 - [NEW] - iOS Client: Auto-discover ESP8266 firmware using mDNS
-- [NEW] - iOS Client: Unijoysticle mode also supports up, down and fire (jump)
+- [NEW] - iOS Client: UniJoystiCle mode also supports up, down and fire (jump)
+
+- [FIX] - Name: Renamed project from Uni-Joysti-Cle to UniJoystiCle (easier to search, shorter to type)
+- [FIX] - ESP8266 device: replaced NodeMCU LoLin with NodeMCU Amica
+- [FIX] - Sophisticated Glue Material: Uses gaffer tape, instead of duct tape
 
 
 v0.1 - 2016-04-06
