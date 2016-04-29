@@ -1543,42 +1543,50 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </class>
 </classes>
 <parts>
-<part name="ESP1" library="ESP12E_DEVKIT" deviceset="ESP12E_DEVKIT" device="">
+<part name="MOD1" library="ESP12E_DEVKIT" deviceset="ESP12E_DEVKIT" device="" value="NodeMCU Amica v1.0">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="X1" library="con-subd" deviceset="F09" device="H" value="Joy #1"/>
-<part name="X2" library="con-subd" deviceset="F09" device="H" value="Joy #2"/>
+<part name="X1" library="con-subd" deviceset="F09" device="H" value="DSUB 9">
+<attribute name="MF" value="FARNELL"/>
+<attribute name="MPN" value="1-1634584-2"/>
+<attribute name="OC_NEWARK" value="39K0552"/>
+</part>
+<part name="X2" library="con-subd" deviceset="F09" device="H" value="DSUB 9">
+<attribute name="MF" value="FARNELL"/>
+<attribute name="MPN" value="1-1634584-2"/>
+<attribute name="OC_NEWARK" value="39K0552"/>
+</part>
 <part name="IC1" library="40xx" deviceset="4066" device="N">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
+<attribute name="MF" value="TEXAS INSTRUMENTS"/>
+<attribute name="MPN" value="SN74HC4066N"/>
+<attribute name="OC_NEWARK" value="76C3574"/>
 </part>
 <part name="IC3" library="40xx" deviceset="4066" device="N">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
+<attribute name="MF" value="TEXAS INSTRUMENTS"/>
+<attribute name="MPN" value="SN74HC4066N"/>
+<attribute name="OC_NEWARK" value="76C3574"/>
 </part>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="VCC" device="" value="3.3v"/>
 <part name="P+2" library="supply1" deviceset="VCC" device="" value="3.3v"/>
 <part name="IC2" library="40xx" deviceset="4066" device="N">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
+<attribute name="MF" value="TEXAS INSTRUMENTS"/>
+<attribute name="MPN" value="SN74HC4066N"/>
+<attribute name="OC_NEWARK" value="76C3574"/>
 </part>
 <part name="FRAME1" library="frames" deviceset="LETTER_P" device="" value="Frame"/>
-<part name="CN1" library="adafruit" deviceset="DCBARREL" device="PTH" value="3.3V - 9V">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
+<part name="CN1" library="adafruit" deviceset="DCBARREL" device="PTH" value="DC JACK">
+<attribute name="MF" value="SPC CONNECTORS"/>
+<attribute name="MPN" value="SPC21364"/>
+<attribute name="OC_NEWARK" value="11M0559"/>
 </part>
-<part name="D1" library="diode" deviceset="1N4004" device="">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
+<part name="D1" library="diode" deviceset="1N4004" device="" value="1N4001">
+<attribute name="MF" value="NTE ELECTRONICS"/>
+<attribute name="MPN" value="1N4001"/>
+<attribute name="OC_NEWARK" value="10M8464"/>
 </part>
 <part name="SUPPLY1" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
@@ -1593,7 +1601,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 RETRO MOE</text>
 </plain>
 <instances>
-<instance part="ESP1" gate="G$1" x="116.84" y="25.4" rot="R90">
+<instance part="MOD1" gate="G$1" x="116.84" y="25.4" rot="R90">
 <attribute name="OC_NEWARK" x="116.84" y="25.4" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="116.84" y="25.4" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="116.84" y="25.4" size="1.778" layer="96" display="off"/>
@@ -1651,7 +1659,7 @@ RETRO MOE</text>
 <nets>
 <net name="N$1" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D0"/>
+<pinref part="MOD1" gate="G$1" pin="D0"/>
 <wire x1="99.06" y1="43.18" x2="99.06" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="48.26" x2="22.86" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="48.26" x2="22.86" y2="137.16" width="0.1524" layer="91"/>
@@ -1661,7 +1669,7 @@ RETRO MOE</text>
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D1"/>
+<pinref part="MOD1" gate="G$1" pin="D1"/>
 <wire x1="101.6" y1="43.18" x2="101.6" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="50.8" x2="25.4" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="50.8" x2="25.4" y2="119.38" width="0.1524" layer="91"/>
@@ -1671,7 +1679,7 @@ RETRO MOE</text>
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D2"/>
+<pinref part="MOD1" gate="G$1" pin="D2"/>
 <wire x1="104.14" y1="43.18" x2="104.14" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="53.34" x2="27.94" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="53.34" x2="27.94" y2="101.6" width="0.1524" layer="91"/>
@@ -1681,7 +1689,7 @@ RETRO MOE</text>
 </net>
 <net name="N$4" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D3"/>
+<pinref part="MOD1" gate="G$1" pin="D3"/>
 <wire x1="106.68" y1="43.18" x2="106.68" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="55.88" x2="30.48" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="55.88" x2="30.48" y2="83.82" width="0.1524" layer="91"/>
@@ -1691,7 +1699,7 @@ RETRO MOE</text>
 </net>
 <net name="N$5" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D5"/>
+<pinref part="MOD1" gate="G$1" pin="D5"/>
 <wire x1="116.84" y1="43.18" x2="116.84" y2="137.16" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="A" pin="C"/>
 <wire x1="116.84" y1="137.16" x2="142.24" y2="137.16" width="0.1524" layer="91"/>
@@ -1699,7 +1707,7 @@ RETRO MOE</text>
 </net>
 <net name="N$6" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D6"/>
+<pinref part="MOD1" gate="G$1" pin="D6"/>
 <wire x1="119.38" y1="43.18" x2="119.38" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="B" pin="C"/>
 <wire x1="119.38" y1="119.38" x2="142.24" y2="119.38" width="0.1524" layer="91"/>
@@ -1707,7 +1715,7 @@ RETRO MOE</text>
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D7"/>
+<pinref part="MOD1" gate="G$1" pin="D7"/>
 <wire x1="121.92" y1="43.18" x2="121.92" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="C" pin="C"/>
 <wire x1="121.92" y1="101.6" x2="142.24" y2="101.6" width="0.1524" layer="91"/>
@@ -1715,7 +1723,7 @@ RETRO MOE</text>
 </net>
 <net name="N$8" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D8"/>
+<pinref part="MOD1" gate="G$1" pin="D8"/>
 <wire x1="124.46" y1="43.18" x2="124.46" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="D" pin="C"/>
 <wire x1="124.46" y1="83.82" x2="142.24" y2="83.82" width="0.1524" layer="91"/>
@@ -1859,7 +1867,7 @@ RETRO MOE</text>
 <junction x="162.56" y="15.24"/>
 </segment>
 <segment>
-<pinref part="ESP1" gate="G$1" pin="GND@3"/>
+<pinref part="MOD1" gate="G$1" pin="GND@3"/>
 <wire x1="132.08" y1="43.18" x2="132.08" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="55.88" x2="137.16" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
@@ -1882,7 +1890,7 @@ RETRO MOE</text>
 <wire x1="170.18" y1="40.64" x2="170.18" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="ESP1" gate="G$1" pin="3V3@2"/>
+<pinref part="MOD1" gate="G$1" pin="3V3@2"/>
 <pinref part="P+1" gate="VCC" pin="VCC"/>
 <wire x1="134.62" y1="43.18" x2="144.78" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="144.78" y1="43.18" x2="144.78" y2="50.8" width="0.1524" layer="91"/>
@@ -1890,7 +1898,7 @@ RETRO MOE</text>
 </net>
 <net name="N$19" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="D4"/>
+<pinref part="MOD1" gate="G$1" pin="D4"/>
 <wire x1="109.22" y1="43.18" x2="109.22" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="58.42" x2="50.8" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="58.42" x2="50.8" y2="66.04" width="0.1524" layer="91"/>
@@ -1900,7 +1908,7 @@ RETRO MOE</text>
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="ESP1" gate="G$1" pin="RX"/>
+<pinref part="MOD1" gate="G$1" pin="RX"/>
 <wire x1="127" y1="43.18" x2="127" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="B" pin="C"/>
 <wire x1="127" y1="66.04" x2="142.24" y2="66.04" width="0.1524" layer="91"/>
@@ -1942,7 +1950,7 @@ RETRO MOE</text>
 </segment>
 <segment>
 <pinref part="SUPPLY2" gate="G$1" pin="5V"/>
-<pinref part="ESP1" gate="G$1" pin="VIN"/>
+<pinref part="MOD1" gate="G$1" pin="VIN"/>
 <wire x1="139.7" y1="7.62" x2="134.62" y2="7.62" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -1956,7 +1964,7 @@ RETRO MOE</text>
 <pinref part="GND1" gate="G$1" pin="3.3V"/>
 </segment>
 <segment>
-<pinref part="ESP1" gate="G$1" pin="GND@1"/>
+<pinref part="MOD1" gate="G$1" pin="GND@1"/>
 <pinref part="GND2" gate="G$1" pin="3.3V"/>
 <wire x1="132.08" y1="0" x2="132.08" y2="7.62" width="0.1524" layer="91"/>
 </segment>
@@ -1964,6 +1972,10 @@ RETRO MOE</text>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="114,1,68.58,68.5165,IC2,C,C,,,"/>
+<approved hash="114,1,68.58,68.5165,IC2,D,C,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>
