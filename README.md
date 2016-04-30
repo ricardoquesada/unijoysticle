@@ -9,5 +9,5 @@ This repository contains:
 
 * the [iOS client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_ios) that sends the packets to the Wi-Fi receiver
 * the [firmware](https://github.com/ricardoquesada/unijoysticle/tree/master/esp8266_firmware) that runs on the Wi-Fi receiver
-. the [schematic](https://github.com/ricardoquesada/unijoysticle/tree/master/schematic) to build your own Wi-Fi receiver
+* the [schematic](https://github.com/ricardoquesada/unijoysticle/tree/master/schematic) to build your own Wi-Fi receiver
 
