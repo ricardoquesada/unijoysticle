@@ -18,6 +18,10 @@
 
 
 l0:
+        ldx #0                  ; wait at least 512 cycles
+:       dex
+        bne :-
+
         lda #%01000000
         sta $dc00
 
@@ -26,6 +30,9 @@ l0:
         ldy $d41a
         sty p1y
 
+        ldx #0                  ; wait at least 512 cycles
+:       dex
+        bne :-
 
         lda #%10000000
         sta $dc00
@@ -51,10 +58,6 @@ l0:
         lda p2y
         jsr print_value
 
-
-        ldx #0                  ; wait at least 512 cycles
-l1:     dex
-        bne l1
 
         jmp l0
 
