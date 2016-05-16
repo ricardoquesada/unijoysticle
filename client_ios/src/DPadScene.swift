@@ -42,7 +42,7 @@ class DPadScene: ControllerScene {
         for (key,value) in names_bits {
             let sprite = childNodeWithName(key) as! SKSpriteNode!
             sprite.colorBlendFactor = 1
-            sprite.color = UIColor.blackColor()
+            sprite.color = UIColor.grayColor()
             assert(sprite != nil, "Invalid name")
             buttons[sprite] = value
         }
@@ -107,7 +107,7 @@ class DPadScene: ControllerScene {
         for (sprite, bitmaks) in buttons {
             if sprite.frame.contains(location) {
                 joyState = joyState | bitmaks
-                sprite.color = UIColor.blueColor()
+                sprite.color = UIColor.redColor()
             }
         }
     }
@@ -116,7 +116,7 @@ class DPadScene: ControllerScene {
         for (sprite, bitmaks) in buttons {
             if sprite.frame.contains(location) {
                 joyState = joyState & ~bitmaks
-                sprite.color = UIColor.blackColor()
+                sprite.color = UIColor.grayColor()
             }
         }
     }

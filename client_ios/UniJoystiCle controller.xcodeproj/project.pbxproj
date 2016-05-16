@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
+		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* ServerViewController.swift */; };
 		50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05831CC6642C0080240F /* AccelerometerFilter.swift */; };
 		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
+		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
 		50BEF5091CC94B3D00505A7F /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGELOG; path = ../CHANGELOG; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle controller.temp_caseinsensitive_rename.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,11 +62,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5094A5F31CEA044D00E3B57A /* res */ = {
+			isa = PBXGroup;
+			children = (
+				5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */,
+			);
+			path = res;
+			sourceTree = "<group>";
+		};
 		50CCB41B1CA5C214002CFD1E = {
 			isa = PBXGroup;
 			children = (
 				50BEF5091CC94B3D00505A7F /* CHANGELOG */,
 				50DD05821CC6642C0080240F /* src */,
+				5094A5F31CEA044D00E3B57A /* res */,
 				50CCB4251CA5C214002CFD1E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -176,6 +187,7 @@
 				50DD05A21CC6642C0080240F /* icon-120.png in Resources */,
 				50DD05A41CC6642C0080240F /* icon.png in Resources */,
 				50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */,
+				5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */,
 				50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */,
 				50DD059C1CC6642C0080240F /* DPadScene.sks in Resources */,
 			);

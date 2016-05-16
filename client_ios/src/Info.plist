@@ -38,6 +38,10 @@
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>C64_Pro_Mono-STYLE.ttf</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
