@@ -57,15 +57,17 @@ class DPadScene: ControllerScene {
 
             let location = touch.locationInNode(self)
             if labelBack!.frame.contains(location) {
-                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: {
+                self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
                     self.sendJoyState()
+
+                    // re-enable it.
+                    UIApplication.sharedApplication().idleTimerDisabled = false
                 })
             }
 
             enableTouch(location)
-
             sendJoyState()
         }
     }
@@ -75,7 +77,6 @@ class DPadScene: ControllerScene {
 
             disableTouch(touch.previousLocationInNode(self))
             enableTouch(touch.locationInNode(self))
-
             sendJoyState()
         }
     }
@@ -85,7 +86,6 @@ class DPadScene: ControllerScene {
 
             disableTouch(touch.previousLocationInNode(self))
             disableTouch(touch.locationInNode(self))
-
             sendJoyState()
         }
     }
@@ -96,12 +96,10 @@ class DPadScene: ControllerScene {
 
                 disableTouch(touch.previousLocationInNode(self))
                 disableTouch(touch.locationInNode(self))
-
                 sendJoyState()
             }
         }
     }
-
 
     func enableTouch(location: CGPoint) {
         for (sprite, bitmaks) in buttons {

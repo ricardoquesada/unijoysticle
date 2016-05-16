@@ -2,6 +2,7 @@
   "images" : [
     {
       "idiom" : "iphone",
+      "filename" : "button1.png",
       "scale" : "1x"
     },
     {

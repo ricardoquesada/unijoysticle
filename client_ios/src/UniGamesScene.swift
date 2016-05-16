@@ -21,8 +21,8 @@ import CoreMotion
 
 class UniGamesScene: ControllerScene {
 
-    var motionManager = CMMotionManager()
-    var rotationRate = CMRotationRate();
+    let motionManager = CMMotionManager()
+    var rotationRate = CMRotationRate()
 
     // accel tmp
     var labelX:SKLabelNode? = nil
@@ -32,31 +32,19 @@ class UniGamesScene: ControllerScene {
     var labelBack:SKLabelNode? = nil
     var zMax:Double = -100
     var zMin:Double = 100
-//    let accelFilter = HighpassFilter(sampleRate: 60, cutoffFrequency: 5.0)
 
     let operationQueue = NSOperationQueue()
 
     override func didMoveToView(view: SKView) {
 
+        labelX = childNodeWithName("SKLabelNode_x") as! SKLabelNode?
+        labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
+        labelZ = childNodeWithName("SKLabelNode_z") as! SKLabelNode?
+        labelState = childNodeWithName("SKLabelNode_state") as! SKLabelNode?
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
+
         // accelerometer stuff
         if motionManager.accelerometerAvailable == true {
-
-//            accelFilter.adaptive = false
-            labelX = childNodeWithName("SKLabelNode_x") as! SKLabelNode?
-            labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
-            labelZ = childNodeWithName("SKLabelNode_z") as! SKLabelNode?
-            labelState = childNodeWithName("SKLabelNode_state") as! SKLabelNode?
-            labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
-
-//            motionManager.accelerometerUpdateInterval = 1/60
-//            motionManager.startAccelerometerUpdatesToQueue(operationQueue, withHandler:{
-//                data, error in
-//
-//                self.accelFilter.addAcceleration(data!.acceleration)
-//
-//                self.zMin = min(data!.acceleration.z, self.zMin)
-//                self.zMax = max(data!.acceleration.z, self.zMax)
-//            })
 
             motionManager.startDeviceMotionUpdatesToQueue(operationQueue, withHandler: {
                 data, error in
@@ -138,10 +126,13 @@ class UniGamesScene: ControllerScene {
         for touch in touches {
             let location = touch.locationInNode(self)
             if labelBack!.frame.contains(location) {
-                self.view?.window!.rootViewController?.dismissViewControllerAnimated(true, completion: {
+                self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
                     self.sendJoyState()
+
+                    // re-enable it.
+                    UIApplication.sharedApplication().idleTimerDisabled = false
                 })
             }
         }

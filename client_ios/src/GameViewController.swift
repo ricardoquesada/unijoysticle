@@ -19,29 +19,34 @@
 import UIKit
 import SpriteKit
 
-class GameViewController: UIViewController, UIAlertViewDelegate {
+class GameViewController: UIViewController {
 
     var selectedScene:String? = nil
     var selectedJoystick:UInt8 = 0
+    var netConnection:NetworkConnection? = nil
+    var userServer:String = "unijoysticle.local"
 
-    func alertView(alertView: UIAlertView, didDismissWithButtonIndex buttonIndex: Int) {
-        dismissViewControllerAnimated(true, completion: {
-            print("finished")
-        })
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let prefValue = NSUserDefaults.standardUserDefaults().valueForKey("ipaddress")
+        if prefValue != nil {
+            userServer = prefValue as! String
+        }
+        netConnection = NetworkConnection(serverName: userServer)
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidDisappear(animated)
         var scene:ControllerScene? = nil
 
-        var serverAddr = "unijoysticle.local"
-        let serverValue = NSUserDefaults.standardUserDefaults().valueForKey("ipaddress")
-        if serverValue != nil {
-            serverAddr = serverValue as! String
-        }
-        let netConnection = NetworkConnection(serverName: serverAddr)
         if netConnection == nil {
-            let alert = UIAlertView(title: "Invalid server", message: "Server not found: " + serverAddr, delegate: self, cancelButtonTitle: "Ok", otherButtonTitles: "")
-            alert.show()
+            let alertController = UIAlertController(title: "Invalid server", message: "Server not found: " + userServer, preferredStyle: .Alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: { uiAlertController in
+                self.dismissViewControllerAnimated(false, completion: nil)
+                })
+            alertController.addAction(defaultAction)
+            presentViewController(alertController, animated: true, completion: nil)
             return
         }
 
@@ -54,6 +59,10 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
         }
         
         if scene != nil {
+
+            // don't turn off screen. usuful when in unijoysticle mode
+            UIApplication.sharedApplication().idleTimerDisabled = true
+
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = false
@@ -63,9 +72,11 @@ class GameViewController: UIViewController, UIAlertViewDelegate {
             skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
-            scene!.scaleMode = .AspectFill
+            scene!.scaleMode = .AspectFit
 
             // FIXME: this should be part of the ControllerScene constructor
+            // either there is a bug in SpriteKit, or I don't know how to override
+            // Scene.
             scene!.joyControl = selectedJoystick
             scene!.net = netConnection
             skView.presentScene(scene)

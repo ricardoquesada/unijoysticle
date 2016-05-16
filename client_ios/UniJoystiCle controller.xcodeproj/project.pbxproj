@@ -10,7 +10,6 @@
 		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
 		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* ServerViewController.swift */; };
-		50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05831CC6642C0080240F /* AccelerometerFilter.swift */; };
 		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
 		50DD05991CC6642C0080240F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05851CC6642C0080240F /* Assets.xcassets */; };
 		50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05861CC6642C0080240F /* LaunchScreen.storyboard */; };
@@ -33,7 +32,6 @@
 		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
 		50BEF5091CC94B3D00505A7F /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGELOG; path = ../CHANGELOG; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle controller.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle controller.temp_caseinsensitive_rename.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		50DD05831CC6642C0080240F /* AccelerometerFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccelerometerFilter.swift; sourceTree = "<group>"; };
 		50DD05841CC6642C0080240F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50DD05851CC6642C0080240F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		50DD05871CC6642C0080240F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 				50DD05901CC6642C0080240F /* raw */,
 				50DD05851CC6642C0080240F /* Assets.xcassets */,
 				508EF7601CC7F08E0082E38D /* ControllerScene.swift */,
-				50DD05831CC6642C0080240F /* AccelerometerFilter.swift */,
 				50DD05841CC6642C0080240F /* AppDelegate.swift */,
 				50DD05861CC6642C0080240F /* LaunchScreen.storyboard */,
 				50DD05881CC6642C0080240F /* Main.storyboard */,
@@ -206,7 +203,6 @@
 				509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
-				50DD05971CC6642C0080240F /* AccelerometerFilter.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
