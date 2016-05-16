@@ -6,11 +6,12 @@
     },
     {
       "idiom" : "iphone",
+      "filename" : "arrow-bold-right_2.png",
       "scale" : "2x"
     },
     {
       "idiom" : "iphone",
-      "filename" : "Spaceship.png",
+      "filename" : "arrow-bold-right_3.png",
       "scale" : "3x"
     }
   ],

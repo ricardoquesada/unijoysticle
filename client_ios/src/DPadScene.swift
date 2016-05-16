@@ -20,7 +20,7 @@ import SpriteKit
 
 class DPadScene: ControllerScene {
 
-    var buttons: [SKNode:UInt8] = [:]
+    var buttons: [SKSpriteNode:UInt8] = [:]
     var labelBack:SKLabelNode? = nil
 
     override func didMoveToView(view: SKView) {
@@ -40,9 +40,11 @@ class DPadScene: ControllerScene {
                             "SKSpriteNode_fire": JoyBits.Fire.rawValue]
 
         for (key,value) in names_bits {
-            let node = childNodeWithName(key)
-            assert(node != nil, "Invalid name")
-            buttons[node!] = value
+            let sprite = childNodeWithName(key) as! SKSpriteNode!
+            sprite.colorBlendFactor = 1
+            sprite.color = UIColor.blackColor()
+            assert(sprite != nil, "Invalid name")
+            buttons[sprite] = value
         }
 
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
@@ -62,7 +64,7 @@ class DPadScene: ControllerScene {
                 })
             }
 
-            enableTouch(touch.locationInNode(self))
+            enableTouch(location)
 
             sendJoyState()
         }
@@ -102,17 +104,19 @@ class DPadScene: ControllerScene {
 
 
     func enableTouch(location: CGPoint) {
-        for (node, bitmaks) in buttons {
-            if node.frame.contains(location) {
+        for (sprite, bitmaks) in buttons {
+            if sprite.frame.contains(location) {
                 joyState = joyState | bitmaks
+                sprite.color = UIColor.blueColor()
             }
         }
     }
 
     func disableTouch(location: CGPoint) {
-        for (node, bitmaks) in buttons {
-            if node.frame.contains(location) {
+        for (sprite, bitmaks) in buttons {
+            if sprite.frame.contains(location) {
                 joyState = joyState & ~bitmaks
+                sprite.color = UIColor.blackColor()
             }
         }
     }
