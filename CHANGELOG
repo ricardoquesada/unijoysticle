@@ -1,11 +1,12 @@
-v0.2 - 2016-??-??
+v0.2 - 2016-06-12
 
 
+- [NEW] - ESP8266: PCB board version. Protoboard version deprecated
+- [NEW] - ESP8266 Schematic: Added EAGLE board and schematic files.
+		  Fritzing diagrams deprecated
 - [NEW] - ESP8266 device: supports 2 joysticks (uses three 4066 ICs instead of two)
 - [NEW] - ESP8266 firmware uses AP mode by default.
           Uses SSID "unijosyticle" + last 2 bytes of mac address
-- [NEW] - ESP8266 Schematic: Added EAGLE board and schematic files.
-		  Fritzing diagrams deprecated
 - [NEW] - iOS Client: Can be configured to use either joystick port
 - [NEW] - iOS Client: Auto-discover ESP8266 firmware using mDNS
 - [NEW] - iOS Client: UniJoystiCle mode also supports up, down and fire (jump)
