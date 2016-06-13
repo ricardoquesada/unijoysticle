@@ -12,4 +12,4 @@ This repository contains:
 * the [schematic + PCB board](https://github.com/ricardoquesada/unijoysticle/tree/master/schematic) to build your own Wi-Fi receiver
 
 
-![PCB](https://lh3.googleusercontent.com/-OjX88hA0O9I/V12OOZiJjpI/AAAAAAABeXo/0AZYzH5x3xIiYRy--uza0qhJhuFwW18NACCo/s400/IMG_4523.jpg)
+![UniJoystiCle v0.2](https://lh3.googleusercontent.com/-eWO315NAUx4/V14KombkYsI/AAAAAAABeYY/wcnp8RfM-FAZW2cmqv752XlbU5t78ycQACCo/s640/IMG_0179.jpg)
