@@ -1,3 +1,11 @@
+v0.2.1 - 2016-06-
+
+- [FIX] ESP8266 Schematic: uses DC Jack Barrel with thinner holes
+- [FIX] ESP8266 Schematic: 4066 ICs use VCC and GND from Joystick.
+		C64 works if power external power is off. Otherwise, the unknown
+		state of the ICs was causing strange bugs on the c64.
+
+
 v0.2 - 2016-06-12
 
 
