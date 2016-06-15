@@ -22,6 +22,8 @@ limitations under the License.
 // set it to 0 to connect to an existing WiFi network
 #define ACCESS_POINT_MODE 1
 
+#define UNIJOYSTICLE_VERSION "v0.2.1"
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
@@ -58,6 +60,8 @@ void setup()
 {
     // Open serial communications and wait for port to open:
     Serial.begin(9600);
+
+    Serial.println("\n*** UniJoystiCle " UNIJOYSTICLE_VERSION " ***\n");
 
     // setting up Station AP
     setupWiFi();
