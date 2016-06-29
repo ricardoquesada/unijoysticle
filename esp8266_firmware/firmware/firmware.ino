@@ -22,7 +22,7 @@ limitations under the License.
 // set it to 0 to connect to an existing WiFi network
 #define ACCESS_POINT_MODE 1
 
-#define UNIJOYSTICLE_VERSION "v0.2.1"
+#define UNIJOYSTICLE_VERSION "v0.2.2"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
