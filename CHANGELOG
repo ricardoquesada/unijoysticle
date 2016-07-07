@@ -1,4 +1,4 @@
-v0.2.2 - 2016-06-
+v0.2.5 - 2016-07-
 
 - [FIX] ESP8266 Schematic: Uses Copper Pour both in Top and Bottom layers
 - [FIX] ESP8266 Schematic: Uses bitmap in bottom layer
@@ -9,6 +9,8 @@ v0.2.2 - 2016-06-
 		ESP8266 VCC is not used.
 - [FIX] ESP8266 Firmware: prints "UniJoystiCle" + version via Serial (good for debugging)
 - [FIX] iOS Client: AppStore compliant
+- [FIX] iOS Client: UniJoystiCle mode calibrated for idling and jumping
+- [FIX] iOS Client: UniJoystiCle mode shows a DPad instead of bits
 
 
 v0.2 - 2016-06-12

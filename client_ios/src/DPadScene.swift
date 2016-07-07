@@ -102,18 +102,18 @@ class DPadScene: ControllerScene {
     }
 
     func enableTouch(location: CGPoint) {
-        for (sprite, bitmaks) in buttons {
+        for (sprite, bitmask) in buttons {
             if sprite.frame.contains(location) {
-                joyState = joyState | bitmaks
+                joyState = joyState | bitmask
                 sprite.color = UIColor.redColor()
             }
         }
     }
 
     func disableTouch(location: CGPoint) {
-        for (sprite, bitmaks) in buttons {
+        for (sprite, bitmask) in buttons {
             if sprite.frame.contains(location) {
-                joyState = joyState & ~bitmaks
+                joyState = joyState & ~bitmask
                 sprite.color = UIColor.grayColor()
             }
         }
