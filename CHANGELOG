@@ -1,4 +1,4 @@
-v0.3.0 - 2016-07-28 - CommVEx release
+v0.3.0 - 2016-07-29 - CommVEx release
 
 - [NEW] iOS Client: uses "angular position" instead of acceleration to simulate the wheel rotation
 more reliable and enables new features like the handicap (see below)
