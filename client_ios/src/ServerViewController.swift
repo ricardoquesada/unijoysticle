@@ -21,6 +21,10 @@ import UIKit
 class ServerViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var ipaddress: UITextField!
+    @IBOutlet weak var handicap: UISlider!
+    @IBOutlet weak var handicapLabel: UILabel!
+
+    let sliderStep:Float = 0.1
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +33,13 @@ class ServerViewController: UIViewController, UITextFieldDelegate {
         if (addr != nil) {
             ipaddress.text = addr as! String?
         }
+        let handicapValue = settings.valueForKey("handicap")
+        var handiFloat:Float = 1.0
+        if (handicapValue != nil) {
+            handiFloat = handicapValue as! Float
+        }
+        handicap.setValue(handiFloat, animated: false)
+        handicapLabel.text = "\(handiFloat)"
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -36,5 +47,13 @@ class ServerViewController: UIViewController, UITextFieldDelegate {
         settings.setValue(textField.text, forKey: "ipaddress")
         textField.resignFirstResponder()
         return true
+    }
+
+    @IBAction func sliderValueChanged(sender: UISlider) {
+        let steppedValue = round(handicap.value / sliderStep) * sliderStep
+        handicapLabel.text = "\(steppedValue)"
+        handicap.value = steppedValue
+        let settings = NSUserDefaults.standardUserDefaults()
+        settings.setValue(steppedValue, forKey: "handicap")
     }
 }

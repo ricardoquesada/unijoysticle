@@ -19,10 +19,17 @@
 import SpriteKit
 import CoreMotion
 
+func radiansToDegrees(rads: Double) -> Double {
+    return rads * 180 / M_PI
+}
+
 class UniGamesScene: ControllerScene {
 
+    let buttonThreshold = 2.1
+    let movementThreshold = 0.4
+    var wheelRotationRate = 1.0
+
     let motionManager = CMMotionManager()
-    var rotationRate = CMRotationRate()
     var userAcceleration = CMAcceleration()
 
     // accel tmp
@@ -32,12 +39,18 @@ class UniGamesScene: ControllerScene {
     var labelY:SKLabelNode? = nil
     var labelZ:SKLabelNode? = nil
     var labelBack:SKLabelNode? = nil
-    var zMax:Double = -100
-    var zMin:Double = 100
+    var doTheJump:Bool = false
 
     let operationQueue = NSOperationQueue()
 
     override func didMoveToView(view: SKView) {
+
+        let settings = NSUserDefaults.standardUserDefaults()
+        let handicapValue = settings.valueForKey("handicap")
+        if (handicapValue != nil) {
+            wheelRotationRate = Double(handicapValue as! Float)
+        }
+
 
         labelX = childNodeWithName("SKLabelNode_x") as! SKLabelNode?
         labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
@@ -63,13 +76,18 @@ class UniGamesScene: ControllerScene {
         // accelerometer stuff
         if motionManager.accelerometerAvailable == true {
 
-            // update at 60Hz... 50hz should be for PAL, but lets do it for NTSC which is faster
-            motionManager.deviceMotionUpdateInterval = 1.0/60.0
+            // jump is very sensitive, should be as fast as possible
+            motionManager.deviceMotionUpdateInterval = 1.0/120.0
             motionManager.startDeviceMotionUpdatesToQueue(operationQueue, withHandler: {
                 data, error in
                 if error == nil {
-                    self.rotationRate = data!.rotationRate
                     self.userAcceleration = data!.userAcceleration
+
+                    // since motionManager frequency != game frequency, record
+                    // the jump state in case it is lost
+                    if (self.userAcceleration.z < -self.buttonThreshold) {
+                        self.doTheJump = true
+                    }
                 }
             })
         }
@@ -86,23 +104,31 @@ class UniGamesScene: ControllerScene {
 
     override func update(currentTime: CFTimeInterval) {
 
-        let buttonThreshold = 1.2
-        let movementThreshold = 0.5
-        let lateralThreshold = 1.0
-        let noMovementThreshold = movementThreshold / 2
 
 //        print("min: \(zMin), max: \(zMax)")
 //        print(self.labelState!.text)
 //        print(self.userAcceleration);
-        if self.userAcceleration.z < -buttonThreshold {
-            print(self.userAcceleration)
+//        if self.userAcceleration.z < -buttonThreshold {
+//            print(self.userAcceleration)
+//            print(self.rotationRate)
+//        }
+
+        var rotation = 0.0
+        var validRotation = false
+        if abs(userAcceleration.y) > movementThreshold || abs(userAcceleration.z) > movementThreshold {
+            rotation = atan2(self.userAcceleration.y, self.userAcceleration.z)
+            if rotation < 0 {
+                rotation += 2 * M_PI
+            }
+            rotation = radiansToDegrees(rotation) * self.wheelRotationRate % 360
+            validRotation = true
         }
 
-
         // Jumping? The press button
-        if userAcceleration.z < -buttonThreshold &&
-            abs(self.userAcceleration.y) > lateralThreshold { // lateral movment to simulate jump without conflict
+        if doTheJump || userAcceleration.z < -buttonThreshold {
+            /* && abs(self.userAcceleration.y) < noMovementThreshold { */
             joyState |= JoyBits.Fire.rawValue
+            doTheJump = false
         }
         // hold it pressed until jump starts descend
         else if userAcceleration.z >= 0 {
@@ -113,7 +139,7 @@ class UniGamesScene: ControllerScene {
         if joyState & JoyBits.Fire.rawValue != 0 {
             joyState = JoyBits.Fire.rawValue
         }
-        else {
+        else if (validRotation) {
 
             // Z and X movements are related in a pedal
             // When X has its peak, it means that Z is almost 0.
@@ -122,36 +148,31 @@ class UniGamesScene: ControllerScene {
             // userAcceleration.z (up and down) controls joy Up & Down for the unicycle game
             // userAcceleration.z > 0 == Joy down
             // userAcceleration.z < 0 == Joy up
-            if (userAcceleration.z < -movementThreshold && abs(userAcceleration.x) < noMovementThreshold) {
+            if (rotation > (90-67.5) && rotation < (90+67.5)) {
                 joyState &= ~JoyBits.Down.rawValue
                 joyState |= JoyBits.Up.rawValue
             }
-            else if (userAcceleration.z > movementThreshold && abs(userAcceleration.x) < noMovementThreshold) {
+            else if (rotation > (270-67.5) && rotation < (270+67.5)){
                 joyState &= ~JoyBits.Up.rawValue
                 joyState |= JoyBits.Down.rawValue
             }
-            else if (userAcceleration.z > -0.05 && userAcceleration.z < 0.05) {
-                // not moving. turn off up and down
-                joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue)
-            }
 
-            // accel X (left and right) controls joy Left & Right for the unicycle game
-            // Accel.X > 0 == Joy Right
-            // Accel.X < 0 == Joy Left
-            if (userAcceleration.x > movementThreshold && abs(userAcceleration.z) < noMovementThreshold) {
+            // userAcceleration.z y (left and right) controls joy Left & Right for the unicycle game
+            // userAcceleration.z.y > 0 == Joy Right
+            // userAcceleration.z.y < 0 == Joy Left
+            if (rotation > (360-67.5) || rotation < 0 + 67.5) {
                 joyState &= ~JoyBits.Left.rawValue
                 joyState |= JoyBits.Right.rawValue
             }
-            else if (userAcceleration.x < -movementThreshold && abs(userAcceleration.z) < noMovementThreshold) {
+            else if (rotation > (180-67.5) && rotation < (180+67.5)) {
                 joyState &= ~JoyBits.Right.rawValue
                 joyState |= JoyBits.Left.rawValue
             }
-            else if (userAcceleration.x > -0.05 && userAcceleration.x < 0.05) {
-                // not moving. turn off left and right
-                joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue)
-            }
+        } else {
+            // invalid rotation
+            // turn off movement bits
+            joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue | JoyBits.Up.rawValue | JoyBits.Down.rawValue)
         }
-
 
         // update labels and sprites
         self.labelX!.text = String(format:"x = %.2f", userAcceleration.x)
