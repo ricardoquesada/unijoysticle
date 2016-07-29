@@ -127,10 +127,11 @@ class UniGamesScene: ControllerScene {
         if abs(userAcceleration.y) > movementThreshold || abs(userAcceleration.z) > movementThreshold {
             angle = atan2(self.userAcceleration.y, self.userAcceleration.z)
             if angle < 0 {
-                angle += 2 * M_PI
+                angle += (2 * M_PI)
             }
             angle = radiansToDegrees(angle) * self.wheelRotationRate % 360
             validAngle = true
+//            print (angle)
         }
 
         // Jumping? The press button
