@@ -2,7 +2,8 @@ v0.3.0 - 2016-07-28 - CommVEx release
 
 - [NEW] iOS Client: uses "angular position" instead of acceleration to simulate the wheel rotation
 more reliable and enables new features like the handicap (see below)
-- [NEW] iOS Client: new "handicap" property which will simulate a faster wheel ratation speed
+- [NEW] iOS Client: new "handicap", "jump threshold" and "movement threshold" properties which
+        simulate a faster wheel rotation, and adds threshold for jump and movement (no need to recompile for different riders/games)
 - [FIX] iOS Client: AppStore compliant
 - [FIX] iOS Client: UniJoystiCle mode calibrated for idling and jumping
 - [FIX] iOS Client: UniJoystiCle mode shows a DPad instead of bits
