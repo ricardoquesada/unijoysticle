@@ -29,7 +29,7 @@ func circleInRect(rect:CGRect) -> CGPath {
 
 class GravityScene: ControllerScene {
 
-    let GRAVITY_FACTOR = 9.8
+    let GRAVITY_FACTOR = 40.0
     let ANGLE_COVER = 45.0 + 45.0 / 2
     let motionManager = CMMotionManager()
     var userAcceleration = CMAcceleration()
