@@ -31,8 +31,10 @@ class MainViewController: UIViewController {
 
             if (controllerSegment.selectedSegmentIndex == 0) {
                 sceneToLoad = "DPadScene"
-            } else {
+            } else if (controllerSegment.selectedSegmentIndex == 1) {
                 sceneToLoad = "UniJoystiCleScene"
+            } else if (controllerSegment.selectedSegmentIndex == 2) {
+                sceneToLoad = "GravityScene"
             }
 
             let gameViewController = segue.destinationViewController as! GameViewController

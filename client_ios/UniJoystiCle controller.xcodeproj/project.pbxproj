@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		50129C071D4E5ABD00157D90 /* GravityScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50129C061D4E5ABD00157D90 /* GravityScene.swift */; };
+		50129C091D4E5B1000157D90 /* GravityScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50129C081D4E5B1000157D90 /* GravityScene.sks */; };
 		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
 		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* ServerViewController.swift */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		50129C061D4E5ABD00157D90 /* GravityScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GravityScene.swift; sourceTree = "<group>"; };
+		50129C081D4E5B1000157D90 /* GravityScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GravityScene.sks; sourceTree = "<group>"; };
 		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
 		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* ServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +106,8 @@
 				50DD058E1CC6642C0080240F /* MainViewController.swift */,
 				50DD05951CC6642C0080240F /* UniGamesScene.sks */,
 				50DD05961CC6642C0080240F /* UniGamesScene.swift */,
+				50129C061D4E5ABD00157D90 /* GravityScene.swift */,
+				50129C081D4E5B1000157D90 /* GravityScene.sks */,
 				509B16BD1CC73CBF00A7426C /* ServerViewController.swift */,
 			);
 			path = src;
@@ -180,6 +186,7 @@
 				50DD05A31CC6642C0080240F /* icon-180.png in Resources */,
 				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
 				50DD05A51CC6642C0080240F /* splash_screen.png in Resources */,
+				50129C091D4E5B1000157D90 /* GravityScene.sks in Resources */,
 				50DD05991CC6642C0080240F /* Assets.xcassets in Resources */,
 				50DD05A21CC6642C0080240F /* icon-120.png in Resources */,
 				50DD05A41CC6642C0080240F /* icon.png in Resources */,
@@ -201,6 +208,7 @@
 				50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */,
 				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
 				509B16BE1CC73CBF00A7426C /* ServerViewController.swift in Sources */,
+				50129C071D4E5ABD00157D90 /* GravityScene.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,

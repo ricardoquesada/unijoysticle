@@ -55,6 +55,7 @@
                                 <segments>
                                     <segment title="D-Pad"/>
                                     <segment title="UniJoystiCle"/>
+                                    <segment title="Gravity"/>
                                 </segments>
                             </segmentedControl>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cze-kl-of4">

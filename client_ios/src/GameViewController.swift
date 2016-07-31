@@ -24,7 +24,7 @@ class GameViewController: UIViewController {
     var selectedScene:String? = nil
     var selectedJoystick:UInt8 = 0
     var netConnection:NetworkConnection? = nil
-    var userServer:String = "unijoysticle.local"
+    var userServer:String = "192.168.4.1"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +54,8 @@ class GameViewController: UIViewController {
             scene = DPadScene(fileNamed: "DPadScene")
         } else if selectedScene == "UniJoystiCleScene" {
             scene = UniGamesScene(fileNamed: "UniGamesScene")
+        } else if selectedScene == "GravityScene" {
+            scene = GravityScene(fileNamed: "GravityScene")
         } else {
             assert(false, "Invalid scene")
         }
@@ -69,7 +71,11 @@ class GameViewController: UIViewController {
             skView.showsNodeCount = false
             
             /* Sprite Kit applies additional optimizations to improve rendering performance */
-            skView.ignoresSiblingOrder = true
+            if selectedScene == "GravityScene" {
+                skView.ignoresSiblingOrder = false
+            } else {
+                skView.ignoresSiblingOrder = true
+            }
             
             /* Set the scale mode to scale to fit the window */
             scene!.scaleMode = .AspectFit

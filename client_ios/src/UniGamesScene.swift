@@ -150,6 +150,9 @@ class UniGamesScene: ControllerScene {
             joyState = JoyBits.Fire.rawValue
         }
 
+        // start clean
+        joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue | JoyBits.Up.rawValue | JoyBits.Down.rawValue)
+
         // allow jumping and moving at the same time. Don't use "else"
         if (validAngle) {
 
@@ -180,10 +183,6 @@ class UniGamesScene: ControllerScene {
                 joyState &= ~JoyBits.Right.rawValue
                 joyState |= JoyBits.Left.rawValue
             }
-        } else {
-            // ! validAngle
-            // turn off movement bits
-            joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue | JoyBits.Up.rawValue | JoyBits.Down.rawValue)
         }
 
         // update labels and sprites

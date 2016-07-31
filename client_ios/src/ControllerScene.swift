@@ -28,7 +28,7 @@ class NetworkConnection {
     var toAddress = sockaddr_in()
     let serverPort:UInt16 = 6464
 
-    init?(serverName:String = "unijoysticle.local") {
+    init?(serverName:String = "192.168.4.1") {
         // Use CFHost instead of inet_pton, since we need to use mDNS
         if let addr = NetworkConnection.addresses[serverName] {
             self.toAddress = addr

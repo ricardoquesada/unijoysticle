@@ -1,3 +1,9 @@
+v0.3.1 - 2016-08-XX
+
+- [NEW] iOS Client: Added Gravity mode. Allows you to move the joystick with the gravity
+- [FIX] iOS Client: Resets Joy state allowing left/right/up/down to be alone
+
+
 v0.3.0 - 2016-07-29 - CommVEx release
 
 - [NEW] iOS Client: uses "angular position" instead of acceleration to simulate the wheel rotation
