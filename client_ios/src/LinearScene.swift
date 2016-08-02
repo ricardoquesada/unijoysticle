@@ -29,9 +29,17 @@ class LinearScene: ControllerScene {
 
     // will be used to calculate the angle. this will be used as the "center"
     var centerPos:CGPoint = CGPointZero
-    let slider:UISlider = UISlider(frame: CGRect(x: 134, y: 100, width: 300, height: 20))
+    let slider:UISlider = UISlider(frame: CGRect(x: 100, y: 100, width: 300, height: 20))
 
     override func didMoveToView(view: SKView) {
+
+        // center slider according to view size
+        var viewSize = view.frame.size
+        viewSize.width = (viewSize.width / 2) - 300/2
+        viewSize.height = (viewSize.height / 2) - 60
+        let oldFrame = slider.frame
+        slider.frame = CGRect(x:viewSize.width, y:viewSize.height, width:oldFrame.size.width, height:oldFrame.size.height)
+
 
         // slider (using UIKit one)
         self.view?.addSubview(slider)
