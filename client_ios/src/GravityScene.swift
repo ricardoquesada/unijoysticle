@@ -29,8 +29,9 @@ func circleInRect(rect:CGRect) -> CGPath {
 
 class GravityScene: ControllerScene {
 
-    let GRAVITY_FACTOR = 40.0
     let ANGLE_COVER = 45.0 + 45.0 / 2
+    let GRAVITY = 9.8
+    var gravityFactor = 4.0
     let motionManager = CMMotionManager()
     var userAcceleration = CMAcceleration()
 
@@ -46,6 +47,14 @@ class GravityScene: ControllerScene {
     let operationQueue = NSOperationQueue()
 
     override func didMoveToView(view: SKView) {
+
+        // read settings
+        let settings = NSUserDefaults.standardUserDefaults()
+
+        let gravityValue = settings.valueForKey("gravity factor")
+        if (gravityValue != nil) {
+            gravityFactor = Double(gravityValue as! Float)
+        }
 
         // setup sprites
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
@@ -92,8 +101,8 @@ class GravityScene: ControllerScene {
 
     override func update(currentTime: CFTimeInterval) {
 
-        self.physicsWorld.gravity.dx = CGFloat(self.userAcceleration.y * self.GRAVITY_FACTOR)
-        self.physicsWorld.gravity.dy = -CGFloat(self.userAcceleration.x * self.GRAVITY_FACTOR)
+        self.physicsWorld.gravity.dx = CGFloat(self.userAcceleration.y * GRAVITY * self.gravityFactor)
+        self.physicsWorld.gravity.dy = -CGFloat(self.userAcceleration.x * GRAVITY * self.gravityFactor)
 
         let currentPos:CGPoint = (spriteBall?.position)!
         let adjustedPosition = CGPoint(x:currentPos.x - centerPos.x, y:currentPos.y - centerPos.y)

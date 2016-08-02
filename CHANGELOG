@@ -1,6 +1,9 @@
 v0.3.1 - 2016-08-XX
 
-- [NEW] iOS Client: Added Gravity mode. Allows you to move the joystick with the gravity
+- [NEW] iOS Client: Added Linear mode. Useful when using the joystick to send a value from 0 to 31
+    Example: to control how the dimmer a of lamp
+- [NEW] iOS Client: Added Gravity mode. Allows you to move the joystick with the gravity.
+    Example: allows you to play The Uni Games (or summer games) using with this new technique
 - [FIX] iOS Client: Resets Joy state allowing left/right/up/down to be alone
 
 

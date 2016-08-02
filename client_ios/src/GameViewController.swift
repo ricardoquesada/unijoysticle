@@ -56,6 +56,8 @@ class GameViewController: UIViewController {
             scene = UniGamesScene(fileNamed: "UniGamesScene")
         } else if selectedScene == "GravityScene" {
             scene = GravityScene(fileNamed: "GravityScene")
+        } else if selectedScene == "LinearScene" {
+            scene = LinearScene(fileNamed: "LinearScene")
         } else {
             assert(false, "Invalid scene")
         }

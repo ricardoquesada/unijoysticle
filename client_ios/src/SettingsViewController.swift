@@ -18,7 +18,7 @@
 
 import UIKit
 
-class ServerViewController: UIViewController, UITextFieldDelegate {
+class SettingsViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var ipaddress: UITextField!
 
@@ -30,6 +30,9 @@ class ServerViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var movementSlider: UISlider!
     @IBOutlet weak var movementLabel: UILabel!
+
+    @IBOutlet weak var gravityLabel: UILabel!
+    @IBOutlet weak var gravitySlider: UISlider!
 
     let sliderStep:Float = 0.1
 
@@ -72,6 +75,16 @@ class ServerViewController: UIViewController, UITextFieldDelegate {
         }
         jumpSlider.setValue(jumpFloat, animated: false)
         jumpLabel.text = "\(jumpFloat)"
+
+        // gravity
+        let gravityValue = settings.valueForKey("gravity factor")
+        var gravityFloat:Float = 4.0
+        if (gravityValue != nil) {
+            gravityFloat = gravityValue as! Float
+        }
+        gravitySlider.setValue(gravityFloat, animated: false)
+        gravityLabel.text = "\(gravityFloat)"
+
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -103,4 +116,13 @@ class ServerViewController: UIViewController, UITextFieldDelegate {
         let settings = NSUserDefaults.standardUserDefaults()
         settings.setValue(steppedValue, forKey: "jump threshold")
     }
+
+    @IBAction func gravityValueChanged(sender: AnyObject) {
+        let steppedValue = round(gravitySlider.value / 0.5) * 0.5
+        gravityLabel.text = "\(steppedValue)"
+        gravitySlider.value = steppedValue
+        let settings = NSUserDefaults.standardUserDefaults()
+        settings.setValue(steppedValue, forKey: "gravity factor")
+    }
+
 }
