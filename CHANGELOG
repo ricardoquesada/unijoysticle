@@ -1,4 +1,4 @@
-v0.3.1 - 2016-08-XX
+v0.3.1 - 2016-08-02
 
 - [NEW] iOS Client: Added Linear mode. Useful when using the joystick to send a value from 0 to 31
     Example: to control how the dimmer a of lamp
