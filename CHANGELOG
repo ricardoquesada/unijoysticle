@@ -1,3 +1,8 @@
+v0.3.2 - WIP
+
+- [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and C64SX
+
+
 v0.3.1 - 2016-08-02
 
 - [NEW] iOS Client: Added Linear mode. Useful when using the joystick to send a value from 0 to 31
