@@ -1,6 +1,9 @@
 v0.3.2 - WIP
 
 - [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and C64SX
+- [NEW] ESP8266 Schematic: Using D1 Mini instead of NodeMCU to reduce the
+		realstate even more. Making it smaller than 5x5cm, thus reducing the price to
+		order the PCB
 
 
 v0.3.1 - 2016-08-02
