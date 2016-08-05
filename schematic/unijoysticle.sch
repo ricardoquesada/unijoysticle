@@ -423,13 +423,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <text x="-1.016" y="3.556" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="5V" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
 </symbol>
-<symbol name="GND">
-<pin name="3.3V" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
-<wire x1="-2.032" y1="0" x2="2.032" y2="0" width="0.254" layer="94"/>
-<wire x1="-1.27" y1="-0.762" x2="1.27" y2="-0.762" width="0.254" layer="94"/>
-<wire x1="-0.508" y1="-1.524" x2="0.508" y2="-1.524" width="0.254" layer="94"/>
-<text x="2.54" y="0" size="1.778" layer="94">&gt;NAME</text>
-</symbol>
 <symbol name="FR-A4L">
 <rectangle x1="178.7652" y1="0" x2="179.3748" y2="20.32" layer="94"/>
 <rectangle x1="225.7552" y1="-26.67" x2="226.3648" y2="67.31" layer="94" rot="R90"/>
@@ -469,18 +462,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <description>5V supply symbol</description>
 <gates>
 <gate name="G$1" symbol="5V" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="GND2" prefix="GND">
-<gates>
-<gate name="G$1" symbol="GND" x="2.54" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -2805,8 +2786,6 @@ Facing DOWN/PCB</text>
 </part>
 <part name="SUPPLY1" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
-<part name="GND1" library="SparkFun-Aesthetics" deviceset="GND2" device=""/>
-<part name="GND2" library="SparkFun-Aesthetics" deviceset="GND2" device=""/>
 <part name="J1" library="riq-connectors" deviceset="DB9" device="FEMALE" value="DB9">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="618009231121"/>
@@ -2824,6 +2803,7 @@ Facing DOWN/PCB</text>
 <part name="GND5" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND6" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="U$1" library="1455413453956-wemos" deviceset="WEMOS" device=""/>
+<part name="GND1" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -2848,7 +2828,7 @@ Facing DOWN/PCB</text>
 <instance part="IC3" gate="D" x="233.68" y="68.58"/>
 <instance part="IC1" gate="P" x="101.6" y="142.24"/>
 <instance part="IC3" gate="P" x="109.22" y="139.7"/>
-<instance part="GND3" gate="1" x="81.28" y="68.58"/>
+<instance part="GND3" gate="1" x="83.82" y="58.42"/>
 <instance part="GND4" gate="1" x="101.6" y="124.46"/>
 <instance part="IC2" gate="A" x="53.34" y="53.34">
 <attribute name="OC_NEWARK" x="53.34" y="53.34" size="1.778" layer="96" display="off"/>
@@ -2864,8 +2844,6 @@ Facing DOWN/PCB</text>
 </instance>
 <instance part="SUPPLY1" gate="G$1" x="175.26" y="144.78"/>
 <instance part="SUPPLY2" gate="G$1" x="78.74" y="63.5" rot="R180"/>
-<instance part="GND1" gate="G$1" x="177.8" y="137.16"/>
-<instance part="GND2" gate="G$1" x="83.82" y="58.42"/>
 <instance part="J1" gate="G$1" x="53.34" y="157.48">
 <attribute name="OC_NEWARK" x="53.34" y="157.48" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="53.34" y="157.48" size="1.778" layer="96" display="off"/>
@@ -2883,6 +2861,7 @@ Facing DOWN/PCB</text>
 <instance part="GND5" gate="1" x="256.54" y="147.32"/>
 <instance part="GND6" gate="1" x="76.2" y="152.4"/>
 <instance part="U$1" gate="G$1" x="134.62" y="66.04" rot="R180"/>
+<instance part="GND1" gate="1" x="177.8" y="137.16"/>
 </instances>
 <busses>
 </busses>
@@ -3036,13 +3015,8 @@ Facing DOWN/PCB</text>
 </segment>
 <segment>
 <pinref part="GND3" gate="1" pin="GND"/>
-<pinref part="GND2" gate="G$1" pin="3.3V"/>
-<wire x1="83.82" y1="60.96" x2="114.3" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="GND"/>
-<wire x1="81.28" y1="71.12" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="71.12" x2="88.9" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="60.96" x2="114.3" y2="60.96" width="0.1524" layer="91"/>
-<junction x="114.3" y="60.96"/>
+<wire x1="83.82" y1="60.96" x2="114.3" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="J2" gate="G$1" pin="8"/>
@@ -3095,6 +3069,14 @@ Facing DOWN/PCB</text>
 <wire x1="68.58" y1="154.94" x2="76.2" y2="154.94" width="0.1524" layer="91"/>
 <junction x="68.58" y="154.94"/>
 <pinref part="GND6" gate="1" pin="GND"/>
+</segment>
+<segment>
+<wire x1="147.32" y1="142.24" x2="147.32" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="139.7" x2="177.8" y2="139.7" width="0.1524" layer="91"/>
+<pinref part="J3" gate="G$1" pin="GNDBREAK"/>
+<pinref part="J3" gate="G$1" pin="GND"/>
+<junction x="147.32" y="139.7"/>
+<pinref part="GND1" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -3156,16 +3138,6 @@ Facing DOWN/PCB</text>
 <pinref part="SUPPLY2" gate="G$1" pin="5V"/>
 <wire x1="78.74" y1="63.5" x2="114.3" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="5V"/>
-</segment>
-</net>
-<net name="3.3V" class="0">
-<segment>
-<wire x1="147.32" y1="142.24" x2="147.32" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="147.32" y1="139.7" x2="177.8" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="GND1" gate="G$1" pin="3.3V"/>
-<pinref part="J3" gate="G$1" pin="GNDBREAK"/>
-<pinref part="J3" gate="G$1" pin="GND"/>
-<junction x="147.32" y="139.7"/>
 </segment>
 </net>
 <net name="J1FIRE" class="0">
