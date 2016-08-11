@@ -206,7 +206,7 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minValue="1" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="0Ba-0v-Y0X">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minValue="1" maxValue="20" translatesAutoresizingMaskIntoConstraints="NO" id="0Ba-0v-Y0X">
                                 <rect key="frame" x="241" y="296" width="142" height="31"/>
                                 <connections>
                                     <action selector="gravityValueChanged:" destination="joe-hk-MZf" eventType="valueChanged" id="ddO-lw-ebZ"/>
