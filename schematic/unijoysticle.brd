@@ -2107,14 +2107,14 @@ design rules under a new name.</description>
 </element>
 <element name="J1" library="riq-connectors" package="DB9" value="DB9" x="8.9789" y="45.466" smashed="yes">
 <attribute name="PROD_ID" value="CONN-08194" x="8.9789" y="45.466" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="-0.7061" y="47.7685" size="1.27" layer="25" ratio="10"/>
+<attribute name="NAME" x="0.8128" y="47.498" size="1.27" layer="25" ratio="10"/>
 <attribute name="OC_NEWARK" value="16T0655" x="8.9789" y="45.466" size="1.778" layer="27" display="off"/>
 <attribute name="MF" value="" x="8.9789" y="45.466" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="618009231121" x="8.9789" y="45.466" size="1.778" layer="27" display="off"/>
 </element>
 <element name="J2" library="riq-connectors" package="DB9" value="DB9" x="40.4114" y="45.466" smashed="yes">
 <attribute name="PROD_ID" value="CONN-08194" x="40.4114" y="45.466" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="30.7264" y="47.7685" size="1.27" layer="25" ratio="10"/>
+<attribute name="NAME" x="30.734" y="47.498" size="1.27" layer="25" ratio="10"/>
 <attribute name="OC_NEWARK" value="16T0655" x="40.4114" y="45.466" size="1.778" layer="27" display="off"/>
 <attribute name="MF" value="" x="40.4114" y="45.466" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="618009231121" x="40.4114" y="45.466" size="1.778" layer="27" display="off"/>
