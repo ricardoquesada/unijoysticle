@@ -1,7 +1,7 @@
 /****************************************************************************
  http://retro.moe/unijoysticle
 
- Copyright 2016 Ricardo Quesada
+ Copyright © 2016 Ricardo Quesada. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ class MainViewController: UIViewController {
             var sceneToLoad = "DPadScene"
 
             if (controllerSegment.selectedSegmentIndex == 0) {
-                sceneToLoad = "DPadScene"
-            } else if (controllerSegment.selectedSegmentIndex == 1) {
                 sceneToLoad = "UniJoystiCleScene"
+            } else if (controllerSegment.selectedSegmentIndex == 1) {
+                sceneToLoad = "DPadScene"
             } else if (controllerSegment.selectedSegmentIndex == 2) {
                 sceneToLoad = "GravityScene"
             } else if (controllerSegment.selectedSegmentIndex == 3) {

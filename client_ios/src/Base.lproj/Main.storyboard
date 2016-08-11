@@ -51,10 +51,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qhu-sM-cCU" userLabel="ControllerType">
-                                <rect key="frame" x="93" y="84" width="383" height="29"/>
+                                <rect key="frame" x="20" y="84" width="528" height="29"/>
                                 <segments>
-                                    <segment title="D-Pad"/>
                                     <segment title="UniJoystiCle"/>
+                                    <segment title="D-Pad"/>
                                     <segment title="Gravity"/>
                                     <segment title="Linear"/>
                                 </segments>
@@ -67,7 +67,10 @@
                                 </connections>
                             </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="8L6-75-3BK">
-                                <rect key="frame" x="200" y="137" width="169" height="29"/>
+                                <rect key="frame" x="154" y="137" width="261" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="261" id="KCT-h5-sxh"/>
+                                </constraints>
                                 <segments>
                                     <segment title="Joystick #1"/>
                                     <segment title="Joystick #2"/>
@@ -76,7 +79,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgg-JH-N6W">
                                 <rect key="frame" x="472" y="28" width="76" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="76" id="buW-T1-24j"/>
+                                    <constraint firstAttribute="width" constant="76" id="MQz-Pi-4CD"/>
                                 </constraints>
                                 <state key="normal" title="Settings"/>
                                 <connections>
@@ -86,15 +89,15 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="8L6-75-3BK" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="25" id="7fV-ie-tcv"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="26" id="9AN-Dv-0h9"/>
-                            <constraint firstItem="VcS-Je-SPg" firstAttribute="top" secondItem="cze-kl-of4" secondAttribute="bottom" constant="97" id="IuD-W9-3TZ"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="bUt-cJ-XLM" secondAttribute="centerX" id="Kvi-4e-aK9"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="8L6-75-3BK" secondAttribute="centerX" id="UEJ-Zx-c5n"/>
-                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" constant="73" id="UOh-tn-5Ya"/>
-                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="8L6-75-3BK" secondAttribute="bottom" constant="28" id="hW3-pc-qth"/>
-                            <constraint firstItem="8L6-75-3BK" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="oIZ-b4-Quf"/>
-                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="trailing" secondItem="bUt-cJ-XLM" secondAttribute="trailingMargin" id="z5H-SV-q6N"/>
+                            <constraint firstItem="8L6-75-3BK" firstAttribute="centerX" secondItem="cze-kl-of4" secondAttribute="centerX" id="1cA-Ym-nNx"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="leading" secondItem="bUt-cJ-XLM" secondAttribute="leadingMargin" id="AdQ-7V-m5H"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="top" secondItem="Qgg-JH-N6W" secondAttribute="bottom" constant="26" id="Bat-Su-V71"/>
+                            <constraint firstItem="8L6-75-3BK" firstAttribute="top" secondItem="qhu-sM-cCU" secondAttribute="bottom" constant="25" id="PCF-EK-HSu"/>
+                            <constraint firstItem="cze-kl-of4" firstAttribute="top" secondItem="8L6-75-3BK" secondAttribute="bottom" constant="28" id="Q7b-ui-ZL4"/>
+                            <constraint firstItem="qhu-sM-cCU" firstAttribute="centerX" secondItem="8L6-75-3BK" secondAttribute="centerX" id="QoU-y4-oJe"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="trailing" secondItem="bUt-cJ-XLM" secondAttribute="trailingMargin" id="bHf-0X-w2K"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="trailing" secondItem="qhu-sM-cCU" secondAttribute="trailing" id="cfy-m5-265"/>
+                            <constraint firstItem="Qgg-JH-N6W" firstAttribute="top" secondItem="F4Y-fa-4PB" secondAttribute="bottom" constant="8" symbolic="YES" id="h2G-T1-li1"/>
                         </constraints>
                     </view>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>

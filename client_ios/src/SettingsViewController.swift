@@ -46,12 +46,12 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
             ipaddress.text = addr as! String?
         }
         else {
-            ipaddress.text = "192.168.4.1"
+            ipaddress.text = SERVER_IP_ADDRESS
         }
 
         // handicap
         let handicapValue = settings.valueForKey("handicap")
-        var handiFloat:Float = 1.0
+        var handiFloat = Float(HANDICAP_RATE)
         if (handicapValue != nil) {
             handiFloat = handicapValue as! Float
         }
@@ -60,7 +60,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
 
         // movement threshold
         let movementValue = settings.valueForKey("movement threshold")
-        var movementFloat:Float = 0.4
+        var movementFloat = Float(MOVEMENT_THRESHOLD)
         if (movementValue != nil) {
             movementFloat = movementValue as! Float
         }
@@ -69,7 +69,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
 
         // jump threshold
         let jumpValue = settings.valueForKey("jump threshold")
-        var jumpFloat:Float = 2.1
+        var jumpFloat = Float(JUMP_THRESHOLD)
         if (jumpValue != nil) {
             jumpFloat = jumpValue as! Float
         }
@@ -78,7 +78,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
 
         // gravity
         let gravityValue = settings.valueForKey("gravity factor")
-        var gravityFloat:Float = 4.0
+        var gravityFloat = Float(GRAVITY_FACTOR)
         if (gravityValue != nil) {
             gravityFloat = gravityValue as! Float
         }

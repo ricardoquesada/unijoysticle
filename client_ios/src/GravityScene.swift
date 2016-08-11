@@ -1,7 +1,7 @@
 /****************************************************************************
  http://retro.moe/unijoysticle
 
- Copyright 2016 Ricardo Quesada
+ Copyright © 2016 Ricardo Quesada. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class GravityScene: ControllerScene {
 
     let ANGLE_COVER = 45.0 + 45.0 / 2
     let GRAVITY = 9.8
-    var gravityFactor = 4.0
+    var gravityFactor = GRAVITY_FACTOR
     let motionManager = CMMotionManager()
     var userAcceleration = CMAcceleration()
 

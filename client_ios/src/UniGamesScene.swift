@@ -1,7 +1,7 @@
 /****************************************************************************
  http://retro.moe/unijoysticle
 
- Copyright 2016 Ricardo Quesada
+ Copyright © 2016 Ricardo Quesada. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ func radiansToDegrees(rads: Double) -> Double {
 
 class UniGamesScene: ControllerScene {
 
-    var jumpThreshold = 2.1
-    var movementThreshold = 0.4
-    var wheelRotationRate = 1.0
+    var jumpThreshold = JUMP_THRESHOLD
+    var movementThreshold = MOVEMENT_THRESHOLD
+    var wheelRotationRate = HANDICAP_RATE
 
     let motionManager = CMMotionManager()
     var userAcceleration = CMAcceleration()

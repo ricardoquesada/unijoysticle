@@ -28,6 +28,7 @@
 		50DD05A51CC6642C0080240F /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05941CC6642C0080240F /* splash_screen.png */; };
 		50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniGamesScene.sks */; };
 		50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniGamesScene.swift */; };
+		50EFD3301D5CE619000B8CA4 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Defaults.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		50DD05941CC6642C0080240F /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_screen.png; sourceTree = "<group>"; };
 		50DD05951CC6642C0080240F /* UniGamesScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniGamesScene.sks; sourceTree = "<group>"; };
 		50DD05961CC6642C0080240F /* UniGamesScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniGamesScene.swift; sourceTree = "<group>"; };
+		50EFD32F1D5CE619000B8CA4 /* Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				50DD058D1CC6642C0080240F /* Info.plist */,
 				50DD058E1CC6642C0080240F /* MainViewController.swift */,
 				509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */,
+				50EFD32F1D5CE619000B8CA4 /* Defaults.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 				50129C071D4E5ABD00157D90 /* GravityScene.swift in Sources */,
 				50AD8A131D504DF7003F3040 /* LinearScene.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
+				50EFD3301D5CE619000B8CA4 /* Defaults.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
 			);

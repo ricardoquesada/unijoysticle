@@ -1,7 +1,7 @@
 /****************************************************************************
  http://retro.moe/unijoysticle
 
- Copyright 2016 Ricardo Quesada
+ Copyright © 2016 Ricardo Quesada. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class NetworkConnection {
     var toAddress = sockaddr_in()
     let serverPort:UInt16 = 6464
 
-    init?(serverName:String = "192.168.4.1") {
+    init?(serverName:String = SERVER_IP_ADDRESS) {
         // Use CFHost instead of inet_pton, since we need to use mDNS
         if let addr = NetworkConnection.addresses[serverName] {
             self.toAddress = addr
