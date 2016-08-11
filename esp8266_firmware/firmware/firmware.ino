@@ -22,7 +22,7 @@ limitations under the License.
 // set it to 0 to connect to an existing WiFi network
 #define ACCESS_POINT_MODE 1
 
-#define UNIJOYSTICLE_VERSION "v0.2.5"
+#define UNIJOYSTICLE_VERSION "v0.3.1"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -48,7 +48,7 @@ MDNSResponder mdns;                     // announce Joystick service
 
 static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
 static const int pinsPort0[] = {D0, D1, D2, D3, D4};
-static const int pinsPort1[] = {D5, D6, D7, D8, D9};
+static const int pinsPort1[] = {D5, D6, D7, D8, RX};
 static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
 
 byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
