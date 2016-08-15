@@ -150,10 +150,10 @@
 <wire x1="49.53" y1="47.498" x2="47.498" y2="49.53" width="0" layer="20" curve="90"/>
 <wire x1="47.498" y1="49.53" x2="2.032" y2="49.53" width="0" layer="20"/>
 <wire x1="2.032" y1="49.53" x2="0" y2="47.498" width="0" layer="20" curve="90"/>
-<text x="43.942" y="4.572" size="1.016" layer="21" rot="SR180" align="top-left">&gt;REVISION</text>
+<text x="47.752" y="1.778" size="1.016" layer="21" rot="R180" align="top-left">&gt;REVISION</text>
 <text x="23.6093" y="4.6355" size="1.27" layer="22" font="vector" rot="SMR270" align="top-right">http://retro.moe</text>
-<text x="47.8282" y="4.572" size="1.016" layer="21" rot="SR180" align="top-left">REV</text>
-<text x="47.8282" y="2.2352" size="1.27" layer="21" rot="SR180" align="top-left">UniJoystiCle</text>
+<text x="43.2562" y="1.778" size="1.016" layer="21" rot="R180" align="top-left">REV</text>
+<text x="47.752" y="3.5052" size="1.27" layer="21" rot="R180" align="top-left">UniJoystiCle</text>
 <rectangle x1="22.479" y1="20.3708" x2="22.7838" y2="20.447" layer="22" rot="R90"/>
 <rectangle x1="22.479" y1="20.828" x2="22.7838" y2="20.9042" layer="22" rot="R90"/>
 <rectangle x1="21.717" y1="20.5994" x2="23.3934" y2="20.6756" layer="22" rot="R90"/>
@@ -2501,6 +2501,12 @@ design rules under a new name.</description>
 <wire x1="36.6014" y1="13.97" x2="35.4838" y2="13.97" width="0.3048" layer="16"/>
 <wire x1="27.94" y1="17.6022" x2="27.94" y2="17.78" width="0.3048" layer="16"/>
 <wire x1="36.6014" y1="13.97" x2="36.83" y2="13.716" width="0.3048" layer="16"/>
+</signal>
+<signal name="N$1">
+<via x="19.812" y="3.81" extent="1-16" drill="0.6" shape="square"/>
+</signal>
+<signal name="N$2">
+<via x="20.574" y="46.482" extent="1-16" drill="0.6" shape="square"/>
 </signal>
 </signals>
 </board>
