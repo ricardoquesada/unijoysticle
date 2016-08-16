@@ -35,8 +35,8 @@ class LinearScene: ControllerScene {
 
         // center slider according to view size
         var viewSize = view.frame.size
-        viewSize.width = (viewSize.width / 2) - 300/2
-        viewSize.height = (viewSize.height / 2) - 60
+        viewSize.width = viewSize.width / 2 - 150
+        viewSize.height = viewSize.height / 2 + 40
         let oldFrame = slider.frame
         slider.frame = CGRect(x:viewSize.width, y:viewSize.height, width:oldFrame.size.width, height:oldFrame.size.height)
 

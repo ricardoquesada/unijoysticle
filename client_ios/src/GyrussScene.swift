@@ -27,7 +27,7 @@ func circleInRect(rect:CGRect) -> CGPath {
     return bezierPath.CGPath;
 }
 
-class GravityScene: ControllerScene {
+class GyrussScene: ControllerScene {
 
     let ANGLE_COVER = 45.0 + 45.0 / 2
     let GRAVITY = 9.8

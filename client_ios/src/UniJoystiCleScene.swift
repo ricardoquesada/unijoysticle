@@ -23,7 +23,7 @@ func radiansToDegrees(rads: Double) -> Double {
     return rads * 180 / M_PI
 }
 
-class UniGamesScene: ControllerScene {
+class UniJoystiCleScene: ControllerScene {
 
     var jumpThreshold = JUMP_THRESHOLD
     var movementThreshold = MOVEMENT_THRESHOLD

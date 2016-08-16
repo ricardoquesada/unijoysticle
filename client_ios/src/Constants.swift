@@ -22,5 +22,12 @@ let SERVER_IP_ADDRESS = "192.168.4.1"
 let HANDICAP_RATE = 1.0
 let MOVEMENT_THRESHOLD = 0.4
 let JUMP_THRESHOLD = 2.1
-
+// Gyruss mode defaults
 let GRAVITY_FACTOR = 10.0
+
+
+// scenes names/files
+let UNIJOYSTICLE_SCENE = "UniJoystiCleScene"
+let DPAD_SCENE = "DPadScene"
+let GYRUSS_SCENE = "GyrussScene"
+let LINEAR_SCENE = "LinearScene"

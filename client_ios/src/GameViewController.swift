@@ -50,14 +50,14 @@ class GameViewController: UIViewController {
             return
         }
 
-        if selectedScene == "DPadScene" {
-            scene = DPadScene(fileNamed: "DPadScene")
-        } else if selectedScene == "UniJoystiCleScene" {
-            scene = UniGamesScene(fileNamed: "UniGamesScene")
-        } else if selectedScene == "GravityScene" {
-            scene = GravityScene(fileNamed: "GravityScene")
-        } else if selectedScene == "LinearScene" {
-            scene = LinearScene(fileNamed: "LinearScene")
+        if selectedScene == UNIJOYSTICLE_SCENE {
+            scene = UniJoystiCleScene(fileNamed: UNIJOYSTICLE_SCENE)
+        } else if selectedScene == DPAD_SCENE {
+            scene = DPadScene(fileNamed: DPAD_SCENE)
+        } else if selectedScene == GYRUSS_SCENE {
+            scene = GyrussScene(fileNamed: GYRUSS_SCENE)
+        } else if selectedScene == LINEAR_SCENE {
+            scene = LinearScene(fileNamed: LINEAR_SCENE)
         } else {
             assert(false, "Invalid scene")
         }
@@ -73,7 +73,7 @@ class GameViewController: UIViewController {
             skView.showsNodeCount = false
             
             /* Sprite Kit applies additional optimizations to improve rendering performance */
-            if selectedScene == "GravityScene" {
+            if selectedScene == GYRUSS_SCENE {
                 skView.ignoresSiblingOrder = false
             } else {
                 skView.ignoresSiblingOrder = true

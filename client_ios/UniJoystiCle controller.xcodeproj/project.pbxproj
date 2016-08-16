@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		50129C071D4E5ABD00157D90 /* GravityScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50129C061D4E5ABD00157D90 /* GravityScene.swift */; };
-		50129C091D4E5B1000157D90 /* GravityScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50129C081D4E5B1000157D90 /* GravityScene.sks */; };
+		50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50129C061D4E5ABD00157D90 /* GyrussScene.swift */; };
+		50129C091D4E5B1000157D90 /* GyrussScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50129C081D4E5B1000157D90 /* GyrussScene.sks */; };
 		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
 		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */; };
@@ -26,14 +26,14 @@
 		50DD05A31CC6642C0080240F /* icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05921CC6642C0080240F /* icon-180.png */; };
 		50DD05A41CC6642C0080240F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05931CC6642C0080240F /* icon.png */; };
 		50DD05A51CC6642C0080240F /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05941CC6642C0080240F /* splash_screen.png */; };
-		50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniGamesScene.sks */; };
-		50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniGamesScene.swift */; };
-		50EFD3301D5CE619000B8CA4 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Defaults.swift */; };
+		50DD05A61CC6642C0080240F /* UniJoystiCleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */; };
+		50DD05A71CC6642C0080240F /* UniJoystiCleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */; };
+		50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		50129C061D4E5ABD00157D90 /* GravityScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GravityScene.swift; sourceTree = "<group>"; };
-		50129C081D4E5B1000157D90 /* GravityScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GravityScene.sks; sourceTree = "<group>"; };
+		50129C061D4E5ABD00157D90 /* GyrussScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GyrussScene.swift; sourceTree = "<group>"; };
+		50129C081D4E5B1000157D90 /* GyrussScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GyrussScene.sks; sourceTree = "<group>"; };
 		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
 		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -54,9 +54,9 @@
 		50DD05921CC6642C0080240F /* icon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-180.png"; sourceTree = "<group>"; };
 		50DD05931CC6642C0080240F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		50DD05941CC6642C0080240F /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_screen.png; sourceTree = "<group>"; };
-		50DD05951CC6642C0080240F /* UniGamesScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniGamesScene.sks; sourceTree = "<group>"; };
-		50DD05961CC6642C0080240F /* UniGamesScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniGamesScene.swift; sourceTree = "<group>"; };
-		50EFD32F1D5CE619000B8CA4 /* Defaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniJoystiCleScene.sks; sourceTree = "<group>"; };
+		50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniJoystiCleScene.swift; sourceTree = "<group>"; };
+		50EFD32F1D5CE619000B8CA4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,10 +83,10 @@
 			children = (
 				50DD058A1CC6642C0080240F /* DPadScene.sks */,
 				50DD058B1CC6642C0080240F /* DPadScene.swift */,
-				50DD05951CC6642C0080240F /* UniGamesScene.sks */,
-				50DD05961CC6642C0080240F /* UniGamesScene.swift */,
-				50129C081D4E5B1000157D90 /* GravityScene.sks */,
-				50129C061D4E5ABD00157D90 /* GravityScene.swift */,
+				50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */,
+				50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */,
+				50129C081D4E5B1000157D90 /* GyrussScene.sks */,
+				50129C061D4E5ABD00157D90 /* GyrussScene.swift */,
 				50AD8A101D504DF7003F3040 /* LinearScene.sks */,
 				50AD8A111D504DF7003F3040 /* LinearScene.swift */,
 			);
@@ -125,7 +125,7 @@
 				50DD058D1CC6642C0080240F /* Info.plist */,
 				50DD058E1CC6642C0080240F /* MainViewController.swift */,
 				509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */,
-				50EFD32F1D5CE619000B8CA4 /* Defaults.swift */,
+				50EFD32F1D5CE619000B8CA4 /* Constants.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -204,13 +204,13 @@
 				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
 				50DD05A51CC6642C0080240F /* splash_screen.png in Resources */,
 				50AD8A121D504DF7003F3040 /* LinearScene.sks in Resources */,
-				50129C091D4E5B1000157D90 /* GravityScene.sks in Resources */,
+				50129C091D4E5B1000157D90 /* GyrussScene.sks in Resources */,
 				50DD05991CC6642C0080240F /* Assets.xcassets in Resources */,
 				50DD05A21CC6642C0080240F /* icon-120.png in Resources */,
 				50DD05A41CC6642C0080240F /* icon.png in Resources */,
 				50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */,
 				5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */,
-				50DD05A61CC6642C0080240F /* UniGamesScene.sks in Resources */,
+				50DD05A61CC6642C0080240F /* UniJoystiCleScene.sks in Resources */,
 				50DD059C1CC6642C0080240F /* DPadScene.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -223,13 +223,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				50DD059E1CC6642C0080240F /* GameViewController.swift in Sources */,
-				50DD05A71CC6642C0080240F /* UniGamesScene.swift in Sources */,
+				50DD05A71CC6642C0080240F /* UniJoystiCleScene.swift in Sources */,
 				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
 				509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */,
-				50129C071D4E5ABD00157D90 /* GravityScene.swift in Sources */,
+				50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */,
 				50AD8A131D504DF7003F3040 /* LinearScene.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
-				50EFD3301D5CE619000B8CA4 /* Defaults.swift in Sources */,
+				50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
 			);
