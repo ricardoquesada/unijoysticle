@@ -23,8 +23,6 @@ class DPadScene: ControllerScene {
 
     var buttons: [SKSpriteNode:UInt8] = [:]
     var labelBack:SKLabelNode? = nil
-    var usingGController:Bool = false
-    var gcontroller:GCController? = nil
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -52,6 +50,13 @@ class DPadScene: ControllerScene {
 
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
 
+        //
+        // Game Controller Code
+        //
+        let center = NSNotificationCenter.defaultCenter()
+        center.addObserver(self, selector: #selector(DPadScene.connectControllers), name: GCControllerDidConnectNotification, object: nil)
+        center.addObserver(self, selector: #selector(DPadScene.controllerDisconnected), name: GCControllerDidDisconnectNotification, object: nil)
+
         let controllers = GCController.controllers()
         if controllers.isEmpty {
             GCController.startWirelessControllerDiscoveryWithCompletionHandler({
@@ -69,14 +74,22 @@ class DPadScene: ControllerScene {
         }
     }
 
+    func connectControllers() {
+        self.enableGamecontroller()
+    }
+    func controllerDisconnected() {
+    }
+
     func enableGamecontroller() {
         let controllers = GCController.controllers()
 
         for controller in controllers {
             if controller.gamepad != nil {
-                usingGController = true
-                gcontroller = controller
-                registerGamepad(gcontroller!)
+                registerGamepad(controller)
+
+                if controller.extendedGamepad != nil {
+                    registerExtendedGamepad(controller)
+                }
                 break
             }
         }
@@ -120,6 +133,44 @@ class DPadScene: ControllerScene {
         }
     }
 
+    func registerExtendedGamepad(controller:GCController) {
+        controller.extendedGamepad?.leftThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
+//            print("dpad xValue = \(xValue) yValue = \(yValue)")
+            self.joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
+            if xValue > 0 {
+                self.joyState |= JoyBits.Right.rawValue
+            } else if xValue < 0 {
+                self.joyState |= JoyBits.Left.rawValue
+            }
+            if yValue > 0 {
+                self.joyState |= JoyBits.Up.rawValue
+            } else if yValue < 0 {
+                self.joyState |= JoyBits.Down.rawValue
+            }
+            self.repaintButtons()
+        }
+        controller.gamepad?.buttonA.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+//            print("button A = \(value) pressed = \(pressed)")
+
+            if pressed {
+                self.joyState |= JoyBits.Fire.rawValue
+            } else {
+                self.joyState &= ~JoyBits.Fire.rawValue
+            }
+            self.repaintButtons()
+        }
+
+        controller.gamepad?.buttonB.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+//            print("button B = \(value) pressed = \(pressed)")
+            if pressed {
+                self.joyState |= JoyBits.Up.rawValue
+            } else {
+                self.joyState &= ~JoyBits.Up.rawValue
+            }
+            self.repaintButtons()
+        }
+    }
+
     func repaintButtons() {
         for (sprite, bitmask) in buttons {
             if bitmask & joyState == bitmask {
@@ -131,6 +182,9 @@ class DPadScene: ControllerScene {
         sendJoyState()
     }
 
+    //
+    // Virtual D-Pad code
+    //
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
 
