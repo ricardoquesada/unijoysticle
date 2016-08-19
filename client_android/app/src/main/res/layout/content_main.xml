@@ -83,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start"
-        android:id="@+id/button"
+        android:id="@+id/buttonStart"
         android:layout_below="@+id/radioGroup2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="79dp" />
