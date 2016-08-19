@@ -75,6 +75,8 @@ class ControllerScene: SKScene {
         case Left   = 0b00000100
         case Right  = 0b00001000
         case Fire   = 0b00010000
+        case DPad   = 0b00001111
+        case All    = 0b00011111
     }
 
     var joyState: UInt8 = 0

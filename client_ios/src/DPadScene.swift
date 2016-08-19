@@ -23,6 +23,8 @@ class DPadScene: ControllerScene {
 
     var buttons: [SKSpriteNode:UInt8] = [:]
     var labelBack:SKLabelNode? = nil
+    var labelGController:SKLabelNode? = nil
+    let STICK_THRESHLOLD:Float = 0.2
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -30,15 +32,16 @@ class DPadScene: ControllerScene {
 //             print("Item \(index + 1): \(value)")
 //        }
 
-        let names_bits = [ "SKSpriteNode_topleft": JoyBits.Up.rawValue | JoyBits.Left.rawValue,
-                           "SKSpriteNode_left": JoyBits.Left.rawValue,
-                           "SKSpriteNode_bottomleft": JoyBits.Down.rawValue | JoyBits.Left.rawValue,
-                            "SKSpriteNode_top": JoyBits.Up.rawValue,
-                            "SKSpriteNode_bottom": JoyBits.Down.rawValue,
-                            "SKSpriteNode_topright": JoyBits.Up.rawValue | JoyBits.Right.rawValue,
-                            "SKSpriteNode_right": JoyBits.Right.rawValue,
-                            "SKSpriteNode_bottomright": JoyBits.Down.rawValue | JoyBits.Right.rawValue,
-                            "SKSpriteNode_fire": JoyBits.Fire.rawValue]
+        let names_bits = [
+            "SKSpriteNode_top": JoyBits.Up.rawValue,
+            "SKSpriteNode_bottom": JoyBits.Down.rawValue,
+            "SKSpriteNode_left": JoyBits.Left.rawValue,
+            "SKSpriteNode_right": JoyBits.Right.rawValue,
+            "SKSpriteNode_fire": JoyBits.Fire.rawValue,
+            "SKSpriteNode_topright": JoyBits.Up.rawValue | JoyBits.Right.rawValue,
+            "SKSpriteNode_topleft": JoyBits.Up.rawValue | JoyBits.Left.rawValue,
+            "SKSpriteNode_bottomleft": JoyBits.Down.rawValue | JoyBits.Left.rawValue,
+            "SKSpriteNode_bottomright": JoyBits.Down.rawValue | JoyBits.Right.rawValue]
 
         for (key,value) in names_bits {
             let sprite = childNodeWithName(key) as! SKSpriteNode!
@@ -49,6 +52,8 @@ class DPadScene: ControllerScene {
         }
 
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
+        labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode?
+        labelGController?.hidden = true
 
         //
         // Game Controller Code
@@ -75,9 +80,12 @@ class DPadScene: ControllerScene {
     }
 
     func connectControllers() {
-        self.enableGamecontroller()
+        enableGamecontroller()
     }
     func controllerDisconnected() {
+        labelGController?.hidden = true
+        joyState = 0
+        sendJoyState()
     }
 
     func enableGamecontroller() {
@@ -90,6 +98,7 @@ class DPadScene: ControllerScene {
                 if controller.extendedGamepad != nil {
                     registerExtendedGamepad(controller)
                 }
+                labelGController?.hidden = false
                 break
             }
         }
@@ -97,59 +106,26 @@ class DPadScene: ControllerScene {
 
     func registerGamepad(controller:GCController) {
         controller.gamepad?.dpad.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
-            print("dpad xValue = \(xValue) yValue = \(yValue)")
-            self.joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
-            if xValue > 0 {
-                self.joyState |= JoyBits.Right.rawValue
-            } else if xValue < 0 {
-                self.joyState |= JoyBits.Left.rawValue
-            }
-            if yValue > 0 {
-                self.joyState |= JoyBits.Up.rawValue
-            } else if yValue < 0 {
-                self.joyState |= JoyBits.Down.rawValue
-            }
-            self.repaintButtons()
-        }
-        controller.gamepad?.buttonA.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
-            print("button A = \(value) pressed = \(pressed)")
+//            print("dpad xValue = \(xValue) yValue = \(yValue)")
+            self.joyState &= ~(JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
 
-            if pressed {
-                self.joyState |= JoyBits.Fire.rawValue
-            } else {
-                self.joyState &= ~JoyBits.Fire.rawValue
-            }
-            self.repaintButtons()
-        }
-
-        controller.gamepad?.buttonB.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
-            print("button B = \(value) pressed = \(pressed)")
-            if pressed {
-                self.joyState |= JoyBits.Up.rawValue
-            } else {
+            // if buttonB (fire) is not pressed, then turn it off
+            if controller.gamepad?.buttonB.pressed == false {
                 self.joyState &= ~JoyBits.Up.rawValue
             }
-            self.repaintButtons()
-        }
-    }
-
-    func registerExtendedGamepad(controller:GCController) {
-        controller.extendedGamepad?.leftThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
-//            print("dpad xValue = \(xValue) yValue = \(yValue)")
-            self.joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
-            if xValue > 0 {
+            if dpad.right.pressed {
                 self.joyState |= JoyBits.Right.rawValue
-            } else if xValue < 0 {
+            } else if dpad.left.pressed {
                 self.joyState |= JoyBits.Left.rawValue
             }
-            if yValue > 0 {
+            if dpad.up.pressed {
                 self.joyState |= JoyBits.Up.rawValue
-            } else if yValue < 0 {
+            } else if dpad.down.pressed {
                 self.joyState |= JoyBits.Down.rawValue
             }
             self.repaintButtons()
         }
-        controller.gamepad?.buttonA.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+        controller.gamepad?.buttonA.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
 //            print("button A = \(value) pressed = \(pressed)")
 
             if pressed {
@@ -160,26 +136,57 @@ class DPadScene: ControllerScene {
             self.repaintButtons()
         }
 
-        controller.gamepad?.buttonB.valueChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+        controller.gamepad?.buttonB.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
 //            print("button B = \(value) pressed = \(pressed)")
             if pressed {
                 self.joyState |= JoyBits.Up.rawValue
-            } else {
+            } else if controller.gamepad?.dpad.up.pressed == false {
+                // only turn off "fire" if both "up" and "button B" are off
                 self.joyState &= ~JoyBits.Up.rawValue
             }
             self.repaintButtons()
         }
     }
 
+    func registerExtendedGamepad(controller:GCController) {
+        controller.extendedGamepad?.leftThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
+//            print("dpad xValue = \(xValue) yValue = \(yValue)")
+            self.joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
+            if xValue > self.STICK_THRESHLOLD {
+                self.joyState |= JoyBits.Right.rawValue
+            } else if xValue < -self.STICK_THRESHLOLD {
+                self.joyState |= JoyBits.Left.rawValue
+            }
+            if yValue > self.STICK_THRESHLOLD {
+                self.joyState |= JoyBits.Up.rawValue
+            } else if yValue < -self.STICK_THRESHLOLD {
+                self.joyState |= JoyBits.Down.rawValue
+            }
+            self.repaintButtons()
+        }
+    }
+
     func repaintButtons() {
+        sendJoyState()
         for (sprite, bitmask) in buttons {
-            if bitmask & joyState == bitmask {
-                sprite.color = UIColor.redColor()
+            // compare for exact values when testing the dpad
+            // so that a diagonal is represented as a diagonal
+            // and not as up+right+up_right_diagonal
+            if (joyState & JoyBits.DPad.rawValue) != 0 {
+                if bitmask == joyState & JoyBits.DPad.rawValue {
+                    sprite.color = UIColor.redColor()
+                } else {
+                    sprite.color = UIColor.grayColor()
+                }
             } else {
-                sprite.color = UIColor.grayColor()
+                // fire button
+                if joyState & bitmask != 0 {
+                    sprite.color = UIColor.redColor()
+                } else {
+                    sprite.color = UIColor.grayColor()
+                }
             }
         }
-        sendJoyState()
     }
 
     //
