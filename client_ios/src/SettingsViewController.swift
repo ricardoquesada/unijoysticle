@@ -43,7 +43,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         let settings = NSUserDefaults.standardUserDefaults()
 
         // ip address
-        let addr = settings.valueForKey("ipaddress")
+        let addr = settings.valueForKey(SETTINGS_IP_ADDRESS_KEY)
         if (addr != nil) {
             ipaddress.text = addr as! String?
         }
@@ -52,8 +52,8 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
 
         // handicap
-        let handicapValue = settings.valueForKey("handicap")
-        var handiFloat = Float(HANDICAP_RATE)
+        let handicapValue = settings.valueForKey(SETTINGS_ROTATION_RATE_KEY)
+        var handiFloat = Float(ROTATION_RATE)
         if (handicapValue != nil) {
             handiFloat = handicapValue as! Float
         }
@@ -61,7 +61,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         handicapLabel.text = "\(handiFloat)"
 
         // movement threshold
-        let movementValue = settings.valueForKey("movement threshold")
+        let movementValue = settings.valueForKey(SETTINGS_MOVEMENT_THRESHOLD_KEY)
         var movementFloat = Float(MOVEMENT_THRESHOLD)
         if (movementValue != nil) {
             movementFloat = movementValue as! Float
@@ -70,7 +70,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         movementLabel.text = "\(movementFloat)"
 
         // jump threshold
-        let jumpValue = settings.valueForKey("jump threshold")
+        let jumpValue = settings.valueForKey(SETTINGS_JUMP_THRESHOLD_KEY)
         var jumpFloat = Float(JUMP_THRESHOLD)
         if (jumpValue != nil) {
             jumpFloat = jumpValue as! Float
@@ -79,19 +79,18 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         jumpLabel.text = "\(jumpFloat)"
 
         // gravity
-        let gravityValue = settings.valueForKey("gravity factor")
+        let gravityValue = settings.valueForKey(SETTINGS_GRAVITY_FACTOR_KEY)
         var gravityFloat = Float(GRAVITY_FACTOR)
         if (gravityValue != nil) {
             gravityFloat = gravityValue as! Float
         }
         gravitySlider.setValue(gravityFloat, animated: false)
         gravityLabel.text = "\(gravityFloat)"
-
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         let settings = NSUserDefaults.standardUserDefaults()
-        settings.setValue(textField.text, forKey: "ipaddress")
+        settings.setValue(textField.text, forKey: SETTINGS_IP_ADDRESS_KEY)
         textField.resignFirstResponder()
         return true
     }
@@ -101,7 +100,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         handicapLabel.text = "\(steppedValue)"
         handicapSlider.value = steppedValue
         let settings = NSUserDefaults.standardUserDefaults()
-        settings.setValue(steppedValue, forKey: "handicap")
+        settings.setValue(steppedValue, forKey: SETTINGS_ROTATION_RATE_KEY)
     }
 
     @IBAction func movementValueChanged(sender: AnyObject) {
@@ -109,14 +108,14 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         movementLabel.text = "\(steppedValue)"
         movementSlider.value = steppedValue
         let settings = NSUserDefaults.standardUserDefaults()
-        settings.setValue(steppedValue, forKey: "movement threshold")
+        settings.setValue(steppedValue, forKey: SETTINGS_MOVEMENT_THRESHOLD_KEY)
     }
     @IBAction func jumpValueChanged(sender: AnyObject) {
         let steppedValue = round(jumpSlider.value / sliderStep) * sliderStep
         jumpLabel.text = "\(steppedValue)"
         jumpSlider.value = steppedValue
         let settings = NSUserDefaults.standardUserDefaults()
-        settings.setValue(steppedValue, forKey: "jump threshold")
+        settings.setValue(steppedValue, forKey: SETTINGS_JUMP_THRESHOLD_KEY)
     }
 
     @IBAction func gravityValueChanged(sender: AnyObject) {
@@ -124,7 +123,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         gravityLabel.text = "\(steppedValue)"
         gravitySlider.value = steppedValue
         let settings = NSUserDefaults.standardUserDefaults()
-        settings.setValue(steppedValue, forKey: "gravity factor")
+        settings.setValue(steppedValue, forKey: SETTINGS_GRAVITY_FACTOR_KEY)
     }
 
+    @IBAction func buttonBValueChanged(sender: AnyObject) {
+        let value = buttonBSlider.on
+        let settings = NSUserDefaults.standardUserDefaults()
+        settings.setValue(value, forKey: SETTINGS_BUTTON_B_KEY)
+    }
 }

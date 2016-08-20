@@ -19,11 +19,13 @@
 let SERVER_IP_ADDRESS = "192.168.4.1"
 
 // UniJoystiCle mode defaults
-let HANDICAP_RATE = 1.0
+let ROTATION_RATE = 1.0
 let MOVEMENT_THRESHOLD = 0.4
 let JUMP_THRESHOLD = 2.1
 // Gyruss mode defaults
 let GRAVITY_FACTOR = 10.0
+// D-Pad
+let BUTTON_B_ENABLED = false
 
 
 // scenes names/files
@@ -31,3 +33,11 @@ let UNIJOYSTICLE_SCENE = "UniJoystiCleScene"
 let DPAD_SCENE = "DPadScene"
 let GYRUSS_SCENE = "GyrussScene"
 let LINEAR_SCENE = "LinearScene"
+
+// settings const
+let SETTINGS_IP_ADDRESS_KEY = "ipaddress"
+let SETTINGS_ROTATION_RATE_KEY = "handicap"
+let SETTINGS_JUMP_THRESHOLD_KEY = "jump threshold"
+let SETTINGS_MOVEMENT_THRESHOLD_KEY = "movement threshold"
+let SETTINGS_GRAVITY_FACTOR_KEY = "gravity factor"
+let SETTINGS_BUTTON_B_KEY = "buttonB"

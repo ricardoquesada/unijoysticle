@@ -27,7 +27,7 @@ class UniJoystiCleScene: ControllerScene {
 
     var jumpThreshold = JUMP_THRESHOLD
     var movementThreshold = MOVEMENT_THRESHOLD
-    var wheelRotationRate = HANDICAP_RATE
+    var wheelRotationRate = ROTATION_RATE
 
     let motionManager = CMMotionManager()
     var userAcceleration = CMAcceleration()
@@ -47,15 +47,15 @@ class UniJoystiCleScene: ControllerScene {
 
         // read settings
         let settings = NSUserDefaults.standardUserDefaults()
-        let handicapValue = settings.valueForKey("handicap")
+        let handicapValue = settings.valueForKey(SETTINGS_ROTATION_RATE_KEY)
         if (handicapValue != nil) {
             wheelRotationRate = Double(handicapValue as! Float)
         }
-        let jumpValue = settings.valueForKey("jump threshold")
+        let jumpValue = settings.valueForKey(SETTINGS_JUMP_THRESHOLD_KEY)
         if (jumpValue != nil) {
             jumpThreshold = Double(jumpValue as! Float)
         }
-        let movementValue = settings.valueForKey("movement threshold")
+        let movementValue = settings.valueForKey(SETTINGS_MOVEMENT_THRESHOLD_KEY)
         if (movementValue != nil) {
             movementThreshold = Double(movementValue as! Float)
         }

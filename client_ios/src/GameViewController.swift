@@ -24,12 +24,12 @@ class GameViewController: UIViewController {
     var selectedScene:String? = nil
     var selectedJoystick:UInt8 = 0
     var netConnection:NetworkConnection? = nil
-    var userServer:String = "192.168.4.1"
+    var userServer:String = SERVER_IP_ADDRESS
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let prefValue = NSUserDefaults.standardUserDefaults().valueForKey("ipaddress")
+        let prefValue = NSUserDefaults.standardUserDefaults().valueForKey(SETTINGS_IP_ADDRESS_KEY)
         if prefValue != nil {
             userServer = prefValue as! String
         }

@@ -25,12 +25,20 @@ class DPadScene: ControllerScene {
     var labelBack:SKLabelNode? = nil
     var labelGController:SKLabelNode? = nil
     let STICK_THRESHLOLD:Float = 0.2
+    var buttonBEnabled = BUTTON_B_ENABLED
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
 //        for (index, value) in self.children.enumerate() {
 //             print("Item \(index + 1): \(value)")
 //        }
+
+        let settings = NSUserDefaults.standardUserDefaults()
+
+        let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
+        if (buttonBValue != nil) {
+            buttonBEnabled = buttonBValue as! Bool
+        }
 
         let names_bits = [
             "SKSpriteNode_top": JoyBits.Up.rawValue,

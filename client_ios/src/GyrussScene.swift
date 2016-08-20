@@ -51,7 +51,7 @@ class GyrussScene: ControllerScene {
         // read settings
         let settings = NSUserDefaults.standardUserDefaults()
 
-        let gravityValue = settings.valueForKey("gravity factor")
+        let gravityValue = settings.valueForKey(SETTINGS_GRAVITY_FACTOR_KEY)
         if (gravityValue != nil) {
             gravityFactor = Double(gravityValue as! Float)
         }

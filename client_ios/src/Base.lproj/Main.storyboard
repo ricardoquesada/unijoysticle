@@ -153,19 +153,22 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="192.168.4.1" borderStyle="roundedRect" placeholder="unijoysticle.local" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="60g-lg-kbs">
-                                                    <rect key="frame" x="363" y="6" width="197" height="30"/>
+                                                    <rect key="frame" x="395" y="6" width="197" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="197" id="veM-9I-upD"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="done"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="qDx-1B-3ua" id="n4x-qG-dL3"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="60g-lg-kbs" firstAttribute="centerY" secondItem="D9m-lv-JsE" secondAttribute="centerY" id="97I-Kp-AKD"/>
                                                 <constraint firstItem="PFQ-zr-7ds" firstAttribute="leading" secondItem="D9m-lv-JsE" secondAttribute="leadingMargin" id="O2c-RP-IrP"/>
                                                 <constraint firstItem="PFQ-zr-7ds" firstAttribute="centerY" secondItem="60g-lg-kbs" secondAttribute="centerY" id="Z2A-Bt-782"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="60g-lg-kbs" secondAttribute="trailing" constant="32" id="eEf-BL-eQJ"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="60g-lg-kbs" secondAttribute="trailing" id="eEf-BL-eQJ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -303,6 +306,9 @@
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2ND-Bc-DSO">
                                                     <rect key="frame" x="543" y="6" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="buttonBValueChanged:" destination="qDx-1B-3ua" eventType="valueChanged" id="h6Q-rO-VEA"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                             <constraints>
