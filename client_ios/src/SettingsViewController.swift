@@ -18,7 +18,7 @@
 
 import UIKit
 
-class SettingsViewController: UIViewController, UITextFieldDelegate {
+class SettingsViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet weak var ipaddress: UITextField!
 
@@ -33,6 +33,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var gravityLabel: UILabel!
     @IBOutlet weak var gravitySlider: UISlider!
+
+    @IBOutlet weak var buttonBSlider: UISwitch!
 
     let sliderStep:Float = 0.1
 

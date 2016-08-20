@@ -151,7 +151,7 @@ class DPadScene: ControllerScene {
     func registerExtendedGamepad(controller:GCController) {
         controller.extendedGamepad?.leftThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
 //            print("dpad xValue = \(xValue) yValue = \(yValue)")
-            self.joyState &= ~(JoyBits.Up.rawValue | JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
+            self.joyState &= ~(JoyBits.DPad.rawValue)
             if xValue > self.STICK_THRESHLOLD {
                 self.joyState |= JoyBits.Right.rawValue
             } else if xValue < -self.STICK_THRESHLOLD {
