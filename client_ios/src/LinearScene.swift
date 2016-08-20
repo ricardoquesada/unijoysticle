@@ -32,7 +32,6 @@ class LinearScene: ControllerScene {
     let slider:UISlider = UISlider(frame: CGRect(x: 100, y: 100, width: 300, height: 20))
 
     override func didMoveToView(view: SKView) {
-
         // center slider according to view size
         var viewSize = view.frame.size
         viewSize.width = viewSize.width / 2 - 150

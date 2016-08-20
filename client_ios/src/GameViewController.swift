@@ -36,12 +36,21 @@ class GameViewController: UIViewController {
         netConnection = NetworkConnection(serverName: userServer)
     }
 
+    override func shouldAutorotate() -> Bool {
+        return false
+    }
+
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        return [.LandscapeLeft]
+    }
+
     override func viewDidAppear(animated: Bool) {
         super.viewDidDisappear(animated)
 
-        // only in landscape mode
-        let value = UIInterfaceOrientation.LandscapeLeft.rawValue
-        UIDevice.currentDevice().setValue(value, forKey: "orientation")
+        // only in landscape mode. Not really needed since "shouldAurotate" and "supportedInterfaceOrientations"
+        // take care of it.
+//        let value = UIInterfaceOrientation.LandscapeLeft.rawValue
+//        UIDevice.currentDevice().setValue(value, forKey: "orientation")
 
         var scene:ControllerScene? = nil
 

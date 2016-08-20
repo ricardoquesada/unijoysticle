@@ -370,7 +370,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="d8v-7X-KUy"/>
                     <connections>
-                        <outlet property="buttonBSlider" destination="2ND-Bc-DSO" id="Kwc-VJ-4yt"/>
+                        <outlet property="buttonBSwitch" destination="2ND-Bc-DSO" id="Kwc-VJ-4yt"/>
                         <outlet property="gravityLabel" destination="cYI-XU-LAr" id="8kh-eQ-fkl"/>
                         <outlet property="gravitySlider" destination="0Ba-0v-Y0X" id="av9-Ac-t7K"/>
                         <outlet property="handicapLabel" destination="kyo-zY-3ph" id="mV9-Wp-W6A"/>

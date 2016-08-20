@@ -34,7 +34,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var gravityLabel: UILabel!
     @IBOutlet weak var gravitySlider: UISlider!
 
-    @IBOutlet weak var buttonBSlider: UISwitch!
+    @IBOutlet weak var buttonBSwitch: UISwitch!
 
     let sliderStep:Float = 0.1
 
@@ -51,7 +51,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             ipaddress.text = SERVER_IP_ADDRESS
         }
 
-        // handicap
+        // rotation rate
         let handicapValue = settings.valueForKey(SETTINGS_ROTATION_RATE_KEY)
         var handiFloat = Float(ROTATION_RATE)
         if (handicapValue != nil) {
@@ -86,6 +86,14 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
         gravitySlider.setValue(gravityFloat, animated: false)
         gravityLabel.text = "\(gravityFloat)"
+
+        // button
+        let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
+        var buttonBBool = BUTTON_B_ENABLED
+        if (buttonBValue != nil) {
+            buttonBBool = buttonBValue as! Bool
+        }
+        buttonBSwitch.setOn(buttonBBool, animated: false)
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -127,7 +135,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     }
 
     @IBAction func buttonBValueChanged(sender: AnyObject) {
-        let value = buttonBSlider.on
+        let value = buttonBSwitch.on
         let settings = NSUserDefaults.standardUserDefaults()
         settings.setValue(value, forKey: SETTINGS_BUTTON_B_KEY)
     }
