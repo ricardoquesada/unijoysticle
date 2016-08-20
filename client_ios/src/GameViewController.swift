@@ -38,6 +38,11 @@ class GameViewController: UIViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidDisappear(animated)
+
+        // only in landscape mode
+        let value = UIInterfaceOrientation.LandscapeLeft.rawValue
+        UIDevice.currentDevice().setValue(value, forKey: "orientation")
+
         var scene:ControllerScene? = nil
 
         if netConnection == nil {
