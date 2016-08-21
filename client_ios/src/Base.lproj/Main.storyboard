@@ -9,7 +9,7 @@
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="UniJoystiCle_Controller" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
                         <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
@@ -57,7 +57,7 @@
         <!--UniJoystiCle Controller-->
         <scene sceneID="gQr-Pq-aTS">
             <objects>
-                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="x6l-MX-dx6" customClass="MainViewController" customModule="UniJoystiCle_Controller" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="F4Y-fa-4PB"/>
                         <viewControllerLayoutGuide type="bottom" id="VcS-Je-SPg"/>
@@ -131,7 +131,7 @@
         <!--Settings-->
         <scene sceneID="ebz-fL-b2p">
             <objects>
-                <tableViewController id="qDx-1B-3ua" customClass="SettingsViewController" customModule="UniJoystiCle_controller_temp_caseinsensitive_rename" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="qDx-1B-3ua" customClass="SettingsViewController" customModule="UniJoystiCle_Controller" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="HgU-Ad-p8B">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

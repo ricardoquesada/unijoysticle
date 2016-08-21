@@ -1,42 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="lAC-f1-Idn">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="EHf-IW-A2E">
+        <!--Navigation Controller-->
+        <scene sceneID="LGk-PN-UHT">
             <objects>
-                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                <navigationController id="lAC-f1-Idn" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z4A-cb-3wP">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="EJ9-1g-Ob8" kind="relationship" relationship="rootViewController" id="NHA-UY-SOd"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dZK-9d-a91" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1378" y="-1099"/>
+        </scene>
+        <!--UniJoystiCle Controller-->
+        <scene sceneID="wWs-Ou-5yX">
+            <objects>
+                <viewController id="EJ9-1g-Ob8" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Llm-lL-Icb"/>
-                        <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
+                        <viewControllerLayoutGuide type="top" id="Wiz-fJ-5ng"/>
+                        <viewControllerLayoutGuide type="bottom" id="FEG-wT-foh"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                    <view key="view" contentMode="scaleToFill" id="Y6G-Ro-f0H">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_screen" translatesAutoresizingMaskIntoConstraints="NO" id="j8F-6J-bpn">
-                                <rect key="frame" x="50" y="165" width="530" height="316"/>
-                            </imageView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Co-nlg">
+                                <rect key="frame" x="170" y="137" width="261" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="261" id="ecy-cA-rh4"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="Joystick #1"/>
+                                    <segment title="Joystick #2"/>
+                                </segments>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="040-rf-uUx" userLabel="ControllerType">
+                                <rect key="frame" x="20" y="84" width="560" height="29"/>
+                                <segments>
+                                    <segment title="UniJoystiCle"/>
+                                    <segment title="D-Pad"/>
+                                    <segment title="Gyruss"/>
+                                    <segment title="Linear"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="j8F-6J-bpn" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="145" id="3ux-NB-sp2"/>
-                            <constraint firstItem="j8F-6J-bpn" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="30" id="5wF-iF-bl2"/>
-                            <constraint firstItem="j8F-6J-bpn" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailingMargin" id="9GH-64-DFB"/>
-                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="j8F-6J-bpn" secondAttribute="bottom" constant="119" id="ZmN-Lx-hVt"/>
+                            <constraint firstItem="040-rf-uUx" firstAttribute="leading" secondItem="Y6G-Ro-f0H" secondAttribute="leadingMargin" id="5BK-YG-Xco"/>
+                            <constraint firstItem="bdd-Co-nlg" firstAttribute="top" secondItem="040-rf-uUx" secondAttribute="bottom" constant="25" id="9hr-P2-bCa"/>
+                            <constraint firstItem="040-rf-uUx" firstAttribute="trailing" secondItem="Y6G-Ro-f0H" secondAttribute="trailingMargin" id="TAX-ns-cKF"/>
+                            <constraint firstItem="040-rf-uUx" firstAttribute="top" secondItem="Wiz-fJ-5ng" secondAttribute="bottom" constant="20" id="Tk5-1F-tXQ"/>
+                            <constraint firstItem="040-rf-uUx" firstAttribute="centerX" secondItem="bdd-Co-nlg" secondAttribute="centerX" id="vWW-f7-SNN"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="UniJoystiCle Controller" id="J3k-jA-lLk">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="xEF-jy-IHq">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ARq-nF-4S1">
+                                <rect key="frame" x="504" y="7" width="76" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="76" id="6hq-jv-eWp"/>
+                                </constraints>
+                                <state key="normal" title="Settings"/>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0Dh-L4-8Uy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="-583" y="-1099"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="splash_screen" width="2204" height="1208"/>
-    </resources>
 </document>
