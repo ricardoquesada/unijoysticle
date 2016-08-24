@@ -21,11 +21,35 @@ import GameController
 
 class DPadScene: ControllerScene {
 
-    var buttons: [SKSpriteNode:UInt8] = [:]
+    var buttons_sprites = [SKSpriteNode]()
+    // ASSERT(buttons_names same_order_as buttons_bitmask)
+    enum ButtonsOrder: Int {
+        case TOP, BOTTOM, LEFT, RIGHT, FIRE, TOP_RIGHT, TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT
+    }
+    let buttons_names = ["SKSpriteNode_top",
+                         "SKSpriteNode_bottom",
+                         "SKSpriteNode_left",
+                         "SKSpriteNode_right",
+                         "SKSpriteNode_fire",
+                         "SKSpriteNode_topright",
+                         "SKSpriteNode_topleft",
+                         "SKSpriteNode_bottomleft",
+                         "SKSpriteNode_bottomright"]
+    let buttons_bitmaks = [JoyBits.Up.rawValue,
+                           JoyBits.Down.rawValue,
+                           JoyBits.Left.rawValue,
+                           JoyBits.Right.rawValue,
+                           JoyBits.Fire.rawValue,
+                           JoyBits.Up.rawValue | JoyBits.Right.rawValue,
+                           JoyBits.Up.rawValue | JoyBits.Left.rawValue,
+                           JoyBits.Down.rawValue | JoyBits.Left.rawValue,
+                           JoyBits.Down.rawValue | JoyBits.Right.rawValue]
+
     var labelBack:SKLabelNode? = nil
     var labelGController:SKLabelNode? = nil
     let STICK_THRESHLOLD:Float = 0.05
     var buttonBEnabled = BUTTON_B_ENABLED
+    var switchABEnabled = SWITCH_AB_ENABLED
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -35,28 +59,23 @@ class DPadScene: ControllerScene {
 
         let settings = NSUserDefaults.standardUserDefaults()
 
+        // Button B enabled?
         let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
         if (buttonBValue != nil) {
             buttonBEnabled = buttonBValue as! Bool
         }
+        // Switch Buttons A & B?
+        let switchABValue = settings.valueForKey(SETTINGS_SWITCH_AB_KEY)
+        if (switchABValue != nil) {
+            switchABEnabled = switchABValue as! Bool
+        }
 
-        let names_bits = [
-            "SKSpriteNode_top": JoyBits.Up.rawValue,
-            "SKSpriteNode_bottom": JoyBits.Down.rawValue,
-            "SKSpriteNode_left": JoyBits.Left.rawValue,
-            "SKSpriteNode_right": JoyBits.Right.rawValue,
-            "SKSpriteNode_fire": JoyBits.Fire.rawValue,
-            "SKSpriteNode_topright": JoyBits.Up.rawValue | JoyBits.Right.rawValue,
-            "SKSpriteNode_topleft": JoyBits.Up.rawValue | JoyBits.Left.rawValue,
-            "SKSpriteNode_bottomleft": JoyBits.Down.rawValue | JoyBits.Left.rawValue,
-            "SKSpriteNode_bottomright": JoyBits.Down.rawValue | JoyBits.Right.rawValue]
-
-        for (key,value) in names_bits {
-            let sprite = childNodeWithName(key) as! SKSpriteNode!
+        for name in buttons_names {
+            let sprite = childNodeWithName(name) as! SKSpriteNode!
             sprite.colorBlendFactor = 1
             sprite.color = UIColor.grayColor()
             assert(sprite != nil, "Invalid name")
-            buttons[sprite] = value
+            buttons_sprites.append(sprite)
         }
 
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
@@ -117,7 +136,7 @@ class DPadScene: ControllerScene {
         controller.gamepad?.dpad.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
             self.joyState &= ~(JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
 
-            // if buttonB (fire) is not pressed, then turn it off
+            // if buttonB (fire) is not enabled, then turn it off
             if !self.buttonBEnabled {
                 self.joyState &= ~JoyBits.Up.rawValue
             }
@@ -136,25 +155,47 @@ class DPadScene: ControllerScene {
 
         // button A (fire)
         controller.gamepad?.buttonA.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
-            if pressed {
-                self.joyState |= JoyBits.Fire.rawValue
+            if self.buttonBEnabled && self.switchABEnabled {
+                // Jump Configuration
+                if pressed {
+                    self.joyState |= JoyBits.Up.rawValue
+                } else {
+                    self.joyState &= ~JoyBits.Up.rawValue
+                }
             } else {
-                self.joyState &= ~JoyBits.Fire.rawValue
+                // Shoot Configuration
+                if pressed {
+                    self.joyState |= JoyBits.Fire.rawValue
+                } else {
+                    self.joyState &= ~JoyBits.Fire.rawValue
+                }
             }
             self.repaintButtons()
         }
 
         // button B (jump)
         controller.gamepad?.buttonB.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
-            if self.buttonBEnabled {
+            // only if Button B is enabled
+            if !self.buttonBEnabled {
+                return
+            }
+
+            if self.switchABEnabled {
+                // Shoot Configuration
+                if pressed {
+                    self.joyState |= JoyBits.Fire.rawValue
+                } else {
+                    self.joyState &= ~JoyBits.Fire.rawValue
+                }
+            } else {
+                // Jump Configuration
                 if pressed {
                     self.joyState |= JoyBits.Up.rawValue
-                } else if controller.gamepad?.dpad.up.pressed == false {
-                    // only turn off "fire" if both "up" and "button B" are off
+                } else {
                     self.joyState &= ~JoyBits.Up.rawValue
                 }
-                self.repaintButtons()
             }
+            self.repaintButtons()
         }
     }
 
@@ -194,22 +235,20 @@ class DPadScene: ControllerScene {
 
     func repaintButtons() {
         sendJoyState()
-        for (sprite, bitmask) in buttons {
-            // compare for exact values when testing the dpad
-            // so that a diagonal is represented as a diagonal
-            // and not as up+right+up_right_diagonal
-            if (joyState & JoyBits.DPad.rawValue) != 0 {
-                if bitmask == joyState & JoyBits.DPad.rawValue {
-                    sprite.color = UIColor.redColor()
+
+        for (index, bitmask) in buttons_bitmaks.enumerate() {
+            if (bitmask & JoyBits.DPad.rawValue != 0) {
+                // testing dpad bitmask
+                if bitmask == (joyState & JoyBits.DPad.rawValue) {
+                    buttons_sprites[index].color = UIColor.redColor()
                 } else {
-                    sprite.color = UIColor.grayColor()
+                    buttons_sprites[index].color = UIColor.grayColor()
                 }
             } else {
-                // fire button
-                if joyState & bitmask != 0 {
-                    sprite.color = UIColor.redColor()
+                if bitmask == (joyState & JoyBits.Fire.rawValue) {
+                    buttons_sprites[index].color = UIColor.redColor()
                 } else {
-                    sprite.color = UIColor.grayColor()
+                    buttons_sprites[index].color = UIColor.grayColor()
                 }
             }
         }
@@ -245,7 +284,6 @@ class DPadScene: ControllerScene {
 
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
-
             disableTouch(touch.previousLocationInNode(self))
             enableTouch(touch.locationInNode(self))
             sendJoyState()
@@ -254,7 +292,6 @@ class DPadScene: ControllerScene {
 
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
-
             disableTouch(touch.previousLocationInNode(self))
             disableTouch(touch.locationInNode(self))
             sendJoyState()
@@ -264,7 +301,6 @@ class DPadScene: ControllerScene {
     override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
         if (touches != nil) {
             for touch in touches! {
-
                 disableTouch(touch.previousLocationInNode(self))
                 disableTouch(touch.locationInNode(self))
                 sendJoyState()
@@ -273,18 +309,18 @@ class DPadScene: ControllerScene {
     }
 
     func enableTouch(location: CGPoint) {
-        for (sprite, bitmask) in buttons {
+        for (index, sprite) in buttons_sprites.enumerate() {
             if sprite.frame.contains(location) {
-                joyState = joyState | bitmask
+                joyState = joyState | buttons_bitmaks[index]
                 sprite.color = UIColor.redColor()
             }
         }
     }
 
     func disableTouch(location: CGPoint) {
-        for (sprite, bitmask) in buttons {
+        for (index, sprite) in buttons_sprites.enumerate() {
             if sprite.frame.contains(location) {
-                joyState = joyState & ~bitmask
+                joyState = joyState & ~buttons_bitmaks[index]
                 sprite.color = UIColor.grayColor()
             }
         }

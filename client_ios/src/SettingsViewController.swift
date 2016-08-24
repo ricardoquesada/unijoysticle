@@ -35,6 +35,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var gravitySlider: UISlider!
 
     @IBOutlet weak var buttonBSwitch: UISwitch!
+    @IBOutlet weak var switchABSwitch: UISwitch!
 
     let sliderStep:Float = 0.1
 
@@ -87,13 +88,21 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         gravitySlider.setValue(gravityFloat, animated: false)
         gravityLabel.text = "\(gravityFloat)"
 
-        // button
+        // button B
         let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
         var buttonBBool = BUTTON_B_ENABLED
         if (buttonBValue != nil) {
             buttonBBool = buttonBValue as! Bool
         }
         buttonBSwitch.setOn(buttonBBool, animated: false)
+
+        // switch AB
+        let switchABValue = settings.valueForKey(SETTINGS_SWITCH_AB_KEY)
+        var switchABBool = SWITCH_AB_ENABLED
+        if (switchABValue != nil) {
+            switchABBool = switchABValue as! Bool
+        }
+        switchABSwitch.setOn(switchABBool, animated: false)
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -138,5 +147,12 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         let value = buttonBSwitch.on
         let settings = NSUserDefaults.standardUserDefaults()
         settings.setValue(value, forKey: SETTINGS_BUTTON_B_KEY)
+        switchABSwitch.enabled = value;
+    }
+
+    @IBAction func switchABValueChanged(sender: AnyObject) {
+        let value = switchABSwitch.on
+        let settings = NSUserDefaults.standardUserDefaults()
+        settings.setValue(value, forKey: SETTINGS_SWITCH_AB_KEY)
     }
 }

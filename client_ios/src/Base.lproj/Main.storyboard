@@ -319,12 +319,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Pfb-o4-ool">
+                                        <rect key="frame" x="0.0" y="433.5" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Pfb-o4-ool" id="eHR-UQ-RPY">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Switch Buttons &quot;A&quot; and &quot;B&quot;" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xWv-PJ-CrE">
+                                                    <rect key="frame" x="8" y="14" width="205" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yZj-di-n0H">
+                                                    <rect key="frame" x="543" y="6" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="switchABValueChanged:" destination="qDx-1B-3ua" eventType="valueChanged" id="p5K-3c-zcD"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="yZj-di-n0H" firstAttribute="centerY" secondItem="eHR-UQ-RPY" secondAttribute="centerY" id="QJW-2t-h2d"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="yZj-di-n0H" secondAttribute="trailing" id="U47-dF-L4V"/>
+                                                <constraint firstItem="xWv-PJ-CrE" firstAttribute="leading" secondItem="eHR-UQ-RPY" secondAttribute="leadingMargin" id="f4d-JY-TRH"/>
+                                                <constraint firstItem="xWv-PJ-CrE" firstAttribute="centerY" secondItem="eHR-UQ-RPY" secondAttribute="centerY" constant="2.75" id="jjt-uv-9kj"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Gyruss Mode" id="MlJ-bd-QWg">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="uGx-qy-FnJ">
-                                        <rect key="frame" x="0.0" y="483.5" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="527.5" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uGx-qy-FnJ" id="con-0t-cNV">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
@@ -380,6 +408,7 @@
                         <outlet property="jumpSlider" destination="wTs-mB-rYl" id="eu5-9a-NPB"/>
                         <outlet property="movementLabel" destination="aiC-vC-Td7" id="neS-Mb-u5Q"/>
                         <outlet property="movementSlider" destination="Aq1-Q4-c2G" id="M6U-7g-cPY"/>
+                        <outlet property="switchABSwitch" destination="yZj-di-n0H" id="FY3-7O-gYo"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="di6-yd-85l" userLabel="First Responder" sceneMemberID="firstResponder"/>

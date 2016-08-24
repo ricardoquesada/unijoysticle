@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
-               BuildableName = "UniJoystiCle controller.temp_caseinsensitive_rename.app"
+               BuildableName = "UniJoystiCle Controller.app"
                BlueprintName = "UniJoystiCle controller"
                ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
-            BuildableName = "UniJoystiCle controller.temp_caseinsensitive_rename.app"
+            BuildableName = "UniJoystiCle Controller.app"
             BlueprintName = "UniJoystiCle controller"
             ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
-            BuildableName = "UniJoystiCle controller.temp_caseinsensitive_rename.app"
+            BuildableName = "UniJoystiCle Controller.app"
             BlueprintName = "UniJoystiCle controller"
             ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50CCB4231CA5C214002CFD1E"
-            BuildableName = "UniJoystiCle controller.temp_caseinsensitive_rename.app"
+            BuildableName = "UniJoystiCle Controller.app"
             BlueprintName = "UniJoystiCle controller"
             ReferencedContainer = "container:UniJoystiCle controller.xcodeproj">
          </BuildableReference>
