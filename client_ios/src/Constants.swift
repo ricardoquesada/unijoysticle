@@ -26,7 +26,7 @@ let JUMP_THRESHOLD = 2.1
 let GRAVITY_FACTOR = 10.0
 // D-Pad
 let BUTTON_B_ENABLED = false
-let SWITCH_AB_ENABLED = false
+let SWAP_A_B_ENABLED = false
 
 // scenes names/files
 let UNIJOYSTICLE_SCENE = "UniJoystiCleScene"
@@ -41,4 +41,4 @@ let SETTINGS_JUMP_THRESHOLD_KEY = "jump threshold"
 let SETTINGS_MOVEMENT_THRESHOLD_KEY = "movement threshold"
 let SETTINGS_GRAVITY_FACTOR_KEY = "gravity factor"
 let SETTINGS_BUTTON_B_KEY = "buttonB"
-let SETTINGS_SWITCH_AB_KEY = "switchAB"
+let SETTINGS_SWAP_A_B_KEY = "switchAB"

@@ -23,9 +23,7 @@ class DPadScene: ControllerScene {
 
     var buttons_sprites = [SKSpriteNode]()
     // ASSERT(buttons_names same_order_as buttons_bitmask)
-    enum ButtonsOrder: Int {
-        case TOP, BOTTOM, LEFT, RIGHT, FIRE, TOP_RIGHT, TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT
-    }
+    // An OrderedDictionary could be used instead. Will be more robust
     let buttons_names = ["SKSpriteNode_top",
                          "SKSpriteNode_bottom",
                          "SKSpriteNode_left",
@@ -49,7 +47,7 @@ class DPadScene: ControllerScene {
     var labelGController:SKLabelNode? = nil
     let STICK_THRESHLOLD:Float = 0.05
     var buttonBEnabled = BUTTON_B_ENABLED
-    var switchABEnabled = SWITCH_AB_ENABLED
+    var swapABEnabled = SWAP_A_B_ENABLED
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -64,10 +62,10 @@ class DPadScene: ControllerScene {
         if (buttonBValue != nil) {
             buttonBEnabled = buttonBValue as! Bool
         }
-        // Switch Buttons A & B?
-        let switchABValue = settings.valueForKey(SETTINGS_SWITCH_AB_KEY)
-        if (switchABValue != nil) {
-            switchABEnabled = switchABValue as! Bool
+        // Swap Buttons A & B?
+        let swapABValue = settings.valueForKey(SETTINGS_SWAP_A_B_KEY)
+        if (swapABValue != nil) {
+            swapABEnabled = swapABValue as! Bool
         }
 
         for name in buttons_names {
@@ -155,7 +153,7 @@ class DPadScene: ControllerScene {
 
         // button A (fire)
         controller.gamepad?.buttonA.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
-            if self.buttonBEnabled && self.switchABEnabled {
+            if self.buttonBEnabled && self.swapABEnabled {
                 // Jump Configuration
                 if pressed {
                     self.joyState |= JoyBits.Up.rawValue
@@ -180,7 +178,7 @@ class DPadScene: ControllerScene {
                 return
             }
 
-            if self.switchABEnabled {
+            if self.swapABEnabled {
                 // Shoot Configuration
                 if pressed {
                     self.joyState |= JoyBits.Fire.rawValue

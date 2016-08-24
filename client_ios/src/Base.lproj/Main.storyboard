@@ -87,7 +87,7 @@
                                 <rect key="frame" x="20" y="84" width="560" height="29"/>
                                 <segments>
                                     <segment title="UniJoystiCle"/>
-                                    <segment title="D-Pad"/>
+                                    <segment title="D-pad"/>
                                     <segment title="Gyruss"/>
                                     <segment title="Linear"/>
                                 </segments>
@@ -289,7 +289,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="DPad Mode + Game Controller" id="2uz-BE-HKK">
+                            <tableViewSection headerTitle="D-pad Mode + Game Controller" id="2uz-BE-HKK">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="XX0-dH-pxU">
                                         <rect key="frame" x="0.0" y="389.5" width="600" height="44"/>
@@ -298,8 +298,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use &quot;B&quot; button instead of &quot;Up&quot; arrow" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NX0-by-JwJ">
-                                                    <rect key="frame" x="8" y="14" width="283" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use &quot;B&quot; Button to Jump" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NX0-by-JwJ">
+                                                    <rect key="frame" x="8" y="14" width="182" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -326,8 +326,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Switch Buttons &quot;A&quot; and &quot;B&quot;" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xWv-PJ-CrE">
-                                                    <rect key="frame" x="8" y="14" width="205" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swap &quot;A&quot; and &quot;B&quot; Buttons" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xWv-PJ-CrE">
+                                                    <rect key="frame" x="8" y="14" width="195" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -335,7 +335,7 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yZj-di-n0H">
                                                     <rect key="frame" x="543" y="6" width="51" height="31"/>
                                                     <connections>
-                                                        <action selector="switchABValueChanged:" destination="qDx-1B-3ua" eventType="valueChanged" id="p5K-3c-zcD"/>
+                                                        <action selector="swapABValueChanged:" destination="qDx-1B-3ua" eventType="valueChanged" id="p5K-3c-zcD"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -408,7 +408,7 @@
                         <outlet property="jumpSlider" destination="wTs-mB-rYl" id="eu5-9a-NPB"/>
                         <outlet property="movementLabel" destination="aiC-vC-Td7" id="neS-Mb-u5Q"/>
                         <outlet property="movementSlider" destination="Aq1-Q4-c2G" id="M6U-7g-cPY"/>
-                        <outlet property="switchABSwitch" destination="yZj-di-n0H" id="FY3-7O-gYo"/>
+                        <outlet property="swapABSwitch" destination="yZj-di-n0H" id="FY3-7O-gYo"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="di6-yd-85l" userLabel="First Responder" sceneMemberID="firstResponder"/>
