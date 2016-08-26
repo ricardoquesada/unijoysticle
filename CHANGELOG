@@ -6,8 +6,8 @@ v0.4 - 2016-08-XX
 		order the PCB
 - [NEW] ESP8266 Schematic: Does not use barrel jack anymore. For external power supply
         the Wemos Supply shield can be used.
-- [NEW] iOS Client: D-Pad works with real gamepads. Optionally jump with
-		button B. Or swap A and B buttons
+- [NEW] iOS Client: D-Pad works with real MFi and iCade game controllers
+- [NEW] iOS Client: When using game controllers, optionally jump with button B. Or swap A and B buttons
 - [FIX] iOS Client: Gravity Mode renamed to Gyruss Mode
 - [FIX] iOS Client: Settings: refactored. Looks nicer. Using Navigation Controller + TableView
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
