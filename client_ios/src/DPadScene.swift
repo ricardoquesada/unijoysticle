@@ -19,7 +19,7 @@
 import SpriteKit
 import GameController
 
-class DPadScene: ControllerScene {
+class DPadScene: ControllerScene, iCadeEventDelegate {
 
     var buttons_sprites = [SKSpriteNode]()
     // ASSERT(buttons_names same_order_as buttons_bitmask)
@@ -106,6 +106,7 @@ class DPadScene: ControllerScene {
         // iCade setup
         let icadeView = iCadeReaderView()
         icadeView.active = true
+        icadeView.delegate = self
         self.view?.addSubview(icadeView)
     }
 
@@ -328,4 +329,45 @@ class DPadScene: ControllerScene {
             }
         }
     }
+
+    //
+    // iCade Delegate
+    //
+    func stateChanged(state:UInt16) -> Void {
+        var extendedState = state
+
+        // If Button "B" enabled, then deactivate the "joy up". You can only jump with Button B.
+        // And if it is disabled, then deactivate Button B
+        if !self.buttonBEnabled {
+            extendedState &= ~iCadeButtons.ButtonB.rawValue
+        } else {
+            extendedState &= ~iCadeButtons.JoystickUp.rawValue
+        }
+
+        // not swapped: A=Fire, B=Jump
+        if !swapABEnabled {
+            if extendedState & iCadeButtons.ButtonB.rawValue != 0 {
+                extendedState |= iCadeButtons.JoystickUp.rawValue
+            }
+        } else {
+            // swapped: A=Jump, B=Fire
+            if extendedState & iCadeButtons.ButtonA.rawValue != 0 {
+                extendedState &= ~iCadeButtons.ButtonA.rawValue
+                extendedState |= iCadeButtons.JoystickUp.rawValue
+            }
+            if extendedState & iCadeButtons.ButtonB.rawValue != 0 {
+                extendedState |= iCadeButtons.ButtonA.rawValue
+            }
+        }
+
+        joyState = (UInt8)(extendedState & 0b00011111)
+        repaintButtons()
+    }
+    func buttonDown(state:UInt16) -> Void {
+        // empty line. just to comply with the protocol
+    }
+    func buttonUp(state:UInt16) -> Void {
+        // empty line. just to comply with the protocol
+    }
+
 }
