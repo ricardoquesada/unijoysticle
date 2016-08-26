@@ -102,6 +102,11 @@ class DPadScene: ControllerScene {
             print("Controllers detected: \(controllers)")
             enableGamecontroller()
         }
+
+        // iCade setup
+        let icadeView = iCadeReaderView()
+        icadeView.active = true
+        self.view?.addSubview(icadeView)
     }
 
     func connectControllers() {

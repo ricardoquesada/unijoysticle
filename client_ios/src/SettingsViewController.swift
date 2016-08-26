@@ -41,6 +41,8 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // iCade setup
         let settings = NSUserDefaults.standardUserDefaults()
 
         // ip address

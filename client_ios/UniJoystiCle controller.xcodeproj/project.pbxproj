@@ -29,6 +29,7 @@
 		50DD05A61CC6642C0080240F /* UniJoystiCleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */; };
 		50DD05A71CC6642C0080240F /* UniJoystiCleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */; };
 		50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Constants.swift */; };
+		50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2FF711D700835003F76B6 /* iCadeReaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniJoystiCleScene.sks; sourceTree = "<group>"; };
 		50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniJoystiCleScene.swift; sourceTree = "<group>"; };
 		50EFD32F1D5CE619000B8CA4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		50F2FF711D700835003F76B6 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				50DD058E1CC6642C0080240F /* MainViewController.swift */,
 				509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */,
 				50EFD32F1D5CE619000B8CA4 /* Constants.swift */,
+				50F2FF711D700835003F76B6 /* iCadeReaderView.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
+				50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
