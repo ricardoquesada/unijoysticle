@@ -18,11 +18,11 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 <img src="https://lh3.googleusercontent.com/Kkt_ynCu6Gr-lRwZIv7FD3NPJe9ThwKV7B7o-ehp1mntRX290XKERHdLl_rzuo9orh3iG9IrgRdVJg=w1242-h642-no" width="277" height="143" />
 
-...And then launch the UniJoystiCle Controller app.
+...and then launch the UniJoystiCle Controller app.
 
 <img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" />
 
-It has four modes: _UniJoystiCle mode_, _D-pad mode_, _Gyruss mode_ and _Linear mode_.
+There are four modes: _UniJoystiCle mode_, _D-pad mode_, _Gyruss mode_ and _Linear mode_.
 
 ## UniJoystiCle mode
 
@@ -64,9 +64,7 @@ __Firing:__ In order to _fire_, you have to hop. Settings has a "Jump Threshold"
 __Compatibility:__ This mode is compatible with multiple sports games like:
 
 * [The Uni Games](https://github.com/ricardoquesada/c64-the-uni-games) (in fact this mode was created to play this game)
-* Summer Games
-* Summer Games II
-* Hypersports
+* Sports games like [Hypersports](http://gamebase64.com/game.php?id=3666&d=18&h=0), [Decathon](http://gamebase64.com/game.php?id=2057&d=18&h=0), etc.
 * etc.
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU)
@@ -77,11 +75,12 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU
 
 This mode converts the smartphone in a virtual D-pad. Just press the arrows for joysticks movements, and the circle to fire.
 
-__Using this mode:__ [YouTube video](https://youtu.be/RhEGogreM0E)
-
 __Compatibility:__
 
 * Any game can be played in this mode.
+
+__Using this mode:__ [YouTube video](https://youtu.be/RhEGogreM0E)
+
 
 ## D-pad + Game Controllers
 
@@ -96,18 +95,17 @@ You can configure it to:
 
 <img class="" src="https://lh3.googleusercontent.com/-RH__wcCr293gHL_KbyM4Nk61MMs1qjJgMI4GHXK1iFUM0Q7VZY3cM1Vt0Pm6dwaVe2tKp6J5Uf0swk=w5760-h3600-no" width="282" height="95" />
 
-__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=0cdgaYVYaao)
-
 __Compatibility:__
 
 * Any game can be played in this mode.
 * Optimized for platformer games like [Giana Sisters](http://gamebase64.com/game.php?id=3275&amp;d=18&amp;h=0), [Super Bread Box](http://gamebase64.com/game.php?id=24140&amp;d=18&amp;h=0), [Bubble Bobble](http://gamebase64.com/game.php?id=1138&amp;d=18&amp;h=0), etc.
 
+__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=0cdgaYVYaao)
+
 __Which controller should you use:__
 
-For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). I'm using the [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) and I like it. DO NOT get the Status SteelSeries.
-
-For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). I'm using the ["original" iCade](http://retrorgb.com/icade.html), and I like it.
+* For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). The [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) is good. DO NOT get the Status SteelSeries.
+* For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
 
 ## Gyruss mode
 
