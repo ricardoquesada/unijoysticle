@@ -1,4 +1,6 @@
-# Smartphone Application
+# The UniJoystiCle™ Documentation
+
+## Smartphone Application
 
 The smartphone application can be download from free from the AppStore, or you can download the source code from [github](https://github.com/ricardoquesada/unijoysticle):
 
@@ -6,7 +8,7 @@ The smartphone application can be download from free from the AppStore, or you c
 
 It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
-## Setup
+### Setup
 
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver (either via USB cable, or via the barrel jack)
@@ -24,7 +26,7 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 There are four modes: _UniJoystiCle mode_, _D-pad mode_, _Gyruss mode_ and _Linear mode_.
 
-## UniJoystiCle mode
+### UniJoystiCle mode
 
 <img class="" src="https://lh3.googleusercontent.com/9XnsNhBu8Vfee_g93H0e7PVlSniZbJbRqUZ2-8IcU_Malzp46xr53bydN0IudDUljb4MV2hYmumDlQs=w5760-h3600-no" width="290" height="163" />      <img class="" src="https://lh3.googleusercontent.com/7Wye9g3xWeS2Qd6zlaVzwnw8oG6a1PXe8oEhlaTTSqte0MqDaqeK3QPwDL0CMMKH_ahilKYZGOoqmPw=w5760-h3600-no" width="87" height="155" />
 
@@ -69,7 +71,7 @@ __Compatibility:__ This mode is compatible with multiple sports games like:
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU)
 
-## D-pad mode
+### D-pad mode
 
 <img class="" src="https://lh3.googleusercontent.com/j2hgT6dzu-wSK1eEwbvD97THXVmokBJV3RkF1lzUeKNXd4A9eqhKjyRG_5rlkAtHfWi4_T6sw1AFdB8=w5760-h3600-no" width="343" height="193" />
 
@@ -82,7 +84,7 @@ __Compatibility:__
 __Using this mode:__ [YouTube video](https://youtu.be/RhEGogreM0E)
 
 
-## D-pad + Game Controllers
+### D-pad + Game Controllers
 
 <img class="alignnone" src="https://lh3.googleusercontent.com/WRLXh522eTsfwQogNMmFebIEC4v-6AjRLbbWMC2ox5t7a4yezb_PzxK8bZKYrT8xIuVOplTMHRmSn00=w5760-h3600-no" width="304" height="171" /><img class="alignnone" src="https://lh3.googleusercontent.com/vxbiIsJjtjfyqieu4QO27VW6hBTxszUth8Eb_g6TbgVK1jGEmvNmnazd7CAb1uFo6I38RNpK_qZO0sc=w5760-h3600-no" width="273" height="157" />
 
@@ -107,7 +109,7 @@ __Which controller should you use:__
 * For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). The [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) is good. DO NOT get the Status SteelSeries.
 * For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
 
-## Gyruss mode
+### Gyruss mode
 
 <img src="https://lh3.googleusercontent.com/E17hGhA4Ab6wNy1_OnpuzIwfzb3y3nsBFTVZv70gY1UJGSlOiXEGEOxda_YRd43CVQuFlhRbvvbWwIM=w5760-h3600-no" width="344" height="194" />
 
@@ -123,7 +125,7 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://youtu.be/n2YHoj1pXB8)
 
-## Linear mode
+### Linear mode
 
 <img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" />
 
@@ -135,7 +137,7 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=eKlaUfoTuYQ)
 
-# Assembling the PCB
+## Assembling the PCB
 
 The hardware as well as the software are open source. So you can build one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
 
@@ -164,7 +166,7 @@ After assembling the PCB, it should look like this:
 
 <img src="https://lh3.googleusercontent.com/EzcB9pZfIeSFlQqB6ONgqUOGPxgydRiCND_uexf3BiooADe20sfCTA-bgKs2NJLEUY6ANjG9HFU8dA=w2528-h1586-no" width="482" height="302" />
 
-# Installing the firmware
+## Installing the firmware
 
 * Install [PlatformIO](http://platformio.org)
 * Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
@@ -179,7 +181,7 @@ $ make
 $ make upload
 ```
 
-# Bugs
+## Bugs
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
 
