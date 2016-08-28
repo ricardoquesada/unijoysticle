@@ -12,7 +12,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 * Power the UniJoystiCle WiFi receiver (either via USB cable, or via the barrel jack)
 * Wait a few seconds and you should see two LEDs. The color is not important
 
-[caption id="" align="alignnone" width="279"]<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" /> Two LEDs indicate that a successful boot[/caption]
+<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
 
 After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your iPhone's Settings, connect to it...:
 
@@ -30,15 +30,15 @@ It has four modes: UniJoystiCle mode, D-pad mode, Gyruss mode and Linear mode.
 
 In this mode, the joystick commands are generated from the smartphone's accelerometer. The accelerometer detects acceleration in the three coordinates: X, Y and Z. If we attach an accelerometer (in this case the smartphone) to a unicycle (or bike) pedal, and we measure the accelerometer's data while we pedal, we will notice that the X and Z axis generates data similar to a sine and cosine.
 
-[caption id="" align="alignnone" width="2000"]<img src="https://lh3.googleusercontent.com/tkTDxICQD2L51ClgOARPCSrcaHvqfLueInfqmEwKdEmb66_2tL7SaZwHTRsgiKj-FA-gGCwA77vmw-4=w5760-h3600-no" width="2000" height="800" /> Accelerometer X and Z values when attached to a bike pedal.[/caption]
+<img src="https://lh3.googleusercontent.com/tkTDxICQD2L51ClgOARPCSrcaHvqfLueInfqmEwKdEmb66_2tL7SaZwHTRsgiKj-FA-gGCwA77vmw-4=w5760-h3600-no" width="2000" height="800" />
 
 And if we put those values in cartesian coordinates (eg: Accelerometer(Z) = Y axis, and Accelerometer(X) = X axis), we will have something similar to a circle.
 
-[caption id="" align="alignnone" width="238"]<img src="https://lh3.googleusercontent.com/uj7t3w1rtLdae9kZk7fIKbxeKU4jssFHRcn8Q4HucrirkWqimleXumDhUDdBKWA74yHrAK-drD1CV6Y=w5760-h3600-no" width="238" height="212" /> Accel(Z) and Accel(X) in cartesian coordinates[/caption]
+<img src="https://lh3.googleusercontent.com/uj7t3w1rtLdae9kZk7fIKbxeKU4jssFHRcn8Q4HucrirkWqimleXumDhUDdBKWA74yHrAK-drD1CV6Y=w5760-h3600-no" width="238" height="212" />
 
 And if we calculate the arctangent (<code>atan2()</code>) value of sin/cosine we get the angle. And with the angle we can simulate the joystick movements. We divide the circle in 8 segments, and assign a joystick movement to each segment. Eg:
 
-[caption id="" align="alignnone" width="224"]<img src="https://lh3.googleusercontent.com/JWfiNmE3_R_m17V_DKnyVQjtzHvR8iYC3SUTGfIaZl4M3q7MUluOVOKcKI9tCLDD47IhvnoRSsHw6-Y=w5760-h3600-no" width="224" height="224" /> Each segment has an assigned joystick movement[/caption]
+<img src="https://lh3.googleusercontent.com/JWfiNmE3_R_m17V_DKnyVQjtzHvR8iYC3SUTGfIaZl4M3q7MUluOVOKcKI9tCLDD47IhvnoRSsHw6-Y=w5760-h3600-no" width="224" height="224" />
 
 There are no such things as "joystick diagonal commands". So in order to simulate the top-right diagonal, we just send the "top" and "right" joystick movements at the same time.
 
@@ -46,13 +46,13 @@ From the graphic we can deduce that:
 <p style="padding-left: 30px;"><strong>One pedal revolution == one joystick "revolution"</strong></p>
 But it is possible to change that ratio. For example, we can change it to "One pedal revolution == <strong>two</strong> joystick revolutions". Just go to settings and do:
 
-[caption id="" align="alignnone" width="376"]<img class="" src="https://lh3.googleusercontent.com/lzJpTVJDyCto_gNurvpjZwImO1-O9_az0cfN0KCDsijJ0y2oPRPJCk7QZlEXUj3jlmRiQFtNZFll3Ig=w5760-h3600-no" width="376" height="172" /> Changing the wheel revolution ratio[/caption]
+<img class="" src="https://lh3.googleusercontent.com/lzJpTVJDyCto_gNurvpjZwImO1-O9_az0cfN0KCDsijJ0y2oPRPJCk7QZlEXUj3jlmRiQFtNZFll3Ig=w5760-h3600-no" width="376" height="172" />
 
 A ratio of 2.0 will divide the circle in 16 segments (8 segments * 2.0 ratio == 16 segments), and what will happen is that:
 <p style="padding-left: 30px;">One pedal revolution == Two joystick revolutions</p>
 
 
-[caption id="" align="alignnone" width="224"]<img src="https://lh3.googleusercontent.com/PfU204uuYq_qwNGXRHQZ3aRuhFpp6ZkmERjB8gwByobmwdCu0TR7QMp-SbN2n_t44PwkGGrMPZYBwqk=w5760-h3600-no" width="224" height="224" /> Circle with 16 segments. One pedal revolution == Two joystick revolutions[/caption]
+<img src="https://lh3.googleusercontent.com/PfU204uuYq_qwNGXRHQZ3aRuhFpp6ZkmERjB8gwByobmwdCu0TR7QMp-SbN2n_t44PwkGGrMPZYBwqk=w5760-h3600-no" width="224" height="224" />
 
 This is useful to:
 
@@ -73,7 +73,7 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU
 
 ## D-pad mode
 
-[caption id="" align="alignnone" width="343"]<img class="" src="https://lh3.googleusercontent.com/j2hgT6dzu-wSK1eEwbvD97THXVmokBJV3RkF1lzUeKNXd4A9eqhKjyRG_5rlkAtHfWi4_T6sw1AFdB8=w5760-h3600-no" width="343" height="193" /> Virtual D-pad mode[/caption]
+<img class="" src="https://lh3.googleusercontent.com/j2hgT6dzu-wSK1eEwbvD97THXVmokBJV3RkF1lzUeKNXd4A9eqhKjyRG_5rlkAtHfWi4_T6sw1AFdB8=w5760-h3600-no" width="343" height="193" />
 
 This mode converts the smartphone in a virtual D-pad. Just press the arrows for joysticks movements, and the circle to fire.
 
@@ -97,7 +97,7 @@ You can configure it to:
  	<li>Use Button "B" to jump. When enabled, it will disable to "Up" D-pad arrow</li>
  	<li>Swap Buttons "A" and "B" (swaps Jump and Shoot buttons)</li>
 </ul>
-[caption id="" align="alignnone" width="282"]<img class="" src="https://lh3.googleusercontent.com/-RH__wcCr293gHL_KbyM4Nk61MMs1qjJgMI4GHXK1iFUM0Q7VZY3cM1Vt0Pm6dwaVe2tKp6J5Uf0swk=w5760-h3600-no" width="282" height="95" /> D-pad + Game Controller settings[/caption]
+<img class="" src="https://lh3.googleusercontent.com/-RH__wcCr293gHL_KbyM4Nk61MMs1qjJgMI4GHXK1iFUM0Q7VZY3cM1Vt0Pm6dwaVe2tKp6J5Uf0swk=w5760-h3600-no" width="282" height="95" />
 
 <strong>Using this mode:</strong>
 
@@ -113,13 +113,14 @@ https://www.youtube.com/watch?v=0cdgaYVYaao
 Try here: <a href="https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/</a>. I'm using the <a href="https://afterpad.com/steelseries-nimbus-the-afterpad-review/">Nimbus SteelSeries</a> and I'm very happy with it. DO NOT get the SteelSeries Stratus.
 
 ## Gyruss mode
-[caption id="" align="alignnone" width="344"]<img src="https://lh3.googleusercontent.com/E17hGhA4Ab6wNy1_OnpuzIwfzb3y3nsBFTVZv70gY1UJGSlOiXEGEOxda_YRd43CVQuFlhRbvvbWwIM=w5760-h3600-no" width="344" height="194" /> Gyruss mode[/caption]
+
+<img src="https://lh3.googleusercontent.com/E17hGhA4Ab6wNy1_OnpuzIwfzb3y3nsBFTVZv70gY1UJGSlOiXEGEOxda_YRd43CVQuFlhRbvvbWwIM=w5760-h3600-no" width="344" height="194" />
 
 In this mode you control the black circle that is inside the blue circle strip. You move the black ball by tilting your smartphone, and gravity will do the rest. Press the gray circle at the right to fire.
 
 This is just a "fun" mode mostly to do experiments and try different playing techniques.
 
-[caption id="" align="alignnone" width="304"]<img class="" src="https://lh3.googleusercontent.com/_mIk_b2YmrhLqCo0IGk81Euw4JsGlK1siu131e67ypI4aCKCxBo59Xu37o-P2QZzeVm3JL1aCFVs928=w5760-h3600-no" width="304" height="59" /> Gyruss Mode Settings[/caption]
+<img class="" src="https://lh3.googleusercontent.com/_mIk_b2YmrhLqCo0IGk81Euw4JsGlK1siu131e67ypI4aCKCxBo59Xu37o-P2QZzeVm3JL1aCFVs928=w5760-h3600-no" width="304" height="59" />
 
 <strong>Compatibility:</strong>
 <ul>
@@ -133,7 +134,7 @@ https://youtu.be/n2YHoj1pXB8
 
 ## Linear mode
 
-[caption id="" align="alignnone" width="344"]<img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" /> Linear mode[/caption]
+<img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" />
 
 This mode is not meant to play games. Instead, is meant to convert the joysticks signals into a numbers from 0 to 31. Since each joystick has 5 lines (5 bits), we have 5 ^^ 2 == 32 combinations.
 
@@ -148,22 +149,22 @@ https://www.youtube.com/watch?v=eKlaUfoTuYQ
 
 # Assembling the PCB
 
-The hardware as well as the software are open source. So you can make one yourself. The schematic and board files are in <a href="https://cadsoft.io/">Eagle</a> format:
-<ul>
- 	<li>board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.2.2)</li>
- 	<li>schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.2.2)</li>
-</ul>
+The hardware as well as the software are open source. So you can make one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
+
+* board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.2.2)
+* schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.2.2)
+
 You will need the following components:
-<ul>
- 	<li>1 x <a href="http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html">NodeMCU ESP8266</a></li>
- 	<li>2 x <a href="https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800">DB9 female</a></li>
- 	<li>3 x <a href="https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726">4066 IC </a></li>
- 	<li>3 x <a href="https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545">sockets for the ICs</a></li>
- 	<li>1 x <a href="https://www.digikey.com/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962">barrel jack</a> (optional)</li>
- 	<li>1 x <a href="https://www.digikey.com/product-detail/en/micro-commercial-co/1N4001-TP/1N4001-TPMSCT-ND/773688">4001 diode</a> (optional)</li>
- 	<li><a href="http://www.aliexpress.com/item/Free-shppping-3200pin-1x40-Pin-2-54mm-Single-Row-Female-Pin-Header-Connector-80PCS-LOT/1897568598.html">Pins</a></li>
-</ul>
-And solder them. It should be straightforward where to place the components. If not, <a href="https://twitter.com/ricardoquesada">ping me</a>.
+
+* 1 x <a href="http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html">NodeMCU ESP8266</a></li>
+* 2 x <a href="https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800">DB9 female</a>
+* 3 x <a href="https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726">4066 IC </a>
+* 3 x <a href="https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545">sockets for the ICs</a>
+* 1 x <a href="https://www.digikey.com/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962">barrel jack</a> (optional)
+* 1 x <a href="https://www.digikey.com/product-detail/en/micro-commercial-co/1N4001-TP/1N4001-TPMSCT-ND/773688">4001 diode</a> (optional)
+* <a href="http://www.aliexpress.com/item/Free-shppping-3200pin-1x40-Pin-2-54mm-Single-Row-Female-Pin-Header-Connector-80PCS-LOT/1897568598.html">Pins</a>
+
+And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
 The barrel jack and the diode are optional. They are only needed if you want to power the NodeMCU module with an external power source. If so, you can use any DC power that from 5v to 12v. 500mA should be enough. Probably it will work with less as well. It works with a 9v battery, although that might not be the most efficient way to power the NodeMCU module.
 
@@ -171,9 +172,9 @@ If you want to avoid the soldering, you can <strong><a href="https://retro.moe/
 
 After assembling the PCB, it should look like this:
 
-[caption id="" align="alignnone" width="468"]<img class="" src="https://lh3.googleusercontent.com/yPbYMpfy4th501PObRIPJa0vGIGubWI4YZfMf8zcqMMhFt0tN0teuPUGoLKu244fXXxJ_c4n95gNrQ=w2464-h1670-no" width="468" height="318" /> Assembled PCB - Front. v0.2.2[/caption]
+<img class="" src="https://lh3.googleusercontent.com/yPbYMpfy4th501PObRIPJa0vGIGubWI4YZfMf8zcqMMhFt0tN0teuPUGoLKu244fXXxJ_c4n95gNrQ=w2464-h1670-no" width="468" height="318" />
 
-[caption id="" align="alignnone" width="482"]<img src="https://lh3.googleusercontent.com/EzcB9pZfIeSFlQqB6ONgqUOGPxgydRiCND_uexf3BiooADe20sfCTA-bgKs2NJLEUY6ANjG9HFU8dA=w2528-h1586-no" width="482" height="302" /> Assembled PCB - Back. v0.2.2[/caption]
+<img src="https://lh3.googleusercontent.com/EzcB9pZfIeSFlQqB6ONgqUOGPxgydRiCND_uexf3BiooADe20sfCTA-bgKs2NJLEUY6ANjG9HFU8dA=w2528-h1586-no" width="482" height="302" />
 
 # Installing the firmware
 
