@@ -22,7 +22,7 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 <img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" />
 
-It has four modes: UniJoystiCle mode, D-pad mode, Gyruss mode and Linear mode.
+It has four modes: _UniJoystiCle mode_, _D-pad mode_, _Gyruss mode_ and _Linear mode_.
 
 ## UniJoystiCle mode
 
@@ -77,14 +77,11 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU
 
 This mode converts the smartphone in a virtual D-pad. Just press the arrows for joysticks movements, and the circle to fire.
 
-<strong>Using this mode:</strong>
+__Using this mode:__ [YouTube video](https://youtu.be/RhEGogreM0E)
 
-https://youtu.be/RhEGogreM0E
+__Compatibility:__
 
-<strong>Compatibility:</strong>
-<ul>
- 	<li>Any game can be played in this mode.</li>
-</ul>
+* Any game can be played in this mode.
 
 ## D-pad + Game Controllers
 
@@ -93,24 +90,24 @@ https://youtu.be/RhEGogreM0E
 This is the same D-pad mode as before. But if you <a href="http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/">connect any iOS Game Controller to your iPhone</a> (it supports both <a href="https://afterpad.com/mficontrollers/">MFi</a> and <a href="https://www.ionaudio.com/products/details/icade">iCade</a> controllers), it will automatically detect it. And with it you can control the virtual D-pad giving you a great gaming experience.
 
 You can configure it to:
-<ul>
- 	<li>Use Button "B" to jump. When enabled, it will disable to "Up" D-pad arrow</li>
- 	<li>Swap Buttons "A" and "B" (swaps Jump and Shoot buttons)</li>
-</ul>
+
+* Use Button "B" to jump. When enabled, it will disable to "Up" D-pad arrow
+* Swap Buttons "A" and "B" (swaps Jump and Shoot buttons)
+
 <img class="" src="https://lh3.googleusercontent.com/-RH__wcCr293gHL_KbyM4Nk61MMs1qjJgMI4GHXK1iFUM0Q7VZY3cM1Vt0Pm6dwaVe2tKp6J5Uf0swk=w5760-h3600-no" width="282" height="95" />
 
-<strong>Using this mode:</strong>
+__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=0cdgaYVYaao)
 
-https://www.youtube.com/watch?v=0cdgaYVYaao
+__Compatibility:__
 
-<strong>Compatibility:</strong>
-<ul>
- 	<li>Any game can be played in this mode.</li>
- 	<li>Optimized for platformer games (<a href="http://gamebase64.com/game.php?id=3275&amp;d=18&amp;h=0">Giana Sisters</a>, <a href="http://gamebase64.com/game.php?id=24140&amp;d=18&amp;h=0">Super Bread Board</a>, <a href="http://gamebase64.com/game.php?id=1138&amp;d=18&amp;h=0">Bubble Bobble</a>, etc.)</li>
-</ul>
-<strong>Which controller should you use:</strong>
+* Any game can be played in this mode.
+* Optimized for platformer games (<a href="http://gamebase64.com/game.php?id=3275&amp;d=18&amp;h=0">Giana Sisters</a>, <a href="http://gamebase64.com/game.php?id=24140&amp;d=18&amp;h=0">Super Bread Board</a>, <a href="http://gamebase64.com/game.php?id=1138&amp;d=18&amp;h=0">Bubble Bobble</a>, etc.)
 
-Try here: <a href="https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/</a>. I'm using the <a href="https://afterpad.com/steelseries-nimbus-the-afterpad-review/">Nimbus SteelSeries</a> and I'm very happy with it. DO NOT get the SteelSeries Stratus.
+__Which controller should you use:__
+
+For MFi controllers, try here: <a href="https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/</a>. I'm using the <a href="https://afterpad.com/steelseries-nimbus-the-afterpad-review/">Nimbus SteelSeries</a> and I'm very happy with it. DO NOT get the SteelSeries Stratus.
+
+For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). I'm using the ["original" iCade](http://retrorgb.com/icade.html), and it works very good.
 
 ## Gyruss mode
 
@@ -122,15 +119,13 @@ This is just a "fun" mode mostly to do experiments and try different playing tec
 
 <img class="" src="https://lh3.googleusercontent.com/_mIk_b2YmrhLqCo0IGk81Euw4JsGlK1siu131e67ypI4aCKCxBo59Xu37o-P2QZzeVm3JL1aCFVs928=w5760-h3600-no" width="304" height="59" />
 
-<strong>Compatibility:</strong>
-<ul>
- 	<li>Gyruss</li>
- 	<li>all the <em>UniJoystiCle mode</em> games</li>
- 	<li>and games with similar techniques to Gyruss</li>
-</ul>
-<strong>Using this mode:</strong>
+__Compatibility:__
 
-https://youtu.be/n2YHoj1pXB8
+* Gyruss
+* all the <em>UniJoystiCle mode</em> games
+* and games with similar techniques to Gyruss
+
+__Using this mode:__ [YouTube video](https://youtu.be/n2YHoj1pXB8)
 
 ## Linear mode
 
@@ -138,14 +133,11 @@ https://youtu.be/n2YHoj1pXB8
 
 This mode is not meant to play games. Instead, is meant to convert the joysticks signals into a numbers from 0 to 31. Since each joystick has 5 lines (5 bits), we have 5 ^^ 2 == 32 combinations.
 
-<strong>Compatibility: </strong>
-<ul>
- 	<li><a href="https://github.com/ricardoquesada/c64-idiotr">C64 I.D.IoT.R</a>, the Intelligent Dimmer for IoT RRRRR</li>
-</ul>
-<strong><strong>Using this mode:</strong>
-</strong>
+__Compatibility:__
 
-https://www.youtube.com/watch?v=eKlaUfoTuYQ
+* <a href="https://github.com/ricardoquesada/c64-idiotr">C64 I.D.IoT.R</a>, the Intelligent Dimmer for IoT RRRRR
+
+__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=eKlaUfoTuYQ)
 
 # Assembling the PCB
 
@@ -192,6 +184,5 @@ $ make upload
 ```
 
 # Bugs
-<ul>
- 	<li>To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.</li>
-</ul>
+
+* To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
