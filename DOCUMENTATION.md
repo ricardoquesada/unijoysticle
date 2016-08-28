@@ -4,7 +4,7 @@ The smartphone application can be download from free from the AppStore, or you c
 
 <a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img class="alignnone" src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a>
 
-It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands are regular joystick movements: <em>Up</em>, <em>Down</em>, <em>Left</em>, <em>Right</em> and <em>Fire</em>. It can send one or multiple commands at the time.
+It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
 ## Setup
 
@@ -36,7 +36,7 @@ And if we put those values in cartesian coordinates (eg: Accelerometer(Z) = Y ax
 
 <img src="https://lh3.googleusercontent.com/uj7t3w1rtLdae9kZk7fIKbxeKU4jssFHRcn8Q4HucrirkWqimleXumDhUDdBKWA74yHrAK-drD1CV6Y=w5760-h3600-no" width="238" height="212" />
 
-And if we calculate the arctangent (<code>atan2()</code>) value of sin/cosine we get the angle. And with the angle we can simulate the joystick movements. We divide the circle in 8 segments, and assign a joystick movement to each segment. Eg:
+And if we calculate the arctangent (`atan2()`) value of sin/cosine we get the angle. And with the angle we can simulate the joystick movements. We divide the circle in 8 segments, and assign a joystick movement to each segment. Eg:
 
 <img src="https://lh3.googleusercontent.com/JWfiNmE3_R_m17V_DKnyVQjtzHvR8iYC3SUTGfIaZl4M3q7MUluOVOKcKI9tCLDD47IhvnoRSsHw6-Y=w5760-h3600-no" width="224" height="224" />
 
@@ -101,27 +101,25 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=0cdgaYVYaao
 __Compatibility:__
 
 * Any game can be played in this mode.
-* Optimized for platformer games (<a href="http://gamebase64.com/game.php?id=3275&amp;d=18&amp;h=0">Giana Sisters</a>, <a href="http://gamebase64.com/game.php?id=24140&amp;d=18&amp;h=0">Super Bread Board</a>, <a href="http://gamebase64.com/game.php?id=1138&amp;d=18&amp;h=0">Bubble Bobble</a>, etc.)
+* Optimized for platformer games like [Giana Sisters](http://gamebase64.com/game.php?id=3275&amp;d=18&amp;h=0), [Super Bread Box](http://gamebase64.com/game.php?id=24140&amp;d=18&amp;h=0), [Bubble Bobble](http://gamebase64.com/game.php?id=1138&amp;d=18&amp;h=0), etc.
 
 __Which controller should you use:__
 
-For MFi controllers, try here: <a href="https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/</a>. I'm using the <a href="https://afterpad.com/steelseries-nimbus-the-afterpad-review/">Nimbus SteelSeries</a> and I'm very happy with it. DO NOT get the SteelSeries Stratus.
+For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). I'm using the [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) and I like it. DO NOT get the Status SteelSeries.
 
-For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). I'm using the ["original" iCade](http://retrorgb.com/icade.html), and it works very good.
+For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). I'm using the ["original" iCade](http://retrorgb.com/icade.html), and I like it.
 
 ## Gyruss mode
 
 <img src="https://lh3.googleusercontent.com/E17hGhA4Ab6wNy1_OnpuzIwfzb3y3nsBFTVZv70gY1UJGSlOiXEGEOxda_YRd43CVQuFlhRbvvbWwIM=w5760-h3600-no" width="344" height="194" />
 
-In this mode you control the black circle that is inside the blue circle strip. You move the black ball by tilting your smartphone, and gravity will do the rest. Press the gray circle at the right to fire.
-
-This is just a "fun" mode mostly to do experiments and try different playing techniques.
+In this mode you control the black circle that is inside the blue circle strip. You move the black ball by tilting your smartphone, and gravity will do the rest. Press the gray circle at the right for _fire_.
 
 <img class="" src="https://lh3.googleusercontent.com/_mIk_b2YmrhLqCo0IGk81Euw4JsGlK1siu131e67ypI4aCKCxBo59Xu37o-P2QZzeVm3JL1aCFVs928=w5760-h3600-no" width="304" height="59" />
 
 __Compatibility:__
 
-* Gyruss
+* [Gyruss](http://gamebase64.com/game.php?id=3370&d=18&h=0)
 * all the <em>UniJoystiCle mode</em> games
 * and games with similar techniques to Gyruss
 
@@ -135,32 +133,32 @@ This mode is not meant to play games. Instead, is meant to convert the joysticks
 
 __Compatibility:__
 
-* <a href="https://github.com/ricardoquesada/c64-idiotr">C64 I.D.IoT.R</a>, the Intelligent Dimmer for IoT RRRRR
+* [C64 I.D.IoT.R](https://github.com/ricardoquesada/c64-idiotr), the Intelligent Dimmer for IoT RRRRR
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=eKlaUfoTuYQ)
 
 # Assembling the PCB
 
-The hardware as well as the software are open source. So you can make one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
+The hardware as well as the software are open source. So you can build one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
 
 * board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.2.2)
 * schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.2.2)
 
 You will need the following components:
 
-* 1 x <a href="http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html">NodeMCU ESP8266</a></li>
-* 2 x <a href="https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800">DB9 female</a>
-* 3 x <a href="https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726">4066 IC </a>
-* 3 x <a href="https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545">sockets for the ICs</a>
-* 1 x <a href="https://www.digikey.com/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962">barrel jack</a> (optional)
-* 1 x <a href="https://www.digikey.com/product-detail/en/micro-commercial-co/1N4001-TP/1N4001-TPMSCT-ND/773688">4001 diode</a> (optional)
-* <a href="http://www.aliexpress.com/item/Free-shppping-3200pin-1x40-Pin-2-54mm-Single-Row-Female-Pin-Header-Connector-80PCS-LOT/1897568598.html">Pins</a>
+* 1 x [NodeMCU ESP8266](http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html)
+* 2 x [DB9 female](https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800)
+* 3 x [4066 IC](https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726)
+* 3 x [sockets for the ICs](https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545)
+* 1 x [barrel jack](https://www.digikey.com/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962)
+* 1 x [4001 diode](https://www.digikey.com/product-detail/en/micro-commercial-co/1N4001-TP/1N4001-TPMSCT-ND/773688)
+* [Pins](http://www.aliexpress.com/item/Free-shppping-3200pin-1x40-Pin-2-54mm-Single-Row-Female-Pin-Header-Connector-80PCS-LOT/1897568598.html)
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
 The barrel jack and the diode are optional. They are only needed if you want to power the NodeMCU module with an external power source. If so, you can use any DC power that from 5v to 12v. 500mA should be enough. Probably it will work with less as well. It works with a 9v battery, although that might not be the most efficient way to power the NodeMCU module.
 
-If you want to avoid the soldering, you can <strong><a href="https://retro.moe/unijoysticle/">order an already assembled PCB from here</a></strong>.
+If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__
 
 After assembling the PCB, it should look like this:
 
@@ -186,3 +184,4 @@ $ make upload
 # Bugs
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
+
