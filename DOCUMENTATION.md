@@ -14,13 +14,13 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 
 [caption id="" align="alignnone" width="279"]<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" /> Two LEDs indicate that a successful boot[/caption]
 
-After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your iPhone's Settings, connect to it:
+After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your iPhone's Settings, connect to it...:
 
-[caption id="" align="alignnone" width="277"]<img src="https://lh3.googleusercontent.com/Kkt_ynCu6Gr-lRwZIv7FD3NPJe9ThwKV7B7o-ehp1mntRX290XKERHdLl_rzuo9orh3iG9IrgRdVJg=w1242-h642-no" width="277" height="143" /> Connect to the UniJoystiCle WiFi network[/caption]
+<img src="https://lh3.googleusercontent.com/Kkt_ynCu6Gr-lRwZIv7FD3NPJe9ThwKV7B7o-ehp1mntRX290XKERHdLl_rzuo9orh3iG9IrgRdVJg=w1242-h642-no" width="277" height="143" />
 
-And then launch the UniJoystiCle Controller app.
+...And then launch the UniJoystiCle Controller app.
 
-[caption id="" align="alignnone" width="288"]<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" /> UniJoystiCle Controller App[/caption]
+<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" />
 
 It has four modes: UniJoystiCle mode, D-pad mode, Gyruss mode and Linear mode.
 
