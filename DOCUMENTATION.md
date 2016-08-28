@@ -30,7 +30,7 @@ It has four modes: UniJoystiCle mode, D-pad mode, Gyruss mode and Linear mode.
 
 In this mode, the joystick commands are generated from the smartphone's accelerometer. The accelerometer detects acceleration in the three coordinates: X, Y and Z. If we attach an accelerometer (in this case the smartphone) to a unicycle (or bike) pedal, and we measure the accelerometer's data while we pedal, we will notice that the X and Z axis generates data similar to a sine and cosine.
 
-<img src="https://lh3.googleusercontent.com/tkTDxICQD2L51ClgOARPCSrcaHvqfLueInfqmEwKdEmb66_2tL7SaZwHTRsgiKj-FA-gGCwA77vmw-4=w5760-h3600-no" width="2000" height="800" />
+<img src="https://lh3.googleusercontent.com/tkTDxICQD2L51ClgOARPCSrcaHvqfLueInfqmEwKdEmb66_2tL7SaZwHTRsgiKj-FA-gGCwA77vmw-4=w5760-h3600-no" />
 
 And if we put those values in cartesian coordinates (eg: Accelerometer(Z) = Y axis, and Accelerometer(X) = X axis), we will have something similar to a circle.
 
