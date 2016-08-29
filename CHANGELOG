@@ -1,13 +1,15 @@
-v0.4 - 2016-08-XX
+v0.4 - 2016-09-XX
 
-- [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and C64SX
+- [NEW] Docs: Added documentation. See DOCUMENTATION.md
+- [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and SX-64
 - [NEW] ESP8266 Schematic: Using D1 Mini instead of NodeMCU to reduce the
 		realstate even more. Making it smaller than 5x5cm, thus reducing the price to
 		order the PCB
 - [NEW] ESP8266 Schematic: Does not use barrel jack anymore. For external power supply
         the Wemos Supply shield can be used.
-- [NEW] iOS Client: D-Pad works with real MFi and iCade game controllers
-- [NEW] iOS Client: When using game controllers, optionally jump with button B. Or swap A and B buttons
+- [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
+- [NEW] iOS Client: When using game controllers, optionally jump with button B.
+- [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
 - [FIX] iOS Client: Gravity Mode renamed to Gyruss Mode
 - [FIX] iOS Client: Settings: refactored. Looks nicer. Using Navigation Controller + TableView
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
