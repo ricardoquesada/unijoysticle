@@ -1,4 +1,4 @@
-# The UniJoystiCle™ Documentation
+# The UniJoystiCle Documentation
 
 ## Smartphone Application
 

@@ -1,4 +1,4 @@
-# The UniJoystiCle™
+# The UniJoystiCle
 
 ![UniJoystiCle™](https://lh3.googleusercontent.com/-piAi8Qz3nnQ/VwL2T8DBSZI/AAAAAAABdos/jpiz2eBrA_U1MW8mXVZVmI68zLlmJoTvACCo/s640-Ic42/logo.png)
 
