@@ -16,6 +16,36 @@
 
     <PreferenceCategory
         android:title="@string/pref_title_cat_unijoysticle">
+        <!-- min:1, max:3 -->
+        <moe.retro.unijoysticle.SeekBarPreference
+            android:defaultValue="1"
+            android:dialogMessage="@string/settings_dialog_message"
+            android:key="seekBar_rotationRate"
+            android:max="3"
+            android:summary="@string/pref_summary_gravity"
+            android:text="@string/settings_unit"
+            android:title="@string/pref_title_rotation_rate" />
+
+        <!-- min:0.1, max:5 -->
+        <moe.retro.unijoysticle.SeekBarPreference
+            android:defaultValue="2.1"
+            android:dialogMessage="@string/settings_dialog_message"
+            android:key="seekBar_jumpThreshold"
+            android:max="5"
+            android:summary="@string/pref_summary_gravity"
+            android:text="@string/settings_unit"
+            android:title="@string/pref_title_jump_threshold" />
+
+        <!-- min:0.1, max:2 -->
+        <moe.retro.unijoysticle.SeekBarPreference
+            android:defaultValue="0.4"
+            android:dialogMessage="@string/settings_dialog_message"
+            android:key="seekBar_movementThreshold"
+            android:max="2"
+            android:summary="@string/pref_summary_gravity"
+            android:text="@string/settings_unit"
+            android:title="@string/pref_title_movement_threshold" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -35,14 +65,15 @@
     <PreferenceCategory
         android:title="@string/pref_title_cat_gyruss">
 
+        <!-- min:1, max:20 -->
         <moe.retro.unijoysticle.SeekBarPreference
-            android:defaultValue="50"
+            android:defaultValue="10"
             android:dialogMessage="@string/settings_dialog_message"
             android:key="SEEKBAR_VALUE"
-            android:max="100"
+            android:max="20"
             android:summary="@string/pref_summary_gravity"
             android:text="@string/settings_unit"
-            android:title="@string/settings_title" />
+            android:title="@string/pref_title_gravity_factor" />
 
     </PreferenceCategory>
 

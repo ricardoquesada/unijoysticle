@@ -11,7 +11,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 ### Setup
 
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
-* Power the UniJoystiCle WiFi receiver (either via USB cable, or via the barrel jack)
+* Power the UniJoystiCle WiFi receiver (either with a micro USB cable, or via the barrel jack)
 * Wait a few seconds and you should see two LEDs. The color is not important
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
@@ -67,9 +67,12 @@ __Compatibility:__ This mode is compatible with multiple sports games like:
 
 * [The Uni Games](https://github.com/ricardoquesada/c64-the-uni-games) (in fact this mode was created to play this game)
 * Sports games like [Hypersports](http://gamebase64.com/game.php?id=3666&d=18&h=0), [Decathon](http://gamebase64.com/game.php?id=2057&d=18&h=0), etc.
-* etc.
+* [C64anabalt](http://www.rgcd.co.uk/2011/12/c64anabalt-c64-2011.html), and other jump-only-games
+* and more
 
-__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=w2cdoTU-GJU)
+__Video:__ [Using a unicycle to play The Uni Games ](https://www.youtube.com/watch?v=w2cdoTU-GJU)
+
+__Video:__ [Using one foot to play C64anabalt](https://www.youtube.com/watch?v=n7p1p53uisk)
 
 ### D-pad mode
 
@@ -184,4 +187,3 @@ $ make upload
 ## Bugs
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
-

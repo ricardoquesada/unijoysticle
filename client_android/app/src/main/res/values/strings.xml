@@ -18,6 +18,10 @@
     <string name="pref_summary_server">Current value is $1</string>
     <string name="pref_default_server">192.168.4.1</string>
 
+    <string name="pref_title_rotation_rate">Rotation rate</string>
+    <string name="pref_title_jump_threshold">Jump threshold</string>
+    <string name="pref_title_movement_threshold">Movement threshold</string>
+
     <string name="pref_title_enable_b">Use button B to jump</string>
     <string name="pref_title_swap_a_b">Swap buttons A and B</string>
 
@@ -26,6 +30,6 @@
     <string name="menu_settings">Settings</string>
     <string name="settings_dialog_message">Here comes a message</string>
     <string name="settings_unit">Km</string>
-    <string name="settings_title">Here comes the title</string>
+    <string name="pref_title_gravity_factor">Gravity factor</string>
 
 </resources>

@@ -29,17 +29,17 @@
         <activity
             android:name="moe.retro.unijoysticle.SettingsActivity"
             android:label="@string/title_activity_settings" />
-
+        <activity
+            android:name="moe.retro.unijoysticle.LinearActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name="moe.retro.unijoysticle.UnijoysticleActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name="moe.retro.unijoysticle.GyrussActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name="moe.retro.unijoysticle.DpadActivity"
-            android:label="@string/title_activity_dpad"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="moe.retro.unijoysticle.LinearActivity"
-            android:screenOrientation="landscape" />
-        <activity android:name="moe.retro.unijoysticle.UnijoysticleActivity"
-            android:screenOrientation="landscape" />
-        <activity android:name="moe.retro.unijoysticle.GyrussActivity"
             android:screenOrientation="landscape" />
     </application>
 

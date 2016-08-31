@@ -10,11 +10,12 @@
     tools:context="moe.retro.unijoysticle.LinearActivity">
 
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
+        android:max="31"
+        android:indeterminate="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:max="31"
-        android:indeterminate="false" />
+        android:layout_marginTop="90dp" />
 </RelativeLayout>
