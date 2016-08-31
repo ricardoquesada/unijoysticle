@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="moe.retro.unijoysticle.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -17,11 +17,25 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        </activity>
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="moe.retro.unijoysticle.DpadActivity"
+            android:label="@string/title_activity_dpad"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="moe.retro.unijoysticle.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name="moe.retro.unijoysticle.LinearActivity" />
+        <activity android:name="moe.retro.unijoysticle.UnijoysticleActivity" />
+        <activity android:name="moe.retro.unijoysticle.GyrussActivity"></activity>
     </application>
 
 </manifest>

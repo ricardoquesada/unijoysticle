@@ -18,4 +18,6 @@ xcschememanagement.plist
 ._.*
 xcuserdata/
 DerivedData/
+.gradle/
+.idea/
 

@@ -9,14 +9,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="moe.retro.unijoysticle.unijosyticle.MainActivity"
+    tools:context="moe.retro.unijoysticle.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/radioGroup"
+        android:id="@+id/radioGroupMode"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp">
@@ -32,7 +32,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="D-Pad"
+            android:text="D-pad"
             android:id="@+id/radioButtonDPad"
             android:layout_gravity="center_horizontal"
             android:checked="false" />
@@ -53,39 +53,40 @@
             android:checked="false" />
     </RadioGroup>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start"
+        android:id="@+id/buttonStart"
+        android:layout_marginTop="48dp"
+        android:layout_below="@+id/radioGroupJoy"
+        android:layout_centerHorizontal="true" />
+
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/radioGroup"
+        android:layout_marginTop="44dp"
+        android:layout_below="@+id/radioGroupMode"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:id="@+id/radioGroup2">
+        android:id="@+id/radioGroupJoy">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Joystick #1"
             android:id="@+id/radioButtonJ1"
-            android:layout_gravity="center_horizontal"
-            android:checked="true" />
+            android:checked="true"
+            android:layout_below="@+id/radioGroupMode" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Joystick #2"
             android:id="@+id/radioButtonJ2"
-            android:layout_gravity="center_horizontal"
-            android:checked="false" />
+            android:checked="false"
+            android:layout_alignTop="@+id/radioButtonJ1"
+            android:layout_toEndOf="@+id/radioButtonJ1" />
     </RadioGroup>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/start"
-        android:id="@+id/buttonStart"
-        android:layout_below="@+id/radioGroup2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="79dp" />
 
 </RelativeLayout>

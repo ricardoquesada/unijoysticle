@@ -1,5 +1,6 @@
-package moe.retro.unijoysticle.unijosyticle;
+package moe.retro.unijoysticle;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import moe.retro.unijoysticle.unijosyticle.R;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +54,23 @@ public class MainActivity extends AppCompatActivity {
             startButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Log.d(TAG, "Button pressed");
+
+                    RadioGroup radioButtonGroup = (RadioGroup) findViewById(R.id.radioGroupMode);
+                    int radioButtonID = radioButtonGroup.getCheckedRadioButtonId();
+                    switch(radioButtonID) {
+                        case R.id.radioButtonDPad:
+                            startActivity(new Intent(getApplicationContext(), DpadActivity.class));
+                            break;
+                        case R.id.radioButtonGyruss:
+                            startActivity(new Intent(getApplicationContext(), GyrussActivity.class));
+                            break;
+                        case R.id.radioButtonLinear:
+                            startActivity(new Intent(getApplicationContext(), LinearActivity.class));
+                            break;
+                        case R.id.radioButtonUniJoystiCle:
+                            startActivity(new Intent(getApplicationContext(), UnijoysticleActivity.class));
+                            break;
+                    }
                 }
             });
         }
@@ -74,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -118,5 +142,23 @@ public class MainActivity extends AppCompatActivity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // The activity is about to be destroyed.
     }
 }
