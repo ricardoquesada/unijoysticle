@@ -9,4 +9,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="moe.retro.unijoysticle.DpadActivity">
 
+    <moe.retro.unijoysticle.DpadView
+        android:id="@+id/game"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_margin="15dip"
+        android:layout_weight="1"
+        android:background="#000000" />
+
 </RelativeLayout>
