@@ -55,21 +55,35 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.d(TAG, "Button pressed");
 
-                    RadioGroup radioButtonGroup = (RadioGroup) findViewById(R.id.radioGroupMode);
-                    int radioButtonID = radioButtonGroup.getCheckedRadioButtonId();
-                    switch(radioButtonID) {
+                    RadioGroup radioButtonGroupMode = (RadioGroup) findViewById(R.id.radioGroupMode);
+                    int radioButtonModeID = radioButtonGroupMode.getCheckedRadioButtonId();
+                    Intent i = null;
+                    switch(radioButtonModeID) {
                         case R.id.radioButtonDPad:
-                            startActivity(new Intent(getApplicationContext(), DpadActivity.class));
+                            i = new Intent(getApplicationContext(), DpadActivity.class);
                             break;
                         case R.id.radioButtonGyruss:
-                            startActivity(new Intent(getApplicationContext(), GyrussActivity.class));
+                            i = new Intent(getApplicationContext(), GyrussActivity.class);
                             break;
                         case R.id.radioButtonLinear:
-                            startActivity(new Intent(getApplicationContext(), LinearActivity.class));
+                            i = new Intent(getApplicationContext(), LinearActivity.class);
                             break;
                         case R.id.radioButtonUniJoystiCle:
-                            startActivity(new Intent(getApplicationContext(), UnijoysticleActivity.class));
+                            i = new Intent(getApplicationContext(), UnijoysticleActivity.class);
                             break;
+                    }
+                    if (i != null) {
+
+                        // which joy is selected: 0 or 1?
+                        RadioGroup radioButtonGroupJoy = (RadioGroup) findViewById(R.id.radioGroupJoy);
+                        int radioButtonJoyID = radioButtonGroupJoy.getCheckedRadioButtonId();
+                        View radioButton = radioButtonGroupJoy.findViewById(radioButtonJoyID);
+                        int idx = radioButtonGroupJoy.indexOfChild(radioButton);
+
+                        i.putExtra("joyPort", (byte)idx);
+                        startActivity(i);
+                    } else {
+                        Log.d(TAG, "Unknown error. Invalid radio button value");
                     }
                 }
             });

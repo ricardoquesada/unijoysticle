@@ -9,10 +9,19 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="moe.retro.unijoysticle.LinearActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0"
+        android:id="@+id/textViewLinear"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
+        android:id="@+id/seekBarLinear"
         android:max="31"
         android:indeterminate="false"
         android:layout_alignParentTop="true"
