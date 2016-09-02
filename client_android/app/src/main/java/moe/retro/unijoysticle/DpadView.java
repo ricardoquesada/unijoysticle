@@ -19,16 +19,25 @@ package moe.retro.unijoysticle;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import java.util.ArrayList;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.hardware.input.InputManager;
+
+import moe.retro.unijoysticle.unijosyticle.R;
+
 
 /*
  * A trivial joystick based physics game to demonstrate joystick handling. If
@@ -49,6 +58,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     private final InputManager mInputManager;
     private Controller mController = null;
+
+    private ArrayList<Sprite> mSprites;
 
     public DpadView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -94,7 +105,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         int deviceId = event.getDeviceId();
-        if (deviceId != -1) {
+        if (deviceId != -1 && mController != null) {
             int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
                 DpadActivity host = (DpadActivity) getContext();
@@ -110,7 +121,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         int deviceId = event.getDeviceId();
-        if (deviceId != -1) {
+        if (deviceId != -1 && mController != null) {
             int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
                 DpadActivity host = (DpadActivity) getContext();
@@ -125,27 +136,29 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
 
-        int dpadValue = mController.getDirectionPressed(event);
-        if (dpadValue != -1) {
-            DpadActivity host = (DpadActivity) getContext();
-            byte maskedValue = (byte) (dpadValue & 0b00001111);
-            host.mJoyState &= 0b11110000;
-            host.mJoyState |= maskedValue;
-            Log.d(TAG,"Joy State (STICK):" + host.mJoyState);
-            return true;
-        }
-
-        // Check that the event came from a joystick or gamepad since a generic
-        // motion event could be almost anything. API level 18 adds the useful
-        // event.isFromSource() helper function.
-        int eventSource = event.getSource();
-        if ((((eventSource & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
-                ((eventSource & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK))
-                && event.getAction() == MotionEvent.ACTION_MOVE) {
-            int id = event.getDeviceId();
-            if (id != -1) {
-                Log.d(TAG, "onGenericMotionEvent. event:" + event.toString());
+        if (mController != null) {
+            int dpadValue = mController.getDirectionPressed(event);
+            if (dpadValue != -1) {
+                DpadActivity host = (DpadActivity) getContext();
+                byte maskedValue = (byte) (dpadValue & 0b00001111);
+                host.mJoyState &= 0b11110000;
+                host.mJoyState |= maskedValue;
+                Log.d(TAG, "Joy State (STICK):" + host.mJoyState);
                 return true;
+            }
+
+            // Check that the event came from a joystick or gamepad since a generic
+            // motion event could be almost anything. API level 18 adds the useful
+            // event.isFromSource() helper function.
+            int eventSource = event.getSource();
+            if ((((eventSource & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+                    ((eventSource & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK))
+                    && event.getAction() == MotionEvent.ACTION_MOVE) {
+                int id = event.getDeviceId();
+                if (id != -1) {
+                    Log.d(TAG, "onGenericMotionEvent. event:" + event.toString());
+                    return true;
+                }
             }
         }
         return super.onGenericMotionEvent(event);
@@ -164,6 +177,13 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         // Update the animation
+
+        // Draw the buttons
+        int num = mSprites.size();
+        for (int i = 0; i < num; i++) {
+            Sprite sprite = mSprites.get(i);
+            sprite.draw(canvas);
+        }
     }
 
     /**
@@ -214,6 +234,18 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public void onInputDeviceRemoved(int deviceId) {
         Log.d(TAG, "onInputDeviceRemoved: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        // add nine sprites after we have the layout in order to know the View size
+        mSprites = new ArrayList<Sprite>();
+        for(int i=0; i<9; ++i) {
+            Sprite sprite = new Sprite(i);
+            mSprites.add(sprite);
+        }
     }
 
     public abstract class Controller {
@@ -371,6 +403,62 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 }
             }
             return directionPressed;
+        }
+    }
+
+    class Sprite {
+        public float mPosX;
+        public float mPosY;
+        public int mIndex;
+        public Paint mPaint;
+        public Bitmap mBitmap;
+        public Matrix mMatrix;
+
+        public Sprite(int i) {
+            mIndex = i;
+            mPaint = new Paint();
+            mPaint.setStyle(Paint.Style.FILL);
+            mPaint.setARGB(255, 0, 0, 255);
+
+            Resources res = getResources();
+            mMatrix = new Matrix();
+
+            if (i==0 || i==2 || i==4 || i==6) {
+                // straight arrow
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_right);
+                mMatrix.setRotate(((i - 2) / 2) * 90, mBitmap.getWidth() / 2, mBitmap.getHeight() / 2);
+            } else if (i==1 || i==3 || i==5 || i==7) {
+                // diagonal arrow
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_top_right);
+                mMatrix.setRotate(((i - 1) / 2) * 90, mBitmap.getWidth() / 2, mBitmap.getHeight() / 2);
+            } else {
+                // i==8. button
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.button);
+            }
+
+            if (i<8) {
+                int pos_x[] = {/**/  0, 1,  -1, /**/ 1,   -1,  0,  1,   -1};
+                int pos_y[] = {/**/ -1,-1,   0, /**/ 0,    1,  1,  1,   -1};
+
+                mPosX = (pos_x[i] + 1) * mBitmap.getWidth();
+                mPosY = (pos_y[i] + 1) * mBitmap.getHeight();
+            }
+
+            // setup Fire button
+            // get view's width and height
+            if(i == 8) {
+                int sw = getWidth();
+                int sh = getHeight();
+                mPosX = sw - mBitmap.getWidth();
+                mPosY = sh / 2;
+            }
+        }
+
+        public void draw(Canvas canvas) {
+            canvas.save();
+            canvas.translate(mPosX, mPosY);
+            canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+            canvas.restore();
         }
     }
 }
