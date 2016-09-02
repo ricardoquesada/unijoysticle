@@ -30,24 +30,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.hardware.input.InputManager;
 
-// OUYA profile:
-// Dpad up: 104
-// Dpad down: 105
-// Dpad left: 109
-// Dpad right: 108
-// A:  96
-// B: 99
-// X: 97
-// Y: 98
-// stick left button: 102
-// stick right button: 103
-// Menu: 107
-// L1: 100
-// L2: 110 + ???
-// R1: 101
-// R2: 106 + ???
-
-
 /*
  * A trivial joystick based physics game to demonstrate joystick handling. If
  * the game controller has a vibrator, then it is used to provide feedback when
@@ -66,6 +48,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     final static int JOY_FIRE     = 1 << 4;
 
     private final InputManager mInputManager;
+    private Controller mController = null;
 
     public DpadView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,32 +57,49 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         setFocusableInTouchMode(true);
 
         mInputManager = (InputManager) this.getContext().getSystemService(Context.INPUT_SERVICE);
-        mInputManager.registerInputDeviceListener(this, null);
         findControllers();
+
+        mInputManager.registerInputDeviceListener(this, null);
     }
 
     void findControllers() {
         int[] deviceIds = mInputManager.getInputDeviceIds();
         for (int deviceId : deviceIds) {
-            InputDevice dev = mInputManager.getInputDevice(deviceId);
-            int sources = dev.getSources();
-            // if the device is a gamepad/joystick, create a ship to represent it
-            if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
-                    ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
-                // if the device has a gamepad or joystick
-                Log.d(TAG, "Joystick / Gamepad found:" + deviceId + dev.getName());
-            }
+                if (createController(deviceId))
+                    break;
         }
+    }
+
+    boolean createController(int deviceId) {
+        InputDevice dev = mInputManager.getInputDevice(deviceId);
+        int sources = dev.getSources();
+        // if the device is a gamepad/joystick, create a ship to represent it
+        if (
+                ((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+                ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)
+                ) {
+            Log.d(TAG, "Name: " + dev.getName() + " Descriptor: " + dev.getDescriptor());
+
+            String devName = dev.getName();
+            if (devName.startsWith("OUYA")) {
+                mController = new OUYAController();
+            } else {
+                mController = new GenericController();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         int deviceId = event.getDeviceId();
         if (deviceId != -1) {
-            Log.d(TAG, "onKeyDown. keyCode:" + keyCode);
-            int dpadValue = getDirectionPressed(event);
+            int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
-                Log.d(TAG, "Dpad value: " + dpadValue);
+                DpadActivity host = (DpadActivity) getContext();
+                host.mJoyState |= dpadValue;
+                Log.d(TAG,"Joy State (DOWN):" + host.mJoyState);
                 return true;
             }
         }
@@ -111,10 +111,11 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         int deviceId = event.getDeviceId();
         if (deviceId != -1) {
-            Log.d(TAG, "onKeyUp. keyCode:" + keyCode);
-            int dpadValue = getDirectionPressed(event);
+            int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
-                Log.d(TAG, "Dpad value: " + dpadValue);
+                DpadActivity host = (DpadActivity) getContext();
+                host.mJoyState &= ~(byte)(dpadValue & 0xff);
+                Log.d(TAG,"Joy State (UP):" + host.mJoyState);
                 return true;
             }
         }
@@ -124,12 +125,14 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
 
-        int dpadValue = getDirectionPressed(event);
+        int dpadValue = mController.getDirectionPressed(event);
         if (dpadValue != -1) {
-            if (dpadValue != 0) {
-                Log.d(TAG, "Dpad value: " + dpadValue);
-                return true;
-            }
+            DpadActivity host = (DpadActivity) getContext();
+            byte maskedValue = (byte) (dpadValue & 0b00001111);
+            host.mJoyState &= 0b11110000;
+            host.mJoyState |= maskedValue;
+            Log.d(TAG,"Joy State (STICK):" + host.mJoyState);
+            return true;
         }
 
         // Check that the event came from a joystick or gamepad since a generic
@@ -184,7 +187,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
      */
     @Override
     public void onInputDeviceAdded(int deviceId) {
-        Log.d(TAG, "onInputDeviceAdded: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
+        Log.d(TAG, "onInputDeviceAdded: " + deviceId);
+        createController(deviceId);
     }
 
     /*
@@ -197,7 +201,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
      */
     @Override
     public void onInputDeviceChanged(int deviceId) {
-        Log.d(TAG, "onInputDeviceChanged: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
+        Log.d(TAG, "onInputDeviceChanged: " + deviceId);
+        createController(deviceId);
     }
 
     /*
@@ -211,69 +216,149 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         Log.d(TAG, "onInputDeviceRemoved: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
     }
 
+    public abstract class Controller {
+        abstract public int getDirectionPressed(InputEvent event);
+
+        public boolean isDpadDevice(InputEvent event) {
+            // Check that input comes from a device with directional pads.
+            if ((event.getSource() & InputDevice.SOURCE_DPAD)
+                    != InputDevice.SOURCE_DPAD) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
     // Code taken from here:
     // https://developer.android.com/training/game-controllers/controller-input.html
-    public int getDirectionPressed(InputEvent event) {
+    public class GenericController extends Controller {
+        @Override
+        public int getDirectionPressed(InputEvent event) {
 
-        int directionPressed = -1;
+            int directionPressed = -1;
+            boolean processed = false;
 
-        if (!isDpadDevice(event)) {
+            if (!isDpadDevice(event)) {
+                return -1;
+            }
+
+            // If the input event is a MotionEvent, check its hat axis values.
+            if (event instanceof MotionEvent) {
+
+                directionPressed = 0;
+
+                // Use the hat axis value to find the D-pad direction
+                MotionEvent motionEvent = (MotionEvent) event;
+                float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+                float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // LEFT and RIGHT direction accordingly.
+                if (Float.compare(xaxis, -1.0f) == 0) {
+                    directionPressed |= JOY_LEFT;
+                } else if (Float.compare(xaxis, 1.0f) == 0) {
+                    directionPressed |= JOY_RIGHT;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (Float.compare(yaxis, -1.0f) == 0) {
+                    directionPressed |= JOY_UP;
+                } else if (Float.compare(yaxis, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN;
+                }
+            }
+
+            // If the input event is a KeyEvent, check its key code.
+            else if (event instanceof KeyEvent) {
+
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    directionPressed |= JOY_LEFT;
+                    processed = true;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    directionPressed |= JOY_RIGHT;
+                    processed = true;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                    directionPressed = JOY_UP;
+                    processed = true;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    directionPressed = JOY_DOWN;
+                    processed = true;
+                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    // do nothing
+                }
+            }
+            if (directionPressed != -1 || processed)
+                return directionPressed;
             return -1;
         }
-
-        // If the input event is a MotionEvent, check its hat axis values.
-        if (event instanceof MotionEvent) {
-
-            directionPressed = 0;
-
-            // Use the hat axis value to find the D-pad direction
-            MotionEvent motionEvent = (MotionEvent) event;
-            float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-            float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
-
-            // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
-            // LEFT and RIGHT direction accordingly.
-            if (Float.compare(xaxis, -1.0f) == 0) {
-                directionPressed |= JOY_LEFT;
-            } else if (Float.compare(xaxis, 1.0f) == 0) {
-                directionPressed |= JOY_RIGHT;
-            }
-            // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
-            // UP and DOWN direction accordingly.
-            if (Float.compare(yaxis, -1.0f) == 0) {
-                directionPressed |= JOY_UP;
-            } else if (Float.compare(yaxis, 1.0f) == 0) {
-                directionPressed |= JOY_DOWN;
-            }
-        }
-
-        // If the input event is a KeyEvent, check its key code.
-        else if (event instanceof KeyEvent) {
-
-            // Use the key code to find the D-pad direction.
-            KeyEvent keyEvent = (KeyEvent) event;
-            if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                directionPressed |= JOY_LEFT;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                directionPressed |= JOY_RIGHT;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                directionPressed = JOY_UP;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                directionPressed = JOY_DOWN;
-            } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
-                // do nothing
-            }
-        }
-        return directionPressed;
     }
 
-    public boolean isDpadDevice(InputEvent event) {
-        // Check that input comes from a device with directional pads.
-        if ((event.getSource() & InputDevice.SOURCE_DPAD)
-                != InputDevice.SOURCE_DPAD) {
-            return true;
-        } else {
-            return false;
+    public class OUYAController extends Controller {
+        // OUYA profile:
+        // Dpad up, down, left, right: 104, 105, 109, 108
+        // A, B, X, Y:  96, 99, 97, 98
+        // stick left / right button: 102, 103
+        // Menu: 107
+        // L1, R1: 100, 101
+        // L2, R2: 110 + ???, 106 + ???
+
+        static final int OUYA_DPAD_UP = 104;
+        static final int OUYA_DPAD_DOWN = 105;
+        static final int OUYA_DPAD_LEFT = 109;
+        static final int OUYA_DPAD_RIGHT = 108;
+
+        @Override
+        public int getDirectionPressed(InputEvent event) {
+
+            if (!isDpadDevice(event)) {
+                return -1;
+            }
+
+            int directionPressed = 0;
+
+            // If the input event is a MotionEvent, check its hat axis values.
+            if (event instanceof MotionEvent) {
+
+                // Use the hat axis value to find the D-pad direction
+                MotionEvent motionEvent = (MotionEvent) event;
+                float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+                float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+
+                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // LEFT and RIGHT direction accordingly.
+                if (Float.compare(xaxis, -1.0f) == 0) {
+                    directionPressed |= JOY_LEFT;
+                } else if (Float.compare(xaxis, 1.0f) == 0) {
+                    directionPressed |= JOY_RIGHT;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (Float.compare(yaxis, -1.0f) == 0) {
+                    directionPressed |= JOY_UP;
+                } else if (Float.compare(yaxis, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN;
+                }
+            }
+
+            // If the input event is a KeyEvent, check its key code.
+            else if (event instanceof KeyEvent) {
+
+                // Use the key code to find the D-pad direction.
+                KeyEvent keyEvent = (KeyEvent) event;
+                if (keyEvent.getKeyCode() == OUYA_DPAD_LEFT) {
+                    directionPressed |= JOY_LEFT;
+                } else if (keyEvent.getKeyCode() == OUYA_DPAD_RIGHT) {
+                    directionPressed |= JOY_RIGHT;
+                }
+                if (keyEvent.getKeyCode() == OUYA_DPAD_UP) {
+                    directionPressed |= JOY_UP;
+                } else if (keyEvent.getKeyCode() == OUYA_DPAD_DOWN) {
+                    directionPressed |= JOY_DOWN;
+                }
+            }
+            return directionPressed;
         }
     }
 }
