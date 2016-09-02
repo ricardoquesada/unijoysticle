@@ -235,7 +235,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         @Override
         public int getDirectionPressed(InputEvent event) {
 
-            int directionPressed = -1;
+            int directionPressed = 0;
             boolean processed = false;
 
             if (!isDpadDevice(event)) {
@@ -245,7 +245,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             // If the input event is a MotionEvent, check its hat axis values.
             if (event instanceof MotionEvent) {
 
-                directionPressed = 0;
+                processed = true;
 
                 // Use the hat axis value to find the D-pad direction
                 MotionEvent motionEvent = (MotionEvent) event;
@@ -272,24 +272,29 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             else if (event instanceof KeyEvent) {
 
                 // Use the key code to find the D-pad direction.
-                KeyEvent keyEvent = (KeyEvent) event;
-                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                final int keyCode = ((KeyEvent)event).getKeyCode();
+
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                     directionPressed |= JOY_LEFT;
                     processed = true;
-                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                     directionPressed |= JOY_RIGHT;
                     processed = true;
-                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                    directionPressed = JOY_UP;
+                }
+
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    directionPressed |= JOY_UP;
                     processed = true;
-                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    directionPressed = JOY_DOWN;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    directionPressed |= JOY_DOWN;
                     processed = true;
-                } else if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
-                    // do nothing
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                    directionPressed |= JOY_FIRE;
+                    processed = true;
                 }
             }
-            if (directionPressed != -1 || processed)
+            if (processed)
                 return directionPressed;
             return -1;
         }
@@ -308,6 +313,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         static final int OUYA_DPAD_DOWN = 105;
         static final int OUYA_DPAD_LEFT = 109;
         static final int OUYA_DPAD_RIGHT = 108;
+        static final int OUYA_BUTTON_A = 96;
+        static final int OUYA_BUTTON_B = 99;
 
         @Override
         public int getDirectionPressed(InputEvent event) {
@@ -346,16 +353,21 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             else if (event instanceof KeyEvent) {
 
                 // Use the key code to find the D-pad direction.
-                KeyEvent keyEvent = (KeyEvent) event;
-                if (keyEvent.getKeyCode() == OUYA_DPAD_LEFT) {
+                int keyCode = ((KeyEvent)event).getKeyCode();
+
+                if (keyCode == OUYA_DPAD_LEFT) {
                     directionPressed |= JOY_LEFT;
-                } else if (keyEvent.getKeyCode() == OUYA_DPAD_RIGHT) {
+                } else if (keyCode == OUYA_DPAD_RIGHT) {
                     directionPressed |= JOY_RIGHT;
                 }
-                if (keyEvent.getKeyCode() == OUYA_DPAD_UP) {
+                if (keyCode == OUYA_DPAD_UP) {
                     directionPressed |= JOY_UP;
-                } else if (keyEvent.getKeyCode() == OUYA_DPAD_DOWN) {
+                } else if (keyCode == OUYA_DPAD_DOWN) {
                     directionPressed |= JOY_DOWN;
+                }
+
+                if (keyCode == OUYA_BUTTON_A) {
+                    directionPressed |= JOY_FIRE;
                 }
             }
             return directionPressed;
