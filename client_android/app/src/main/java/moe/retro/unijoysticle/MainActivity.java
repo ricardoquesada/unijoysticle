@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.google.android.gms.appindexing.Action;
@@ -64,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Disable UniJoystiCle and Gyruss modes until they are implemented
+        RadioButton radioUnijoysticle = (RadioButton) findViewById(R.id.radioButtonUniJoystiCle);
+        radioUnijoysticle.setEnabled(false);
+        RadioButton radioGyruss = (RadioButton) findViewById(R.id.radioButtonGyruss);
+        radioGyruss.setEnabled(false);
+
 
         Button startButton = (Button) findViewById(R.id.buttonStart);
         if (null != startButton) {
