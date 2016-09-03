@@ -23,12 +23,20 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import java.util.ArrayList;
+
+import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyEvent;
@@ -58,11 +66,26 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     private final InputManager mInputManager;
     private Controller mController = null;
+    private SparseArray<PointF> mActivePointers;
 
     private ArrayList<Sprite> mSprites;
+    // sprites order: Top, Top-Right, Right, Bottom-Right, Bottom, Bottom-Left, Left, Top-Left, Fire
+    private final byte mSpritesJoyBits[] = {
+            0b0001, /* top */
+            0b1001, /* top-right */
+            0b1000, /* right */
+            0b1010, /* bottom-right */
+            0b0010, /* bottom */
+            0b0110, /* bottom-left */
+            0b0100, /* left */
+            0b0101, /* top-left */
+            0b10000, /* fire */
+    };
 
     public DpadView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        mActivePointers = new SparseArray<PointF>();
 
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -213,8 +236,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     /*
      * This is an unusual case. Input devices don't typically change, but they
-     * certainly can --- for example a device may have different modes. We use
-     * this to make sure that the ship has an up-to-date InputDevice.
+     * certainly can --- for example a device may have different modes
      * @see
      * com.example.inputmanagercompat.InputManagerCompat.InputDeviceListener
      * #onInputDeviceChanged(int)
@@ -226,7 +248,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     }
 
     /*
-     * Remove any ship associated with the ID.
      * @see
      * com.example.inputmanagercompat.InputManagerCompat.InputDeviceListener
      * #onInputDeviceRemoved(int)
@@ -234,6 +255,109 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public void onInputDeviceRemoved(int deviceId) {
         Log.d(TAG, "onInputDeviceRemoved: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
+    }
+
+    //
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        // MotionEvent reports input details from the touch screen
+        // and other input controls. In this case, you are only
+        // interested in events where the touch position changed.
+
+        boolean handled = false;
+
+        int actionMask = e.getActionMasked();
+
+        switch (actionMask) {
+            case MotionEvent.ACTION_MOVE:
+                for (int size = e.getPointerCount(), i = 0; i < size; i++) {
+                    int pid = e.getPointerId(i);
+                    // get previous position and disable it
+                    PointF oldP = mActivePointers.get(pid);
+                    disableTouch(oldP.x, oldP.y);
+                    float xx = e.getX(i);
+                    float yy = e.getY(i);
+                    mActivePointers.put(pid, new PointF(xx, yy));
+                    handled |= enableTouch(xx, yy);
+                }
+                break;
+            case MotionEvent.ACTION_DOWN: {
+                // one finger, use pointer 0
+                final int pointerId = e.getPointerId(0);
+                final float x = e.getX();
+                final float y = e.getY();
+                mActivePointers.put(pointerId, new PointF(x, y));
+                handled |= enableTouch(x, y);
+                break;
+            }
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                final int pointerIndex = e.getActionIndex();
+                final int pointerId = e.getPointerId(pointerIndex);
+                final float x = e.getX(pointerIndex);
+                final float y = e.getY(pointerIndex);
+                mActivePointers.put(pointerId, new PointF(x, y));
+                handled |= enableTouch(x, y);
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                // one finger, use pointer 0
+                final int pointerId = e.getPointerId(0);
+                final float x = e.getX();
+                final float y = e.getY();
+                mActivePointers.delete(pointerId);
+                handled |= disableTouch(x, y);
+                break;
+            }
+            case MotionEvent.ACTION_POINTER_UP: {
+                final int pointerIndex = e.getActionIndex();
+                final int pointerId = e.getPointerId(pointerIndex);
+                final float x = e.getX(pointerIndex);
+                final float y = e.getY(pointerIndex);
+                mActivePointers.delete(pointerId);
+                handled |= disableTouch(x, y);
+                break;
+            }
+            case MotionEvent.ACTION_CANCEL:
+                for (int size = e.getPointerCount(), i = 0; i < size; i++) {
+                    int pid = e.getPointerId(i);
+                    mActivePointers.delete(pid);
+                    handled |= disableTouch(e.getX(i), e.getY(i));
+                }
+                break;
+        }
+        if (handled)
+            return true;
+        return super.onTouchEvent(e);
+    }
+
+    protected boolean disableTouch(float x, float y) {
+        boolean handled = false;
+        DpadActivity host = (DpadActivity) getContext();
+        for(int i=0; i<9; ++i) {
+            final Sprite sprite = mSprites.get(i);
+            if (sprite.containPoint(x,y)) {
+                sprite.setColor(Color.WHITE);
+                host.mJoyState &= ~mSpritesJoyBits[i];
+                invalidate();
+                handled = true;
+            }
+        }
+        return handled;
+    }
+
+    protected boolean enableTouch(float x, float y) {
+        boolean handled = false;
+        DpadActivity host = (DpadActivity) getContext();
+        for(int i=0; i<9; ++i) {
+            final Sprite sprite = mSprites.get(i);
+            if (sprite.containPoint(x,y)) {
+                sprite.setColor(Color.RED);
+                host.mJoyState |= mSpritesJoyBits[i];
+                invalidate();
+                handled = true;
+            }
+        }
+        return handled;
     }
 
     @Override
@@ -248,6 +372,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         }
     }
 
+    //
+    // Controller logic
+    //
     public abstract class Controller {
         abstract public int getDirectionPressed(InputEvent event);
 
@@ -261,6 +388,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             }
         }
     }
+
     // Code taken from here:
     // https://developer.android.com/training/game-controllers/controller-input.html
     public class GenericController extends Controller {
@@ -417,40 +545,37 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         public Sprite(int i) {
             mIndex = i;
             mPaint = new Paint();
-            mPaint.setStyle(Paint.Style.FILL);
-            mPaint.setARGB(255, 0, 0, 255);
 
             Resources res = getResources();
             mMatrix = new Matrix();
 
-            if (i==0 || i==2 || i==4 || i==6) {
-                // straight arrow
-                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_right);
-                mMatrix.setRotate(((i - 2) / 2) * 90, mBitmap.getWidth() / 2, mBitmap.getHeight() / 2);
-            } else if (i==1 || i==3 || i==5 || i==7) {
-                // diagonal arrow
-                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_top_right);
-                mMatrix.setRotate(((i - 1) / 2) * 90, mBitmap.getWidth() / 2, mBitmap.getHeight() / 2);
-            } else {
-                // i==8. button
-                mBitmap = BitmapFactory.decodeResource(res, R.drawable.button);
-            }
-
+            final int sw = getWidth();
+            final int sh = getHeight();
             if (i<8) {
-                int pos_x[] = {/**/  0, 1,  -1, /**/ 1,   -1,  0,  1,   -1};
-                int pos_y[] = {/**/ -1,-1,   0, /**/ 0,    1,  1,  1,   -1};
+                // dpad buttons
+                // positions:
+                final int pos_x[] = {/**/  0,  1,    -1, /**/ 1,   -1,  0,  1,   -1};
+                final int pos_y[] = {/**/ -1, -1,     0, /**/ 0,    1,  1,  1,   -1};
+                // rotations:
+                final int rots[] =  {    -90,  0,   180, /**/ 0,  180, 90, 90,  -90};
+                // texture ids:
+                final int texid[] = {      0,  1,     0,      0,    1,  0,  1,    1};
 
-                mPosX = (pos_x[i] + 1) * mBitmap.getWidth();
-                mPosY = (pos_y[i] + 1) * mBitmap.getHeight();
-            }
+                if (texid[i]==0)
+                    mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_right);
+                else
+                    mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_top_right);
 
-            // setup Fire button
-            // get view's width and height
-            if(i == 8) {
-                int sw = getWidth();
-                int sh = getHeight();
-                mPosX = sw - mBitmap.getWidth();
-                mPosY = sh / 2;
+                final int padding = 2;
+                mPosX = (pos_x[i] + 1) * mBitmap.getWidth() + padding;
+                mPosY = sh - mBitmap.getHeight() * (3-(pos_y[i]+1)) - padding;
+                mMatrix.setRotate(rots[i], mBitmap.getWidth()/2, mBitmap.getHeight()/2);
+            }  else if(i == 8) {
+                // fire button
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.button);
+                final int padding = 50;
+                mPosX = sw - mBitmap.getWidth() - padding;
+                mPosY = sh/2 - mBitmap.getHeight()/2;
             }
         }
 
@@ -459,6 +584,18 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             canvas.translate(mPosX, mPosY);
             canvas.drawBitmap(mBitmap, mMatrix, mPaint);
             canvas.restore();
+        }
+
+        public boolean containPoint(float x, float y) {
+            return (x >= mPosX &&
+                    x <= (mPosX + mBitmap.getWidth()) &&
+                    y >= mPosY &&
+                    y <= (mPosY + mBitmap.getHeight()));
+        }
+
+        public void setColor(int color) {
+            final ColorFilter filter = new LightingColorFilter(color, 1);
+            mPaint.setColorFilter(filter);
         }
     }
 }
