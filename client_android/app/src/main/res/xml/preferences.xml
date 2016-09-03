@@ -3,10 +3,10 @@
     <PreferenceCategory
         android:title="@string/pref_title_cat_server">
         <EditTextPreference
-            android:key="example_text"
+            android:key="@string/key_serverAddress"
             android:summary="@string/pref_summary_server"
             android:title="@string/pref_title_server_name"
-            android:defaultValue="@string/pref_default_server"
+            android:defaultValue="@string/default_serverAddress"
             android:selectAllOnFocus="true"
             android:inputType="textCapWords"
             android:capitalize="words"
@@ -51,15 +51,15 @@
     <PreferenceCategory
         android:title="@string/pref_title_cat_dpad">
         <SwitchPreference
-            android:key="enable_button_b"
-            android:title="@string/pref_title_enable_b"
-            android:defaultValue="true" />
+            android:key="@string/key_enableButtonB"
+            android:title="@string/title_enableButtonB"
+            android:defaultValue="@string/default_enableButtonB" />
 
         <SwitchPreference
-            android:dependency="enable_button_b"
-            android:key="swap_button_a_b"
-            android:title="@string/pref_title_swap_a_b"
-            android:defaultValue="true" />
+            android:dependency="@string/key_enableButtonB"
+            android:key="@string/key_swapButtonsAB"
+            android:title="@string/title_swapButtonsAB"
+            android:defaultValue="@string/default_swapButtonsAB" />
     </PreferenceCategory>
 
     <PreferenceCategory

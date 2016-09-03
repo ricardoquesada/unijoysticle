@@ -19,6 +19,7 @@ package moe.retro.unijoysticle;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import java.util.ArrayList;
@@ -67,6 +69,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     private final InputManager mInputManager;
     private Controller mController = null;
     private SparseArray<PointF> mActivePointers;
+    private final boolean mEnableButtonB;
+    private final boolean mSwapButtonsAB;
 
     private ArrayList<Sprite> mSprites;
     // sprites order: Top, Top-Right, Right, Bottom-Right, Bottom, Bottom-Left, Left, Top-Left, Fire
@@ -86,6 +90,11 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         super(context, attrs);
 
         mActivePointers = new SparseArray<PointF>();
+
+        DpadActivity host = (DpadActivity) getContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mEnableButtonB = preferences.getBoolean(host.getString(R.string.key_enableButtonB), false);
+        mSwapButtonsAB = preferences.getBoolean(host.getString(R.string.key_swapButtonsAB), false);
 
         setFocusable(true);
         setFocusableInTouchMode(true);

@@ -16,7 +16,9 @@
 
 package moe.retro.unijoysticle;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.os.AsyncTask;
@@ -31,9 +33,8 @@ import java.util.concurrent.TimeUnit;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-/**
- * Created by riq on 8/31/16.
- */
+import moe.retro.unijoysticle.unijosyticle.R;
+
 public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = BaseActivity.class.getSimpleName();
@@ -109,8 +110,11 @@ public class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "192.168.4.1");
+
         // udp connection
-        mNet = new UDPConnection("192.168.4.1");
+        mNet = new UDPConnection(serverAddress);
 
         // get JoyValue
         Bundle b = getIntent().getExtras();
