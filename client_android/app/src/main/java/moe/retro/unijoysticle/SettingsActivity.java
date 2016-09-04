@@ -20,15 +20,19 @@ package moe.retro.unijoysticle;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -37,6 +41,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
@@ -146,13 +151,44 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragment implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences);
-//            setHasOptionsMenu(true);
+            PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
+
+            final EditTextPreference pref = (EditTextPreference)findPreference(getString(R.string.key_serverAddress));
+            pref.setSummary(pref.getText());
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,  String key) {
+            updatePreference(findPreference(key), key);
+        }
+
+        // based on: http://stackoverflow.com/a/4325239/1119460
+        private void updatePreference(Preference preference, String key) {
+            if (preference == null) return;
+            if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                listPreference.setSummary(listPreference.getEntry());
+            }
+            if (preference instanceof EditTextPreference) {
+                EditTextPreference editTextPref = (EditTextPreference) preference;
+                if (preference.getTitle().toString().toLowerCase().contains("password"))
+                {
+                    preference.setSummary("******");
+                } else {
+                    preference.setSummary(editTextPref.getText());
+                }
+            }
+            if (preference instanceof MultiSelectListPreference) {
+                EditTextPreference editTextPref = (EditTextPreference) preference;
+                preference.setSummary(editTextPref.getText());
+            }
         }
     }
 }
