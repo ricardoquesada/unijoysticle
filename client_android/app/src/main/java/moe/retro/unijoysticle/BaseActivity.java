@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.os.AsyncTask;
+import android.view.WindowManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -109,6 +110,9 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "192.168.4.1");

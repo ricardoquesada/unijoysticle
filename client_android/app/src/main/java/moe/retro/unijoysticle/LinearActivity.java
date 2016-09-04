@@ -29,11 +29,15 @@ public class LinearActivity extends BaseActivity implements SeekBar.OnSeekBarCha
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTitle(getString(R.string.action_bar_title_linear));
+
         setContentView(R.layout.activity_linear);
 
         mValueText = (TextView) findViewById(R.id.textViewLinear);
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBarLinear);
         seekBar.setOnSeekBarChangeListener(this);
+
     }
 
     // OnSeekBarChangeListener methods :

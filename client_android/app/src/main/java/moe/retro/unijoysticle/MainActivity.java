@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md"));
+                    startActivity(browserIntent);
                 }
             });
         }
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://moe.retro.unijoysticle.unijosyticle/http/host/path")
+                Uri.parse("android-app://moe.retro.unijoysticle/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
     }
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://moe.retro.unijoysticle.unijosyticle/http/host/path")
+                Uri.parse("android-app://moe.retro.unijoysticle/http/host/path")
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();

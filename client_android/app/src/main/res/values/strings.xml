@@ -41,4 +41,9 @@
     <string name="default_enableButtonB">false</string>
     <string name="default_swapButtonsAB">false</string>
 
+
+    <!-- ActionBar Titles -->
+    <string name="action_bar_title_dpad">Dpad mode</string>
+    <string name="action_bar_title_linear">Linear mode</string>
+
 </resources>

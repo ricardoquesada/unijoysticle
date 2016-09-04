@@ -16,7 +16,6 @@
 
 package moe.retro.unijoysticle;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import moe.retro.unijoysticle.unijosyticle.R;
@@ -26,6 +25,9 @@ public class DpadActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTitle(getString(R.string.action_bar_title_dpad));
+
         setContentView(R.layout.activity_dpad);
     }
 }

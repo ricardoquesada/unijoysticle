@@ -130,6 +130,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             } else {
                 mController = new GenericController();
             }
+
+            DpadActivity host = (DpadActivity) getContext();
+            host.setTitle(host.getString(R.string.action_bar_title_dpad) + ": " + devName);
             return true;
         }
         return false;
@@ -287,7 +290,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
      */
     @Override
     public void onInputDeviceRemoved(int deviceId) {
-        Log.d(TAG, "onInputDeviceRemoved: " + deviceId + ", " + InputDevice.getDevice(deviceId).getName());
+        Log.d(TAG, "onInputDeviceRemoved: " + deviceId);
+        DpadActivity host = (DpadActivity) getContext();
+        host.setTitle(host.getString(R.string.action_bar_title_dpad));
     }
 
     //
