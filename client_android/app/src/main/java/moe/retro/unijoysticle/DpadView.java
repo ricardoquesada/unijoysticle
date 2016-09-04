@@ -26,8 +26,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -65,6 +63,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     final static int JOY_LEFT     = 1 << 2;
     final static int JOY_RIGHT    = 1 << 3;
     final static int JOY_FIRE     = 1 << 4;
+    // there is not such thing as button B in commodore 64, but
+    // this bit is used as temp value when storing the game controller info.
+    final static int JOY_FIRE_B   = 1 << 5;
 
     private final InputManager mInputManager;
     private Controller mController = null;
@@ -73,15 +74,15 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     private final boolean mSwapButtonsAB;
 
     private ArrayList<Sprite> mSprites;
-    // sprites order: Top, Top-Right, Right, Bottom-Right, Bottom, Bottom-Left, Left, Top-Left, Fire
+    // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
     private final byte mSpritesJoyBits[] = {
             0b0001, /* top */
             0b1001, /* top-right */
-            0b1000, /* right */
-            0b1010, /* bottom-right */
-            0b0010, /* bottom */
-            0b0110, /* bottom-left */
             0b0100, /* left */
+            0b1000, /* right */
+            0b0110, /* bottom-left */
+            0b0010, /* bottom */
+            0b1010, /* bottom-right */
             0b0101, /* top-left */
             0b10000, /* fire */
     };
@@ -142,7 +143,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             if (dpadValue != -1) {
                 DpadActivity host = (DpadActivity) getContext();
                 host.mJoyState |= dpadValue;
-                Log.d(TAG,"Joy State (DOWN):" + host.mJoyState);
+                repaintButtons();
                 return true;
             }
         }
@@ -158,7 +159,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             if (dpadValue != -1) {
                 DpadActivity host = (DpadActivity) getContext();
                 host.mJoyState &= ~(byte)(dpadValue & 0xff);
-                Log.d(TAG,"Joy State (UP):" + host.mJoyState);
+                repaintButtons();
                 return true;
             }
         }
@@ -175,7 +176,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 byte maskedValue = (byte) (dpadValue & 0b00001111);
                 host.mJoyState &= 0b11110000;
                 host.mJoyState |= maskedValue;
-                Log.d(TAG, "Joy State (STICK):" + host.mJoyState);
+                repaintButtons();
                 return true;
             }
 
@@ -189,6 +190,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 int id = event.getDeviceId();
                 if (id != -1) {
                     Log.d(TAG, "onGenericMotionEvent. event:" + event.toString());
+                    repaintButtons();
                     return true;
                 }
             }
@@ -218,6 +220,28 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         }
     }
 
+    private void repaintButtons() {
+        DpadActivity host = (DpadActivity) getContext();
+        for(int i=0; i<9; i++) {
+            Sprite sprite = mSprites.get(i);
+            if ((mSpritesJoyBits[i] & 0b00001111) != 0) {
+                // testing dpad bitmask
+                if (mSpritesJoyBits[i] == (host.mJoyState & 0b00001111)) {
+                    sprite.setColor(Color.RED);
+                } else {
+                    sprite.setColor(Color.WHITE);
+                }
+            } else {
+                if (mSpritesJoyBits[i] == (host.mJoyState & 0b00010000)) {
+                    sprite.setColor(Color.RED);
+                } else {
+                    sprite.setColor(Color.WHITE);
+                }
+            }
+        }
+        invalidate();
+
+    }
     /**
      * Any gamepad button + the spacebar or DPAD_CENTER will be used as the fire
      * key.
@@ -389,12 +413,34 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
         public boolean isDpadDevice(InputEvent event) {
             // Check that input comes from a device with directional pads.
-            if ((event.getSource() & InputDevice.SOURCE_DPAD)
-                    != InputDevice.SOURCE_DPAD) {
-                return true;
-            } else {
-                return false;
+            return (((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD) ||
+                    ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD));
+        }
+
+        protected int transformDpadValues(int directionPressed) {
+
+            // if buttonB enabled, then the only way to jump is by either pressing A or B
+            // and not Dpad UP
+            if (mEnableButtonB) {
+                directionPressed &= ~JOY_UP;
+
+                if (mSwapButtonsAB) {
+                    // A=Jump, B=Shoot
+                    if ((directionPressed & JOY_FIRE) != 0)
+                        directionPressed |= JOY_UP;
+                    // after JOY_FIRE bit was tested, clean it
+                    directionPressed &= ~JOY_FIRE;
+                    if ((directionPressed & JOY_FIRE_B) != 0)
+                        directionPressed |= JOY_FIRE;
+                } else {
+                    if ((directionPressed & JOY_FIRE_B) != 0)
+                        directionPressed |= JOY_UP;
+                }
             }
+
+            // remove extra bits, like JOY_FIRE_B
+            directionPressed &= 0b00011111;
+            return directionPressed;
         }
     }
 
@@ -462,9 +508,13 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                     directionPressed |= JOY_FIRE;
                     processed = true;
                 }
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_B) {
+                    directionPressed |= JOY_FIRE_B;
+                    processed = true;
+                }
             }
             if (processed)
-                return directionPressed;
+                return transformDpadValues(directionPressed);
             return -1;
         }
     }
@@ -488,9 +538,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         @Override
         public int getDirectionPressed(InputEvent event) {
 
-            if (!isDpadDevice(event)) {
+            if (!isDpadDevice(event))
                 return -1;
-            }
 
             int directionPressed = 0;
 
@@ -538,8 +587,11 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 if (keyCode == OUYA_BUTTON_A) {
                     directionPressed |= JOY_FIRE;
                 }
+                if (keyCode == OUYA_BUTTON_B) {
+                    directionPressed |= JOY_FIRE_B;
+                }
             }
-            return directionPressed;
+            return transformDpadValues(directionPressed);
         }
     }
 
@@ -561,7 +613,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             final int sw = getWidth();
             final int sh = getHeight();
             if (i<8) {
-                // dpad buttons
+                // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
                 // positions:
                 final int pos_x[] = {/**/  0,  1,    -1, /**/ 1,   -1,  0,  1,   -1};
                 final int pos_y[] = {/**/ -1, -1,     0, /**/ 0,    1,  1,  1,   -1};
