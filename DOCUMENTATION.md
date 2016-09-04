@@ -4,7 +4,7 @@
 
 The smartphone application can be download from free from the AppStore, or you can download the source code from [github](https://github.com/ricardoquesada/unijoysticle):
 
-<a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img class="alignnone" src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a>
+<a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img class="alignnone" src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a><a href='https://play.google.com/store/apps/details?id=moe.retro.unijoysticle&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 
 It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
@@ -16,7 +16,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
 
-After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your iPhone's Settings, connect to it...:
+After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your smartphone Settings, connect to it...:
 
 <img src="https://lh3.googleusercontent.com/Kkt_ynCu6Gr-lRwZIv7FD3NPJe9ThwKV7B7o-ehp1mntRX290XKERHdLl_rzuo9orh3iG9IrgRdVJg=w1242-h642-no" width="277" height="143" />
 
@@ -91,7 +91,7 @@ __Using this mode:__ [YouTube video](https://youtu.be/RhEGogreM0E)
 
 <img class="alignnone" src="https://lh3.googleusercontent.com/WRLXh522eTsfwQogNMmFebIEC4v-6AjRLbbWMC2ox5t7a4yezb_PzxK8bZKYrT8xIuVOplTMHRmSn00=w5760-h3600-no" width="304" height="171" /><img class="alignnone" src="https://lh3.googleusercontent.com/vxbiIsJjtjfyqieu4QO27VW6hBTxszUth8Eb_g6TbgVK1jGEmvNmnazd7CAb1uFo6I38RNpK_qZO0sc=w5760-h3600-no" width="273" height="157" />
 
-This is the same D-pad mode as before. But if you <a href="http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/">connect any iOS Game Controller to your iPhone</a> (it supports both <a href="https://afterpad.com/mficontrollers/">MFi</a> and <a href="https://www.ionaudio.com/products/details/icade">iCade</a> controllers), it will automatically detect it. And with it you can control the virtual D-pad giving you a great gaming experience.
+This is the same D-pad mode as before. But if you <a href="http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/">connect any Game Controller to your smartphone</a> (for iOS it supports both <a href="https://afterpad.com/mficontrollers/">MFi</a> and <a href="https://www.ionaudio.com/products/details/icade">iCade</a> controllers; for Android it supports official controllers as well as OUYA ones), it will automatically detect it. And with it you can control the virtual D-pad giving you a great gaming experience.
 
 You can configure it to:
 
