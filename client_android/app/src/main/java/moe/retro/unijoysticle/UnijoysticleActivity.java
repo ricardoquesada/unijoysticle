@@ -16,16 +16,17 @@
 
 package moe.retro.unijoysticle;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
-public class UnijoysticleActivity extends AppCompatActivity {
+public class UnijoysticleActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unijoysticle);
+
+        setTitle(getString(R.string.action_bar_title_unijoysticle));
     }
 }

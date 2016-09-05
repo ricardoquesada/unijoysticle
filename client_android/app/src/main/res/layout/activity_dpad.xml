@@ -8,7 +8,7 @@
         android:id="@+id/game"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_margin="4dip"
+        android:layout_margin="0dip"
         android:layout_weight="1"
         android:background="#c0c0c0" />
 </LinearLayout>

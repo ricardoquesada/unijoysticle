@@ -66,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Disable UniJoystiCle and Gyruss modes until they are implemented
-        RadioButton radioUnijoysticle = (RadioButton) findViewById(R.id.radioButtonUniJoystiCle);
-        radioUnijoysticle.setEnabled(false);
+        // Disable Gyruss modes until they are implemented
         RadioButton radioGyruss = (RadioButton) findViewById(R.id.radioButtonGyruss);
         radioGyruss.setEnabled(false);
 

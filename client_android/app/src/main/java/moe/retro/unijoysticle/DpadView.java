@@ -242,6 +242,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 }
             }
         }
+        host.sendJoyState();
         invalidate();
 
     }
