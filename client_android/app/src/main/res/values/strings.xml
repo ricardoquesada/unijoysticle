@@ -35,15 +35,21 @@
     <string name="key_serverAddress">key_serverAddress</string>
     <string name="key_enableButtonB">key_enableButtonB</string>
     <string name="key_swapButtonsAB">key_swapButtonsAB</string>
+    <string name="key_movementThreshold">key_movementThreshold</string>
+    <string name="key_jumpThreshold">key_jumpThreshold</string>
+    <string name="key_rotationRatio">key_movementThreshold</string>
 
     <!-- pref default values -->
     <string name="default_serverAddress">192.168.4.1</string>
     <string name="default_enableButtonB">false</string>
     <string name="default_swapButtonsAB">false</string>
-
+    <string name="default_movementThreshold">0.4</string>
+    <string name="default_jumpThreshold">2.1</string>
+    <string name="default_rotationRatio">1</string>
 
     <!-- ActionBar Titles -->
     <string name="action_bar_title_dpad">Dpad mode</string>
     <string name="action_bar_title_linear">Linear mode</string>
+    <string name="action_bar_title_unijoysticle">UniJoystiCle mode</string>
 
 </resources>
