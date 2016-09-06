@@ -431,7 +431,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         public boolean isDpadDevice(InputEvent event) {
             // Check that input comes from a device with directional pads.
             return (((event.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD) ||
-                    ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD));
+                    ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+                    ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)
+            );
         }
 
         protected int transformDpadValues(int directionPressed) {
