@@ -7,6 +7,11 @@ v0.4 - 2016-09-XX
 		order the PCB
 - [NEW] ESP8266 Schematic: Does not use barrel jack anymore. For external power supply
         the Wemos Supply shield can be used.
+- [NEW] Android Client: new client for android. Supports:
+		UniJoystiCle mode
+		Dpad mode + controllers: Generic and OUYA controllers
+		Linear mode
+		Settings
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
 - [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
