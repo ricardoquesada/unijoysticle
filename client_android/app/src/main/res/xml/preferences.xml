@@ -19,7 +19,7 @@
         <!--FIXME: min:1, max:3. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
             android:dialogMessage="@string/slider_rotationRatioMessage"
-            android:key="seekBar_rotationRate"
+            android:key="@string/key_rotationRatio"
             android:defaultValue="10"
             android:text="10"
             android:max="30"
@@ -28,7 +28,7 @@
         <!--FIXME: min:0.1, max:5. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
             android:dialogMessage="@string/slider_jumpThresholdMessage"
-            android:key="seekBar_jumpThreshold"
+            android:key="@string/key_jumpThreshold"
             android:defaultValue="21"
             android:text="0"
             android:max="50"
@@ -37,7 +37,7 @@
         <!--FIXME:  min:0.1, max:2. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
             android:dialogMessage="@string/slider_movementThresholdMessage"
-            android:key="seekBar_movementThreshold"
+            android:key="@string/key_movementThreshold"
             android:defaultValue="40"
             android:text="0"
             android:max="20"

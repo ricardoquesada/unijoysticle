@@ -37,7 +37,7 @@
     <string name="key_swapButtonsAB">key_swapButtonsAB</string>
     <string name="key_movementThreshold">key_movementThreshold</string>
     <string name="key_jumpThreshold">key_jumpThreshold</string>
-    <string name="key_rotationRatio">key_movementThreshold</string>
+    <string name="key_rotationRatio">key_rotationRatio</string>
 
     <!-- pref default values -->
     <string name="default_serverAddress">192.168.4.1</string>
