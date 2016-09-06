@@ -38,7 +38,7 @@
         <moe.retro.unijoysticle.SeekBarPreference
             android:dialogMessage="@string/slider_movementThresholdMessage"
             android:key="@string/key_movementThreshold"
-            android:defaultValue="40"
+            android:defaultValue="4"
             android:text="0"
             android:max="20"
             android:title="@string/pref_title_movement_threshold" />
