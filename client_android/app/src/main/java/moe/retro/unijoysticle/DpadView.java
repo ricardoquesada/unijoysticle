@@ -103,7 +103,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         mInputManager = (InputManager) this.getContext().getSystemService(Context.INPUT_SERVICE);
         findControllers();
 
-        mInputManager.registerInputDeviceListener(this, null);
     }
 
     void findControllers() {
@@ -112,6 +111,18 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 if (createController(deviceId))
                     break;
         }
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mInputManager.registerInputDeviceListener(this, null);
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mInputManager.unregisterInputDeviceListener(this);
     }
 
     boolean createController(int deviceId) {

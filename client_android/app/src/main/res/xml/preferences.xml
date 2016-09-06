@@ -16,34 +16,31 @@
 
     <PreferenceCategory
         android:title="@string/pref_title_cat_unijoysticle">
-        <!--min:1, max:3-->
+        <!--FIXME: min:1, max:3. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
-            android:defaultValue="1"
-            android:dialogMessage="@string/settings_dialog_message"
+            android:dialogMessage="@string/slider_rotationRatioMessage"
             android:key="seekBar_rotationRate"
-            android:max="3"
-            android:summary="@string/pref_summary_gravity"
-            android:text="@string/settings_unit"
+            android:defaultValue="10"
+            android:text="10"
+            android:max="30"
             android:title="@string/pref_title_rotation_rate" />
 
-        <!--min:0.1, max:5-->
+        <!--FIXME: min:0.1, max:5. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
-            android:defaultValue="2.1"
-            android:dialogMessage="@string/settings_dialog_message"
+            android:dialogMessage="@string/slider_jumpThresholdMessage"
             android:key="seekBar_jumpThreshold"
-            android:max="5"
-            android:summary="@string/pref_summary_gravity"
-            android:text="@string/settings_unit"
+            android:defaultValue="21"
+            android:text="0"
+            android:max="50"
             android:title="@string/pref_title_jump_threshold" />
 
-        <!-- min:0.1, max:2-->
+        <!--FIXME:  min:0.1, max:2. "text" -> "min" -->
         <moe.retro.unijoysticle.SeekBarPreference
-            android:defaultValue="0.4"
-            android:dialogMessage="@string/settings_dialog_message"
+            android:dialogMessage="@string/slider_movementThresholdMessage"
             android:key="seekBar_movementThreshold"
-            android:max="2"
-            android:summary="@string/pref_summary_gravity"
-            android:text="@string/settings_unit"
+            android:defaultValue="40"
+            android:text="0"
+            android:max="20"
             android:title="@string/pref_title_movement_threshold" />
     </PreferenceCategory>
 
@@ -80,7 +77,9 @@
     <PreferenceCategory android:title="About">
         <EditTextPreference
             android:title="Version"
-            android:summary="v0.3" />
+            android:summary="@string/appVersion"
+            android:enabled="false"
+            />
     </PreferenceCategory>
 
 

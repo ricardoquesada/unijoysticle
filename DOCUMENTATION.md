@@ -128,6 +128,8 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://youtu.be/n2YHoj1pXB8)
 
+__Note__: This mode is only avaible on iOS. Android support coming soon.
+
 ### Linear mode
 
 <img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" />

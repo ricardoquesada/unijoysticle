@@ -89,13 +89,13 @@ public class UnijoysticleView extends View implements SensorEventListener {
         UnijoysticleActivity host = (UnijoysticleActivity) getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mMovementThreshold = preferences.getFloat(host.getString(R.string.key_movementThreshold),
-                Float.parseFloat(host.getString(R.string.default_movementThreshold)))
+                Float.parseFloat(host.getString(R.string.slider_movementThresholdDefault)))
                 * GRAVITY;
         mJumpThreshold = preferences.getFloat(host.getString(R.string.key_jumpThreshold),
-                Float.parseFloat(host.getString(R.string.default_jumpThreshold)))
+                Float.parseFloat(host.getString(R.string.slider_jumpThresholdDefault)))
                 * GRAVITY;
         mRotationRatio = preferences.getFloat(host.getString(R.string.key_rotationRatio),
-                Float.parseFloat(host.getString(R.string.default_rotationRatio)));
+                Float.parseFloat(host.getString(R.string.slider_rotationRatioDefault)));
 
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -122,7 +122,7 @@ public class UnijoysticleView extends View implements SensorEventListener {
         super.onDetachedFromWindow();
         mSensorManager.unregisterListener(this);
 
-        // turn it off
+        // turn it off. Not sure if it is needed
         setKeepScreenOn(false);
     }
 
