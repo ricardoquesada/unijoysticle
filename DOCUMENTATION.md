@@ -189,3 +189,4 @@ $ make upload
 ## Bugs
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
+* "Gyruss mode" is only supported on iOS. Android version coming soon.
