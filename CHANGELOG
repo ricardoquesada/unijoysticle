@@ -15,6 +15,7 @@ v0.4 - 2016-09-XX
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
 - [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
+- [NEW] Tests: New Commodore 64 prg to test the UniJoystiCle + instructions
 - [FIX] iOS Client: Gravity Mode renamed to Gyruss Mode
 - [FIX] iOS Client: Settings: refactored. Looks nicer. Using Navigation Controller + TableView
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
