@@ -188,7 +188,7 @@ $ make upload
 
 ## Troubleshooting
 
-The first thing to do, is to download this C64 program and follow its intructions:
+The first thing to do: download and run this C64 program. Then follow its intructions:
 
   * [UniJoystiCle test program](https://github.com/ricardoquesada/unijoysticle/raw/master/tests/bin/unijoysticle_test_exo.prg)
 
@@ -196,13 +196,13 @@ The first thing to do, is to download this C64 program and follow its intruction
 
 If you don't see two LEDs on the NodeMCU then:
 
-* Make sure it is not plugged into the Commmodore 64
+* Make sure it is NOT plugged into the Commmodore 64
 * Power it either:
-  * via the micro USB cable
-  * or by using a barrel jack: from +5.5V to 12V with at least 500mA
+  * via the micro USB cable (recommended)
+  * or by using the barrel jack: anything between 5.5V and 12V with at least 500mA should be Ok.
 * Press the RST (reset) button on the NodeMCU
 
-If that doesn't work, the probably your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+If that doesn't work (you don't see the two LEDs), probably your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
 
 ### Joysticks don't work
 
@@ -224,9 +224,8 @@ If that doesn't work, the probably your NodeMCU doesn't have the UniJoystiCle fi
 
 ### Some joystick movements work but others don't
 
-* Probably one (or more) of the 4066 ICs are malfunctioning. Try swapping them.
-
-
+* Probably one (or more) of the 4066 ICs are malfunctioning. Try swapping them until you find the broken one. And then replace it with a new one
+* or perhaps one of the traces in the PCB is open. With a multimeter and the schematic you should be able to find it.
 
 
 ## Bugs
