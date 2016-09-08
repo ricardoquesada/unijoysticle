@@ -209,6 +209,16 @@ If that doesn't work (you don't see the two LEDs), probably your NodeMCU doesn't
 * From your smartphone, make sure that you are connected to the Unijoysticle WiFi network
   * If it fails to connect, try again. Sometimes it take a few tries to connect
   * No more than 2 connections will be accepted (at least in firmware 0.3.1)
+* From the smartphone UniJoystiCle application, make sure that the server address is `192.168.4.1`
+
+
+### The C64 keyboard doesn't work
+
+This is because the UniJoystiCle smartphone application is sending joystick commands to the C64.
+Just make sure that the UniJoystiCle smartphone application is not running.
+
+This is not a bug/limitation of the UniJoystiCle. It is a c64 limitation.
+The c64 keyboard won't work correctly if you keep moving a regular joystick while using the keyboard.
 
 
 ### The game controllers don't work
