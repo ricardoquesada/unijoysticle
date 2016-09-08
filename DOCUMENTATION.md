@@ -186,7 +186,23 @@ $ make
 $ make upload
 ```
 
+## Troubleshooting
+
+### The device (NodeMCU) doesn't boot
+
+If you don't see two LEDs on the NodeMCU then:
+
+* Make sure it is not plugged into the Commmodore 64
+* Power it either:
+  * via the micro USB cable
+  * or by using a barrel jack: from +5.5V to 12V with at least 500mA
+* Press the RST (reset) button on the NodeMCU
+
+If that doesn't work, the probably your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+
+
 ## Bugs
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
 * "Gyruss mode" is only supported on iOS. Android version coming soon.
+
