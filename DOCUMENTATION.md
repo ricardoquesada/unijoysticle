@@ -188,6 +188,10 @@ $ make upload
 
 ## Troubleshooting
 
+The first thing to do, is to download this C64 program and follow its intructions:
+
+  * [UniJoystiCle test program](https://github.com/ricardoquesada/unijoysticle/raw/master/tests/bin/unijoysticle_test_exo.prg)
+
 ### The device (NodeMCU) doesn't boot
 
 If you don't see two LEDs on the NodeMCU then:
@@ -199,6 +203,30 @@ If you don't see two LEDs on the NodeMCU then:
 * Press the RST (reset) button on the NodeMCU
 
 If that doesn't work, the probably your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+
+### Joysticks don't work
+
+* From your smartphone, make sure that you are connected to the Unijoysticle WiFi network
+  * If it fails to connect, try again. Sometimes it take a few tries to connect
+  * No more than 2 connections will be accepted (at least in firmware 0.3.1)
+
+
+### The game controllers don't work
+
+* For iOS, all MFi (the official) and all iCade (the "old" unofficial) game controllers should work.
+* For Android, all the official (including Amazon game controllers) and the OUYA game controllers should work.
+* Make sure that the Game Controller is paired via Bluetooth to the smartphone
+  * If unsure, [read this guide](http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/)
+* When the game controller is paired to the smartphone, you can use it in the D-pad mode.
+  * on iOS you should see a legend that says "Game controller detected" (MFi controllers). Or nothing if using iCade controllers.
+  * on Android you should see the name of the game controller in the title
+
+
+### Some joystick movements work but others don't
+
+* Probably one (or more) of the 4066 ICs are malfunctioning. Try swapping them.
+
+
 
 
 ## Bugs
