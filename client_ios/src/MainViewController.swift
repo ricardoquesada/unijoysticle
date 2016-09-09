@@ -27,15 +27,17 @@ class MainViewController: UIViewController {
 
         if ((segue.destinationViewController as? GameViewController) != nil) {
 
-            var sceneToLoad = "DPadScene"
+            var sceneToLoad = ""
 
             if (controllerSegment.selectedSegmentIndex == 0) {
                 sceneToLoad = UNIJOYSTICLE_SCENE
             } else if (controllerSegment.selectedSegmentIndex == 1) {
                 sceneToLoad = DPAD_SCENE
             } else if (controllerSegment.selectedSegmentIndex == 2) {
-                sceneToLoad = GYRUSS_SCENE
+                sceneToLoad = COMMANDO_SCENE
             } else if (controllerSegment.selectedSegmentIndex == 3) {
+                sceneToLoad = GYRUSS_SCENE
+            } else if (controllerSegment.selectedSegmentIndex == 4) {
                 sceneToLoad = LINEAR_SCENE
             }
 
@@ -46,5 +48,10 @@ class MainViewController: UIViewController {
     }
 
     @IBAction func prepareForUnwind(segue: UIStoryboardSegue) {
+    }
+
+    @IBAction func controllerValueChanged(sender: AnyObject) {
+        // In command mode, disable Joysticks, since it will use both of them
+        joystickSegment.enabled = ( controllerSegment.selectedSegmentIndex != 2)
     }
 }

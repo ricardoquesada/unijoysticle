@@ -64,6 +64,14 @@ class NetworkConnection {
             sendto(fd, data, data.count, 0, UnsafePointer($0), socklen_t(sizeofValue(toAddress)))
         }
     }
+
+    func sendState2(data:[UInt8]) {
+        assert(data.count == 4, "Invalid data");
+        withUnsafePointer(&toAddress) {
+            sendto(fd, data, data.count, 0, UnsafePointer($0), socklen_t(sizeofValue(toAddress)))
+        }
+    }
+
 }
 
 class ControllerScene: SKScene {
@@ -79,16 +87,41 @@ class ControllerScene: SKScene {
         case All    = 0b00011111
     }
 
-    var joyState: UInt8 = 0
-    var joyControl: UInt8 = 1   // joystick 0 or 1
     var net:NetworkConnection?
+
+
+    var protoVersion = 1                        // default version
+
+    // Protocol Version 1
+    var joyState: UInt8 = 0
+    var joyControl: UInt8 = 1                   // joystick 0 or 1
+
+    // Protocol version 2
+    struct ProtoHeader {
+        var version:UInt8 = 2
+        var joyControl:UInt8 = 0b00000011       // two joysticks
+        var joyState1:UInt8 = 0
+        var joyState2:UInt8 = 0
+    }
+
+    var protoHeader:ProtoHeader = ProtoHeader()
 
     func sendJoyState() {
         assert(net != nil, "net is nil")
         net!.sendState(joyControl, joyState)
     }
 
+    func sendJoyState2() {
+        assert(net != nil, "net is nil")
+        let data:[UInt8] = [protoHeader.version, protoHeader.joyControl, protoHeader.joyState1, protoHeader.joyState2]
+        net!.sendState2(data)
+    }
+
     override func update(currentTime: CFTimeInterval) {
-        sendJoyState()
+        if protoVersion == 1 {
+            sendJoyState()
+        } else {
+            sendJoyState2()
+        }
     }
 }

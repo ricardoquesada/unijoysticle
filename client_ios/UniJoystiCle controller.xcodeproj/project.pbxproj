@@ -28,6 +28,8 @@
 		50DD05A51CC6642C0080240F /* splash_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05941CC6642C0080240F /* splash_screen.png */; };
 		50DD05A61CC6642C0080240F /* UniJoystiCleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */; };
 		50DD05A71CC6642C0080240F /* UniJoystiCleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */; };
+		50E2D9FB1D8337E2001984EE /* CommandoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E2D9FA1D8337E2001984EE /* CommandoScene.swift */; };
+		50E2D9FD1D833849001984EE /* CommandoScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50E2D9FC1D833849001984EE /* CommandoScene.sks */; };
 		50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Constants.swift */; };
 		50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2FF711D700835003F76B6 /* iCadeReaderView.swift */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		50DD05941CC6642C0080240F /* splash_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_screen.png; sourceTree = "<group>"; };
 		50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UniJoystiCleScene.sks; sourceTree = "<group>"; };
 		50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniJoystiCleScene.swift; sourceTree = "<group>"; };
+		50E2D9FA1D8337E2001984EE /* CommandoScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandoScene.swift; sourceTree = "<group>"; };
+		50E2D9FC1D833849001984EE /* CommandoScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CommandoScene.sks; sourceTree = "<group>"; };
 		50EFD32F1D5CE619000B8CA4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		50F2FF711D700835003F76B6 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,10 +87,12 @@
 		50AD8A141D504E18003F3040 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				50DD058A1CC6642C0080240F /* DPadScene.sks */,
-				50DD058B1CC6642C0080240F /* DPadScene.swift */,
 				50DD05951CC6642C0080240F /* UniJoystiCleScene.sks */,
 				50DD05961CC6642C0080240F /* UniJoystiCleScene.swift */,
+				50DD058A1CC6642C0080240F /* DPadScene.sks */,
+				50DD058B1CC6642C0080240F /* DPadScene.swift */,
+				50E2D9FC1D833849001984EE /* CommandoScene.sks */,
+				50E2D9FA1D8337E2001984EE /* CommandoScene.swift */,
 				50129C081D4E5B1000157D90 /* GyrussScene.sks */,
 				50129C061D4E5ABD00157D90 /* GyrussScene.swift */,
 				50AD8A101D504DF7003F3040 /* LinearScene.sks */,
@@ -204,6 +210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50DD05A31CC6642C0080240F /* icon-180.png in Resources */,
+				50E2D9FD1D833849001984EE /* CommandoScene.sks in Resources */,
 				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
 				50DD05A51CC6642C0080240F /* splash_screen.png in Resources */,
 				50AD8A121D504DF7003F3040 /* LinearScene.sks in Resources */,
@@ -231,6 +238,7 @@
 				509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */,
 				50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */,
 				50AD8A131D504DF7003F3040 /* LinearScene.swift in Sources */,
+				50E2D9FB1D8337E2001984EE /* CommandoScene.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,

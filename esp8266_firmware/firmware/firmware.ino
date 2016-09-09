@@ -22,7 +22,7 @@ limitations under the License.
 // set it to 0 to connect to an existing WiFi network
 #define ACCESS_POINT_MODE 1
 
-#define UNIJOYSTICLE_VERSION "v0.3.1"
+#define UNIJOYSTICLE_VERSION "v0.4.0"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -151,6 +151,39 @@ void loop()
 
         // DEBUG: turn off internal LED
         // digitalWrite(INTERNAL_LED, HIGH);
+    }
+    else if (noBytes == 4)
+    {
+        Udp.read(packetBuffer,noBytes); // read the packet into the buffer
+
+        // packetBuffer[0] = version
+        // packetBuffer[1] = ports enabled
+        // packetBuffer[2] = joy1
+        // packetBuffer[3] = joy2
+
+        if (packetBuffer[0] == 2) {
+            // joy 1 enabled ?
+            if (packetBuffer[1] & 0x1) {
+                for (int i=0; i<TOTAL_PINS; i++)
+                {
+                    if (packetBuffer[2] & (1<<i))
+                        digitalWrite(pinsPort0[i], HIGH);
+                    else
+                        digitalWrite(pinsPort0[i], LOW);
+                }
+            }
+
+            // joy 2 enabled ?
+            if (packetBuffer[1] & 0x2) {
+                for (int i=0; i<TOTAL_PINS; i++)
+                {
+                    if (packetBuffer[3] & (1<<i))
+                        digitalWrite(pinsPort1[i], HIGH);
+                    else
+                        digitalWrite(pinsPort1[i], LOW);
+                }
+            }
+        }
     }
 }
 

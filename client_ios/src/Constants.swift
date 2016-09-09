@@ -31,6 +31,7 @@ let SWAP_A_B_ENABLED = false
 // scenes names/files
 let UNIJOYSTICLE_SCENE = "UniJoystiCleScene"
 let DPAD_SCENE = "DPadScene"
+let COMMANDO_SCENE = "CommandoScene"
 let GYRUSS_SCENE = "GyrussScene"
 let LINEAR_SCENE = "LinearScene"
 

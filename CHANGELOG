@@ -12,6 +12,8 @@ v0.4 - 2016-09-XX
 		Dpad mode + controllers: Generic and OUYA controllers
 		Linear mode
 		Settings
+- [NEW] Commando Mode: Control the tow joysticks with one game controller.
+		Ideal for games like Commando were the granedes can be thrown with button B
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
 - [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped

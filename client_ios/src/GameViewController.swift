@@ -68,6 +68,8 @@ class GameViewController: UIViewController {
             scene = UniJoystiCleScene(fileNamed: UNIJOYSTICLE_SCENE)
         } else if selectedScene == DPAD_SCENE {
             scene = DPadScene(fileNamed: DPAD_SCENE)
+        } else if selectedScene == COMMANDO_SCENE {
+            scene = CommandoScene(fileNamed: COMMANDO_SCENE)
         } else if selectedScene == GYRUSS_SCENE {
             scene = GyrussScene(fileNamed: GYRUSS_SCENE)
         } else if selectedScene == LINEAR_SCENE {
