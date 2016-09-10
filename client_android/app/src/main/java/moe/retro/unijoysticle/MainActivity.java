@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Disable Gyruss modes until they are implemented
-        RadioButton radioGyruss = (RadioButton) findViewById(R.id.radioButtonGyruss);
-        radioGyruss.setEnabled(false);
+//        RadioButton radioGyruss = (RadioButton) findViewById(R.id.radioButtonGyruss);
+//        radioGyruss.setEnabled(false);
 
 
         Button startButton = (Button) findViewById(R.id.buttonStart);
@@ -84,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.radioButtonDPad:
                             i = new Intent(getApplicationContext(), DpadActivity.class);
                             break;
-                        case R.id.radioButtonGyruss:
-                            i = new Intent(getApplicationContext(), GyrussActivity.class);
-                            break;
+//                        case R.id.radioButtonGyruss:
+//                            i = new Intent(getApplicationContext(), GyrussActivity.class);
+//                            break;
                         case R.id.radioButtonLinear:
                             i = new Intent(getApplicationContext(), LinearActivity.class);
                             break;

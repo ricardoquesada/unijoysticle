@@ -43,14 +43,14 @@
             android:text="Commando"
             android:id="@+id/radioButtonCommando"
             android:layout_gravity="center_horizontal"
-            android:checked="true" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gyruss"
-            android:id="@+id/radioButtonGyruss"
             android:checked="false" />
+
+        <!--<RadioButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Gyruss"-->
+            <!--android:id="@+id/radioButtonGyruss"-->
+            <!--android:checked="false" />-->
 
         <RadioButton
             android:layout_width="wrap_content"
