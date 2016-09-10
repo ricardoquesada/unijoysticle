@@ -26,7 +26,7 @@ public class CommandoActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.action_bar_title_commando));
+        setTitle(getString(R.string.action_bar_title_commando) + ": Connect a Game Controller to use it");
 
         setContentView(R.layout.activity_commando);
     }
