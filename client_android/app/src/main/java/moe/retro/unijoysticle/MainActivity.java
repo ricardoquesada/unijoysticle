@@ -70,6 +70,19 @@ public class MainActivity extends AppCompatActivity {
 //        RadioButton radioGyruss = (RadioButton) findViewById(R.id.radioButtonGyruss);
 //        radioGyruss.setEnabled(false);
 
+        final RadioGroup radioButtonGroupMode = (RadioGroup) findViewById(R.id.radioGroupMode);
+        final RadioGroup radioButtonGroupJoy = (RadioGroup) findViewById(R.id.radioGroupJoy);
+
+        radioButtonGroupMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                boolean enabled = (checkedId != R.id.radioButtonCommando);
+                for(int i = 0; i < radioButtonGroupJoy.getChildCount(); i++){
+                    ((RadioButton)radioButtonGroupJoy.getChildAt(i)).setEnabled(enabled);
+                }
+            }
+        });
 
         Button startButton = (Button) findViewById(R.id.buttonStart);
         if (null != startButton) {
@@ -77,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.d(TAG, "Button pressed");
 
-                    RadioGroup radioButtonGroupMode = (RadioGroup) findViewById(R.id.radioGroupMode);
                     int radioButtonModeID = radioButtonGroupMode.getCheckedRadioButtonId();
                     Intent i = null;
                     switch(radioButtonModeID) {
@@ -100,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                     if (i != null) {
 
                         // which joy is selected: 0 or 1?
-                        RadioGroup radioButtonGroupJoy = (RadioGroup) findViewById(R.id.radioGroupJoy);
                         int radioButtonJoyID = radioButtonGroupJoy.getCheckedRadioButtonId();
                         View radioButton = radioButtonGroupJoy.findViewById(radioButtonJoyID);
                         int idx = radioButtonGroupJoy.indexOfChild(radioButton);
