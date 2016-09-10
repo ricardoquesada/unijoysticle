@@ -131,7 +131,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
         labelGController?.hidden = true
         self.protoHeader.joyState1 = 0
         self.protoHeader.joyState2 = 0
-        sendJoyState2()
+        sendJoyState()
     }
 
     func enableGamecontroller() {
@@ -227,7 +227,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
     }
 
     func repaintButtons() {
-        sendJoyState2()
+        sendJoyState()
 
         // joy #1
         for (index, bitmask) in buttons_bitmaks.enumerate() {
@@ -264,7 +264,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
                     // reset state to avoid having the joystick pressed
                     self.protoHeader.joyState1 = 0
                     self.protoHeader.joyState2 = 0
-                    self.sendJoyState2()
+                    self.sendJoyState()
 
                     // re-enable it.
                     UIApplication.sharedApplication().idleTimerDisabled = false

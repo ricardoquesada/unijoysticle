@@ -93,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.radioButtonUniJoystiCle:
                             i = new Intent(getApplicationContext(), UnijoysticleActivity.class);
                             break;
+                        case R.id.radioButtonCommando:
+                            i = new Intent(getApplicationContext(), CommandoActivity.class);
+                            break;
                     }
                     if (i != null) {
 

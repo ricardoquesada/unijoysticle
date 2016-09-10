@@ -91,7 +91,26 @@ public class BaseActivity extends AppCompatActivity {
                     }
                     return null;
                 }
+                protected void onPostExecute(Void result) {
+                    super.onPostExecute(result);
+                }
+            };
+            async_client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
 
+        public void sendState2(final byte[] data) {
+            async_client = new AsyncTask<Void, Void, Void>()
+            {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    DatagramPacket dp = new DatagramPacket(data, data.length, mServerAddress, SERVER_PORT);
+                    try {
+                        mSocket.send(dp);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
                 protected void onPostExecute(Void result) {
                     super.onPostExecute(result);
                 }
@@ -100,11 +119,23 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private UDPConnection mNet;
+
+    public byte mProtoVersion = 1;       // by default, use v1
+
+    // Protocol v1
     public byte mJoyState = 0;
     public byte mJoyControl = 1;      // joystick 0 or 1
-    private UDPConnection mNet;
-//    public NetworkConnection mNet;
 
+    // Protocol v2
+    class ProtoHeader {
+        byte version = 2;
+        byte joyControl = 0b00000011;   // joy 1 and 2 enabled
+        byte joyState1 = 0;
+        byte joyState2 = 0;
+    }
+
+    public ProtoHeader mProtoHeader;
     private ScheduledExecutorService mScheduleTaskExecutor;
 
     @Override
@@ -132,6 +163,8 @@ public class BaseActivity extends AppCompatActivity {
                 sendJoyState();
             }
         }, 0, 16, TimeUnit.MILLISECONDS);       // ~60Hz
+
+        mProtoHeader = new ProtoHeader();
     }
 
     @Override
@@ -155,7 +188,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void sendJoyState() {
-        mNet.sendState(mJoyControl, mJoyState);
+        if (mProtoVersion == 1) {
+            mNet.sendState(mJoyControl, mJoyState);
+        } else {
+            byte data[] = new byte[]{mProtoHeader.version, mProtoHeader.joyControl, mProtoHeader.joyState1, mProtoHeader.joyState2};
+            mNet.sendState2(data);
+        }
     }
 
     protected void update(float dt) {

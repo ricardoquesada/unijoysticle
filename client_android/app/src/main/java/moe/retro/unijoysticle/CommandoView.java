@@ -19,7 +19,6 @@ package moe.retro.unijoysticle;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,7 +30,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import java.util.ArrayList;
@@ -54,24 +52,25 @@ import moe.retro.unijoysticle.unijosyticle.R;
  * vibrator is used for that purpose.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-public class DpadView extends View implements InputManager.InputDeviceListener {
+public class CommandoView extends View implements InputManager.InputDeviceListener {
 
-    private static final String TAG = DpadView.class.getSimpleName();
+    private static final String TAG = CommandoView.class.getSimpleName();
 
-    final static int JOY_UP       = 1 << 0;
-    final static int JOY_DOWN     = 1 << 1;
-    final static int JOY_LEFT     = 1 << 2;
-    final static int JOY_RIGHT    = 1 << 3;
-    final static int JOY_FIRE     = 1 << 4;
-    // there is not such thing as button B in commodore 64, but
-    // this bit is used as temp value when storing the game controller info.
-    final static int JOY_FIRE_B   = 1 << 5;
+    final static int JOY_UP1       = 1 << 0;
+    final static int JOY_DOWN1     = 1 << 1;
+    final static int JOY_LEFT1     = 1 << 2;
+    final static int JOY_RIGHT1    = 1 << 3;
+    final static int JOY_FIRE1     = 1 << 4;
+
+    final static int JOY_UP2       = 1 << 8;
+    final static int JOY_DOWN2     = 1 << 9;
+    final static int JOY_LEFT2     = 1 << 10;
+    final static int JOY_RIGHT2    = 1 << 11;
+    final static int JOY_FIRE2     = 1 << 12;
 
     private final InputManager mInputManager;
     private Controller mController = null;
     private SparseArray<PointF> mActivePointers;
-    private final boolean mEnableButtonB;
-    private final boolean mSwapButtonsAB;
 
     private ArrayList<Sprite> mSprites;
     // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
@@ -87,15 +86,12 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             0b10000, /* fire */
     };
 
-    public DpadView(Context context, AttributeSet attrs) {
+    public CommandoView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mActivePointers = new SparseArray<PointF>();
 
-        DpadActivity host = (DpadActivity) getContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mEnableButtonB = preferences.getBoolean(host.getString(R.string.key_enableButtonB), false);
-        mSwapButtonsAB = preferences.getBoolean(host.getString(R.string.key_swapButtonsAB), false);
+        CommandoActivity host = (CommandoActivity) getContext();
 
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -103,13 +99,14 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         mInputManager = (InputManager) this.getContext().getSystemService(Context.INPUT_SERVICE);
         findControllers();
 
+        host.mProtoVersion = 2;
     }
 
     void findControllers() {
         int[] deviceIds = mInputManager.getInputDeviceIds();
         for (int deviceId : deviceIds) {
-                if (createController(deviceId))
-                    break;
+            if (createController(deviceId))
+                break;
         }
     }
 
@@ -142,8 +139,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 mController = new GenericController();
             }
 
-            DpadActivity host = (DpadActivity) getContext();
-            host.setTitle(host.getString(R.string.action_bar_title_dpad) + ": " + devName);
+            CommandoActivity host = (CommandoActivity) getContext();
+            host.setTitle(host.getString(R.string.action_bar_title_commando) + ": " + devName);
             return true;
         }
         return false;
@@ -155,8 +152,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         if (deviceId != -1 && mController != null) {
             int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
-                DpadActivity host = (DpadActivity) getContext();
-                host.mJoyState |= dpadValue;
+                CommandoActivity host = (CommandoActivity) getContext();
+                host.mProtoHeader.joyState1 |= (dpadValue & 0b00011111);
+                host.mProtoHeader.joyState2 |= (dpadValue >> 8);
                 repaintButtons();
                 return true;
             }
@@ -171,8 +169,9 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         if (deviceId != -1 && mController != null) {
             int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
-                DpadActivity host = (DpadActivity) getContext();
-                host.mJoyState &= ~(byte)(dpadValue & 0xff);
+                CommandoActivity host = (CommandoActivity) getContext();
+                host.mProtoHeader.joyState1 &= ~(byte)(dpadValue & 0xff);
+                host.mProtoHeader.joyState2 &= ~(byte)(dpadValue >> 8);
                 repaintButtons();
                 return true;
             }
@@ -186,10 +185,13 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         if (mController != null) {
             int dpadValue = mController.getDirectionPressed(event);
             if (dpadValue != -1) {
-                DpadActivity host = (DpadActivity) getContext();
-                byte maskedValue = (byte) (dpadValue & 0b00001111);
-                host.mJoyState &= 0b11110000;
-                host.mJoyState |= maskedValue;
+                CommandoActivity host = (CommandoActivity) getContext();
+                byte maskedValue1 = (byte) (dpadValue & 0b00001111);
+                byte maskedValue2 = (byte) (dpadValue >> 8);
+                host.mProtoHeader.joyState1 &= 0b11110000;
+                host.mProtoHeader.joyState1 |= maskedValue1;
+                host.mProtoHeader.joyState2 &= 0b11110000;
+                host.mProtoHeader.joyState2 |= maskedValue2;
                 repaintButtons();
                 return true;
             }
@@ -212,7 +214,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         // Update the animation
 
         // Draw the buttons
-        int num = mSprites.size();
+        final int num = mSprites.size();
         for (int i = 0; i < num; i++) {
             Sprite sprite = mSprites.get(i);
             sprite.draw(canvas);
@@ -220,18 +222,22 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     }
 
     private void repaintButtons() {
-        DpadActivity host = (DpadActivity) getContext();
-        for(int i=0; i<9; i++) {
+        CommandoActivity host = (CommandoActivity) getContext();
+        final int num = mSprites.size();
+        for(int i=0; i<num; i++) {
+
+            final int j = i % 9;
+            byte jState = i<9 ? host.mProtoHeader.joyState2 : host.mProtoHeader.joyState1;
             Sprite sprite = mSprites.get(i);
-            if ((mSpritesJoyBits[i] & 0b00001111) != 0) {
+            if ((mSpritesJoyBits[j] & 0b00001111) != 0) {
                 // testing dpad bitmask
-                if (mSpritesJoyBits[i] == (host.mJoyState & 0b00001111)) {
+                if (mSpritesJoyBits[j] == (jState & 0b00001111)) {
                     sprite.setColor(Color.RED);
                 } else {
                     sprite.setColor(Color.WHITE);
                 }
             } else {
-                if (mSpritesJoyBits[i] == (host.mJoyState & 0b00010000)) {
+                if (mSpritesJoyBits[j] == (jState & 0b00010000)) {
                     sprite.setColor(Color.RED);
                 } else {
                     sprite.setColor(Color.WHITE);
@@ -241,18 +247,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         host.sendJoyState();
         invalidate();
 
-    }
-    /**
-     * Any gamepad button + the spacebar or DPAD_CENTER will be used as the fire
-     * key.
-     *
-     * @param keyCode
-     * @return true of it's a fire key.
-     */
-    private static boolean isFireKey(int keyCode) {
-        return KeyEvent.isGamepadButton(keyCode)
-                || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
-                || keyCode == KeyEvent.KEYCODE_SPACE;
     }
 
     /*
@@ -288,120 +282,18 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     @Override
     public void onInputDeviceRemoved(int deviceId) {
         Log.d(TAG, "onInputDeviceRemoved: " + deviceId);
-        DpadActivity host = (DpadActivity) getContext();
-        host.setTitle(host.getString(R.string.action_bar_title_dpad));
+        CommandoActivity host = (CommandoActivity) getContext();
+        host.setTitle(host.getString(R.string.action_bar_title_commando));
     }
 
     //
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        // MotionEvent reports input details from the touch screen
-        // and other input controls. In this case, you are only
-        // interested in events where the touch position changed.
-
-        boolean handled = false;
-
-        int actionMask = e.getActionMasked();
-
-        switch (actionMask) {
-            case MotionEvent.ACTION_MOVE:
-                for (int size = e.getPointerCount(), i = 0; i < size; i++) {
-                    int pid = e.getPointerId(i);
-                    // get previous position and disable it
-                    PointF oldP = mActivePointers.get(pid);
-                    disableTouch(oldP.x, oldP.y);
-                    float xx = e.getX(i);
-                    float yy = e.getY(i);
-                    mActivePointers.put(pid, new PointF(xx, yy));
-                    handled |= enableTouch(xx, yy);
-                }
-                break;
-            case MotionEvent.ACTION_DOWN: {
-                // one finger, use pointer 0
-                final int pointerId = e.getPointerId(0);
-                final float x = e.getX();
-                final float y = e.getY();
-                mActivePointers.put(pointerId, new PointF(x, y));
-                handled |= enableTouch(x, y);
-                break;
-            }
-            case MotionEvent.ACTION_POINTER_DOWN: {
-                final int pointerIndex = e.getActionIndex();
-                final int pointerId = e.getPointerId(pointerIndex);
-                final float x = e.getX(pointerIndex);
-                final float y = e.getY(pointerIndex);
-                mActivePointers.put(pointerId, new PointF(x, y));
-                handled |= enableTouch(x, y);
-                break;
-            }
-            case MotionEvent.ACTION_UP: {
-                // one finger, use pointer 0
-                final int pointerId = e.getPointerId(0);
-                final float x = e.getX();
-                final float y = e.getY();
-                mActivePointers.delete(pointerId);
-                handled |= disableTouch(x, y);
-                break;
-            }
-            case MotionEvent.ACTION_POINTER_UP: {
-                final int pointerIndex = e.getActionIndex();
-                final int pointerId = e.getPointerId(pointerIndex);
-                final float x = e.getX(pointerIndex);
-                final float y = e.getY(pointerIndex);
-                mActivePointers.delete(pointerId);
-                handled |= disableTouch(x, y);
-                break;
-            }
-            case MotionEvent.ACTION_CANCEL:
-                for (int size = e.getPointerCount(), i = 0; i < size; i++) {
-                    int pid = e.getPointerId(i);
-                    mActivePointers.delete(pid);
-                    handled |= disableTouch(e.getX(i), e.getY(i));
-                }
-                break;
-        }
-        if (handled)
-            return true;
-        return super.onTouchEvent(e);
-    }
-
-    protected boolean disableTouch(float x, float y) {
-        boolean handled = false;
-        DpadActivity host = (DpadActivity) getContext();
-        for(int i=0; i<9; ++i) {
-            final Sprite sprite = mSprites.get(i);
-            if (sprite.containPoint(x,y)) {
-                sprite.setColor(Color.WHITE);
-                host.mJoyState &= ~mSpritesJoyBits[i];
-                invalidate();
-                handled = true;
-            }
-        }
-        return handled;
-    }
-
-    protected boolean enableTouch(float x, float y) {
-        boolean handled = false;
-        DpadActivity host = (DpadActivity) getContext();
-        for(int i=0; i<9; ++i) {
-            final Sprite sprite = mSprites.get(i);
-            if (sprite.containPoint(x,y)) {
-                sprite.setColor(Color.RED);
-                host.mJoyState |= mSpritesJoyBits[i];
-                invalidate();
-                handled = true;
-            }
-        }
-        return handled;
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // add nine sprites after we have the layout in order to know the View size
         mSprites = new ArrayList<Sprite>();
-        for(int i=0; i<9; ++i) {
+        for(int i=0; i<18; ++i) {
             Sprite sprite = new Sprite(i);
             mSprites.add(sprite);
         }
@@ -419,32 +311,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                     ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
                     ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)
             );
-        }
-
-        protected int transformDpadValues(int directionPressed) {
-
-            // if buttonB enabled, then the only way to jump is by either pressing A or B
-            // and not Dpad UP
-            if (mEnableButtonB) {
-                directionPressed &= ~JOY_UP;
-
-                if (mSwapButtonsAB) {
-                    // A=Jump, B=Shoot
-                    if ((directionPressed & JOY_FIRE) != 0)
-                        directionPressed |= JOY_UP;
-                    // after JOY_FIRE bit was tested, clean it
-                    directionPressed &= ~JOY_FIRE;
-                    if ((directionPressed & JOY_FIRE_B) != 0)
-                        directionPressed |= JOY_FIRE;
-                } else {
-                    if ((directionPressed & JOY_FIRE_B) != 0)
-                        directionPressed |= JOY_UP;
-                }
-            }
-
-            // remove extra bits, like JOY_FIRE_B
-            directionPressed &= 0b00011111;
-            return directionPressed;
         }
     }
 
@@ -468,23 +334,43 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
                 // Use the hat axis value to find the D-pad direction
                 MotionEvent motionEvent = (MotionEvent) event;
-                float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-                float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
 
-                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // Joy #2
+                    // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
                 // LEFT and RIGHT direction accordingly.
-                if (Float.compare(xaxis, -1.0f) == 0) {
-                    directionPressed |= JOY_LEFT;
-                } else if (Float.compare(xaxis, 1.0f) == 0) {
-                    directionPressed |= JOY_RIGHT;
+                float xaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+                float yaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+                if (Float.compare(xaxis2, -1.0f) == 0) {
+                    directionPressed |= JOY_LEFT2;
+                } else if (Float.compare(xaxis2, 1.0f) == 0) {
+                    directionPressed |= JOY_RIGHT2;
                 }
                 // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
                 // UP and DOWN direction accordingly.
-                if (Float.compare(yaxis, -1.0f) == 0) {
-                    directionPressed |= JOY_UP;
-                } else if (Float.compare(yaxis, 1.0f) == 0) {
-                    directionPressed |= JOY_DOWN;
+                if (Float.compare(yaxis2, -1.0f) == 0) {
+                    directionPressed |= JOY_UP2;
+                } else if (Float.compare(yaxis2, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN2;
                 }
+
+                // Joy #1
+                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // LEFT and RIGHT direction accordingly.
+                float xaxis1 = motionEvent.getAxisValue(MotionEvent.AXIS_Z);
+                float yaxis1 = motionEvent.getAxisValue(MotionEvent.AXIS_RZ);
+                if (xaxis1 < -0.5f) {
+                    directionPressed |= JOY_LEFT1;
+                } else if (xaxis1 > 0.5f) {
+                    directionPressed |= JOY_RIGHT1;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis1 < -0.5f) {
+                    directionPressed |= JOY_UP1;
+                } else if (yaxis1 > 0.5f) {
+                    directionPressed |= JOY_DOWN1;
+                }
+
             }
 
             // If the input event is a KeyEvent, check its key code.
@@ -494,31 +380,32 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 final int keyCode = ((KeyEvent)event).getKeyCode();
 
                 if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    directionPressed |= JOY_LEFT;
+                    directionPressed |= JOY_LEFT2;
                     processed = true;
                 } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    directionPressed |= JOY_RIGHT;
+                    directionPressed |= JOY_RIGHT2;
                     processed = true;
                 }
 
                 if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    directionPressed |= JOY_UP;
+                    directionPressed |= JOY_UP2;
                     processed = true;
                 } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    directionPressed |= JOY_DOWN;
+                    directionPressed |= JOY_DOWN2;
                     processed = true;
                 }
-                if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BUTTON_A) {
-                    directionPressed |= JOY_FIRE;
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                    directionPressed |= JOY_FIRE2;
                     processed = true;
                 }
-                if (keyCode == KeyEvent.KEYCODE_BUTTON_B) {
-                    directionPressed |= JOY_FIRE_B;
+
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_B || keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    directionPressed |= JOY_FIRE1;
                     processed = true;
                 }
             }
             if (processed)
-                return transformDpadValues(directionPressed);
+                return directionPressed;
             return -1;
         }
     }
@@ -552,22 +439,41 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
                 // Use the hat axis value to find the D-pad direction
                 MotionEvent motionEvent = (MotionEvent) event;
-                float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
-                float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
 
+                // Joy #2
                 // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
                 // LEFT and RIGHT direction accordingly.
-                if (Float.compare(xaxis, -1.0f) == 0) {
-                    directionPressed |= JOY_LEFT;
-                } else if (Float.compare(xaxis, 1.0f) == 0) {
-                    directionPressed |= JOY_RIGHT;
+                float xaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
+                float yaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
+                if (Float.compare(xaxis2, -1.0f) == 0) {
+                    directionPressed |= JOY_LEFT2;
+                } else if (Float.compare(xaxis2, 1.0f) == 0) {
+                    directionPressed |= JOY_RIGHT2;
                 }
                 // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
                 // UP and DOWN direction accordingly.
-                if (Float.compare(yaxis, -1.0f) == 0) {
-                    directionPressed |= JOY_UP;
-                } else if (Float.compare(yaxis, 1.0f) == 0) {
-                    directionPressed |= JOY_DOWN;
+                if (Float.compare(yaxis2, -1.0f) == 0) {
+                    directionPressed |= JOY_UP2;
+                } else if (Float.compare(yaxis2, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN2;
+                }
+
+                // Joy #1
+                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // LEFT and RIGHT direction accordingly.
+                float xaxis1 = motionEvent.getAxisValue(MotionEvent.AXIS_RX);
+                float yaxis1 = motionEvent.getAxisValue(MotionEvent.AXIS_RY);
+                if (xaxis1 < -0.5f) {
+                    directionPressed |= JOY_LEFT1;
+                } else if (xaxis1 > 0.5f) {
+                    directionPressed |= JOY_RIGHT1;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis1 < -0.5f) {
+                    directionPressed |= JOY_UP1;
+                } else if (yaxis1 > 0.5f) {
+                    directionPressed |= JOY_DOWN1;
                 }
             }
 
@@ -578,24 +484,24 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 int keyCode = ((KeyEvent)event).getKeyCode();
 
                 if (keyCode == OUYA_DPAD_LEFT) {
-                    directionPressed |= JOY_LEFT;
+                    directionPressed |= JOY_LEFT2;
                 } else if (keyCode == OUYA_DPAD_RIGHT) {
-                    directionPressed |= JOY_RIGHT;
+                    directionPressed |= JOY_RIGHT2;
                 }
                 if (keyCode == OUYA_DPAD_UP) {
-                    directionPressed |= JOY_UP;
+                    directionPressed |= JOY_UP2;
                 } else if (keyCode == OUYA_DPAD_DOWN) {
-                    directionPressed |= JOY_DOWN;
+                    directionPressed |= JOY_DOWN2;
                 }
 
                 if (keyCode == OUYA_BUTTON_A) {
-                    directionPressed |= JOY_FIRE;
+                    directionPressed |= JOY_FIRE2;
                 }
                 if (keyCode == OUYA_BUTTON_B) {
-                    directionPressed |= JOY_FIRE_B;
+                    directionPressed |= JOY_FIRE1;
                 }
             }
-            return transformDpadValues(directionPressed);
+            return directionPressed;
         }
     }
 
@@ -616,32 +522,34 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
             final int sw = getWidth();
             final int sh = getHeight();
-            if (i<8) {
-                // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
-                // positions:
-                final int pos_x[] = {/**/  0,  1,    -1, /**/ 1,   -1,  0,  1,   -1};
-                final int pos_y[] = {/**/ -1, -1,     0, /**/ 0,    1,  1,  1,   -1};
-                // rotations:
-                final int rots[] =  {    -90,  0,   180, /**/ 0,  180, 90, 90,  -90};
-                // texture ids:
-                final int texid[] = {      0,  1,     0,      0,    1,  0,  1,    1};
 
-                if (texid[i]==0)
-                    mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_right);
-                else
-                    mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_top_right);
+            i = i % 9;
 
-                final int padding = 2;
-                mPosX = (pos_x[i] + 1) * mBitmap.getWidth() + padding;
-                mPosY = sh - mBitmap.getHeight() * (3-(pos_y[i]+1)) - padding;
-                mMatrix.setRotate(rots[i], mBitmap.getWidth()/2, mBitmap.getHeight()/2);
-            }  else if(i == 8) {
-                // fire button
+            // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
+            // positions:
+            final int pos_x[] = {/**/  0,  1,    -1, /**/ 1,   -1,  0,  1,   -1,  0};
+            final int pos_y[] = {/**/ -1, -1,     0, /**/ 0,    1,  1,  1,   -1,  0};
+            // rotations:
+            final int rots[] =  {    -90,  0,   180, /**/ 0,  180, 90, 90,  -90,  0};
+            // texture ids:
+            final int texid[] = {      0,  1,     0,      0,    1,  0,  1,    1,  2};
+
+            if (texid[i]==0)
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_right);
+            else if (texid[i]==1)
+                mBitmap = BitmapFactory.decodeResource(res, R.drawable.arrow_bold_top_right);
+            else
                 mBitmap = BitmapFactory.decodeResource(res, R.drawable.button);
-                final int padding = 50;
-                mPosX = sw - mBitmap.getWidth() - padding;
-                mPosY = sh/2 - mBitmap.getHeight()/2;
-            }
+
+            final int paddingX = (mIndex < 9) ? sw/4 : 3*sw/4;
+            final int paddingY = sh/2;
+
+            mPosX = pos_x[i] * mBitmap.getWidth() - mBitmap.getWidth()/2 + paddingX;
+            mPosY = sh - mBitmap.getHeight() * (1-pos_y[i]) + mBitmap.getHeight()/2 - paddingY;
+            mMatrix.setRotate(rots[i], mBitmap.getWidth()/2, mBitmap.getHeight()/2);
+            if (i==8)
+                mMatrix.setScale(0.6f, 0.6f, mBitmap.getWidth()/2, mBitmap.getHeight()/2);
+
         }
 
         public void draw(Canvas canvas) {
