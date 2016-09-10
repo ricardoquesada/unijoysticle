@@ -89,7 +89,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
 
         labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
         labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode?
-        labelGController?.hidden = true
+        labelGController?.text = "Connect a Game Controller"
 
         //
         // Game Controller Code
@@ -128,7 +128,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
         enableGamecontroller()
     }
     func controllerDisconnected() {
-        labelGController?.hidden = true
+        labelGController?.text = "Connect a Game Controller"
         self.protoHeader.joyState1 = 0
         self.protoHeader.joyState2 = 0
         sendJoyState()
@@ -144,7 +144,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
                 if controller.extendedGamepad != nil {
                     registerExtendedGamepad(controller)
                 }
-                labelGController?.hidden = false
+                labelGController?.text = "Game Controller Detected"
                 break
             }
         }
