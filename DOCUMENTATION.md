@@ -13,7 +13,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver. Either with:
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
-  * or via the barrel jack: Anything between 5.5V and 12V with 500mA should be fine. As an example, a regular 9V battery should work (although it is not very efficient).
+  * or via the barrel jack: Anything between 5.5V and 12V with 500mA should be fine. As an example, a regular 9V battery should work (although it is not very efficient). It might even be possible to get the power from the datasette port.
 * Wait a few seconds and you should see two LEDs. The color is not important
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
@@ -26,7 +26,7 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 <img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" />
 
-There are four modes: _UniJoystiCle mode_, _D-pad mode_, _Gyruss mode_ and _Linear mode_.
+There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Linear mode_.
 
 ### UniJoystiCle mode
 
@@ -124,6 +124,17 @@ It is called "Commando" mode, since it allows you to play the Commando game by u
 * and Button B to throw grenades. Spacebar is not needed anymore!
 
 You can do much more than that, since you control both joysticks. So you can play multiplayer games controlling both players at the same time. Not for the mere mortals.
+
+__Compatibility:__
+
+* Any game that uses Joystick #2 + spacebar can be used in this mode.
+* Any dual player game can be played in this mode.
+
+__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=VK-gzT5wkiw)
+
+__Which controller should you use:__
+
+Refer to _D-pad + Game Controllers_ section.
 
 
 ### Gyruss mode
