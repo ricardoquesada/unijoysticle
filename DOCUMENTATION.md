@@ -24,7 +24,7 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 ...and then launch the UniJoystiCle Controller app.
 
-<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="288" height="204" />
+<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="682" height="204" />
 
 There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Linear mode_.
 
