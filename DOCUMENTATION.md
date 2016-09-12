@@ -111,8 +111,13 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=0cdgaYVYaao
 
 __Which controller should you use:__
 
+For iOS:
 * For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). The [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) is good. DO NOT get the Status SteelSeries.
 * For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
+
+For Android:
+* Any Game Controller that supports the Android protocol. See [reviews here](http://www.androidauthority.com/best-bluetooth-gaming-controllers-403184/)
+* OUYA Game Controllers (they are not that great though). [Get it here](http://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313.TR0.TRC0.H0.Xouya+game+controller.TRS0&_nkw=ouya+game+controller&_sacat=0)
 
 ### Commando mode + Game Controllers
 
