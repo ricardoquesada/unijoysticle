@@ -11,7 +11,9 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 ### Setup
 
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
-* Power the UniJoystiCle WiFi receiver (either with a micro USB cable, or via the barrel jack)
+* Power the UniJoystiCle WiFi receiver. Either with:
+  * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
+  * or via the barrel jack: Anything between 5.5V and 12V with 500mA should be fine. As an example, a regular 9V battery should work (although it is not very efficient).
 * Wait a few seconds and you should see two LEDs. The color is not important
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
@@ -112,6 +114,18 @@ __Which controller should you use:__
 * For MFi controllers, try here: [AfterPad](https://afterpad.com/mficontrollers/">https://afterpad.com/mficontrollers/). The [Nimbus SteelSeries](https://afterpad.com/steelseries-nimbus-the-afterpad-review/) is good. DO NOT get the Status SteelSeries.
 * For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
 
+### Commando mode + Game Controllers
+
+In this mode you control both joysticks at the same time. A game controller is needed for this. Can't be played with the "virtual" dpad.
+It is called "Commando" mode, since it allows you to play the Commando game by using:
+
+* The dpad to control the movements of the Hero
+* Button A to fire
+* and Button B to throw grenades. Spacebar is not needed anymore!
+
+You can do much more than that, since you control both joysticks. So you can play multiplayer games controlling both players at the same time. Not for the mere mortals.
+
+
 ### Gyruss mode
 
 <img src="https://lh3.googleusercontent.com/E17hGhA4Ab6wNy1_OnpuzIwfzb3y3nsBFTVZv70gY1UJGSlOiXEGEOxda_YRd43CVQuFlhRbvvbWwIM=w5760-h3600-no" width="344" height="194" />
@@ -173,9 +187,10 @@ After assembling the PCB, it should look like this:
 
 ## Installing the firmware
 
+* Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
+* Connect the UniJoystiCle Wifi device, by using a micro USB cable, to the computer
 * Install [PlatformIO](http://platformio.org)
 * Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
-* Connect the ESP8266 module with the USB cable to the computer
 * And do `make && make upload`
 
 Example:
@@ -242,4 +257,5 @@ The c64 keyboard won't work correctly if you keep moving a regular joystick whil
 
 * To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
 * "Gyruss mode" is only supported on iOS. Android version coming soon.
+* It is only compatible with Commodore 64, 64c and 128. Not compatible with 128D and SX64 (since the WiFi controller doesn't fit).
 
