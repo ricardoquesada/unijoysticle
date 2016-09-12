@@ -116,7 +116,8 @@ __Which controller should you use:__
 
 ### Commando mode + Game Controllers
 
-<img src="https://lh3.googleusercontent.com/tgLsbc3oRG6yk8MqKIIltiFPOOrm23AVACod9iCpep07wRRlDrkCePVUI-9nbm7v8UcY10qXQhP-Mw=w1136-h638-no" width="344" height="194" />
+<img src="https://lh3.googleusercontent.com/tgLsbc3oRG6yk8MqKIIltiFPOOrm23AVACod9iCpep07wRRlDrkCePVUI-9nbm7v8UcY10qXQhP-Mw=w1136-h638-no" width="344" height="194" /><img class="alignnone" src="https://lh3.googleusercontent.com/vxbiIsJjtjfyqieu4QO27VW6hBTxszUth8Eb_g6TbgVK1jGEmvNmnazd7CAb1uFo6I38RNpK_qZO0sc=w5760-h3600-no" width="273" height="157" />
+
 
 In this mode you control both joysticks at the same time. A game controller is needed for this. Can't be played with the "virtual" dpad.
 It is called "Commando" mode, since it allows you to play the Commando game by using:
