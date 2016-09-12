@@ -24,7 +24,7 @@ After a booting it, you should be able to see a WiFi network called "unijoysticl
 
 ...and then launch the UniJoystiCle Controller app.
 
-<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/ueHuOOYMMb5JrAd57o1XE_7N_1l89atfHX1GGsZ1CMpzVG1k6-ZeXsb6Ppzlu-RVzOi5y2cLzx9VGQ0=w622-h440" width="288" height="204" />
+<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="288" height="204" />
 
 There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Linear mode_.
 
@@ -115,6 +115,8 @@ __Which controller should you use:__
 * For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
 
 ### Commando mode + Game Controllers
+
+<img src="https://lh3.googleusercontent.com/tgLsbc3oRG6yk8MqKIIltiFPOOrm23AVACod9iCpep07wRRlDrkCePVUI-9nbm7v8UcY10qXQhP-Mw=w1136-h638-no" width="344" height="194" />
 
 In this mode you control both joysticks at the same time. A game controller is needed for this. Can't be played with the "virtual" dpad.
 It is called "Commando" mode, since it allows you to play the Commando game by using:
