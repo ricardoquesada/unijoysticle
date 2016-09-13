@@ -116,8 +116,11 @@ For iOS:
 * For iCade controlles, try here: [iCade Controllers](http://retrorgb.com/icadecontrollers.html). The ["original" iCade](http://retrorgb.com/icade.html) is good.
 
 For Android:
-* Any Game Controller that supports the Android protocol. See [reviews here](http://www.androidauthority.com/best-bluetooth-gaming-controllers-403184/)
+* Any Game Controller that supports __the Android protocol__. See [reviews here](http://www.androidauthority.com/best-bluetooth-gaming-controllers-403184/)
 * OUYA Game Controllers (they are not that great though). [Get it here](http://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313.TR0.TRC0.H0.Xouya+game+controller.TRS0&_nkw=ouya+game+controller&_sacat=0)
+* Notes:
+  * Amazon Fire Game Controllers support the Android protocol
+  * Moga Game Controllers support the Android protocol [when in "B" mode](https://gavinsgadgets.com/2016/03/21/how-to-connect-a-moga-pro-power-bluetooth-game-controller-with-the-samsung-galaxy-s7/)
 
 ### Commando mode + Game Controllers
 
