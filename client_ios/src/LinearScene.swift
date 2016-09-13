@@ -24,8 +24,8 @@ class LinearScene: ControllerScene {
     // accel tmp
     var buttons: [SKSpriteNode:UInt8] = [:]
 
-    var labelBack:SKLabelNode? = nil
-    var labelSlider:SKLabelNode? = nil
+    var labelBack:SKLabelNode = SKLabelNode()
+    var labelSlider:SKLabelNode = SKLabelNode()
 
     // will be used to calculate the angle. this will be used as the "center"
     var centerPos:CGPoint = CGPointZero
@@ -50,8 +50,8 @@ class LinearScene: ControllerScene {
 
 
         // setup sprites
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
-        labelSlider = childNodeWithName("SKLabelNode_value") as! SKLabelNode?
+        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
+        labelSlider = (childNodeWithName("SKLabelNode_value") as! SKLabelNode?)!
 
         let names_bits = [
             "SKSpriteNode_left": JoyBits.Left.rawValue,
@@ -73,7 +73,7 @@ class LinearScene: ControllerScene {
         // round the slider position to the nearest index of the numbers array
         let index = (Int)(slider.value)
         slider.setValue(Float(index), animated: false)
-        labelSlider?.text = "\(index)"
+        labelSlider.text = "\(index)"
 
         joyState = UInt8(index)
     }
@@ -97,7 +97,7 @@ class LinearScene: ControllerScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             let location = touch.locationInNode(self)
-            if labelBack!.frame.contains(location) {
+            if labelBack.frame.contains(location) {
                 self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0

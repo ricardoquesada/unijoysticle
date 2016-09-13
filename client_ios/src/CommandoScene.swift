@@ -69,8 +69,8 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
         JoyBits.Down.rawValue | JoyBits.Right.rawValue
     ]
 
-    var labelBack:SKLabelNode? = nil
-    var labelGController:SKLabelNode? = nil
+    var labelBack:SKLabelNode = SKLabelNode()
+    var labelGController:SKLabelNode = SKLabelNode()
     let STICK_THRESHLOLD:Float = 0.05
 
     override func didMoveToView(view: SKView) {
@@ -87,9 +87,9 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
             buttons_sprites.append(sprite)
         }
 
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
-        labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode?
-        labelGController?.text = "Connect a Game Controller"
+        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
+        labelGController = (childNodeWithName("SKLabelNode_controller") as! SKLabelNode?)!
+        labelGController.text = "Connect a Game Controller"
 
         //
         // Game Controller Code
@@ -128,7 +128,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
         enableGamecontroller()
     }
     func controllerDisconnected() {
-        labelGController?.text = "Connect a Game Controller"
+        labelGController.text = "Connect a Game Controller"
         self.protoHeader.joyState1 = 0
         self.protoHeader.joyState2 = 0
         sendJoyState()
@@ -144,7 +144,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
                 if controller.extendedGamepad != nil {
                     registerExtendedGamepad(controller)
                 }
-                labelGController?.text = "Game Controller Detected"
+                labelGController.text = "Game Controller Detected"
                 break
             }
         }
@@ -259,7 +259,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
         for touch in touches {
 
             let location = touch.locationInNode(self)
-            if labelBack!.frame.contains(location) {
+            if labelBack.frame.contains(location) {
                 self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.protoHeader.joyState1 = 0

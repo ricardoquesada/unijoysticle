@@ -38,9 +38,9 @@ class GyrussScene: ControllerScene {
     // accel tmp
     var buttons: [SKSpriteNode:UInt8] = [:]
 
-    var labelBack:SKLabelNode? = nil
-    var spriteFire:SKSpriteNode? = nil
-    var spriteBall:SKSpriteNode? = nil
+    var labelBack:SKLabelNode = SKLabelNode()
+    var spriteFire:SKSpriteNode = SKSpriteNode()
+    var spriteBall:SKSpriteNode = SKSpriteNode()
     // will be used to calculate the angle. this will be used as the "center"
     var centerPos:CGPoint = CGPointZero
 
@@ -57,9 +57,9 @@ class GyrussScene: ControllerScene {
         }
 
         // setup sprites
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
-        spriteFire = childNodeWithName("SKSpriteNode_fire") as! SKSpriteNode?
-        spriteBall = childNodeWithName("SKSpriteNode_ball") as! SKSpriteNode?
+        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
+        spriteFire = (childNodeWithName("SKSpriteNode_fire") as! SKSpriteNode?)!
+        spriteBall = (childNodeWithName("SKSpriteNode_ball") as! SKSpriteNode?)!
 
         let circleSprite = childNodeWithName("SKSpriteNode_outerCircle")
 
@@ -104,7 +104,7 @@ class GyrussScene: ControllerScene {
         self.physicsWorld.gravity.dx = CGFloat(self.userAcceleration.y * GRAVITY * self.gravityFactor)
         self.physicsWorld.gravity.dy = -CGFloat(self.userAcceleration.x * GRAVITY * self.gravityFactor)
 
-        let currentPos:CGPoint = (spriteBall?.position)!
+        let currentPos:CGPoint = spriteBall.position
         let adjustedPosition = CGPoint(x:currentPos.x - centerPos.x, y:currentPos.y - centerPos.y)
         var angle = 0.0
         angle = atan2(Double(adjustedPosition.y), Double(adjustedPosition.x))
@@ -162,7 +162,7 @@ class GyrussScene: ControllerScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             let location = touch.locationInNode(self)
-            if labelBack!.frame.contains(location) {
+            if labelBack.frame.contains(location) {
                 self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
@@ -171,7 +171,7 @@ class GyrussScene: ControllerScene {
                     // re-enable it.
                     UIApplication.sharedApplication().idleTimerDisabled = false
                 })
-            } else if spriteFire!.frame.contains(location) {
+            } else if spriteFire.frame.contains(location) {
                 joyState |= JoyBits.Fire.rawValue
             }
         }
@@ -179,7 +179,7 @@ class GyrussScene: ControllerScene {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             let location = touch.locationInNode(self)
-            if spriteFire!.frame.contains(location) {
+            if spriteFire.frame.contains(location) {
                 joyState &= ~JoyBits.Fire.rawValue
             }
         }

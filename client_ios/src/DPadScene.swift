@@ -43,8 +43,8 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
                            JoyBits.Down.rawValue | JoyBits.Left.rawValue,
                            JoyBits.Down.rawValue | JoyBits.Right.rawValue]
 
-    var labelBack:SKLabelNode? = nil
-    var labelGController:SKLabelNode? = nil
+    var labelBack:SKLabelNode = SKLabelNode()
+    var labelGController:SKLabelNode = SKLabelNode()
     let STICK_THRESHLOLD:Float = 0.05
     var buttonBEnabled = BUTTON_B_ENABLED
     var swapABEnabled = SWAP_A_B_ENABLED
@@ -76,9 +76,9 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
             buttons_sprites.append(sprite)
         }
 
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
-        labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode?
-        labelGController?.hidden = true
+        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
+        labelGController = (childNodeWithName("SKLabelNode_controller") as! SKLabelNode?)!
+        labelGController.hidden = true
 
         //
         // Game Controller Code
@@ -114,7 +114,7 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         enableGamecontroller()
     }
     func controllerDisconnected() {
-        labelGController?.hidden = true
+        labelGController.hidden = true
         joyState = 0
         sendJoyState()
     }
@@ -129,7 +129,7 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
                 if controller.extendedGamepad != nil {
                     registerExtendedGamepad(controller)
                 }
-                labelGController?.hidden = false
+                labelGController.hidden = false
                 break
             }
         }
@@ -267,7 +267,7 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         for touch in touches {
 
             let location = touch.locationInNode(self)
-            if labelBack!.frame.contains(location) {
+            if labelBack.frame.contains(location) {
                 self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0

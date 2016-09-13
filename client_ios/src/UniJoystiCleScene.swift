@@ -35,10 +35,7 @@ class UniJoystiCleScene: ControllerScene {
     // accel tmp
     var buttons: [SKSpriteNode:UInt8] = [:]
 
-    var labelX:SKLabelNode? = nil
-    var labelY:SKLabelNode? = nil
-    var labelZ:SKLabelNode? = nil
-    var labelBack:SKLabelNode? = nil
+    var labelBack:SKLabelNode = SKLabelNode()
     var doTheJump:Bool = false
 
     let operationQueue = NSOperationQueue()
@@ -61,10 +58,7 @@ class UniJoystiCleScene: ControllerScene {
         }
 
         // setup labes and other stuff
-        labelX = childNodeWithName("SKLabelNode_x") as! SKLabelNode?
-        labelY = childNodeWithName("SKLabelNode_y") as! SKLabelNode?
-        labelZ = childNodeWithName("SKLabelNode_z") as! SKLabelNode?
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode?
+        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
 
         let names_bits = [
                            "SKSpriteNode_left": JoyBits.Left.rawValue,
@@ -186,10 +180,6 @@ class UniJoystiCleScene: ControllerScene {
         }
 
         // update labels and sprites
-        self.labelX!.text = String(format:"x = %.2f", userAcceleration.x)
-        self.labelY!.text = String(format:"y = %.2f", userAcceleration.y)
-        self.labelZ!.text = String(format:"z = %.2f", userAcceleration.z)
-
         for (sprite, bitmask) in buttons {
             if (joyState & bitmask) != 0 {
                 sprite.color = UIColor.redColor()
@@ -207,7 +197,7 @@ class UniJoystiCleScene: ControllerScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             let location = touch.locationInNode(self)
-            if labelBack!.frame.contains(location) {
+            if labelBack.frame.contains(location) {
                 self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
