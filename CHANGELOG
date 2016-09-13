@@ -25,7 +25,7 @@ v0.4 - 2016-09-XX
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
 - [FIX] iOS Client: Settings + Launch screen work both in Portrait and Landscape modes
 
-v0.3.1 - 2016-08-02
+v0.3.1 - 2016-08-02 (internal release)
 
 - [NEW] iOS Client: Added Linear mode. Useful when using the joystick to send a value from 0 to 31
     Example: to control how the dimmer a of lamp
