@@ -121,7 +121,7 @@ For Android:
 * Notes:
   * Amazon Fire Game Controllers support the Android protocol
   * Moga Game Controllers support the Android protocol [when in "B" mode](https://gavinsgadgets.com/2016/03/21/how-to-connect-a-moga-pro-power-bluetooth-game-controller-with-the-samsung-galaxy-s7/)
-  * It supports WiFi-Direct game controllers as well, like the NVIDIA SHIELD, or the Amazon Fire 2nd gen. Since most phones don't support WiFi-Direct, you should install the Android UniJoystiCle app into those Android Devices. eg: Amazon Fire TV, or the NVIDIA SHIELD Android TV.
+  * WiFi-Direct game controllers are supported as well, like the NVIDIA SHIELD, or the Amazon Fire 2nd gen. But since most smartphones don't support WiFi-Direct, you should install the Android UniJoystiCle app into WiFi-Direct-enabled devices, like the Amazon Fire TV, or the NVIDIA SHIELD Android TV.
 
 ### Commando mode + Game Controllers
 
