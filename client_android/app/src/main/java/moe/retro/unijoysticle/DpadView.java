@@ -242,18 +242,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         invalidate();
 
     }
-    /**
-     * Any gamepad button + the spacebar or DPAD_CENTER will be used as the fire
-     * key.
-     *
-     * @param keyCode
-     * @return true of it's a fire key.
-     */
-    private static boolean isFireKey(int keyCode) {
-        return KeyEvent.isGamepadButton(keyCode)
-                || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
-                || keyCode == KeyEvent.KEYCODE_SPACE;
-    }
 
     /*
      * When an input device is added, we add a ship based upon the device.
@@ -471,7 +459,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 float xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
                 float yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
 
-                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // Dpad
                 // LEFT and RIGHT direction accordingly.
                 if (Float.compare(xaxis, -1.0f) == 0) {
                     directionPressed |= JOY_LEFT;
@@ -483,6 +471,23 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 if (Float.compare(yaxis, -1.0f) == 0) {
                     directionPressed |= JOY_UP;
                 } else if (Float.compare(yaxis, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN;
+                }
+
+                // Left Joystick
+                // Check if the AXIS_X value is -1 or 1
+                xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_X);
+                yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_Y);
+                if (xaxis < -0.5f) {
+                    directionPressed |= JOY_LEFT;
+                } else if (xaxis > 0.5f) {
+                    directionPressed |= JOY_RIGHT;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis < -0.5f) {
+                    directionPressed |= JOY_UP;
+                } else if (yaxis > 0.5f) {
                     directionPressed |= JOY_DOWN;
                 }
             }
@@ -508,7 +513,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                     directionPressed |= JOY_DOWN;
                     processed = true;
                 }
-                if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL || keyCode == KeyEvent.KEYCODE_BUTTON_A) {
                     directionPressed |= JOY_FIRE;
                     processed = true;
                 }
@@ -538,6 +543,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         static final int OUYA_DPAD_RIGHT = 108;
         static final int OUYA_BUTTON_A = 96;
         static final int OUYA_BUTTON_B = 99;
+        static final int OUYA_STICK_BUTTON_LEFT = 102;
 
         @Override
         public int getDirectionPressed(InputEvent event) {
@@ -569,6 +575,23 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 } else if (Float.compare(yaxis, 1.0f) == 0) {
                     directionPressed |= JOY_DOWN;
                 }
+
+                // Left Joystick
+                // Check if the AXIS_X value is -1 or 1
+                xaxis = motionEvent.getAxisValue(MotionEvent.AXIS_X);
+                yaxis = motionEvent.getAxisValue(MotionEvent.AXIS_Y);
+                if (xaxis < -0.5f) {
+                    directionPressed |= JOY_LEFT;
+                } else if (xaxis > 0.5f) {
+                    directionPressed |= JOY_RIGHT;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis < -0.5f) {
+                    directionPressed |= JOY_UP;
+                } else if (yaxis > 0.5f) {
+                    directionPressed |= JOY_DOWN;
+                }
             }
 
             // If the input event is a KeyEvent, check its key code.
@@ -588,7 +611,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                     directionPressed |= JOY_DOWN;
                 }
 
-                if (keyCode == OUYA_BUTTON_A) {
+                if (keyCode == OUYA_STICK_BUTTON_LEFT || keyCode == OUYA_BUTTON_A) {
                     directionPressed |= JOY_FIRE;
                 }
                 if (keyCode == OUYA_BUTTON_B) {

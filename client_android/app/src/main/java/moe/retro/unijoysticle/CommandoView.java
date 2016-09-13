@@ -335,8 +335,8 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                 // Use the hat axis value to find the D-pad direction
                 MotionEvent motionEvent = (MotionEvent) event;
 
-                // Joy #2
-                    // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
+                // Joy #2: Dpad
+                // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
                 // LEFT and RIGHT direction accordingly.
                 float xaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_X);
                 float yaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_HAT_Y);
@@ -353,7 +353,25 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                     directionPressed |= JOY_DOWN2;
                 }
 
-                // Joy #1
+                // Joy #2: Left Joystick
+                // Check if the AXIS_X value is -1 or 1
+                xaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_X);
+                yaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_Y);
+                if (xaxis2 < -0.5f) {
+                    directionPressed |= JOY_LEFT2;
+                } else if (xaxis2 > 0.5f) {
+                    directionPressed |= JOY_RIGHT2;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis2 < -0.5f) {
+                    directionPressed |= JOY_UP2;
+                } else if (yaxis2 > 0.5f) {
+                    directionPressed |= JOY_DOWN2;
+                }
+
+
+                // Joy #1: Right Joystick
                 // Check if the AXIS_HAT_X value is -1 or 1, and set the D-pad
                 // LEFT and RIGHT direction accordingly.
                 float xaxis1 = motionEvent.getAxisValue(MotionEvent.AXIS_Z);
@@ -370,7 +388,6 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                 } else if (yaxis1 > 0.5f) {
                     directionPressed |= JOY_DOWN1;
                 }
-
             }
 
             // If the input event is a KeyEvent, check its key code.
@@ -394,12 +411,12 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                     directionPressed |= JOY_DOWN2;
                     processed = true;
                 }
-                if (keyCode == KeyEvent.KEYCODE_BUTTON_A) {
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_A || keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL) {
                     directionPressed |= JOY_FIRE2;
                     processed = true;
                 }
 
-                if (keyCode == KeyEvent.KEYCODE_BUTTON_B || keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_B || keyCode == KeyEvent.KEYCODE_BUTTON_THUMBR) {
                     directionPressed |= JOY_FIRE1;
                     processed = true;
                 }
@@ -425,6 +442,8 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
         static final int OUYA_DPAD_RIGHT = 108;
         static final int OUYA_BUTTON_A = 96;
         static final int OUYA_BUTTON_B = 99;
+        static final int OUYA_STICK_BUTTON_LEFT = 102;
+        static final int OUYA_STICK_BUTTON_RIGHT = 103;
 
         @Override
         public int getDirectionPressed(InputEvent event) {
@@ -455,6 +474,23 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                 if (Float.compare(yaxis2, -1.0f) == 0) {
                     directionPressed |= JOY_UP2;
                 } else if (Float.compare(yaxis2, 1.0f) == 0) {
+                    directionPressed |= JOY_DOWN2;
+                }
+
+                // Joy #2: Left Joystick
+                // Check if the AXIS_X value is -1 or 1
+                xaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_X);
+                yaxis2 = motionEvent.getAxisValue(MotionEvent.AXIS_Y);
+                if (xaxis2 < -0.5f) {
+                    directionPressed |= JOY_LEFT2;
+                } else if (xaxis2 > 0.5f) {
+                    directionPressed |= JOY_RIGHT2;
+                }
+                // Check if the AXIS_HAT_Y value is -1 or 1, and set the D-pad
+                // UP and DOWN direction accordingly.
+                if (yaxis2 < -0.5f) {
+                    directionPressed |= JOY_UP2;
+                } else if (yaxis2 > 0.5f) {
                     directionPressed |= JOY_DOWN2;
                 }
 
@@ -494,10 +530,10 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                     directionPressed |= JOY_DOWN2;
                 }
 
-                if (keyCode == OUYA_BUTTON_A) {
+                if (keyCode == OUYA_STICK_BUTTON_LEFT || keyCode == OUYA_BUTTON_A) {
                     directionPressed |= JOY_FIRE2;
                 }
-                if (keyCode == OUYA_BUTTON_B) {
+                if (keyCode == OUYA_STICK_BUTTON_RIGHT || keyCode == OUYA_BUTTON_B) {
                     directionPressed |= JOY_FIRE1;
                 }
             }

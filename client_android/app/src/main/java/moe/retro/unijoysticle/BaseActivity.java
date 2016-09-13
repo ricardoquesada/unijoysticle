@@ -136,7 +136,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public ProtoHeader mProtoHeader;
-    private ScheduledExecutorService mScheduleTaskExecutor;
+//    private ScheduledExecutorService mScheduleTaskExecutor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,12 +157,12 @@ public class BaseActivity extends AppCompatActivity {
         Log.d(TAG, "Joy Selected:" + mJoyControl);
 
         // schedule a handler every 60 per second
-        mScheduleTaskExecutor = Executors.newScheduledThreadPool(2);
-        mScheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                sendJoyState();
-            }
-        }, 0, 16, TimeUnit.MILLISECONDS);       // ~60Hz
+//        mScheduleTaskExecutor = Executors.newScheduledThreadPool(2);
+//        mScheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+//            public void run() {
+//                sendJoyState();
+//            }
+//        }, 0, 16, TimeUnit.MILLISECONDS);       // ~60Hz
 
         mProtoHeader = new ProtoHeader();
     }
@@ -181,22 +181,27 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mScheduleTaskExecutor.shutdownNow();
-        mNet.sendState(mJoyControl, (byte) 0);
+//        mScheduleTaskExecutor.shutdownNow();
+        if (mProtoVersion == 1) {
+            mJoyState = 0;
+        } else {
+            mProtoHeader.joyState2 = 0;
+            mProtoHeader.joyState1 = 0;
+        }
+        sendJoyState();
         super.onDestroy();
         // The activity is about to be destroyed.
     }
 
     public void sendJoyState() {
-        if (mProtoVersion == 1) {
-            mNet.sendState(mJoyControl, mJoyState);
-        } else {
-            byte data[] = new byte[]{mProtoHeader.version, mProtoHeader.joyControl, mProtoHeader.joyState1, mProtoHeader.joyState2};
-            mNet.sendState2(data);
+        // send it twice, in case the UDP packet is lost
+        for (int i=0; i<2; i++) {
+            if (mProtoVersion == 1) {
+                mNet.sendState(mJoyControl, mJoyState);
+            } else {
+                byte data[] = new byte[]{mProtoHeader.version, mProtoHeader.joyControl, mProtoHeader.joyState1, mProtoHeader.joyState2};
+                mNet.sendState2(data);
+            }
         }
-    }
-
-    protected void update(float dt) {
-        sendJoyState();
     }
 }

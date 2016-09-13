@@ -108,16 +108,14 @@ class ControllerScene: SKScene {
 
     func sendJoyState() {
         assert(net != nil, "net is nil")
-        
-        if protoVersion == 1 {
-            net!.sendState(joyControl, joyState)
-        } else {
-            let data:[UInt8] = [protoHeader.version, protoHeader.joyControl, protoHeader.joyState1, protoHeader.joyState2]
-            net!.sendState2(data)
-        }
-    }
 
-    override func update(currentTime: CFTimeInterval) {
-        sendJoyState()
+        for _ in 1...2 {
+            if protoVersion == 1 {
+                net!.sendState(joyControl, joyState)
+            } else {
+                let data:[UInt8] = [protoHeader.version, protoHeader.joyControl, protoHeader.joyState1, protoHeader.joyState2]
+                net!.sendState2(data)
+            }
+        }
     }
 }
