@@ -76,9 +76,6 @@ class LinearScene: ControllerScene {
         labelSlider.text = "\(index)"
 
         joyState = UInt8(index)
-    }
-
-    override func update(currentTime: CFTimeInterval) {
 
         for (sprite, bitmask) in buttons {
             if (joyState & bitmask) != 0 {
@@ -89,9 +86,7 @@ class LinearScene: ControllerScene {
             }
         }
 
-        // send joy status every update since UDP doesn't have resend and it is possible
-        // that some packets are lost
-        super.update(currentTime)
+        sendJoyState()
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

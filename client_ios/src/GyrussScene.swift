@@ -101,6 +101,8 @@ class GyrussScene: ControllerScene {
 
     override func update(currentTime: CFTimeInterval) {
 
+        let prevState = joyState;
+
         self.physicsWorld.gravity.dx = CGFloat(self.userAcceleration.y * GRAVITY * self.gravityFactor)
         self.physicsWorld.gravity.dy = -CGFloat(self.userAcceleration.x * GRAVITY * self.gravityFactor)
 
@@ -145,18 +147,19 @@ class GyrussScene: ControllerScene {
             joyState |= JoyBits.Left.rawValue
         }
 
-        for (sprite, bitmask) in buttons {
-            if (joyState & bitmask) != 0 {
-                sprite.color = UIColor.redColor()
-            }
-            else {
-                sprite.color = UIColor.grayColor()
+        if joyState != prevState {
+            sendJoyState();
+
+            // update sprite colors
+            for (sprite, bitmask) in buttons {
+                if (joyState & bitmask) != 0 {
+                    sprite.color = UIColor.redColor()
+                }
+                else {
+                    sprite.color = UIColor.grayColor()
+                }
             }
         }
-
-        // send joy status every update since UDP doesn't have resend and it is possible
-        // that some packets are lost
-        super.update(currentTime)
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

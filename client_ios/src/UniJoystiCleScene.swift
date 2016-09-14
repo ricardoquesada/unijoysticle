@@ -108,6 +108,7 @@ class UniJoystiCleScene: ControllerScene {
     override func update(currentTime: CFTimeInterval) {
 
 
+        let prevState = joyState
 //        print("min: \(zMin), max: \(zMax)")
 //        print(self.labelState!.text)
 //        print(self.userAcceleration);
@@ -179,19 +180,19 @@ class UniJoystiCleScene: ControllerScene {
             }
         }
 
-        // update labels and sprites
-        for (sprite, bitmask) in buttons {
-            if (joyState & bitmask) != 0 {
-                sprite.color = UIColor.redColor()
-            }
-            else {
-                sprite.color = UIColor.grayColor()
+        if prevState != joyState {
+            sendJoyState()
+
+            // update labels and sprites
+            for (sprite, bitmask) in buttons {
+                if (joyState & bitmask) != 0 {
+                    sprite.color = UIColor.redColor()
+                }
+                else {
+                    sprite.color = UIColor.grayColor()
+                }
             }
         }
-
-        // send joy status every update since UDP doesn't have resend and it is possible
-        // that some packets are lost
-        super.update(currentTime)
     }
 
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

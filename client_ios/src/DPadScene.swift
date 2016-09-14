@@ -219,22 +219,6 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
             }
             self.repaintButtons()
         }
-
-        // right thumbstick
-        controller.extendedGamepad?.rightThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
-            self.joyState &= ~(JoyBits.DPad.rawValue)
-            if xValue > self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Right.rawValue
-            } else if xValue < -self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Left.rawValue
-            }
-            if yValue > self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Up.rawValue
-            } else if yValue < -self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Down.rawValue
-            }
-            self.repaintButtons()
-        }
     }
 
     func repaintButtons() {
