@@ -10,7 +10,8 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 
 ### Setup
 
-<img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
+<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
+
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver. Either with:
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
@@ -19,7 +20,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
      * A regular 9V battery works, although it is not very efficient 
 * Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
 
-<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
+<img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
 
 After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your smartphone Settings, connect to it...:
 
