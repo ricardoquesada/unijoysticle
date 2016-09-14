@@ -348,8 +348,11 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                 }
                 break;
         }
-        if (handled)
+        if (handled) {
+            DpadActivity host = (DpadActivity) getContext();
+            host.sendJoyState();
             return true;
+        }
         return super.onTouchEvent(e);
     }
 

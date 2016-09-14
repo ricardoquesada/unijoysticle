@@ -13,8 +13,10 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver. Either with:
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
-  * or via the barrel jack: Anything between 5.5V and 12V with 500mA should be fine. As an example, a regular 9V battery should work (although it is not very efficient). It might even be possible to get the power from the datasette port.
-* Wait a few seconds and you should see two LEDs. The color is not important
+  * or via the barrel jack: Anything between 5V and 12V with 500mA should be fine
+     * It is possible to get the power from the datasette port (or the expansion port, or user port) using the correct cable. Take into account the the WiFi device might need as much as 400ma to work. 
+     * A regular 9V battery works, although it is not very efficient 
+* Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
 

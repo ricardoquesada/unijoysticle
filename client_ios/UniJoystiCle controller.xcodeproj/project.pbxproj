@@ -42,6 +42,7 @@
 		509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		50AD8A101D504DF7003F3040 /* LinearScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LinearScene.sks; sourceTree = "<group>"; };
 		50AD8A111D504DF7003F3040 /* LinearScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearScene.swift; sourceTree = "<group>"; };
+		50B7C59D1D89C6AE000445A8 /* DOCUMENTATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = DOCUMENTATION.md; path = ../DOCUMENTATION.md; sourceTree = "<group>"; };
 		50BEF5091CC94B3D00505A7F /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGELOG; path = ../CHANGELOG; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle Controller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle Controller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50DD05841CC6642C0080240F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +105,7 @@
 		50CCB41B1CA5C214002CFD1E = {
 			isa = PBXGroup;
 			children = (
+				50B7C59D1D89C6AE000445A8 /* DOCUMENTATION.md */,
 				50BEF5091CC94B3D00505A7F /* CHANGELOG */,
 				50DD05821CC6642C0080240F /* src */,
 				5094A5F31CEA044D00E3B57A /* res */,
