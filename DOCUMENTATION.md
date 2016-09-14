@@ -10,7 +10,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 
 ### Setup
 
-<img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="279" height="153" />
+<img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver. Either with:
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
