@@ -14,8 +14,8 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
 * DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
 * Power the UniJoystiCle WiFi receiver. Either with:
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
-  * or via the barrel jack: Anything between 5V and 12V with 500mA should be fine
-     * It is possible to get the power from the datasette port (or the expansion port, or user port) using the correct cable. Take into account the the WiFi device might need as much as 400ma to work. 
+  * or via the barrel jack: Anything between 5V and 12V with __400mA__ should be fine
+     * It is possible to get the power from the datasette port, or the expansion port, or user port using and ad-hoc cable. Just make sure that there is enough current (400mA)
      * A regular 9V battery works, although it is not very efficient 
 * Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
 
@@ -201,8 +201,7 @@ You will need the following components:
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
-The barrel jack and the diode are optional. They are only needed if you want to power the NodeMCU module with an external power source. If so, you can use any DC power that from 5v to 12v. 500mA should be enough. Probably it will work with less as well. It works with a 9v battery, although that might not be the most efficient way to power the NodeMCU module.
-
+The barrel jack and the diode are optional. They are only needed if you want to power the NodeMCU module with an external power source. If so, you can use any DC power that from 5v to 12v. 400mA should be enough. Probably it will work with less as well.
 If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__
 
 After assembling the PCB, it should look like this:
@@ -240,10 +239,24 @@ If you don't see two LEDs on the NodeMCU then:
 * Make sure it is NOT plugged into the Commmodore 64
 * Power it either:
   * via the micro USB cable (recommended)
-  * or by using the barrel jack: anything between 5.5V and 12V with at least 500mA should be Ok.
+  * or by using the barrel jack: anything between 5V and 12V with __at least 400mA__ should be Ok.
 * Press the RST (reset) button on the NodeMCU
 
-If that doesn't work (you don't see the two LEDs), probably your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+If that doesn't work (you don't see the two LEDs), probably:
+
+* your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+* you are using power from c64 (datasette, user port or expansion port), and the C64 doesn't have enough current
+
+#### When using power from the C64
+
+You should know that all the connected devices compete for the current. Example: If you have an 1541 Ultimate II, and WiModem and a UniJoystiCle, then the three of them will compete for current. If that is the case, most probably one of them won't work.
+
+Tested configurations:
+
+* UniJoystiCle (current from the datasette port) + regualr PSU: Works Ok.
+* UniJoystiCle (current from the datasette port) + 1541 Ultimate II + regular PSU: Works Ok.
+* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + regular PSU: Sometimes it works, sometimes it doesn't
+* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok 
 
 ### Joysticks don't work
 
@@ -281,7 +294,7 @@ The c64 keyboard won't work correctly if you keep moving a regular joystick whil
 
 ## Bugs
 
-* To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64.
+* To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64. Apparently it only happens when it is powered via USB.
 * "Gyruss mode" is only supported on iOS. Android version coming soon.
-* It is only compatible with Commodore 64, 64c and 128. Not compatible with 128D and SX64 (since the WiFi controller doesn't fit).
+* It is only compatible with Commodore 64, 64c and 128. It is not compatible with 128D and SX64 since the WiFi controller doesn't fit.
 
