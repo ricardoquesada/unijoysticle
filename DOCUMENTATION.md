@@ -253,7 +253,7 @@ You should know that all the connected devices compete for the current. Example:
 
 Tested configurations:
 
-* UniJoystiCle (current from the datasette port) + regualr PSU: Works Ok.
+* UniJoystiCle (current from the datasette port) + regular PSU: Works Ok.
 * UniJoystiCle (current from the datasette port) + 1541 Ultimate II + regular PSU: Works Ok.
 * UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + regular PSU: Sometimes it works, sometimes it doesn't
 * UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok 
