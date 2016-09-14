@@ -1,19 +1,18 @@
-v0.4 - 2016-09-XX
+v0.4 - 2016-10-XX
 
 - [NEW] Docs: Added documentation. See DOCUMENTATION.md
 - [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and SX-64
 - [NEW] ESP8266 Schematic: Using D1 Mini instead of NodeMCU to reduce the
-		realstate even more. Making it smaller than 5x5cm, thus reducing the price to
-		order the PCB
-- [NEW] ESP8266 Schematic: Does not use barrel jack anymore. For external power supply
-        the Wemos Supply shield can be used.
+        realstate even more. Making it smaller than 5x5cm. Chepear to produce
+- [NEW] ESP8266 Schematic: Does not use diode anymore. It seems it was not needed.
+- [NEW] Client: Added Commando Mode: Control both c64 joysticks with one game controller.
+        Ideal for games like Commando were the granedes can be thrown with button B
 - [NEW] Android Client: new client for android. Supports:
-		UniJoystiCle mode
-		Dpad mode + controllers: Generic and OUYA controllers
-		Linear mode
-		Settings
-- [NEW] Commando Mode: Control the tow joysticks with one game controller.
-		Ideal for games like Commando were the granedes can be thrown with button B
+        UniJoystiCle mode
+        Dpad mode + controllers: Generic and OUYA game controllers
+        Commando mode: Generic and OUYA game controllers
+        Linear mode
+        Settings
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
 - [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
@@ -47,9 +46,9 @@ more reliable and enables new features like the handicap (see below)
 - [FIX] ESP8266 Schematic: Uses bitmap in bottom layer
 - [FIX] ESP8266 Schematic: uses DC Jack Barrel with thinner holes
 - [FIX] ESP8266 Schematic: 4066 ICs use VCC and GND from Joystick.
-		C64 works if power external power is off. Otherwise, the unknown
-		state of the ICs was causing strange bugs on the c64.
-		ESP8266 VCC is not used.
+        C64 works if power external power is off. Otherwise, the unknown
+        state of the ICs was causing strange bugs on the c64.
+        ESP8266 VCC is not used.
 - [FIX] ESP8266 Firmware: prints "UniJoystiCle" + version via Serial (good for debugging)
 
 
@@ -58,7 +57,7 @@ v0.2 - 2016-06-12
 
 - [NEW] - ESP8266: PCB board version. Protoboard version deprecated
 - [NEW] - ESP8266 Schematic: Added EAGLE board and schematic files.
-		  Fritzing diagrams deprecated
+          Fritzing diagrams deprecated
 - [NEW] - ESP8266 device: supports 2 joysticks (uses three 4066 ICs instead of two)
 - [NEW] - ESP8266 firmware uses AP mode by default.
           Uses SSID "unijosyticle" + last 2 bytes of mac address
