@@ -2705,7 +2705,7 @@ Mating wall wart : TOL-00298 (and others)</description>
 <part name="GND5" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND6" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="U$1" library="1455413453956-wemos" deviceset="WEMOS" device=""/>
-<part name="J3" library="SparkFun-Connectors" deviceset="POWER_JACK" device="SLT" value="5V ONLY  "/>
+<part name="J3" library="SparkFun-Connectors" deviceset="POWER_JACK" device="SLT" value="POWER"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="SUPPLY1" library="SparkFun-Aesthetics" deviceset="VCC" device="" value="VCC-2"/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="VCC" device="" value="VCC-2"/>

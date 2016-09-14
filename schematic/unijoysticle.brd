@@ -150,10 +150,9 @@
 <wire x1="49.53" y1="47.498" x2="47.498" y2="49.53" width="0" layer="20" curve="90"/>
 <wire x1="47.498" y1="49.53" x2="2.032" y2="49.53" width="0" layer="20"/>
 <wire x1="2.032" y1="49.53" x2="0" y2="47.498" width="0" layer="20" curve="90"/>
-<text x="48.26" y="28.956" size="1.016" layer="21" rot="R270" align="top-left">&gt;REVISION</text>
+<text x="47.8028" y="40.64" size="1.27" layer="21" rot="R270" align="top-left">&gt;REVISION</text>
 <text x="23.6093" y="4.6355" size="1.27" layer="22" font="vector" rot="SMR270" align="top-right">http://retro.moe</text>
-<text x="48.006" y="23.9522" size="1.016" layer="21" rot="R270" align="top-left">REV</text>
-<text x="46.2788" y="29.21" size="1.27" layer="21" rot="R270" align="top-left">UniJoystiCle</text>
+<text x="47.8028" y="33.02" size="1.27" layer="21" rot="R270" align="top-left">UniJoystiCle</text>
 <rectangle x1="22.479" y1="20.3708" x2="22.7838" y2="20.447" layer="22" rot="R90"/>
 <rectangle x1="22.479" y1="20.828" x2="22.7838" y2="20.9042" layer="22" rot="R90"/>
 <rectangle x1="21.717" y1="20.5994" x2="23.3934" y2="20.6756" layer="22" rot="R90"/>
@@ -1768,6 +1767,7 @@
 <rectangle x1="7.1628" y1="22.4282" x2="8.382" y2="22.5044" layer="22" rot="R90"/>
 <rectangle x1="7.239" y1="22.5044" x2="8.1534" y2="22.5806" layer="22" rot="R90"/>
 <rectangle x1="7.3152" y1="22.5044" x2="7.9248" y2="22.5806" layer="22" rot="R90"/>
+<text x="37.1348" y="9.906" size="1.27" layer="21" rot="R270" align="top-left">5V ONLY</text>
 </plain>
 <libraries>
 <library name="40xx">
@@ -1945,7 +1945,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </library>
 </libraries>
 <attributes>
-<attribute name="REVISION" value="0.4.0"/>
+<attribute name="REVISION" value="v0.4.0"/>
 </attributes>
 <variantdefs>
 </variantdefs>
@@ -2170,7 +2170,7 @@ design rules under a new name.</description>
 <attribute name="MPN" value="618009231121" x="40.4114" y="45.466" size="1.778" layer="27" display="off"/>
 </element>
 <element name="U$1" library="1455413453956-wemos" package="WEMOS" value="WEMOS" x="3.81" y="2.54"/>
-<element name="J3" library="SparkFun-Connectors" package="POWER_JACK_SLOT" value="5V ONLY  " x="52.578" y="0.762" rot="R90">
+<element name="J3" library="SparkFun-Connectors" package="POWER_JACK_SLOT" value="POWER" x="52.578" y="0.762" rot="R90">
 <attribute name="PROD_ID" value="PRT-00119" x="52.578" y="0.762" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 </elements>
@@ -2551,6 +2551,9 @@ design rules under a new name.</description>
 <wire x1="38.5572" y1="3.3528" x2="37.9984" y2="3.9116" width="0.3048" layer="1"/>
 <wire x1="26.8224" y1="2.794" x2="26.67" y2="2.54" width="0.3048" layer="1"/>
 <wire x1="38.5572" y1="3.3528" x2="38.778" y2="3.342" width="0.3048" layer="1"/>
+</signal>
+<signal name="N$1">
+<via x="3.81" y="26.162" extent="1-16" drill="0.6" shape="square"/>
 </signal>
 </signals>
 </board>
