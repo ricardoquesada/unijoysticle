@@ -190,7 +190,7 @@ The hardware as well as the software are open source. So you can build one yours
 * board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.2.2)
 * schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.2.2)
 
-You will need the following components:
+You will need the following components (BOM):
 
 * 1 x [NodeMCU ESP8266](http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html)
 * 2 x [DB9 female](https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800)
