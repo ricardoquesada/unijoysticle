@@ -37,6 +37,10 @@ enum iCadeButtons:UInt16 {
     case JoystickUpLeft     = 0b00000101
     case JoystickDownLeft   = 0b00000110
 
+    /* Buttons layout in the iCade
+       A C E G
+       B D F H
+    */
     case ButtonA            = 0b00010000
     case ButtonB            = 0b00100000
     case ButtonC            = 0b01000000

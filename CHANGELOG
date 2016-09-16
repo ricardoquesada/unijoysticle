@@ -13,7 +13,8 @@ v0.4 - 2016-10-XX
         Commando mode: Generic and OUYA game controllers
         Linear mode
         Settings
-- [NEW] iOS Client: D-Pad works with MFi and iCade game controllers
+- [NEW] iOS Client: D-Pad works with MFi and iCade game controllers.
+        When in iCade mode, button A and D act as Fire, and buttons B and C and jump
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
 - [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
 - [NEW] Tests: New Commodore 64 prg to test the UniJoystiCle + instructions

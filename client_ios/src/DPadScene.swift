@@ -323,23 +323,26 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         // If Button "B" enabled, then deactivate the "joy up". You can only jump with Button B.
         // And if it is disabled, then deactivate Button B
         if !self.buttonBEnabled {
-            extendedState &= ~iCadeButtons.ButtonB.rawValue
+            extendedState &= ~(iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue)
         } else {
             extendedState &= ~iCadeButtons.JoystickUp.rawValue
         }
 
-        // not swapped: A=Fire, B=Jump
         if !swapABEnabled {
-            if extendedState & iCadeButtons.ButtonB.rawValue != 0 {
+            // not swapped: A=Fire, B=Jump
+            if extendedState & (iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue) != 0 {
                 extendedState |= iCadeButtons.JoystickUp.rawValue
+            }
+            if extendedState & (iCadeButtons.ButtonA.rawValue | iCadeButtons.ButtonD.rawValue) != 0 {
+                extendedState |= iCadeButtons.ButtonA.rawValue
             }
         } else {
             // swapped: A=Jump, B=Fire
-            if extendedState & iCadeButtons.ButtonA.rawValue != 0 {
+            if extendedState & (iCadeButtons.ButtonA.rawValue | iCadeButtons.ButtonD.rawValue) != 0 {
                 extendedState &= ~iCadeButtons.ButtonA.rawValue
                 extendedState |= iCadeButtons.JoystickUp.rawValue
             }
-            if extendedState & iCadeButtons.ButtonB.rawValue != 0 {
+            if extendedState & (iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue) != 0 {
                 extendedState |= iCadeButtons.ButtonA.rawValue
             }
         }

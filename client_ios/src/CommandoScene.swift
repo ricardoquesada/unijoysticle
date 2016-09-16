@@ -251,7 +251,7 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
     }
 
     //
-    // Virtual D-Pad code
+    // Detect "back"
     //
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
@@ -281,11 +281,17 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
     //
     func stateChanged(state:UInt16) -> Void {
 
-        // Joy #2
-        protoHeader.joyState2 = (UInt8)(state & 0b00011111)
+        // Joy #2 dpad
+        protoHeader.joyState2 = (UInt8)(state & 0b00001111)
+
+        // Joy #2 button: either button A or D
+        if state & (iCadeButtons.ButtonA.rawValue | iCadeButtons.ButtonD.rawValue) != 0 {
+            protoHeader.joyState2 |= JoyBits.Fire.rawValue
+        }
 
         // Joy #1 (only button is supported since it doesn't have two sticks)
-        if state & iCadeButtons.ButtonB.rawValue == iCadeButtons.ButtonB.rawValue {
+        // Either button B or C
+        if state & (iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue) != 0 {
             protoHeader.joyState1 = JoyBits.Fire.rawValue
         } else {
             protoHeader.joyState1 = 0
