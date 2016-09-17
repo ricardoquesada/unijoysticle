@@ -26,14 +26,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener
+public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener
 {
     // ------------------------------------------------------------------------------------------
     // Private attributes :
     private static final String androidns="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
-    private TextView mValueText;
+    private TextView mSplashText,mValueText;
     private Context mContext;
 
     private String mDialogMessage;
@@ -49,7 +49,7 @@ class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarCha
 
     // ------------------------------------------------------------------------------------------
     // Constructor :
-    private SeekBarPreference(Context context, AttributeSet attrs) {
+    public SeekBarPreference(Context context, AttributeSet attrs) {
 
         super(context,attrs);
         mContext = context;
@@ -83,11 +83,11 @@ class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarCha
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(6,6,6,6);
 
-        TextView splashText = new TextView(mContext);
-        splashText.setPadding(30, 10, 30, 10);
+        mSplashText = new TextView(mContext);
+        mSplashText.setPadding(30, 10, 30, 10);
         if (mDialogMessage != null)
-            splashText.setText(mDialogMessage);
-        layout.addView(splashText);
+            mSplashText.setText(mDialogMessage);
+        layout.addView(mSplashText);
 
         mValueText = new TextView(mContext);
         mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -150,7 +150,7 @@ class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarCha
     public void onStopTrackingTouch(SeekBar seek) {}
 
     // ------------------------------------------------------------------------------------------
-    // Set the positive button listener and onClick action : 
+    // Set the positive button listener and onClick action :
     @Override
     public void showDialog(Bundle state) {
 
@@ -171,7 +171,7 @@ class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarCha
             setSummary(String.valueOf(toStore));
         }
 
-        getDialog().dismiss();
+        ((AlertDialog) getDialog()).dismiss();
     }
     // ------------------------------------------------------------------------------------------
 }
