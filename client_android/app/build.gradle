@@ -1,23 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'MyAndroidKey'
-            keyPassword 'bombi73'
-            storeFile file('/Users/riq/keystores/android.jks')
-            storePassword 'bombi737373'
-        }
+    if (project.hasProperty("MyProject.signing")
+            && new File(project.property("MyProject.signing") + ".gradle").exists()) {
+        apply from: project.property("MyProject.signing") + ".gradle";
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId 'moe.retro.unijoysticle'
         minSdkVersion 18
-        targetSdkVersion 23
-        versionCode 6
-        versionName '0.4.2'
-        signingConfig signingConfigs.config
+        targetSdkVersion 24
+        versionCode 7
+        versionName '0.4.3'
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {
@@ -32,8 +29,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.google.android.gms:play-services-analytics:9.4.0'
 }

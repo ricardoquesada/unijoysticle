@@ -28,13 +28,11 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import java.util.ArrayList;
 
-import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyEvent;
@@ -56,21 +54,20 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
 
     private static final String TAG = CommandoView.class.getSimpleName();
 
-    final static int JOY_UP1       = 1 << 0;
-    final static int JOY_DOWN1     = 1 << 1;
-    final static int JOY_LEFT1     = 1 << 2;
-    final static int JOY_RIGHT1    = 1 << 3;
-    final static int JOY_FIRE1     = 1 << 4;
+    private final static int JOY_UP1       = 1 << 0;
+    private final static int JOY_DOWN1     = 1 << 1;
+    private final static int JOY_LEFT1     = 1 << 2;
+    private final static int JOY_RIGHT1    = 1 << 3;
+    private final static int JOY_FIRE1     = 1 << 4;
 
-    final static int JOY_UP2       = 1 << 8;
-    final static int JOY_DOWN2     = 1 << 9;
-    final static int JOY_LEFT2     = 1 << 10;
-    final static int JOY_RIGHT2    = 1 << 11;
-    final static int JOY_FIRE2     = 1 << 12;
+    private final static int JOY_UP2       = 1 << 8;
+    private final static int JOY_DOWN2     = 1 << 9;
+    private final static int JOY_LEFT2     = 1 << 10;
+    private final static int JOY_RIGHT2    = 1 << 11;
+    private final static int JOY_FIRE2     = 1 << 12;
 
     private final InputManager mInputManager;
     private Controller mController = null;
-    private SparseArray<PointF> mActivePointers;
 
     private ArrayList<Sprite> mSprites;
     // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
@@ -89,8 +86,6 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
     public CommandoView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mActivePointers = new SparseArray<PointF>();
-
         CommandoActivity host = (CommandoActivity) getContext();
 
         setFocusable(true);
@@ -102,7 +97,7 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
         host.mProtoVersion = 2;
     }
 
-    void findControllers() {
+    private void findControllers() {
         int[] deviceIds = mInputManager.getInputDeviceIds();
         for (int deviceId : deviceIds) {
             if (createController(deviceId))
@@ -122,7 +117,7 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
         mInputManager.unregisterInputDeviceListener(this);
     }
 
-    boolean createController(int deviceId) {
+    private boolean createController(int deviceId) {
         InputDevice dev = mInputManager.getInputDevice(deviceId);
         int sources = dev.getSources();
         // if the device is a gamepad/joystick, create a ship to represent it

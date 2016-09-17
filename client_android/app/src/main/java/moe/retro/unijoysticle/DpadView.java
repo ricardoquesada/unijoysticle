@@ -58,14 +58,14 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     private static final String TAG = DpadView.class.getSimpleName();
 
-    final static int JOY_UP       = 1 << 0;
-    final static int JOY_DOWN     = 1 << 1;
-    final static int JOY_LEFT     = 1 << 2;
-    final static int JOY_RIGHT    = 1 << 3;
-    final static int JOY_FIRE     = 1 << 4;
+    private final static int JOY_UP       = 1 << 0;
+    private final static int JOY_DOWN     = 1 << 1;
+    private final static int JOY_LEFT     = 1 << 2;
+    private final static int JOY_RIGHT    = 1 << 3;
+    private final static int JOY_FIRE     = 1 << 4;
     // there is not such thing as button B in commodore 64, but
     // this bit is used as temp value when storing the game controller info.
-    final static int JOY_FIRE_B   = 1 << 5;
+    private final static int JOY_FIRE_B   = 1 << 5;
 
     private final InputManager mInputManager;
     private Controller mController = null;
@@ -105,7 +105,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     }
 
-    void findControllers() {
+    private void findControllers() {
         int[] deviceIds = mInputManager.getInputDeviceIds();
         for (int deviceId : deviceIds) {
                 if (createController(deviceId))
@@ -125,7 +125,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         mInputManager.unregisterInputDeviceListener(this);
     }
 
-    boolean createController(int deviceId) {
+    private boolean createController(int deviceId) {
         InputDevice dev = mInputManager.getInputDevice(deviceId);
         int sources = dev.getSources();
         // if the device is a gamepad/joystick, create a ship to represent it
@@ -356,7 +356,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         return super.onTouchEvent(e);
     }
 
-    protected boolean disableTouch(float x, float y) {
+    private boolean disableTouch(float x, float y) {
         boolean handled = false;
         DpadActivity host = (DpadActivity) getContext();
         for(int i=0; i<9; ++i) {
@@ -371,7 +371,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         return handled;
     }
 
-    protected boolean enableTouch(float x, float y) {
+    private boolean enableTouch(float x, float y) {
         boolean handled = false;
         DpadActivity host = (DpadActivity) getContext();
         for(int i=0; i<9; ++i) {
@@ -412,7 +412,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
             );
         }
 
-        protected int transformDpadValues(int directionPressed) {
+        int transformDpadValues(int directionPressed) {
 
             // if buttonB enabled, then the only way to jump is by either pressing A or B
             // and not Dpad UP

@@ -17,7 +17,6 @@
 
 package moe.retro.unijoysticle;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -29,14 +28,12 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import java.util.ArrayList;
 
 import android.view.Display;
@@ -51,11 +48,11 @@ public class UnijoysticleView extends View implements SensorEventListener {
 
     private static final String TAG = UnijoysticleView.class.getSimpleName();
 
-    final static int JOY_UP       = 1 << 0;
-    final static int JOY_DOWN     = 1 << 1;
-    final static int JOY_LEFT     = 1 << 2;
-    final static int JOY_RIGHT    = 1 << 3;
-    final static int JOY_FIRE     = 1 << 4;
+    private final static int JOY_UP       = 1 << 0;
+    private final static int JOY_DOWN     = 1 << 1;
+    private final static int JOY_LEFT     = 1 << 2;
+    private final static int JOY_RIGHT    = 1 << 3;
+    private final static int JOY_FIRE     = 1 << 4;
 
     private final float mMovementThreshold;
     private final float mJumpThreshold;
@@ -330,7 +327,6 @@ public class UnijoysticleView extends View implements SensorEventListener {
                 // fire button
                 mBitmap = BitmapFactory.decodeResource(res, R.drawable.button);
                 mMatrix.setScale(0.75f, 0.75f, mBitmap.getWidth()/2, mBitmap.getHeight()/2);
-                final int padding = 50;
                 mPosX = sw/2 - mBitmap.getWidth()/2;
                 mPosY = sh/2 - mBitmap.getHeight()/2;
             }

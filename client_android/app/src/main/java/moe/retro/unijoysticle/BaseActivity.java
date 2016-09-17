@@ -16,6 +16,7 @@
 
 package moe.retro.unijoysticle;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,14 +29,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = BaseActivity.class.getSimpleName();
@@ -62,7 +61,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public class UDPConnection {
         private AsyncTask<Void, Void, Void> async_client;
-        private int SERVER_PORT = 6464;
+        final private int SERVER_PORT = 6464;
         private InetAddress mServerAddress;
         private DatagramSocket mSocket;
 
@@ -129,7 +128,7 @@ public class BaseActivity extends AppCompatActivity {
 
     // Protocol v2
     class ProtoHeader {
-        byte version = 2;
+        final byte version = 2;
         byte joyControl = 0b00000011;   // joy 1 and 2 enabled
         byte joyState1 = 0;
         byte joyState2 = 0;

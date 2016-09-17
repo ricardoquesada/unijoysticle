@@ -17,7 +17,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,17 +25,15 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 
-
-public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener
+class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener
 {
     // ------------------------------------------------------------------------------------------
     // Private attributes :
     private static final String androidns="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
-    private TextView mSplashText,mValueText;
+    private TextView mValueText;
     private Context mContext;
 
     private String mDialogMessage;
@@ -52,7 +49,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     // ------------------------------------------------------------------------------------------
     // Constructor :
-    public SeekBarPreference(Context context, AttributeSet attrs) {
+    private SeekBarPreference(Context context, AttributeSet attrs) {
 
         super(context,attrs);
         mContext = context;
@@ -86,11 +83,11 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(6,6,6,6);
 
-        mSplashText = new TextView(mContext);
-        mSplashText.setPadding(30, 10, 30, 10);
+        TextView splashText = new TextView(mContext);
+        splashText.setPadding(30, 10, 30, 10);
         if (mDialogMessage != null)
-            mSplashText.setText(mDialogMessage);
-        layout.addView(mSplashText);
+            splashText.setText(mDialogMessage);
+        layout.addView(splashText);
 
         mValueText = new TextView(mContext);
         mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -174,7 +171,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
             setSummary(String.valueOf(toStore));
         }
 
-        ((AlertDialog) getDialog()).dismiss();
+        getDialog().dismiss();
     }
     // ------------------------------------------------------------------------------------------
 }
