@@ -90,7 +90,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     public DpadView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mActivePointers = new SparseArray<PointF>();
+        mActivePointers = new SparseArray<>();
 
         DpadActivity host = (DpadActivity) getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -391,7 +391,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // add nine sprites after we have the layout in order to know the View size
-        mSprites = new ArrayList<Sprite>();
+        mSprites = new ArrayList<>();
         for(int i=0; i<9; ++i) {
             Sprite sprite = new Sprite(i);
             mSprites.add(sprite);

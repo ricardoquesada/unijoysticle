@@ -47,7 +47,7 @@ public final class AnalyticsTrackers {
         return sInstance;
     }
 
-    private final Map<Target, Tracker> mTrackers = new HashMap<Target, Tracker>();
+    private final Map<Target, Tracker> mTrackers = new HashMap<>();
     private final Context mContext;
 
     /**

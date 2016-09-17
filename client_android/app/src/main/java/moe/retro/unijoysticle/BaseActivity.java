@@ -69,9 +69,7 @@ public class BaseActivity extends AppCompatActivity {
             try {
                 mServerAddress = InetAddress.getByName(serverAddress);
                 mSocket = new DatagramSocket();
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (UnknownHostException e) {
+            } catch (SocketException | UnknownHostException e) {
                 e.printStackTrace();
             }
         }

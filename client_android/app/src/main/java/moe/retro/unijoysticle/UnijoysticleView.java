@@ -150,7 +150,7 @@ public class UnijoysticleView extends View implements SensorEventListener {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // add nine sprites after we have the layout in order to know the View size
-        mSprites = new ArrayList<Sprite>();
+        mSprites = new ArrayList<>();
         for(int i=0; i<9; ++i) {
             Sprite sprite = new Sprite(i);
             mSprites.add(sprite);

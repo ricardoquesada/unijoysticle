@@ -287,7 +287,7 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
         super.onSizeChanged(w, h, oldw, oldh);
 
         // add nine sprites after we have the layout in order to know the View size
-        mSprites = new ArrayList<Sprite>();
+        mSprites = new ArrayList<>();
         for(int i=0; i<18; ++i) {
             Sprite sprite = new Sprite(i);
             mSprites.add(sprite);
@@ -537,12 +537,12 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
     }
 
     class Sprite {
-        public float mPosX;
-        public float mPosY;
-        public int mIndex;
-        public Paint mPaint;
-        public Bitmap mBitmap;
-        public Matrix mMatrix;
+        public final float mPosX;
+        public final float mPosY;
+        public final int mIndex;
+        public final Paint mPaint;
+        public final Bitmap mBitmap;
+        public final Matrix mMatrix;
 
         public Sprite(int i) {
             mIndex = i;
