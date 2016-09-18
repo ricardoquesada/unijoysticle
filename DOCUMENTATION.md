@@ -17,7 +17,7 @@ It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands
   * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
   * or via the barrel jack: Anything between 5V and 12V with __400mA__ should be fine
      * It is possible to get the power from the datasette port, or the expansion port, or user port using and ad-hoc cable. Just make sure that there is enough current (400mA)
-     * A regular 9V battery works, although it is not very efficient 
+     * A regular 9V battery works, although it is not very efficient
 * Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
 
 <img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
@@ -239,7 +239,7 @@ If you don't see two LEDs on the NodeMCU then:
 
 * Make sure it is NOT plugged into the Commmodore 64
 * Power it either:
-  * via the micro USB cable (recommended)
+  * via the micro USB cable
   * or by using the barrel jack: anything between 5V and 12V with __at least 400mA__ should be Ok.
 * Press the RST (reset) button on the NodeMCU
 
@@ -250,14 +250,25 @@ If that doesn't work (you don't see the two LEDs), probably:
 
 #### When using power from the C64
 
-You should know that all the connected devices compete for the current. Example: If you have an 1541 Ultimate II, and WiModem and a UniJoystiCle, then the three of them will compete for current. If that is the case, most probably one of them won't work.
+You should know that all the connected devices compete for the current. Example: If you have an 1541 Ultimate II, a WiModem and the UniJoystiCle, then the three of them will compete for current. If that is the case, most probably one of them won't work.
 
 Tested configurations:
 
 * UniJoystiCle (current from the datasette port) + regular PSU: Works Ok.
 * UniJoystiCle (current from the datasette port) + 1541 Ultimate II + regular PSU: Works Ok.
 * UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + regular PSU: Sometimes it works, sometimes it doesn't
-* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok 
+* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok
+* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + WiModem + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok
+
+#### So, How much power does The UniJoystiCle use ?
+
+The WiFi module alone uses up to 200mA, depending on the type of WiFi network used (B, G or N)
+It also uses 20mA for each joystick line that is ON. For example, if 3 lines are On (Joy #1 Up, Joy #1 Fire, joy #Left) then it will use 60mA for that alone.
+So, a max of 400mA might be needed:
+
+* 200mA for the WiFi module
+* 200mA if all the ten joystick lines are On
+
 
 ### Joysticks don't work
 
