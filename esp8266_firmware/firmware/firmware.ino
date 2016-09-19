@@ -29,6 +29,7 @@ limitations under the License.
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
 #include <ESP8266mDNS.h>
+#include <EEPROM.h>
 
 extern "C" {
   #include "user_interface.h"
@@ -66,6 +67,8 @@ void setup()
     // Open serial communications and wait for port to open:
     Serial.begin(115200);
     Serial.setDebugOutput(1);
+
+    EEPROM.begin(512);
 
     delay(500);
 
@@ -270,7 +273,10 @@ static bool tryWPS()
     // reading data from EPROM, last saved credentials
 //    WiFi.begin(WiFi.SSID().c_str(),WiFi.psk().c_str()); 
 //    WiFi.begin(ssid_sta, pass_sta);
-    WiFi.begin("","");
+    char ssid[128];
+    char pass[128];
+    readCredentials(ssid, pass);
+    WiFi.begin(ssid, pass);
     delay(1000);
     wpsSuccess = WiFi.isConnected();
     if (!wpsSuccess) {
@@ -281,6 +287,8 @@ static bool tryWPS()
             String newSSID = WiFi.SSID();
             if(newSSID.length() > 0) {
                 Serial.printf("Connected to SSID '%s'\n", newSSID.c_str());
+                Serial.printf("Password: %s\n", WiFi.psk().c_str());
+                saveCredentials(WiFi.SSID(), WiFi.psk());
                 delay(500);
             } else {
                 Serial.println("WPS failed");
@@ -310,11 +318,100 @@ static void printWifiStatus()
     else
     {
         // print the SSID of the network you're attached to:
-        Serial.print("SSID: ");
-        Serial.println(WiFi.SSID());
+        Serial.printf("SSID: %s\n", WiFi.SSID().c_str());
         // print your WiFi shield's IP address:
         __ipAddress = WiFi.localIP();
         Serial.print("Local IP Address: ");
         Serial.println(__ipAddress);
     }
+}
+
+static void readCredentials(char* ssid, char* pass)
+{
+    static const char signature[] = "uni";
+
+#if 0
+    char tmp[513];
+    for (int i=0; i<512; i++)
+        tmp[i] = EEPROM.read(i);
+    Serial.printf("EEPROM signature: %s\n", tmp);
+
+    for (int i=0;i<32;i++) {
+        Serial.printf("%2x %2x %2x %2x %2x %2x %2x %2x - "
+                      ,tmp[i*16 + 0]
+                      ,tmp[i*16 + 1]
+                      ,tmp[i*16 + 2]
+                      ,tmp[i*16 + 3]
+                      ,tmp[i*16 + 4]
+                      ,tmp[i*16 + 5]
+                      ,tmp[i*16 + 6]
+                      ,tmp[i*16 + 7]);
+        Serial.printf("%2x %2x %2x %2x %2x %2x %2x %2x\n"
+                      ,tmp[i*16 + 8]
+                      ,tmp[i*16 + 9]
+                      ,tmp[i*16 + 10]
+                      ,tmp[i*16 + 11]
+                      ,tmp[i*16 + 12]
+                      ,tmp[i*16 + 13]
+                      ,tmp[i*16 + 14]
+                      ,tmp[i*16 + 15]);
+    }
+#endif
+
+    bool failed = false;
+    char buf[4];
+    buf[3] = 0;
+    for (int i=0; i<3; ++i) {
+        buf[i] = EEPROM.read(i);
+        failed |= (buf[i] != signature[i]);
+    }
+    if (failed) {
+        Serial.printf("EEPROM signature failed: '%s' !=  'uni'\n",buf);
+        ssid[0] = 0;
+        pass[0] = 0;
+        for (int i=0; i<3; i++)
+            EEPROM.write(i, signature[i]);
+        EEPROM.write(3, 0);
+        EEPROM.write(4, 0);
+        EEPROM.commit();
+        return;
+    }
+
+    int idx=3;
+    for(int i=0;;i++) {
+        ssid[i] = EEPROM.read(idx++);
+        if (ssid[i] == 0)
+            break;
+    }
+
+    for(int i=0;;i++) {
+        pass[i] = EEPROM.read(idx++);
+        if (pass[i] == 0)
+            break;
+    }
+    Serial.printf("EEPROM credentials: ssid: %s, pass: %s\n", ssid, pass);
+}
+
+static void saveCredentials(const String& ssid, const String& pass)
+{
+    static const char signature[] = "uni";
+    for (int i=0; i<3; ++i) {
+        EEPROM.write(i, signature[i]);
+    }
+    int idx = 3;
+
+    for (int i=0; i<ssid.length(); ++i) {
+        EEPROM.write(idx, ssid[i]);
+        idx++;
+    }
+
+    EEPROM.write(idx, 0);
+    idx++;
+
+    for (int i=0; i<pass.length(); ++i) {
+        EEPROM.write(idx, pass[i]);
+        idx++;
+    }
+    EEPROM.write(idx, 0);
+    EEPROM.commit();
 }
