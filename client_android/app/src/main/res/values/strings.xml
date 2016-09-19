@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="start">Start</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="appVersion">v0.4.3</string>
+    <string name="appVersion">v0.4.4</string>
 
     <!-- Strings related to Settings -->
 
@@ -55,5 +55,10 @@
     <string name="action_bar_title_linear">Linear mode</string>
     <string name="action_bar_title_unijoysticle">UniJoystiCle mode</string>
     <string name="action_bar_title_commando">Commando mode</string>
+
+    <!-- Misc -->
+    <string name="ok">Ok</string>
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_message">Could not resolve server name</string>
 
 </resources>

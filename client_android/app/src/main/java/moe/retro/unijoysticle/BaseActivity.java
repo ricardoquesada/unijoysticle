@@ -17,13 +17,17 @@
 package moe.retro.unijoysticle;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.os.AsyncTask;
 import android.view.WindowManager;
+
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -60,25 +64,51 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public class UDPConnection {
-        private AsyncTask<Void, Void, Void> async_client;
+        private AsyncTask<Void, Void, Boolean> async_client;
         final private int SERVER_PORT = 6464;
         private InetAddress mServerAddress;
         private DatagramSocket mSocket;
 
-        UDPConnection(String serverAddress) {
-            try {
-                mServerAddress = InetAddress.getByName(serverAddress);
-                mSocket = new DatagramSocket();
-            } catch (SocketException | UnknownHostException e) {
-                e.printStackTrace();
-            }
+        UDPConnection(final String serverAddress) {
+
+            async_client = new AsyncTask<Void, Void, Boolean>() {
+                @Override
+                protected Boolean doInBackground(Void... params) {
+                    try {
+                        mServerAddress = InetAddress.getByName(serverAddress);
+                        mSocket = new DatagramSocket();
+                    } catch (SocketException | UnknownHostException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                    return true;
+                }
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    super.onPostExecute(result);
+
+                    if (!result) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
+                        builder.setMessage(R.string.error_dialog_message)
+                                .setTitle(R.string.error_dialog_title);
+                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            };
+            async_client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         public void sendState(final byte joyControl, final byte joyState) {
-            async_client = new AsyncTask<Void, Void, Void>()
+            async_client = new AsyncTask<Void, Void, Boolean>()
             {
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected Boolean doInBackground(Void... params) {
                     byte data[] = new byte[]{joyControl, joyState};
                     DatagramPacket dp = new DatagramPacket(data, data.length, mServerAddress, SERVER_PORT);
                     try {
@@ -86,9 +116,9 @@ public class BaseActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    return null;
+                    return true;
                 }
-                protected void onPostExecute(Void result) {
+                protected void onPostExecute(Boolean result) {
                     super.onPostExecute(result);
                 }
             };
@@ -96,19 +126,19 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         public void sendState2(final byte[] data) {
-            async_client = new AsyncTask<Void, Void, Void>()
+            async_client = new AsyncTask<Void, Void, Boolean>()
             {
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected Boolean doInBackground(Void... params) {
                     DatagramPacket dp = new DatagramPacket(data, data.length, mServerAddress, SERVER_PORT);
                     try {
                         mSocket.send(dp);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    return null;
+                    return true;
                 }
-                protected void onPostExecute(Void result) {
+                protected void onPostExecute(Boolean result) {
                     super.onPostExecute(result);
                 }
             };
