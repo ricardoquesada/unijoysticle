@@ -21,6 +21,10 @@ limitations under the License.
 
 #define UNIJOYSTICLE_VERSION "v0.4.1"
 
+// 1: try to connect to WPS. If it fails create the AP network
+// 0: Create the AP network without trying WPS
+#define TRY_WPS 0
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
@@ -30,9 +34,9 @@ extern "C" {
   #include "user_interface.h"
 }
 
-const char* ssid_ap = "unijoysticle";       // SSID for Access Point
-const char* ssid_sta = "some_ssid";         // EDIT: put your SSID here
-const char* pass_sta = "thepassword";       // EDIT: put your password here
+static const char* ssid_ap = "unijoysticle";       // SSID for Access Point
+static const char* ssid_sta = "some_ssid";         // EDIT: put your SSID here
+static const char* pass_sta = "thepassword";       // EDIT: put your password here
 
 enum {
     // possible errors. Use nubmer >=2
@@ -45,17 +49,17 @@ static IPAddress __ipAddress;                   // local IP Address
 static bool __ap_mode = true;                   // whether or not it is in AP mode
 
 
-MDNSResponder mdns;                     // announce Joystick service
+static MDNSResponder mdns;                     // announce Joystick service
 
 static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
 static const int pinsPort0[] = {D0, D1, D2, D3, D4};
 static const int pinsPort1[] = {D5, D6, D7, D8, RX};
 static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
 
-byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
+static byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
 // A UDP instance to let us send and receive packets over UDP
-WiFiUDP Udp;
+static WiFiUDP Udp;
 
 void setup()
 {
@@ -222,9 +226,11 @@ static void setupWiFi()
 {
     __ap_mode = false;
 
-//    if (!tryWPS()) {
+#if TRY_WPS
+    if (!tryWPS()) {
+#else
     if (true) {
-
+#endif
         delay(500);
         __ap_mode = true;
         Serial.print("[Creating AP]");
@@ -291,7 +297,7 @@ static bool tryWPS()
     return wpsSuccess;
 }
 
-void printWifiStatus()
+static void printWifiStatus()
 {
     if (__ap_mode) {
         Serial.print("AP Station #: ");
