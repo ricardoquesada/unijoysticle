@@ -57,7 +57,7 @@
     <string name="action_bar_title_commando">Commando mode</string>
 
     <!-- Misc -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="error_dialog_title">Error</string>
     <string name="error_dialog_message">Could not resolve server name</string>
 
