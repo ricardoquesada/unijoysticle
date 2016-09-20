@@ -481,19 +481,20 @@ void createWebServer()
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>The UniJoystiCle</title>
+  <title>The UniJoystiCle WiFi device</title>
 </head>
 <body>
-<h1>The UniJoystiCle</h1>
+<h1>The UniJoystiCle WiFi device</h1>
 <h2>Stats</h2>
 <ul>
   <li>Firmware: %s</li>
   <li>IP Address: %d.%d.%d.%d</li>
+  <li>SSID: %s</li>
   <li>Chip ID: %d</li>
   <li>Last reset reason: %s</li>
 </ul>
 <h2>Settings</h2>
-<h4>Change WiFi mode:</h4>
+<h4>Set WiFi mode:</h4>
 <form method='get' action='mode'>
   <input type='radio' name='mode' value='0' %s> AP<br>
   <input type='radio' name='mode' value='1' %s> STA<br>
@@ -503,11 +504,11 @@ void createWebServer()
 <br>
 <p>Mode description:</p>
 <ul>
-  <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>
+  <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with <i>unijoysticle-</i></li>
   <li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
   <li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
 </ul>
-<h4>Change SSID/Password (to use when in STA mode):</h4>
+<h4>Set SSID/Password (to be used when in STA mode):</h4>
 <form method='get' action='setting'>
   <label>SSID: </label><input name='ssid' length=32>
   <label>Password: </label><input name='pass' length=64>
@@ -527,11 +528,12 @@ void createWebServer()
         snprintf(buf, sizeof(buf)-1, htmlraw,
                  UNIJOYSTICLE_VERSION,
                  __ipAddress[0], __ipAddress[1], __ipAddress[2], __ipAddress[3],
-                ESP.getChipId(),
-                ESP.getResetReason().c_str(),
-                (mode == 0) ? "checked" : "",
-                (mode == 1) ? "checked" : "",
-                (mode == 2) ? "checked" : "");
+                 WiFi.SSID().c_str(),
+                 ESP.getChipId(),
+                 ESP.getResetReason().c_str(),
+                 (mode == 0) ? "checked" : "",
+                 (mode == 1) ? "checked" : "",
+                 (mode == 2) ? "checked" : "");
 
         delay(50);
         __settingsServer.send(200, "text/html", buf);
