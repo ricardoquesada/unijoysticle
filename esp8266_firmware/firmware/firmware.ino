@@ -21,10 +21,6 @@ limitations under the License.
 
 #define UNIJOYSTICLE_VERSION "v0.4.1"
 
-// 1: try to connect to WPS. If it fails create the AP network
-// 0: Create the AP network without trying WPS
-#define TRY_WPS 0
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
@@ -35,9 +31,8 @@ extern "C" {
   #include "user_interface.h"
 }
 
-static const char* ssid_ap = "unijoysticle";       // SSID for Access Point
-static const char* ssid_sta = "some_ssid";         // EDIT: put your SSID here
-static const char* pass_sta = "thepassword";       // EDIT: put your password here
+static const char* __ssid_ap = "unijoysticle";       // SSID for Access Point
+static const char __signature[] = "uni";
 
 enum {
     // possible errors. Use nubmer >=2
@@ -45,9 +40,17 @@ enum {
     ERROR_MDNS_FAIL = 3,
 };
 
-static const unsigned int localPort = 6464;    // local port to listen for UDP packets
+enum {
+    MODE_AP = 0,        // AP, creates the unijoysticle wifi network
+    MODE_STA = 1,       // STA, tries to connect to SSID. If it fails, then AP
+    MODE_WPS = 2,       // WPS, tries to connect to SSID. If it fails, then WPS, if it fails AP.
+};
+
+static const unsigned int localPort = 6464;     // local port to listen for UDP packets
 static IPAddress __ipAddress;                   // local IP Address
-static bool __ap_mode = true;                   // whether or not it is in AP mode
+static uint8_t __mode = MODE_AP;                // how to connect ?
+static bool __in_ap_mode = false;               // in AP connection? different than __mode, since
+                                                // this is not a "mode" but how the connection was established
 
 
 static MDNSResponder mdns;                     // announce Joystick service
@@ -72,16 +75,18 @@ void setup()
 
     delay(500);
 
-    Serial.println("\n*** UniJoystiCle " UNIJOYSTICLE_VERSION " ***\n");
+    __mode = getMode();
+    __in_ap_mode = false;
+
+    Serial.printf("\n*** The UniJoystiCle " UNIJOYSTICLE_VERSION " ***\n");
+    Serial.printf("\nMode: %d\n", __mode);
 
     // setting up Station AP
     setupWiFi();
     delay(500);
     printWifiStatus();
 
-    Serial.println("Connected to wifi");
-    Serial.print("Udp server started at port ");
-    Serial.println(localPort);
+    Serial.printf("Udp server started at port: %d\n", localPort);
 
     delay(2000);
 
@@ -203,7 +208,7 @@ void loop()
             }
         }
     }
-    else 
+    else
     {
       Serial.println("Invalid packet");
     }
@@ -227,87 +232,93 @@ static void fatalError(int times)
 
 static void setupWiFi()
 {
-    __ap_mode = false;
+    bool ok = false;
 
-#if TRY_WPS
-    if (!tryWPS()) {
-#else
-    if (true) {
-#endif
-        delay(500);
-        __ap_mode = true;
-        Serial.print("[Creating AP]");
-        WiFi.mode(WIFI_AP);
-        delay(500);
+    if (__mode == MODE_STA || __mode == MODE_WPS)
+        ok = setupSTA();
 
-        uint8_t mac[WL_MAC_ADDR_LENGTH];
-        WiFi.softAPmacAddress(mac);
-        char buf[50];
-        memset(buf, 0, sizeof(buf)-1);
-        snprintf(buf, sizeof(buf)-1, "%s-%x%x%x",
-                 ssid_ap,
-                 mac[WL_MAC_ADDR_LENGTH-3],
-                 mac[WL_MAC_ADDR_LENGTH-2],
-                 mac[WL_MAC_ADDR_LENGTH-1]);
+    if (!ok && __mode == MODE_WPS)
+        ok = setupWPS();
 
-        bool success = false;
-        while(!success) {
-            if ((success=WiFi.softAP(buf))) {
-                Serial.print("SSID:");
-                Serial.println(buf);
-            } else {
-                Serial.println("Failed to create AP");
-                delay(1000);
-            }
-        }
-    }
+    if (!ok && __mode == MODE_AP)
+        ok = setupAP();
 }
 
-
-static bool tryWPS()
+static bool setupAP()
 {
-    bool wpsSuccess = false;
-    Serial.println("WPS config start");
-    WiFi.mode(WIFI_STA);
-    delay(1000);
-    // reading data from EPROM, last saved credentials
-//    WiFi.begin(WiFi.SSID().c_str(),WiFi.psk().c_str()); 
-//    WiFi.begin(ssid_sta, pass_sta);
+    delay(500);
+    WiFi.mode(WIFI_AP);
+    delay(500);
+
+    uint8_t mac[WL_MAC_ADDR_LENGTH];
+    WiFi.softAPmacAddress(mac);
+    char buf[50];
+    memset(buf, 0, sizeof(buf)-1);
+    snprintf(buf, sizeof(buf)-1, "%s-%x%x%x",
+             __ssid_ap,
+             mac[WL_MAC_ADDR_LENGTH-3],
+             mac[WL_MAC_ADDR_LENGTH-2],
+             mac[WL_MAC_ADDR_LENGTH-1]);
+
+    Serial.printf("Creating AP with SSID='%s'...",buf);
+    bool success = false;
+    while(!success) {
+        if ((success=WiFi.softAP(buf))) {
+            Serial.println("OK");
+        } else {
+            Serial.println("Error");
+            delay(1000);
+        }
+    }
+
+    __in_ap_mode = true;
+    return true;
+}
+
+static bool setupSTA()
+{
     char ssid[128];
     char pass[128];
     readCredentials(ssid, pass);
+
+    Serial.printf("Trying to connect to %s...\n");
+    WiFi.mode(WIFI_STA);
+    delay(1000);
     WiFi.begin(ssid, pass);
     delay(1000);
-    wpsSuccess = WiFi.isConnected();
-    if (!wpsSuccess) {
-        Serial.println("Failed to connect using saved credentials. Trying WPS...");
-        wpsSuccess = WiFi.beginWPSConfig();
-        if(wpsSuccess) {
-            // in case of a timeout we might have an empty ssid
-            String newSSID = WiFi.SSID();
-            if(newSSID.length() > 0) {
-                Serial.printf("Connected to SSID '%s'\n", newSSID.c_str());
-                Serial.printf("Password: %s\n", WiFi.psk().c_str());
-                saveCredentials(WiFi.SSID(), WiFi.psk());
-                delay(500);
-            } else {
-                Serial.println("WPS failed");
-                wpsSuccess = false;
-            }
-        }
+    return WiFi.isConnected();
+}
 
-        if (!wpsSuccess) {
-            // Issue #1845: https://github.com/esp8266/Arduino/issues/1845
+static bool setupWPS()
+{
+    // Mode must be WIFI_STA, but it is already in that mode
+    Serial.println("Trying to connect using WPS...");
+    bool wpsSuccess = WiFi.beginWPSConfig();
+    if(wpsSuccess) {
+        // in case of a timeout we might have an empty ssid
+        String newSSID = WiFi.SSID();
+        if(newSSID.length() > 0) {
+            Serial.printf("Connected to SSID '%s'\n", newSSID.c_str());
+            Serial.printf("Password: %s\n", WiFi.psk().c_str());
+            saveCredentials(WiFi.SSID(), WiFi.psk());
             delay(500);
-            wifi_wps_disable();
+        } else {
+            Serial.println("WPS failed");
+            wpsSuccess = false;
         }
+    }
+
+    if (!wpsSuccess) {
+        // Issue #1845: https://github.com/esp8266/Arduino/issues/1845
+        delay(500);
+        wifi_wps_disable();
     }
     return wpsSuccess;
 }
 
 static void printWifiStatus()
 {
-    if (__ap_mode) {
+    if (__in_ap_mode) {
         Serial.print("AP Station #: ");
         Serial.println(WiFi.softAPgetStationNum());
         // print your WiFi shield's IP address:
@@ -326,9 +337,18 @@ static void printWifiStatus()
     }
 }
 
+//
+// EEPROM struct
+//  0-2: "uni"
+//    3: mode: 0 = AP, creates the unijoysticle wifi network
+//             1 = STA, tries to connect to SSID. If it fails, then AP
+//             2 = WPS, tries to connect to SSID. If it fails, then WPS, if it fails AP.
+//  4-7: reserved
+//  asciiz: SSID
+//  asciiz: password
+//
 static void readCredentials(char* ssid, char* pass)
 {
-    static const char signature[] = "uni";
 
 #if 0
     char tmp[513];
@@ -358,26 +378,15 @@ static void readCredentials(char* ssid, char* pass)
     }
 #endif
 
-    bool failed = false;
-    char buf[4];
-    buf[3] = 0;
-    for (int i=0; i<3; ++i) {
-        buf[i] = EEPROM.read(i);
-        failed |= (buf[i] != signature[i]);
-    }
-    if (failed) {
-        Serial.printf("EEPROM signature failed: '%s' !=  'uni'\n",buf);
+    if (!isValidEEPROM()) {
+        Serial.printf("EEPROM signature failed: not 'uni'\n");
         ssid[0] = 0;
         pass[0] = 0;
-        for (int i=0; i<3; i++)
-            EEPROM.write(i, signature[i]);
-        EEPROM.write(3, 0);
-        EEPROM.write(4, 0);
-        EEPROM.commit();
+        setDefaultCredentials();
         return;
     }
 
-    int idx=3;
+    int idx=8;
     for(int i=0;;i++) {
         ssid[i] = EEPROM.read(idx++);
         if (ssid[i] == 0)
@@ -394,11 +403,7 @@ static void readCredentials(char* ssid, char* pass)
 
 static void saveCredentials(const String& ssid, const String& pass)
 {
-    static const char signature[] = "uni";
-    for (int i=0; i<3; ++i) {
-        EEPROM.write(i, signature[i]);
-    }
-    int idx = 3;
+    int idx = 8;
 
     for (int i=0; i<ssid.length(); ++i) {
         EEPROM.write(idx, ssid[i]);
@@ -414,4 +419,37 @@ static void saveCredentials(const String& ssid, const String& pass)
     }
     EEPROM.write(idx, 0);
     EEPROM.commit();
+}
+
+static bool isValidEEPROM()
+{
+    bool failed = false;
+    for (int i=0; i<3; ++i) {
+        char c = EEPROM.read(i);
+        failed |= (c != __signature[i]);
+    }
+    return !failed;
+}
+
+static void setDefaultCredentials()
+{
+    for (int i=0; i<8; i++) {
+        if (i<3)
+            EEPROM.write(i, __signature[i]);
+        else
+            EEPROM.write(i, 8);
+    }
+    EEPROM.write(8, 0);
+    EEPROM.write(9, 0);
+    EEPROM.commit();
+}
+
+static uint8_t getMode()
+{
+    if (!isValidEEPROM()) {
+        setDefaultCredentials();
+        return MODE_AP;
+    }
+    uint8_t mode = EEPROM.read(3);
+    return mode;
 }
