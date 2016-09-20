@@ -17,7 +17,6 @@
 package moe.retro.unijoysticle;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
