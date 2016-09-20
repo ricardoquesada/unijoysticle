@@ -308,7 +308,7 @@ The c64 keyboard won't work correctly if you keep moving a regular joystick whil
 
 ## Bugs
 
-* To boot the NodeMCU make sure that it is not connected to the Commodore 64. Otherwise it might not boot. I guess (big guess) it is related to a line that should be floating, but it is not when it is connected to the C64. Apparently it only happens when it is powered via USB.
-* "Gyruss mode" is only supported on iOS. Android version coming soon.
-* It is only compatible with Commodore 64, 64c and 128. It is not compatible with 128D and SX64 since the WiFi controller doesn't fit.
+Did you find a bug? Please report it here:
+
+* [UniJoystiCle Bugs](https://github.com/ricardoquesada/unijoysticle/issues)
 
