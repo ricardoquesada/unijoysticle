@@ -23,6 +23,7 @@ limitations under the License.
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
 #include <WiFiUDP.h>
 #include <ESP8266mDNS.h>
 #include <EEPROM.h>
@@ -53,8 +54,6 @@ static bool __in_ap_mode = false;               // in AP connection? different t
                                                 // this is not a "mode" but how the connection was established
 
 
-static MDNSResponder mdns;                     // announce Joystick service
-
 static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
 static const int pinsPort0[] = {D0, D1, D2, D3, D4};
 static const int pinsPort1[] = {D5, D6, D7, D8, RX};
@@ -62,16 +61,18 @@ static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
 
 static byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
-// A UDP instance to let us send and receive packets over UDP
-static WiFiUDP Udp;
+static WiFiUDP __udp;                           // server for joysticks commands
+static MDNSResponder __mdns;                    // announce Joystick service
+static ESP8266WebServer __settingsServer(80);   // server for settings
+
 
 void setup()
 {
     // Open serial communications and wait for port to open:
     Serial.begin(115200);
-    Serial.setDebugOutput(1);
+    Serial.setDebugOutput(true);
 
-    EEPROM.begin(512);
+    EEPROM.begin(128);
 
     delay(500);
 
@@ -90,9 +91,12 @@ void setup()
 
     delay(2000);
 
-    Udp.begin(localPort);
+    __udp.begin(localPort);
 
-    if (mdns.begin("unijoysticle", __ipAddress)) {
+    createWebServer();
+    __settingsServer.begin();
+
+    if (__mdns.begin("unijoysticle", __ipAddress)) {
         Serial.print("MDNS responder started in:");
         Serial.print(__ipAddress);
         Serial.print(" / ");
@@ -104,7 +108,8 @@ void setup()
     }
 
     // advertize mDNS service
-    mdns.addService("unijoysticle", "udp", localPort);
+    __mdns.addService("unijoysticle", "udp", localPort);
+    __mdns.addService("http", "tcp", 80);
 
     for (int i=0; i<TOTAL_PINS; i++)
     {
@@ -117,7 +122,13 @@ void setup()
 
 void loop()
 {
-    int noBytes = Udp.parsePacket();
+    __settingsServer.handleClient();
+    loopUDP();
+}
+
+static void loopUDP()
+{
+    int noBytes = __udp.parsePacket();
     if (noBytes == 0)
         return;
 
@@ -144,11 +155,11 @@ void loop()
         // Serial.print(":Packet of ");
         // Serial.print(noBytes);
         // Serial.print(" received from ");
-        // Serial.print(Udp.remoteIP());
+        // Serial.print(__udp.remoteIP());
         // Serial.print(":");
-        // Serial.println(Udp.remotePort());
+        // Serial.println(__udp.remotePort());
         // We've received a packet, read the data from it
-        Udp.read(packetBuffer,noBytes); // read the packet into the buffer
+        __udp.read(packetBuffer,noBytes); // read the packet into the buffer
 
         const int* pins;
         if (packetBuffer[0] == 0)
@@ -164,10 +175,10 @@ void loop()
                 digitalWrite(pins[i], LOW);
         }
 
-        // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        // Udp.write("#IP of ESP8266#");
-        // Udp.println(WiFi.localIP());
-        // Udp.endPacket();
+        // __udp.beginPacket(__udp.remoteIP(), __udp.remotePort());
+        // __udp.write("#IP of ESP8266#");
+        // __udp.println(WiFi.localIP());
+        // __udp.endPacket();
 
         // Serial.println(received_command);
         // Serial.println();
@@ -177,7 +188,7 @@ void loop()
     }
     else if (noBytes == 4)
     {
-        Udp.read(packetBuffer,noBytes); // read the packet into the buffer
+        __udp.read(packetBuffer,noBytes); // read the packet into the buffer
 
         // packetBuffer[0] = version
         // packetBuffer[1] = ports enabled
@@ -240,7 +251,8 @@ static void setupWiFi()
     if (!ok && __mode == MODE_WPS)
         ok = setupWPS();
 
-    if (!ok && __mode == MODE_AP)
+    // always defualt in AP if couldn't connect with previous modes
+    if (!ok)
         ok = setupAP();
 }
 
@@ -281,12 +293,10 @@ static bool setupSTA()
     char pass[128];
     readCredentials(ssid, pass);
 
-    Serial.printf("Trying to connect to %s...\n");
+    Serial.printf("Trying to connect to %s...\n", ssid);
     WiFi.mode(WIFI_STA);
-    delay(1000);
     WiFi.begin(ssid, pass);
-    delay(1000);
-    return WiFi.isConnected();
+    return (WiFi.waitForConnectResult() == WL_CONNECTED);
 }
 
 static bool setupWPS()
@@ -453,3 +463,77 @@ static uint8_t getMode()
     uint8_t mode = EEPROM.read(3);
     return mode;
 }
+
+static void setMode(uint8_t mode)
+{
+    if (!isValidEEPROM()) {
+        setDefaultCredentials();
+    }
+    EEPROM.write(3, mode);
+    EEPROM.commit();
+}
+
+
+//
+// Settings
+//
+void createWebServer()
+{
+    __settingsServer.on("/", []() {
+        String content = "<!DOCTYPE HTML>\r\n<html><body><h1>The UniJoystiCle firmware " UNIJOYSTICLE_VERSION"</h1>";
+
+        content += "<p>IP Address: ";
+        content += String(__ipAddress[0]) + "." + String(__ipAddress[1]) + "." + String(__ipAddress[2]) + "." + String(__ipAddress[3]);
+        content += "</p>";
+
+        content += "<p>Set SSID/Password:</p>";
+        content += "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit' value='Submit'></form>";
+
+        content += "<p>Change mode (current mode: ";
+        content += getMode();
+        content += ")</p>";
+        content += "<form method='get' action='mode'>";
+        content += "<input type='radio' name='mode' value='0'> AP: creates its own WiFi network<br>";
+        content += "<input type='radio' name='mode' value='1'> STA: Tries to connect to a defined SSID/PASS. If it fails, it will try AP<br>";
+        content += "<input type='radio' name='mode' value='2'> WPS: Tries to connect to a defined SSID/PASS. If it fails, tries to use WPS. If it fails it will try AP<br>";
+        content += "<input type='submit' value='Submit'></form>";
+
+        content += "<p>Reset device:</p>";
+        content += "<form method='get' action='reset'><input type='submit' value='Reboot'></form>";
+
+    delay(1000);
+
+        content += "</body></html>";
+        __settingsServer.send(200, "text/html", content);
+    });
+    __settingsServer.on("/setting", []() {
+        int statusCode = 404;
+        String qsid = __settingsServer.arg("ssid");
+        String qpass = __settingsServer.arg("pass");
+        String content;
+        if (qsid.length() > 0 && qpass.length() > 0) {
+            saveCredentials(qsid, qpass);
+            content = "{\"Success\":\"saved to EEPROM... reset to boot into new WiFi\"}";
+            statusCode = 200;
+        } else {
+            content = "{\"Error\":\"404 not found\"}";
+            statusCode = 404;
+            Serial.println("Sending 404");
+        }
+        __settingsServer.send(statusCode, "application/json", content);
+    });
+    __settingsServer.on("/mode", []() {
+        String arg = __settingsServer.arg("mode");
+        int mode = arg.toInt();
+        setMode(mode);
+        String content = "{\"Success\":\"saved to EEPROM... reset to boot into new WiFi\"}";
+        __settingsServer.send(200, "application/json", content);
+    });
+    __settingsServer.on("/reset", []() {
+        String content = "{\"Success\":\"Rebooting...\"}";
+        __settingsServer.send(200, "application/json", content);
+        delay(1000);
+        ESP.restart();
+    });
+}
+
