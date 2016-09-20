@@ -480,27 +480,29 @@ static void setMode(uint8_t mode)
 void createWebServer()
 {
     __settingsServer.on("/", []() {
-        String content = "<!DOCTYPE HTML>\r\n<html><head><title>The UniJoystiCle</title></head><body><h1>The UniJoystiCle</h1>";
-        content += "<h2>Stats</h2>" \
-                "<p>Firmware: " UNIJOYSTICLE_VERSION"</p>" \
-                "<p>IP Address: ";
+        String content = "<!DOCTYPE HTML>\r\n<html><head><title>The UniJoystiCle</title></head><body><h1>The UniJoystiCle</h1>" \
+                "<h2>Stats</h2>" \
+                "<ul>" \
+                "<li>Firmware: " UNIJOYSTICLE_VERSION"</li>" \
+                "<li>IP Address: ";
         content += String(__ipAddress[0]) + "." + String(__ipAddress[1]) + "." + String(__ipAddress[2]) + "." + String(__ipAddress[3]);
-        content += "</p>";
+        content += "</li>" \
+                "<li>Chip ID: ";
+        content += ESP.getChipId();
+        content += "</li>" \
+                "<li>Last reset reason: ";
+        content += ESP.getResetReason();
+        content += "</li>" \
+                "</ul>";
 
         //
         // Radio Buttons
         //
         int mode = getMode();
-        String stringMode = "AP";
-        if (mode == 1)
-            stringMode = "STA";
-        else if (mode == 2)
-            stringMode = "STA+WPS";
         content += "<h2>Settings</h2>" \
-                "<p>Change WiFi mode (current mode: ";
-        content += stringMode;
-        content += ")</p><form method='get' action='mode'>" \
-                    "<input type='radio' name='mode' value='0'";
+                "<h4>Change WiFi mode:</h4>" \
+                "<form method='get' action='mode'>" \
+                "<input type='radio' name='mode' value='0'";
         if (mode==0)
             content += "checked";
         content += "> AP<br>";
@@ -514,31 +516,29 @@ void createWebServer()
         if (mode==2)
             content += "checked";
         content += "> STA+WPS<br>" \
-                    "<input type='submit' value='Submit'></form>";
+                    "<input type='submit' value='Submit'></form>" \
+
+                    "<br>" \
+                    "<p>Mode description:</p>" \
+                    "<ul>" \
+                    "<li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>" \ 
+                    "<li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>" \ 
+                    "<li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>" \ 
+                    "</ul>";
 
         //
         // Change SSID/password
         //
-        content += "<p>Change SSID/Password (to use when in STA mode):</p>" \
-                    "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit' value='Submit'></form>";
+        content += "<h4>Change SSID/Password (to use when in STA mode):</h4>" \
+                    "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><label>Password: </label><input name='pass' length=64><input type='submit' value='Submit'></form>";
 
         //
         // Reset
         //
-        content += "<p>Reset device:</p><form method='get' action='reset'>" \
-                    "<input type='submit' value='Reboot'></form>";
+        content += "<h4>Reset device:</h4><form method='get' action='reset'>" \
+                    "<input type='submit' value='Reboot'></form>" \
 
-        //
-        // Definition
-        //
-        content += "<br>";
-        content += "<p>WiFi Mode:</p>";
-        content += "<li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>";
-        content += "<li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>";
-        content += "<li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>";
-        content += "</ul>";
-
-        content += "<hr><p><a href='http://retro.moe/unijoysticle'>The UniJoystiCle homepage</a></p>";
+                    "<hr><p><a href='http://retro.moe/unijoysticle'><small>The UniJoystiCle homepage</small></a></p>";
 
         delay(50);
 
