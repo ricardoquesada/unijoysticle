@@ -202,8 +202,8 @@ You will need the following components (BOM):
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
-The barrel jack and the diode are optional. They are only needed if you want to power the NodeMCU module with an external power source. If so, you can use any DC power that from 5v to 12v. 400mA should be enough. Probably it will work with less as well.
-If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__
+The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 400mA should be enough. 
+If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__.
 
 After assembling the PCB, it should look like this:
 
