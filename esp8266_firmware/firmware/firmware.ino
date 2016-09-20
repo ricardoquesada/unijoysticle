@@ -479,71 +479,64 @@ static void setMode(uint8_t mode)
 //
 void createWebServer()
 {
+    static const char *htmlraw = R"html(
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>The UniJoystiCle</title>
+</head>
+<body>
+<h1>The UniJoystiCle</h1>
+<h2>Stats</h2>
+<ul>
+  <li>Firmware: %s</li>
+  <li>IP Address: %d.%d.%d.%d</li>
+  <li>Chip ID: %d</li>
+  <li>Last reset reason: %s</li>
+</ul>
+<h2>Settings</h2>
+<h4>Change WiFi mode:</h4>
+<form method='get' action='mode'>
+  <input type='radio' name='mode' value='0' %s> AP<br>
+  <input type='radio' name='mode' value='1' %s> STA<br>
+  <input type='radio' name='mode' value='2' %s> STA+WPS<br>
+  <input type='submit' value='Submit'>
+</form>
+<br>
+<p>Mode description:</p>
+<ul>
+  <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>
+  <li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
+  <li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
+</ul>
+<h4>Change SSID/Password (to use when in STA mode):</h4>
+<form method='get' action='setting'>
+  <label>SSID: </label><input name='ssid' length=32>
+  <label>Password: </label><input name='pass' length=64>
+  <input type='submit' value='Submit'>
+</form>
+<h4>Reset device:</h4>
+<form method='get' action='reset'>
+  <input type='submit' value='Reboot'>
+</form>
+<hr><p><a href='http://retro.moe/unijoysticle'>The UniJoystiCle homepage</a> | <a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
+</body></html>
+)html";
+
     __settingsServer.on("/", []() {
-        String content = "<!DOCTYPE HTML>\r\n<html><head><title>The UniJoystiCle</title></head><body><h1>The UniJoystiCle</h1>" \
-                "<h2>Stats</h2>" \
-                "<ul>" \
-                "<li>Firmware: " UNIJOYSTICLE_VERSION"</li>" \
-                "<li>IP Address: ";
-        content += String(__ipAddress[0]) + "." + String(__ipAddress[1]) + "." + String(__ipAddress[2]) + "." + String(__ipAddress[3]);
-        content += "</li>" \
-                "<li>Chip ID: ";
-        content += ESP.getChipId();
-        content += "</li>" \
-                "<li>Last reset reason: ";
-        content += ESP.getResetReason();
-        content += "</li>" \
-                "</ul>";
-
-        //
-        // Radio Buttons
-        //
-        int mode = getMode();
-        content += "<h2>Settings</h2>" \
-                "<h4>Change WiFi mode:</h4>" \
-                "<form method='get' action='mode'>" \
-                "<input type='radio' name='mode' value='0'";
-        if (mode==0)
-            content += "checked";
-        content += "> AP<br>";
-
-        content += "<input type='radio' name='mode' value='1'";
-        if (mode==1)
-            content += "checked";
-        content += "> STA<br>";
-
-        content += "<input type='radio' name='mode' value='2'";
-        if (mode==2)
-            content += "checked";
-        content += "> STA+WPS<br>" \
-                    "<input type='submit' value='Submit'></form>" \
-
-                    "<br>" \
-                    "<p>Mode description:</p>" \
-                    "<ul>" \
-                    "<li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>" \ 
-                    "<li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>" \ 
-                    "<li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>" \ 
-                    "</ul>";
-
-        //
-        // Change SSID/password
-        //
-        content += "<h4>Change SSID/Password (to use when in STA mode):</h4>" \
-                    "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><label>Password: </label><input name='pass' length=64><input type='submit' value='Submit'></form>";
-
-        //
-        // Reset
-        //
-        content += "<h4>Reset device:</h4><form method='get' action='reset'>" \
-                    "<input type='submit' value='Reboot'></form>" \
-
-                    "<hr><p><a href='http://retro.moe/unijoysticle'><small>The UniJoystiCle homepage</small></a></p>";
+        const int mode = getMode();
+        char buf[2048];
+        snprintf(buf, sizeof(buf)-1, htmlraw,
+                 UNIJOYSTICLE_VERSION,
+                 __ipAddress[0], __ipAddress[1], __ipAddress[2], __ipAddress[3],
+                ESP.getChipId(),
+                ESP.getResetReason().c_str(),
+                (mode == 0) ? "checked" : "",
+                (mode == 1) ? "checked" : "",
+                (mode == 2) ? "checked" : "");
 
         delay(50);
-
-        content += "</body></html>";
-        __settingsServer.send(200, "text/html", content);
+        __settingsServer.send(200, "text/html", buf);
     });
 
     __settingsServer.on("/setting", []() {
