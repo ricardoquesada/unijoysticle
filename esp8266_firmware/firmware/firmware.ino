@@ -39,6 +39,7 @@ enum {
     // possible errors. Use nubmer >=2
     ERROR_CANNOT_CONNECT = 2,
     ERROR_MDNS_FAIL = 3,
+    ERROR_UDP_FAIL = 4,
 };
 
 enum {
@@ -62,7 +63,6 @@ static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
 static byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
 static WiFiUDP __udp;                           // server for joysticks commands
-static MDNSResponder __mdns;                    // announce Joystick service
 static ESP8266WebServer __settingsServer(80);   // server for settings
 
 
@@ -91,25 +91,23 @@ void setup()
 
     delay(2000);
 
-    __udp.begin(localPort);
+    if (MDNS.begin("unijoysticle"))
+        Serial.println("MDNS responder started");
+    else fatalError(ERROR_MDNS_FAIL);
+
+    if (__udp.begin(localPort))
+        Serial.println("UDP server started");
+    else fatalError(ERROR_UDP_FAIL);
 
     createWebServer();
     __settingsServer.begin();
-
-    if (__mdns.begin("unijoysticle", __ipAddress)) {
-        Serial.print("MDNS responder started in:");
-        Serial.print(__ipAddress);
-        Serial.print(" / ");
-        Serial.println(localPort);
-    }
-    else
-    {
-        fatalError(ERROR_MDNS_FAIL);
-    }
+    Serial.println("HTTP server started");
 
     // advertize mDNS service
-    __mdns.addService("unijoysticle", "udp", localPort);
-    __mdns.addService("http", "tcp", 80);
+    MDNS.addService("unijoysticle", "udp", localPort);
+    delay(100);
+    MDNS.addService("http", "tcp", 80);
+    delay(100);
 
     for (int i=0; i<TOTAL_PINS; i++)
     {
@@ -567,7 +565,7 @@ void createWebServer()
     __settingsServer.on("/reset", []() {
         String content = "{\"Success\":\"Rebooting...\"}";
         __settingsServer.send(200, "application/json", content);
-        delay(500);
+        delay(1000);
         ESP.restart();
     });
 }
