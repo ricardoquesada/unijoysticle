@@ -480,32 +480,72 @@ static void setMode(uint8_t mode)
 void createWebServer()
 {
     __settingsServer.on("/", []() {
-        String content = "<!DOCTYPE HTML>\r\n<html><body><h1>The UniJoystiCle firmware " UNIJOYSTICLE_VERSION"</h1>";
-
-        content += "<p>IP Address: ";
+        String content = "<!DOCTYPE HTML>\r\n<html><head><title>The UniJoystiCle</title></head><body><h1>The UniJoystiCle</h1>";
+        content += "<h2>Stats</h2>" \
+                "<p>Firmware: " UNIJOYSTICLE_VERSION"</p>" \
+                "<p>IP Address: ";
         content += String(__ipAddress[0]) + "." + String(__ipAddress[1]) + "." + String(__ipAddress[2]) + "." + String(__ipAddress[3]);
         content += "</p>";
 
-        content += "<p>Set SSID/Password:</p>";
-        content += "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit' value='Submit'></form>";
+        //
+        // Radio Buttons
+        //
+        int mode = getMode();
+        String stringMode = "AP";
+        if (mode == 1)
+            stringMode = "STA";
+        else if (mode == 2)
+            stringMode = "STA+WPS";
+        content += "<h2>Settings</h2>" \
+                "<p>Change WiFi mode (current mode: ";
+        content += stringMode;
+        content += ")</p><form method='get' action='mode'>" \
+                    "<input type='radio' name='mode' value='0'";
+        if (mode==0)
+            content += "checked";
+        content += "> AP<br>";
 
-        content += "<p>Change mode (current mode: ";
-        content += getMode();
-        content += ")</p>";
-        content += "<form method='get' action='mode'>";
-        content += "<input type='radio' name='mode' value='0'> AP: creates its own WiFi network<br>";
-        content += "<input type='radio' name='mode' value='1'> STA: Tries to connect to a defined SSID/PASS. If it fails, it will try AP<br>";
-        content += "<input type='radio' name='mode' value='2'> WPS: Tries to connect to a defined SSID/PASS. If it fails, tries to use WPS. If it fails it will try AP<br>";
-        content += "<input type='submit' value='Submit'></form>";
+        content += "<input type='radio' name='mode' value='1'";
+        if (mode==1)
+            content += "checked";
+        content += "> STA<br>";
 
-        content += "<p>Reset device:</p>";
-        content += "<form method='get' action='reset'><input type='submit' value='Reboot'></form>";
+        content += "<input type='radio' name='mode' value='2'";
+        if (mode==2)
+            content += "checked";
+        content += "> STA+WPS<br>" \
+                    "<input type='submit' value='Submit'></form>";
 
-    delay(1000);
+        //
+        // Change SSID/password
+        //
+        content += "<p>Change SSID/Password (to use when in STA mode):</p>" \
+                    "<form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=64><input type='submit' value='Submit'></form>";
+
+        //
+        // Reset
+        //
+        content += "<p>Reset device:</p><form method='get' action='reset'>" \
+                    "<input type='submit' value='Reboot'></form>";
+
+        //
+        // Definition
+        //
+        content += "<br>";
+        content += "<p>WiFi Mode:</p>";
+        content += "<li>AP (Access Point mode): creates its own WiFi network. The SSID will start with 'unijoysticle-'</li>";
+        content += "<li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>";
+        content += "<li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>";
+        content += "</ul>";
+
+        content += "<hr><p><a href='http://retro.moe/unijoysticle'>The UniJoystiCle homepage</a></p>";
+
+        delay(50);
 
         content += "</body></html>";
         __settingsServer.send(200, "text/html", content);
     });
+
     __settingsServer.on("/setting", []() {
         int statusCode = 404;
         String qsid = __settingsServer.arg("ssid");
@@ -522,6 +562,7 @@ void createWebServer()
         }
         __settingsServer.send(statusCode, "application/json", content);
     });
+
     __settingsServer.on("/mode", []() {
         String arg = __settingsServer.arg("mode");
         int mode = arg.toInt();
@@ -529,10 +570,11 @@ void createWebServer()
         String content = "{\"Success\":\"saved to EEPROM... reset to boot into new WiFi\"}";
         __settingsServer.send(200, "application/json", content);
     });
+
     __settingsServer.on("/reset", []() {
         String content = "{\"Success\":\"Rebooting...\"}";
         __settingsServer.send(200, "application/json", content);
-        delay(1000);
+        delay(500);
         ESP.restart();
     });
 }
