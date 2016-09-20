@@ -233,6 +233,8 @@ The first thing to do: download and run this C64 program. Then follow its intruc
 
   * [UniJoystiCle test program](https://github.com/ricardoquesada/unijoysticle/raw/master/tests/bin/unijoysticle_test_exo.prg)
 
+<img src="https://lh3.googleusercontent.com/35TVPVQQHc_SImpSP1NEPhm6N-kkvyMSqXgO9m3gqSQUQoNxWX5dR6NjFWgl7NJoDzhtPdLpI9-djA=w384-h272-no" />
+
 ### The device (NodeMCU) doesn't boot
 
 If you don't see two LEDs on the NodeMCU then:
@@ -262,7 +264,7 @@ Tested configurations:
 
 #### So, How much power does The UniJoystiCle use ?
 
-The WiFi module alone uses up to 200mA, depending on the type of WiFi network used (B, G or N)
+The WiFi module alone uses up to 200mA, depending on the type of WiFi network used (B, G or N).  
 It also uses 20mA for each joystick line that is ON. For example, if 3 lines are On (Joy #1 Up, Joy #1 Fire, joy #Left) then it will use 60mA for that alone.
 So, a max of 400mA might be needed:
 
