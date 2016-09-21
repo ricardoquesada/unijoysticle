@@ -296,16 +296,16 @@ static void setupWiFi()
     if (!ok && __mode == MODE_WPS)
         ok = setupWPS();
 
-    // always defualt in AP if couldn't connect with previous modes
+    // always default to AP if couldn't connect with previous modes
     if (!ok)
         ok = setupAP();
 }
 
 static bool setupAP()
 {
-    delay(500);
+    delay(100);
     WiFi.mode(WIFI_AP);
-    delay(500);
+    delay(100);
 
     uint8_t mac[WL_MAC_ADDR_LENGTH];
     WiFi.softAPmacAddress(mac);
@@ -657,7 +657,7 @@ void createWebServer()
         ESP.restart();
     });
     __settingsServer.on("/resetstats", []() {
-        for (int i=0;i<5;++i)
+        for (int i=0;i<TOTAL_PINS;++i)
         {
             __joyPushes0[i] = 0;
             __joyTimeUsed0[i] = 0;

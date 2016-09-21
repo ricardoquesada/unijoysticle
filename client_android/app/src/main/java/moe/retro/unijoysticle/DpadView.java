@@ -297,7 +297,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
                     int pid = e.getPointerId(i);
                     // get previous position and disable it
                     PointF oldP = mActivePointers.get(pid);
-                    disableTouch(oldP.x, oldP.y);
+                    handled |= disableTouch(oldP.x, oldP.y);
                     float xx = e.getX(i);
                     float yy = e.getY(i);
                     mActivePointers.put(pid, new PointF(xx, yy));
