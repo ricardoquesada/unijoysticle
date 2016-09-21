@@ -586,7 +586,7 @@ void createWebServer()
 
     static const char *htmlredirectok = R"html(<html>
 <head>
- <meta http-equiv="refresh" content="1"; URL="/" />
+ <meta http-equiv="refresh" content="1; url=/" />
 </head>
 <body>Success</body>
 </html>
@@ -594,7 +594,7 @@ void createWebServer()
 
     static const char *htmlredirecterr = R"html(<html>
 <head>
- <meta http-equiv="refresh" content="1"; URL="/" />
+ <meta http-equiv="refresh" content="1; url=/" />
 </head>
 <body>Error</body>
 </html>
