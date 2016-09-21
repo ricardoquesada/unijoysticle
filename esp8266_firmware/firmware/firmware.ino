@@ -524,70 +524,85 @@ static void setMode(uint8_t mode)
 //
 void createWebServer()
 {
-    static const char *htmlraw = R"html(
-<!DOCTYPE HTML>
-<html>
-<head>
-  <title>The UniJoystiCle WiFi device</title>
-</head>
+    static const char *htmlraw = R"html(<html>
+<head><title>UniJoystiCle WiFi setup</title></head>
 <body>
-<h1>The UniJoystiCle WiFi device</h1>
+<h1>The UniJoystiCle WiFi setup</h1>
 <h2>Stats</h2>
 <ul>
-  <li>Firmware: %s</li>
-  <li>IP Address: %d.%d.%d.%d</li>
-  <li>SSID: %s</li>
-  <li>Chip ID: %d</li>
-  <li>Last reset reason: %s</li>
-  <li>Joy #0 (ms / pushes):</li>
-  <ul>
-      <li>Up: %dms / %d</li>
-      <li>Down: %dms / %d</li>
-      <li>Left: %dms / %d</li>
-      <li>Right: %dms / %d</li>
-      <li>Fire: %dms / %d</li>
-  </ul>
-  <li>Joy #1 (ms / pushes):</li>
-  <ul>
-      <li>Up: %dms / %d</li>
-      <li>Down: %dms / %d</li>
-      <li>Left: %dms / %d</li>
-      <li>Right: %dms / %d</li>
-      <li>Fire: %dms / %d</li>
-  </ul>
+ <li>Firmware: %s</li>
+ <li>IP Address: %d.%d.%d.%d</li>
+ <li>SSID: %s</li>
+ <li>Chip ID: %d</li>
+ <li>Last reset reason: %s</li>
+ <li>Joy #1 (ms / releases):</li>
+ <ul>
+  <li>Up: %dms / %d</li>
+  <li>Down: %dms / %d</li>
+  <li>Left: %dms / %d</li>
+  <li>Right: %dms / %d</li>
+  <li>Fire: %dms / %d</li>
+ </ul>
+ <li>Joy #2 (ms / releases):</li>
+ <ul>
+  <li>Up: %dms / %d</li>
+  <li>Down: %dms / %d</li>
+  <li>Left: %dms / %d</li>
+  <li>Right: %dms / %d</li>
+  <li>Fire: %dms / %d</li>
+ </ul>
 </ul>
+<form method='get' action='resetstats'>
+  <input type='submit' value='Reset Joy Stats'>
+</form>
 <h2>Settings</h2>
 <h4>Set WiFi mode:</h4>
 <form method='get' action='mode'>
-  <input type='radio' name='mode' value='0' %s> AP<br>
-  <input type='radio' name='mode' value='1' %s> STA<br>
-  <input type='radio' name='mode' value='2' %s> STA+WPS<br>
-  <input type='submit' value='Submit'>
+ <input type='radio' name='mode' value='0' %s> AP<br>
+ <input type='radio' name='mode' value='1' %s> STA<br>
+ <input type='radio' name='mode' value='2' %s> STA+WPS<br>
+ <input type='submit' value='Submit'>
 </form>
 <br>
 <p>Mode description:</p>
 <ul>
-  <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with <i>unijoysticle-</i></li>
-  <li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
-  <li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
+ <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with <i>unijoysticle-</i></li>
+ <li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
+ <li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
 </ul>
 <h4>Set SSID/Password (to be used when in STA mode):</h4>
 <form method='get' action='setting'>
-  <label>SSID: </label><input name='ssid' length=32>
-  <label>Password: </label><input name='pass' length=64>
-  <input type='submit' value='Submit'>
+ <label>SSID: </label><input name='ssid' length=32>
+ <label>Password: </label><input name='pass' length=64>
+ <input type='submit' value='Submit'>
 </form>
 <h4>Reset device:</h4>
-<form method='get' action='reset'>
-  <input type='submit' value='Reboot'>
+<form method='get' action='restart'>
+ <input type='submit' value='Reboot'>
 </form>
-<hr><p><a href='http://retro.moe/unijoysticle'>The UniJoystiCle homepage</a> | <a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
+<hr><p><a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
 </body></html>
 )html";
 
+    static const char *htmlredirectok = R"html(<html>
+<head>
+ <meta http-equiv="refresh" content="1"; URL="/" />
+</head>
+<body>Success</body>
+</html>
+)html";
+
+    static const char *htmlredirecterr = R"html(<html>
+<head>
+ <meta http-equiv="refresh" content="1"; URL="/" />
+</head>
+<body>Error</body>
+</html>
+)html";
+
     __settingsServer.on("/", []() {
-        const int mode = getMode();
         char buf[2048];
+        const int mode = getMode();
         snprintf(buf, sizeof(buf)-1, htmlraw,
                  UNIJOYSTICLE_VERSION,
                  __ipAddress[0], __ipAddress[1], __ipAddress[2], __ipAddress[3],
@@ -607,8 +622,9 @@ void createWebServer()
                  (mode == 0) ? "checked" : "",
                  (mode == 1) ? "checked" : "",
                  (mode == 2) ? "checked" : "");
+        buf[sizeof(buf)-1] = 0;
 
-        delay(50);
+        delay(0);
         __settingsServer.send(200, "text/html", buf);
     });
 
@@ -619,29 +635,36 @@ void createWebServer()
         String content;
         if (qsid.length() > 0 && qpass.length() > 0) {
             saveCredentials(qsid, qpass);
-            content = "{\"Success\":\"saved to EEPROM... reset to boot into new WiFi\"}";
+            content = htmlredirectok;
             statusCode = 200;
         } else {
-            content = "{\"Error\":\"404 not found\"}";
+            content = htmlredirecterr;
             statusCode = 404;
-            Serial.println("Sending 404");
         }
-        __settingsServer.send(statusCode, "application/json", content);
+        __settingsServer.send(statusCode, "text/html", content);
     });
 
     __settingsServer.on("/mode", []() {
         String arg = __settingsServer.arg("mode");
         int mode = arg.toInt();
         setMode(mode);
-        String content = "{\"Success\":\"saved to EEPROM... reset to boot into new WiFi\"}";
-        __settingsServer.send(200, "application/json", content);
+        __settingsServer.send(200, "text/html", htmlredirectok);
     });
 
-    __settingsServer.on("/reset", []() {
-        String content = "{\"Success\":\"Rebooting...\"}";
-        __settingsServer.send(200, "application/json", content);
+    __settingsServer.on("/restart", []() {
+        __settingsServer.send(200, "text/html", htmlredirectok);
         delay(1000);
         ESP.restart();
+    });
+    __settingsServer.on("/resetstats", []() {
+        for (int i=0;i<5;++i)
+        {
+            __joyPushes0[i] = 0;
+            __joyTimeUsed0[i] = 0;
+            __joyPushes1[i] = 0;
+            __joyTimeUsed1[i] = 0;
+        }
+        __settingsServer.send(200, "text/html", htmlredirectok);
     });
 }
 
