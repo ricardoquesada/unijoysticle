@@ -56,9 +56,25 @@ static bool __in_ap_mode = false;               // in AP connection? different t
 
 
 static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
-static const int pinsPort0[] = {D0, D1, D2, D3, D4};
-static const int pinsPort1[] = {D5, D6, D7, D8, RX};
-static const int TOTAL_PINS = sizeof(pinsPort0) / sizeof(pinsPort0[0]);
+static const int __pinsPort0[] = {D0, D1, D2, D3, D4};
+static const int __pinsPort1[] = {D5, D6, D7, D8, RX};
+static const int TOTAL_PINS = sizeof(__pinsPort0) / sizeof(__pinsPort0[0]);
+
+// how many pushes/presses
+static int __joyPushes0[] = {0, 0, 0, 0, 0};
+static int __joyPushes1[] = {0, 0, 0, 0, 0};
+
+// how many milliseconds it was used
+static int __joyTimeUsed0[] = {0, 0, 0, 0, 0};
+static int __joyTimeUsed1[] = {0, 0, 0, 0, 0};
+
+// last time (ms) it was pressed. needed to measure the ms
+static int __joyLastTimeUsed0[] = {0, 0, 0, 0, 0};
+static int __joyLastTimeUsed1[] = {0, 0, 0, 0, 0};
+
+// last joy state
+static uint8_t __lastJoy0 = 0;
+static uint8_t __lastJoy1 = 0;
 
 static byte packetBuffer[512];             //buffer to hold incoming and outgoing packets
 
@@ -111,17 +127,17 @@ void setup()
 
     for (int i=0; i<TOTAL_PINS; i++)
     {
-        pinMode(pinsPort0[i], OUTPUT);
-        digitalWrite(pinsPort0[i], LOW);
-        pinMode(pinsPort1[i], OUTPUT);
-        digitalWrite(pinsPort1[i], LOW);
+        pinMode(__pinsPort0[i], OUTPUT);
+        digitalWrite(__pinsPort0[i], LOW);
+        pinMode(__pinsPort1[i], OUTPUT);
+        digitalWrite(__pinsPort1[i], LOW);
     }
 }
 
 void loop()
 {
-    __settingsServer.handleClient();
     loopUDP();
+    __settingsServer.handleClient();
 }
 
 static void loopUDP()
@@ -132,88 +148,119 @@ static void loopUDP()
 
     String received_command = "";
 
-    // byte 0:
-    // LSB Nibble: Control Port: 0 or 1
-    // MSB Nibble: 0 Joystick value
-    //             1 Mouse (Not supported yet)
-    //             2 Paddle (Not supported yet)
-    //
-    // byte 1:
-    // Joystick  bit 0: up
-    //           bit 1: down
-    //           bit 2: left
-    //           bit 3: right
-    //           bit 4: fire
+    const int now = millis();
+
     if (noBytes == 2)
     {
-        // DEBUG: turn on internal LED
-        // digitalWrite(INTERNAL_LED, LOW);
-
-        // Serial.print(millis() / 1000);
-        // Serial.print(":Packet of ");
-        // Serial.print(noBytes);
-        // Serial.print(" received from ");
-        // Serial.print(__udp.remoteIP());
-        // Serial.print(":");
-        // Serial.println(__udp.remotePort());
-        // We've received a packet, read the data from it
-        __udp.read(packetBuffer,noBytes); // read the packet into the buffer
+        // Protocol v1
+        // byte 0:
+        // LSB Nibble: Control Port: 0 or 1
+        // MSB Nibble: 0 Joystick value
+        //             1 Mouse (Not supported yet)
+        //             2 Paddle (Not supported yet)
+        //
+        // byte 1:
+        // Joystick  bit 0: up
+        //           bit 1: down
+        //           bit 2: left
+        //           bit 3: right
+        //           bit 4: fire
 
         const int* pins;
-        if (packetBuffer[0] == 0)
-            pins = pinsPort0;
-        else
-            pins = pinsPort1;
+        int* joyPushes;
+        int* joyTimeUsed;
+        int* joyLastTimeUsed;
+        uint8_t lastJoy;
+
+        __udp.read(packetBuffer,noBytes); // read the packet into the buffer
+
+        if (packetBuffer[0] == 0) {
+            pins = __pinsPort0;
+            joyPushes = __joyPushes0;
+            lastJoy = __lastJoy0;
+            joyTimeUsed = __joyTimeUsed0;
+            joyLastTimeUsed = __joyLastTimeUsed0;
+        } else {
+            pins = __pinsPort1;
+            joyPushes = __joyPushes1;
+            lastJoy = __lastJoy1;
+            joyTimeUsed = __joyTimeUsed1;
+            joyLastTimeUsed = __joyLastTimeUsed1;
+        }
 
         for (int i=0; i<TOTAL_PINS; i++)
         {
-            if (packetBuffer[1] & (1<<i))
-                digitalWrite(pins[i], HIGH);
-            else
-                digitalWrite(pins[i], LOW);
+            const uint8_t mask = 1<<i;
+
+            // only if it is different
+            if ((lastJoy & mask) != (packetBuffer[1] & mask)) {
+                if (packetBuffer[1] & mask) {
+                    digitalWrite(pins[i], HIGH);
+                    joyPushes[i]++;
+                    joyLastTimeUsed[i] = now;
+                } else {
+                    digitalWrite(pins[i], LOW);
+                    joyTimeUsed[i] += (now - joyLastTimeUsed[i]);
+                }
+            }
         }
 
-        // __udp.beginPacket(__udp.remoteIP(), __udp.remotePort());
-        // __udp.write("#IP of ESP8266#");
-        // __udp.println(WiFi.localIP());
-        // __udp.endPacket();
-
-        // Serial.println(received_command);
-        // Serial.println();
-
-        // DEBUG: turn off internal LED
-        // digitalWrite(INTERNAL_LED, HIGH);
+        // update last joy
+        if (packetBuffer[0] == 0)
+            __lastJoy0 = packetBuffer[1];
+        else
+            __lastJoy1 = packetBuffer[1];
     }
     else if (noBytes == 4)
     {
-        __udp.read(packetBuffer,noBytes); // read the packet into the buffer
-
+        // Protocol v2
         // packetBuffer[0] = version
         // packetBuffer[1] = ports enabled
         // packetBuffer[2] = joy1
         // packetBuffer[3] = joy2
 
+        __udp.read(packetBuffer, noBytes); // read the packet into the buffer
+
+        // correct version?
         if (packetBuffer[0] == 2) {
             // joy 1 enabled ?
             if (packetBuffer[1] & 0x1) {
                 for (int i=0; i<TOTAL_PINS; i++)
                 {
-                    if (packetBuffer[2] & (1<<i))
-                        digitalWrite(pinsPort0[i], HIGH);
-                    else
-                        digitalWrite(pinsPort0[i], LOW);
+                    const uint8_t mask = 1<<i;
+                    // only update if different from last state
+                    if ((__lastJoy0 & mask) != (packetBuffer[2] & mask)) {
+                        if (packetBuffer[2] & mask) {
+                            digitalWrite(__pinsPort0[i], HIGH);
+                            __joyPushes0[i]++;
+                            __joyLastTimeUsed0[i] = now;
+                        } else {
+                            digitalWrite(__pinsPort0[i], LOW);
+                            __joyTimeUsed0[i] += (now - __joyLastTimeUsed0[i]);
+                        }
+                    }
                 }
+                __lastJoy0 = packetBuffer[2];
             }
 
             // joy 2 enabled ?
             if (packetBuffer[1] & 0x2) {
                 for (int i=0; i<TOTAL_PINS; i++)
                 {
-                    if (packetBuffer[3] & (1<<i))
-                        digitalWrite(pinsPort1[i], HIGH);
-                    else
-                        digitalWrite(pinsPort1[i], LOW);
+                    const uint8_t mask = 1<<i;
+                    // only update if different from last state
+                    if ((__lastJoy1 & mask) != (packetBuffer[3] & mask)) {
+                        if (packetBuffer[3] & mask) {
+                            digitalWrite(__pinsPort1[i], HIGH);
+                            __joyPushes1[i]++;
+                            __joyLastTimeUsed1[i] = now;
+                        } else {
+                            digitalWrite(__pinsPort1[i], LOW);
+                            __joyTimeUsed1[i] += (now - __joyLastTimeUsed1[i]);
+                        }
+                    }
                 }
+                __lastJoy1 = packetBuffer[3];
             }
         }
     }
@@ -492,6 +539,22 @@ void createWebServer()
   <li>SSID: %s</li>
   <li>Chip ID: %d</li>
   <li>Last reset reason: %s</li>
+  <li>Joy #0 (ms / pushes):</li>
+  <ul>
+      <li>Up: %dms / %d</li>
+      <li>Down: %dms / %d</li>
+      <li>Left: %dms / %d</li>
+      <li>Right: %dms / %d</li>
+      <li>Fire: %dms / %d</li>
+  </ul>
+  <li>Joy #1 (ms / pushes):</li>
+  <ul>
+      <li>Up: %dms / %d</li>
+      <li>Down: %dms / %d</li>
+      <li>Left: %dms / %d</li>
+      <li>Right: %dms / %d</li>
+      <li>Fire: %dms / %d</li>
+  </ul>
 </ul>
 <h2>Settings</h2>
 <h4>Set WiFi mode:</h4>
@@ -531,6 +594,16 @@ void createWebServer()
                  WiFi.SSID().c_str(),
                  ESP.getChipId(),
                  ESP.getResetReason().c_str(),
+                 __joyTimeUsed0[0], __joyPushes0[0],
+                 __joyTimeUsed0[1], __joyPushes0[1],
+                 __joyTimeUsed0[2], __joyPushes0[2],
+                 __joyTimeUsed0[3], __joyPushes0[3],
+                 __joyTimeUsed0[4], __joyPushes0[4],
+                 __joyTimeUsed1[0], __joyPushes1[0],
+                 __joyTimeUsed1[1], __joyPushes1[1],
+                 __joyTimeUsed1[2], __joyPushes1[2],
+                 __joyTimeUsed1[3], __joyPushes1[3],
+                 __joyTimeUsed1[4], __joyPushes1[4],
                  (mode == 0) ? "checked" : "",
                  (mode == 1) ? "checked" : "",
                  (mode == 2) ? "checked" : "");
