@@ -535,7 +535,7 @@ void createWebServer()
  <li>SSID: %s</li>
  <li>Chip ID: %d</li>
  <li>Last reset reason: %s</li>
- <li>Joy #1 (ms / releases):</li>
+ <li>Joy #1 (ms / # releases):</li>
  <ul>
   <li>Up: %dms / %d</li>
   <li>Down: %dms / %d</li>
@@ -543,7 +543,7 @@ void createWebServer()
   <li>Right: %dms / %d</li>
   <li>Fire: %dms / %d</li>
  </ul>
- <li>Joy #2 (ms / releases):</li>
+ <li>Joy #2 (ms / # releases):</li>
  <ul>
   <li>Up: %dms / %d</li>
   <li>Down: %dms / %d</li>
