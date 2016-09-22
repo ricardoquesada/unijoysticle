@@ -23,10 +23,10 @@ import android.util.Log;
 import java.net.InetAddress;
 
 
-public class Helpers {
-    static final String TAG = "Helpers";
-    static int sFinishedResolved = 0;
-    static InetAddress sServerInetAddress = null;
+class Helpers {
+    private static final String TAG = "Helpers";
+    private static int sFinishedResolved = 0;
+    private static InetAddress sServerInetAddress = null;
 
     static InetAddress resolveUniJoysticleLocal(Context context) {
 

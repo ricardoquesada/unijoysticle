@@ -62,7 +62,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public class CannotResolveException extends Exception {}
+    private class CannotResolveException extends Exception {}
 
     public class UDPConnection {
         private AsyncTask<Void, Void, Boolean> async_client;
@@ -164,7 +164,7 @@ public class BaseActivity extends AppCompatActivity {
 
     // Protocol v1
     public byte mJoyState = 0;
-    public byte mJoyControl = 1;      // joystick 0 or 1
+    private byte mJoyControl = 1;      // joystick 0 or 1
 
     // Protocol v2
     class ProtoHeader {
@@ -258,7 +258,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public UDPConnection resolveServerAddress(final String serverAddress) {
+    private UDPConnection resolveServerAddress(final String serverAddress) {
         if (serverAddress.equals("unijoysticle.local")) {
             return resolveUniJoystiCleLocal();
         }
@@ -269,7 +269,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public UDPConnection resolveUniJoystiCleLocal() {
+    private UDPConnection resolveUniJoystiCleLocal() {
         InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(this);
         if (inetAddress != null)
             return new UDPConnection(inetAddress);

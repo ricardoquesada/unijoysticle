@@ -16,7 +16,7 @@
 
 package moe.retro.unijoysticle;
 
-public class Constants {
+class Constants {
     static final String key_serverAddress = "key_serverAddress";
     static final String key_serverStats = "key_serverStats";
 
