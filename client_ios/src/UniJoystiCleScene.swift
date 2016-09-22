@@ -120,7 +120,7 @@ class UniJoystiCleScene: ControllerScene {
         var angle = 0.0
         var validAngle = false
         if abs(userAcceleration.y) > movementThreshold || abs(userAcceleration.z) > movementThreshold {
-            angle = atan2(self.userAcceleration.y, self.userAcceleration.z)
+            angle = atan2(-self.userAcceleration.y, self.userAcceleration.z)
             if angle < 0 {
                 angle += (2 * M_PI)
             }
