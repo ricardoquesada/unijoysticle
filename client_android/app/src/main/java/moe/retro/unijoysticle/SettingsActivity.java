@@ -18,7 +18,9 @@ package moe.retro.unijoysticle;
 
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -29,6 +31,8 @@ import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+
+import java.net.InetAddress;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
@@ -146,9 +150,31 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
             PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
 
-            final EditTextPreference pref = (EditTextPreference)findPreference(getString(R.string.key_serverAddress));
+            final EditTextPreference pref = (EditTextPreference)findPreference(Constants.key_serverAddress);
             pref.setSummary(pref.getText());
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+            final Preference statsPref = findPreference(Constants.key_serverStats);
+            statsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // get current server address
+                    final EditTextPreference serverAddressPref = (EditTextPreference)findPreference(Constants.key_serverAddress);
+                    String serverAddress = serverAddressPref.getText();
+
+                    if (serverAddress.equals("unijoysticle.local")) {
+                        InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(getActivity());
+                        if (inetAddress != null)
+                            serverAddress = "http://" + inetAddress.getHostAddress();
+                        else
+                            return false;
+                    }
+                    Uri uri = Uri.parse(serverAddress);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                    return true;
+                }
+            });
         }
 
         @Override

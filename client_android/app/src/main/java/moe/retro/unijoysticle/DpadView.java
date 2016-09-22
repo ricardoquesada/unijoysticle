@@ -94,8 +94,8 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
         DpadActivity host = (DpadActivity) getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mEnableButtonB = preferences.getBoolean(host.getString(R.string.key_enableButtonB), false);
-        mSwapButtonsAB = preferences.getBoolean(host.getString(R.string.key_swapButtonsAB), false);
+        mEnableButtonB = preferences.getBoolean(Constants.key_enableButtonB, false);
+        mSwapButtonsAB = preferences.getBoolean(Constants.key_swapButtonsAB, false);
 
         setFocusable(true);
         setFocusableInTouchMode(true);

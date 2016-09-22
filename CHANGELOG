@@ -13,6 +13,8 @@ v0.4 - 2016-10-XX
         Commando mode: Generic and OUYA game controllers
         Linear mode
         Settings
+		Resolves unijoyticle.local address
+		Can display the server stats from Settings
 		Basically it supports all iOS features except Gyruss mode
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers.
         When in iCade mode, button A and D act as Fire, and buttons B and C and jump

@@ -17,11 +17,8 @@
 package moe.retro.unijoysticle;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.net.nsd.NsdManager;
-import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -180,11 +177,6 @@ public class BaseActivity extends AppCompatActivity {
     public ProtoHeader mProtoHeader;
 //    private ScheduledExecutorService mScheduleTaskExecutor;
 
-    // ugly hack. should be mutex/lock
-    private int mFinishedResolve = 0;       // 0: unresolved, 1: ok, -1: error resolving
-    private InetAddress mServerInetAddress = null;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,7 +185,7 @@ public class BaseActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "unijoysticle.local");
+        String serverAddress = preferences.getString(Constants.key_serverAddress, "unijoysticle.local");
 
         mNet = resolveServerAddress(serverAddress);
         if (mNet == null) {
@@ -270,7 +262,6 @@ public class BaseActivity extends AppCompatActivity {
         if (serverAddress.equals("unijoysticle.local")) {
             return resolveUniJoystiCleLocal();
         }
-
         try {
             return new UDPConnection(serverAddress);
         } catch (CannotResolveException e) {
@@ -279,39 +270,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public UDPConnection resolveUniJoystiCleLocal() {
-
-        NsdManager.ResolveListener resolveListener = new NsdManager.ResolveListener() {
-
-            @Override
-            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.e(TAG, "Resolve failed" + errorCode);
-                mFinishedResolve = -1;
-            }
-
-            @Override
-            public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-                mServerInetAddress = serviceInfo.getHost();
-                mFinishedResolve = 1;
-            }
-        };
-
-        NsdManager nsdManager = (NsdManager) getApplicationContext().getSystemService(Context.NSD_SERVICE);
-        NsdServiceInfo service = new NsdServiceInfo();
-        service.setServiceType("_unijoysticle._udp");
-        service.setServiceName("unijoysticle");
-        nsdManager.resolveService(service, resolveListener);
-
-        while(mFinishedResolve == 0) {
-            try {
-                Thread.sleep(120);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                mFinishedResolve = -1;
-            }
-        }
-        if (mFinishedResolve == 1)
-            return new UDPConnection(mServerInetAddress);
+        InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(this);
+        if (inetAddress != null)
+            return new UDPConnection(inetAddress);
         return null;
     }
 }

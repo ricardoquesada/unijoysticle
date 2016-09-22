@@ -82,17 +82,10 @@ public class UnijoysticleView extends View implements SensorEventListener {
     public UnijoysticleView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final float GRAVITY = 9.81f;
-        UnijoysticleActivity host = (UnijoysticleActivity) getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mMovementThreshold = preferences.getFloat(host.getString(R.string.key_movementThreshold),
-                Float.parseFloat(host.getString(R.string.slider_movementThresholdDefault)))
-                * GRAVITY;
-        mJumpThreshold = preferences.getFloat(host.getString(R.string.key_jumpThreshold),
-                Float.parseFloat(host.getString(R.string.slider_jumpThresholdDefault)))
-                * GRAVITY;
-        mRotationRatio = preferences.getFloat(host.getString(R.string.key_rotationRatio),
-                Float.parseFloat(host.getString(R.string.slider_rotationRatioDefault)));
+        mMovementThreshold = preferences.getFloat(Constants.key_movementThreshold, Constants.default_movementThreshold) * Constants.gravity;
+        mJumpThreshold = preferences.getFloat(Constants.key_jumpThreshold, Constants.default_jumpThreshold) * Constants.gravity;
+        mRotationRatio = preferences.getFloat(Constants.key_rotationRatio, Constants.default_rotationRatio);
 
         setFocusable(true);
         setFocusableInTouchMode(true);
