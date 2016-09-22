@@ -13,6 +13,7 @@ v0.4 - 2016-10-XX
         Commando mode: Generic and OUYA game controllers
         Linear mode
         Settings
+		Basically it supports all iOS features except Gyruss mode
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers.
         When in iCade mode, button A and D act as Fire, and buttons B and C and jump
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
@@ -21,6 +22,7 @@ v0.4 - 2016-10-XX
 - [FIX] Android Client / iOS Client: Instead of sending the state 60 times per
         seconds, it sends twice per state change. Saves battery life!
 - [FIX] iOS Client: Gravity Mode renamed to Gyruss Mode
+- [FIX] iOS Client: UniJoystiCle Mode: rotation direction fixed.
 - [FIX] iOS Client: Settings: refactored. Looks nicer. Using Navigation Controller + TableView
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
 - [FIX] iOS Client: Settings + Launch screen work both in Portrait and Landscape modes
