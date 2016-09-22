@@ -17,8 +17,11 @@
 package moe.retro.unijoysticle;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -68,6 +71,14 @@ public class BaseActivity extends AppCompatActivity {
         private InetAddress mServerAddress;
         private DatagramSocket mSocket;
 
+        UDPConnection(final InetAddress inetAddress)  {
+            mServerAddress = inetAddress;
+            try {
+                mSocket = new DatagramSocket();
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+        }
         UDPConnection(final String serverAddress) {
 
             async_client = new AsyncTask<Void, Void, Boolean>() {
@@ -164,6 +175,11 @@ public class BaseActivity extends AppCompatActivity {
     public ProtoHeader mProtoHeader;
 //    private ScheduledExecutorService mScheduleTaskExecutor;
 
+    // ugly hack. should be mutex/lock
+    private boolean mFinishedResolve = false;
+    private InetAddress mServerInetAddress = null;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +191,10 @@ public class BaseActivity extends AppCompatActivity {
         String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "192.168.4.1");
 
         // udp connection
-        mNet = new UDPConnection(serverAddress);
+        if (serverAddress.equals("unijoysticle.local")) {
+            mNet = resolveUniJoystiCleLocal();
+        } else
+            mNet = new UDPConnection(serverAddress);
 
         // get JoyValue
         Bundle b = getIntent().getExtras();
@@ -230,4 +249,39 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+    public UDPConnection resolveUniJoystiCleLocal() {
+        NsdManager.ResolveListener resolveListener = new NsdManager.ResolveListener() {
+
+            @Override
+            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+                Log.e(TAG, "Resolve failed" + errorCode);
+                mFinishedResolve = true;
+            }
+
+            @Override
+            public void onServiceResolved(NsdServiceInfo serviceInfo) {
+                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+                mServerInetAddress = serviceInfo.getHost();
+                mFinishedResolve = true;
+            }
+        };
+
+        NsdManager nsdManager = (NsdManager) getApplicationContext().getSystemService(Context.NSD_SERVICE);
+        NsdServiceInfo service = new NsdServiceInfo();
+        service.setServiceType("_unijoysticle._udp");
+        service.setServiceName("unijoysticle");
+        nsdManager.resolveService(service, resolveListener);
+
+        while(!mFinishedResolve) {
+            try {
+                Thread.sleep(120);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                mFinishedResolve = true;
+            }
+        }
+        return new UDPConnection(mServerInetAddress);
+    }
+
 }

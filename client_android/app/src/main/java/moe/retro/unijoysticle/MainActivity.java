@@ -18,6 +18,7 @@ package moe.retro.unijoysticle;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import moe.retro.unijoysticle.unijosyticle.R;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

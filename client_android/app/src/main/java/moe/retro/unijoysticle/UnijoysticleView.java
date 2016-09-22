@@ -197,9 +197,9 @@ public class UnijoysticleView extends View implements SensorEventListener {
         float angle = 0;
         boolean validAngle = false;
 
-        if (Math.abs(y) > mMovementThreshold || Math.abs(z) > mMovementThreshold) {
+        if (Math.abs(x) > mMovementThreshold || Math.abs(z) > mMovementThreshold) {
             // -y, and not y to simulate a forward movement, and not backwards.
-            angle = (float) Math.atan2(-y, z);
+            angle = (float) Math.atan2(x, z);
             if (angle < 0) {
                 angle += 2 * Math.PI;
             }
@@ -208,7 +208,7 @@ public class UnijoysticleView extends View implements SensorEventListener {
         }
 
         // Jumping? The press button
-        if (z < -mJumpThreshold) {
+        if (z > mJumpThreshold) {
             /* && abs(self.userAcceleration.y) < noMovementThreshold { */
             host.mJoyState |= JOY_FIRE;
         }
