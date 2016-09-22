@@ -270,7 +270,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private UDPConnection resolveUniJoystiCleLocal() {
-        InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(this);
+        InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(getApplicationContext());
         if (inetAddress != null)
             return new UDPConnection(inetAddress);
         return null;

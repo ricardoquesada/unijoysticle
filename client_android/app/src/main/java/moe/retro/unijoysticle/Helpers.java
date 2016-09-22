@@ -27,34 +27,38 @@ class Helpers {
     private static final String TAG = "Helpers";
     private static int sFinishedResolved = 0;
     private static InetAddress sServerInetAddress = null;
+    private static boolean sInProgress = false;
+    private static NsdManager.ResolveListener sResolveListener = new NsdManager.ResolveListener() {
+        @Override
+        public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.e(TAG, "Resolve failed: " + errorCode);
+            sFinishedResolved = -1;
+            sInProgress = false;
+        }
+
+        @Override
+        public void onServiceResolved(NsdServiceInfo serviceInfo) {
+            Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+            sServerInetAddress = serviceInfo.getHost();
+            sFinishedResolved = 1;
+            sInProgress = false;
+        }
+    };
+    private static NsdServiceInfo sServiceInfo = new NsdServiceInfo();
 
     static InetAddress resolveUniJoysticleLocal(Context context) {
 
+        if (!sInProgress) {
+            sServerInetAddress = null;
+            sInProgress = true;
+
+            NsdManager nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
+            sServiceInfo.setServiceName("unijoysticle");
+            sServiceInfo.setServiceType("_unijoysticle._udp");
+            nsdManager.resolveService(sServiceInfo, sResolveListener);
+        }
+
         sFinishedResolved = 0;
-        sServerInetAddress = null;
-
-        NsdManager.ResolveListener resolveListener = new NsdManager.ResolveListener() {
-
-            @Override
-            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.e(TAG, "Resolve failed" + errorCode);
-                sFinishedResolved = -1;
-            }
-
-            @Override
-            public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-                sServerInetAddress = serviceInfo.getHost();
-                sFinishedResolved = 1;
-            }
-        };
-
-        NsdManager nsdManager = (NsdManager) context.getApplicationContext().getSystemService(Context.NSD_SERVICE);
-        NsdServiceInfo service = new NsdServiceInfo();
-        service.setServiceType("_unijoysticle._udp");
-        service.setServiceName("unijoysticle");
-        nsdManager.resolveService(service, resolveListener);
-
         int tries = 0;
         while (sFinishedResolved == 0) {
             try {
@@ -64,9 +68,11 @@ class Helpers {
                 sFinishedResolved = -1;
             }
             tries++;
-            // 1.5s to resolve it... if it can't fail
-            if (tries == 15)
+            // 2s to resolve it... if it can't fail
+            if (tries == 20) {
                 sFinishedResolved = -1;
+                // should cancel resolve... not sure how to do it.
+            }
         }
         return sServerInetAddress;
     }
