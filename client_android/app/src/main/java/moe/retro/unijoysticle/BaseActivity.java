@@ -65,11 +65,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public class CannotResolveException extends Exception {}
+
     public class UDPConnection {
         private AsyncTask<Void, Void, Boolean> async_client;
         final private int SERVER_PORT = 6464;
         private InetAddress mServerAddress;
         private DatagramSocket mSocket;
+        private int mTaskFinished = 0; // 0 didn't finish. 1:finished Ok. -1:finished with error
 
         UDPConnection(final InetAddress inetAddress)  {
             mServerAddress = inetAddress;
@@ -79,7 +82,7 @@ public class BaseActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        UDPConnection(final String serverAddress) {
+        UDPConnection(final String serverAddress) throws CannotResolveException {
 
             async_client = new AsyncTask<Void, Void, Boolean>() {
                 @Override
@@ -97,21 +100,23 @@ public class BaseActivity extends AppCompatActivity {
                 protected void onPostExecute(Boolean result) {
                     super.onPostExecute(result);
 
-                    if (!result) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
-                        builder.setMessage(R.string.error_dialog_message)
-                                .setTitle(R.string.error_dialog_title);
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
+                    mTaskFinished = result ? 1 : -1;
                 }
             };
             async_client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            while (mTaskFinished == 0) {
+                try
+                {
+                    Thread.sleep(100);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                    throw new CannotResolveException();
+                }
+            }
+            if (mTaskFinished == -1)
+                throw new CannotResolveException();
         }
 
         public void sendState(final byte joyControl, final byte joyState) {
@@ -176,7 +181,7 @@ public class BaseActivity extends AppCompatActivity {
 //    private ScheduledExecutorService mScheduleTaskExecutor;
 
     // ugly hack. should be mutex/lock
-    private boolean mFinishedResolve = false;
+    private int mFinishedResolve = 0;       // 0: unresolved, 1: ok, -1: error resolving
     private InetAddress mServerInetAddress = null;
 
 
@@ -188,13 +193,22 @@ public class BaseActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "192.168.4.1");
+        String serverAddress = preferences.getString(getString(R.string.key_serverAddress), "unijoysticle.local");
 
-        // udp connection
-        if (serverAddress.equals("unijoysticle.local")) {
-            mNet = resolveUniJoystiCleLocal();
-        } else
-            mNet = new UDPConnection(serverAddress);
+        mNet = resolveServerAddress(serverAddress);
+        if (mNet == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
+            builder.setMessage(R.string.error_dialog_message)
+                    .setTitle(getString(R.string.error_dialog_title) + " " + serverAddress);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    finish();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
 
         // get JoyValue
         Bundle b = getIntent().getExtras();
@@ -234,36 +248,51 @@ public class BaseActivity extends AppCompatActivity {
             mProtoHeader.joyState1 = 0;
         }
         sendJoyState();
+
         super.onDestroy();
-        // The activity is about to be destroyed.
     }
 
     public void sendJoyState() {
-        // send it twice, in case the UDP packet is lost
-        for (int i=0; i<2; i++) {
-            if (mProtoVersion == 1) {
-                mNet.sendState(mJoyControl, mJoyState);
-            } else {
-                byte data[] = new byte[]{mProtoHeader.version, mProtoHeader.joyControl, mProtoHeader.joyState1, mProtoHeader.joyState2};
-                mNet.sendState2(data);
+        if (mNet != null) {
+            // send it twice, in case the UDP packet is lost
+            for (int i = 0; i < 2; i++) {
+                if (mProtoVersion == 1) {
+                    mNet.sendState(mJoyControl, mJoyState);
+                } else {
+                    byte data[] = new byte[]{mProtoHeader.version, mProtoHeader.joyControl, mProtoHeader.joyState1, mProtoHeader.joyState2};
+                    mNet.sendState2(data);
+                }
             }
         }
     }
 
+    public UDPConnection resolveServerAddress(final String serverAddress) {
+        if (serverAddress.equals("unijoysticle.local")) {
+            return resolveUniJoystiCleLocal();
+        }
+
+        try {
+            return new UDPConnection(serverAddress);
+        } catch (CannotResolveException e) {
+            return null;
+        }
+    }
+
     public UDPConnection resolveUniJoystiCleLocal() {
+
         NsdManager.ResolveListener resolveListener = new NsdManager.ResolveListener() {
 
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
                 Log.e(TAG, "Resolve failed" + errorCode);
-                mFinishedResolve = true;
+                mFinishedResolve = -1;
             }
 
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
                 mServerInetAddress = serviceInfo.getHost();
-                mFinishedResolve = true;
+                mFinishedResolve = 1;
             }
         };
 
@@ -273,15 +302,16 @@ public class BaseActivity extends AppCompatActivity {
         service.setServiceName("unijoysticle");
         nsdManager.resolveService(service, resolveListener);
 
-        while(!mFinishedResolve) {
+        while(mFinishedResolve == 0) {
             try {
                 Thread.sleep(120);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                mFinishedResolve = true;
+                mFinishedResolve = -1;
             }
         }
-        return new UDPConnection(mServerInetAddress);
+        if (mFinishedResolve == 1)
+            return new UDPConnection(mServerInetAddress);
+        return null;
     }
-
 }

@@ -39,7 +39,7 @@
     <string name="key_rotationRatio">key_rotationRatio</string>
 
     <!-- pref default values -->
-    <string name="default_serverAddress">192.168.4.1</string>
+    <string name="default_serverAddress">unijoysticle.local</string>
     <string name="default_enableButtonB">false</string>
     <string name="default_swapButtonsAB">false</string>
 
@@ -58,8 +58,8 @@
 
     <!-- Misc -->
     <string name="ok">OK</string>
-    <string name="error_dialog_title">Error</string>
-    <string name="error_dialog_message">Could not resolve server name</string>
+    <string name="error_dialog_title">Could not resolve:</string>
+    <string name="error_dialog_message">Make sure that the UniJoystiCle WiFi device is On</string>
     <string name="unijoysticle">UniJoystiCle</string>
     <string name="dpad">D-pad</string>
     <string name="commando">Commando</string>
