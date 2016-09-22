@@ -60,5 +60,12 @@
     <string name="ok">OK</string>
     <string name="error_dialog_title">Error</string>
     <string name="error_dialog_message">Could not resolve server name</string>
+    <string name="unijoysticle">UniJoystiCle</string>
+    <string name="dpad">D-pad</string>
+    <string name="commando">Commando</string>
+    <string name="linear">Linear</string>
+    <string name="joystick1">Joystick #1</string>
+    <string name="joystick2">Joystick #2</string>
+    <string name="zero">0</string>
 
 </resources>

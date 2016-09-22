@@ -24,7 +24,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UniJoystiCle"
+            android:text="@string/unijoysticle"
             android:id="@+id/radioButtonUniJoystiCle"
             android:layout_gravity="center_horizontal"
             android:checked="false" />
@@ -32,7 +32,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="D-pad"
+            android:text="@string/dpad"
             android:id="@+id/radioButtonDPad"
             android:layout_gravity="center_horizontal"
             android:checked="true" />
@@ -40,7 +40,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Commando"
+            android:text="@string/commando"
             android:id="@+id/radioButtonCommando"
             android:layout_gravity="center_horizontal"
             android:checked="false" />
@@ -55,7 +55,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Linear"
+            android:text="@string/linear"
             android:id="@+id/radioButtonLinear"
             android:layout_gravity="center_horizontal"
             android:checked="false" />
@@ -82,7 +82,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Joystick #1"
+            android:text="@string/joystick1"
             android:id="@+id/radioButtonJ1"
             android:checked="true"
             android:layout_below="@+id/radioGroupMode" />
@@ -90,7 +90,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Joystick #2"
+            android:text="@string/joystick2"
             android:id="@+id/radioButtonJ2"
             android:checked="false"
             android:layout_alignTop="@+id/radioButtonJ1"
