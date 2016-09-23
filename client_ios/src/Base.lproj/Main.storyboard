@@ -42,7 +42,7 @@
         <scene sceneID="XXw-Xs-Q07">
             <objects>
                 <navigationController id="QBJ-tR-hsE" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9fM-tJ-GLb">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="9fM-tJ-GLb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -69,7 +69,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cze-kl-of4">
                                 <state key="normal" title="Start Joystick"/>
                                 <connections>
-                                    <segue destination="BV1-FR-VrT" kind="presentation" modalTransitionStyle="flipHorizontal" id="cTX-oU-4WW"/>
+                                    <segue destination="BV1-FR-VrT" kind="presentation" id="cTX-oU-4WW"/>
                                 </connections>
                             </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="8L6-75-3BK">
