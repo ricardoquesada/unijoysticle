@@ -45,7 +45,7 @@ class GameViewController: UIViewController {
     }
 
     override func viewDidAppear(animated: Bool) {
-        super.viewDidDisappear(animated)
+        super.viewDidAppear(animated)
 
         // only in landscape mode. Not really needed since "shouldAurotate" and "supportedInterfaceOrientations"
         // take care of it.

@@ -11,7 +11,7 @@
         <scene sceneID="LGk-PN-UHT">
             <objects>
                 <navigationController id="lAC-f1-Idn" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Z4A-cb-3wP">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z4A-cb-3wP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -35,13 +35,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Co-nlg">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Co-nlg">
                                 <segments>
                                     <segment title="Joystick #1"/>
                                     <segment title="Joystick #2"/>
                                 </segments>
                             </segmentedControl>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="040-rf-uUx" userLabel="ControllerType">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="040-rf-uUx" userLabel="ControllerType">
                                 <segments>
                                     <segment title="UniJoystiCle"/>
                                     <segment title="D-Pad"/>
@@ -50,25 +50,27 @@
                                     <segment title="Linear"/>
                                 </segments>
                             </segmentedControl>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nd8-KZ-qRj">
+                                <state key="normal" title="Start Joystick"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="bdd-Co-nlg" firstAttribute="centerX" secondItem="Y6G-Ro-f0H" secondAttribute="centerX" id="7nT-MC-TnK"/>
                             <constraint firstItem="bdd-Co-nlg" firstAttribute="top" secondItem="040-rf-uUx" secondAttribute="bottom" constant="25" id="9hr-P2-bCa"/>
+                            <constraint firstItem="Nd8-KZ-qRj" firstAttribute="centerX" secondItem="Y6G-Ro-f0H" secondAttribute="centerX" id="P0D-pN-629"/>
                             <constraint firstItem="040-rf-uUx" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Y6G-Ro-f0H" secondAttribute="leadingMargin" constant="2" id="Qu9-LU-SPM"/>
                             <constraint firstItem="040-rf-uUx" firstAttribute="top" secondItem="Wiz-fJ-5ng" secondAttribute="bottom" constant="20" id="Tk5-1F-tXQ"/>
                             <constraint firstItem="040-rf-uUx" firstAttribute="centerX" secondItem="Y6G-Ro-f0H" secondAttribute="centerX" id="ZyG-hx-43X"/>
                             <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="040-rf-uUx" secondAttribute="trailing" constant="2" id="fZ8-OE-7Ex"/>
+                            <constraint firstItem="Nd8-KZ-qRj" firstAttribute="top" secondItem="bdd-Co-nlg" secondAttribute="bottom" constant="28" id="pOn-X2-Xog"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="UniJoystiCle Controller" id="J3k-jA-lLk">
-                        <barButtonItem key="rightBarButtonItem" style="done" id="xEF-jy-IHq">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" style="done" id="xEF-jy-IHq">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ARq-nF-4S1">
                                 <rect key="frame" x="571" y="7" width="76" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="76" id="6hq-jv-eWp"/>
-                                </constraints>
                                 <state key="normal" title="Settings"/>
                             </button>
                         </barButtonItem>
@@ -76,7 +78,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Dh-L4-8Uy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1379" y="-346"/>
+            <point key="canvasLocation" x="-1379" y="-268"/>
         </scene>
     </scenes>
 </document>

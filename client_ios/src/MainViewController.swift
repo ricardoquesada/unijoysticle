@@ -22,8 +22,16 @@ class MainViewController: UIViewController {
 
     @IBOutlet weak var controllerSegment: UISegmentedControl!
     @IBOutlet weak var joystickSegment: UISegmentedControl!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        activityIndicator.stopAnimating()
+    }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+
+        activityIndicator.startAnimating()
 
         if ((segue.destinationViewController as? GameViewController) != nil) {
 
@@ -45,9 +53,6 @@ class MainViewController: UIViewController {
             gameViewController.selectedScene = sceneToLoad
             gameViewController.selectedJoystick = UInt8(joystickSegment.selectedSegmentIndex)
         }
-    }
-
-    @IBAction func prepareForUnwind(segue: UIStoryboardSegue) {
     }
 
     @IBAction func controllerValueChanged(sender: AnyObject) {

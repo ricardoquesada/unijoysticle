@@ -37,6 +37,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var buttonBSwitch: UISwitch!
     @IBOutlet weak var swapABSwitch: UISwitch!
 
+    @IBOutlet weak var versionLabel: UILabel!
     let sliderStep:Float = 0.1
 
     override func viewDidLoad() {
@@ -106,6 +107,11 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
         swapABSwitch.setOn(swapABBool, animated: false)
         swapABSwitch.enabled = buttonBBool
+
+        // version
+        let nsObject: AnyObject? = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"]
+        let version = nsObject as! String
+        versionLabel.text = "version: " + version
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -159,7 +165,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         settings.setValue(value, forKey: SETTINGS_SWAP_A_B_KEY)
     }
 
-    @IBAction func onStatsAndSettingsTouched(sender: AnyObject) {
+    @IBAction func statsAndSettingsTouchUpInside(sender: AnyObject) {
         if let checkURL = NSURL(string: "http://" + ipaddress.text!) {
             if UIApplication.sharedApplication().openURL(checkURL) {
                 print("url successfully opened")
