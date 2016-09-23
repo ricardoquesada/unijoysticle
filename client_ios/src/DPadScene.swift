@@ -286,13 +286,11 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         }
     }
 
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        if (touches != nil) {
-            for touch in touches! {
-                disableTouch(touch.previousLocationInNode(self))
-                disableTouch(touch.locationInNode(self))
-                sendJoyState()
-            }
+    override func touchesCancelled(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch in touches {
+            disableTouch(touch.previousLocationInNode(self))
+            disableTouch(touch.locationInNode(self))
+            sendJoyState()
         }
     }
 
