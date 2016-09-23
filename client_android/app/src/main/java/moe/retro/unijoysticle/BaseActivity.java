@@ -67,8 +67,8 @@ public class BaseActivity extends AppCompatActivity {
     public class UDPConnection {
         private AsyncTask<Void, Void, Boolean> async_client;
         final private int SERVER_PORT = 6464;
-        private InetAddress mServerAddress;
-        private DatagramSocket mSocket;
+        private InetAddress mServerAddress = null;
+        private DatagramSocket mSocket = null;
         private int mTaskFinished = 0; // 0 didn't finish. 1:finished Ok. -1:finished with error
 
         UDPConnection(final InetAddress inetAddress)  {
@@ -93,15 +93,19 @@ public class BaseActivity extends AppCompatActivity {
                     }
                     return true;
                 }
-                @Override
+
+                // FIXME: this will get called once it is too late.
+                // it only gets called from the UI thread, but we are blocking the UI
+                // thread with the "while()"... should use a better way to deal with this.
                 protected void onPostExecute(Boolean result) {
                     super.onPostExecute(result);
-
                     mTaskFinished = result ? 1 : -1;
                 }
             };
             async_client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            while (mTaskFinished == 0) {
+
+            int tries = 0;
+            while (mTaskFinished == 0 && mServerAddress == null) {
                 try
                 {
                     Thread.sleep(100);
@@ -111,6 +115,10 @@ public class BaseActivity extends AppCompatActivity {
                     e.printStackTrace();
                     throw new CannotResolveException();
                 }
+                tries++;
+                // 2.0 seconds
+                if (tries == 20)
+                    mTaskFinished = -1;
             }
             if (mTaskFinished == -1)
                 throw new CannotResolveException();
