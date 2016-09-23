@@ -8,12 +8,12 @@
     <!-- Strings related to Settings -->
 
     <!-- Categories -->
-    <string name="pref_title_cat_server">Server</string>
+    <string name="pref_title_cat_server">WiFi device</string>
     <string name="pref_title_cat_unijoysticle">UniJoystiCle mode</string>
     <string name="pref_title_cat_dpad">Dpad mode + Game controller</string>
     <string name="pref_title_cat_gyruss">Gyruss mode</string>
 
-    <string name="pref_title_server_name">Server address</string>
+    <string name="pref_title_server_name">Device address</string>
     <string name="pref_summary_server">%s</string>
 
     <string name="pref_title_rotation_rate">Rotation rate</string>
@@ -36,7 +36,7 @@
     <string name="default_enableButtonB">false</string>
     <string name="default_swapButtonsAB">false</string>
 
-    <string name="prefs_server_stats">Server stats &amp; settings</string>
+    <string name="prefs_server_stats">Device stats &amp; settings</string>
 
     <string name="slider_jumpThresholdMessage">Threshold to trigger the "fire" button</string>
     <string name="slider_movementThresholdMessage">Threshold to trigger the Up/Down/Left/Right buttons</string>
