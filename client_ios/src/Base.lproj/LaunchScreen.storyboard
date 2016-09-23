@@ -11,7 +11,7 @@
         <scene sceneID="LGk-PN-UHT">
             <objects>
                 <navigationController id="lAC-f1-Idn" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Z4A-cb-3wP">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z4A-cb-3wP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -32,7 +32,7 @@
                         <viewControllerLayoutGuide type="bottom" id="FEG-wT-foh"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Y6G-Ro-f0H">
-                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Co-nlg">
@@ -62,9 +62,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="UniJoystiCle Controller" id="J3k-jA-lLk">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="xEF-jy-IHq">
+                        <barButtonItem key="rightBarButtonItem" style="done" id="xEF-jy-IHq">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ARq-nF-4S1">
-                                <rect key="frame" x="472" y="7" width="76" height="30"/>
+                                <rect key="frame" x="571" y="7" width="76" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="6hq-jv-eWp"/>
@@ -76,7 +76,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Dh-L4-8Uy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-583" y="-1099"/>
+            <point key="canvasLocation" x="-1379" y="-346"/>
         </scene>
     </scenes>
 </document>
