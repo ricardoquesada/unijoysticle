@@ -1,4 +1,4 @@
-# The UniJoystiCle Documentation
+# The UniJoystiCle™ Documentation
 
 The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more!
 
