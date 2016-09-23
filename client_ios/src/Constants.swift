@@ -16,7 +16,7 @@
  limitations under the License.
  ****************************************************************************/
 
-let SERVER_IP_ADDRESS = "192.168.4.1"
+let SERVER_IP_ADDRESS = "unijoysticle.local"
 
 // UniJoystiCle mode defaults
 let ROTATION_RATE = 1.0

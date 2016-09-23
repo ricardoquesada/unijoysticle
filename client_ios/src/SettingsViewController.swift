@@ -105,6 +105,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
             swapABBool = swapABValue as! Bool
         }
         swapABSwitch.setOn(swapABBool, animated: false)
+        swapABSwitch.enabled = buttonBBool
     }
 
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -156,5 +157,15 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         let value = swapABSwitch.on
         let settings = NSUserDefaults.standardUserDefaults()
         settings.setValue(value, forKey: SETTINGS_SWAP_A_B_KEY)
+    }
+
+    @IBAction func onStatsAndSettingsTouched(sender: AnyObject) {
+        if let checkURL = NSURL(string: "http://" + ipaddress.text!) {
+            if UIApplication.sharedApplication().openURL(checkURL) {
+                print("url successfully opened")
+            }
+        } else {
+            print("invalid url")
+        }
     }
 }
