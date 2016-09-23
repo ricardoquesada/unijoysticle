@@ -1,36 +1,59 @@
 # The UniJoystiCle Documentation
 
-## Smartphone Application
+The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more!
 
-The smartphone application can be download from free from the AppStore, or you can download the source code from [github](https://github.com/ricardoquesada/unijoysticle):
+It consists of two major parts:
 
-<a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a><a href='https://play.google.com/store/apps/details?id=moe.retro.unijoysticle&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://lh3.googleusercontent.com/nUm_upw_pznWfcD9pp71LPhpwdTMd6L7LVBK2Bw3UoAaiD0AFkTc1P6Gfl1MXiy7mOaApxVLdUMWXA=w564-h168-no' width="162" height="48"/></a>
+* The UniJoystiCle WiFi device
+* The UniJoystiCle smartphone application
 
-It sends "joystick commands" to the UniJoystiCle WiFi receiver. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
-### Setup
+## The WiFi device
 
 <img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
 
-* DO NOT plug the UniJoystiCle WiFi receiver to the Commodore 64 yet
-* Power the UniJoystiCle WiFi receiver. Either with:
-  * a micro USB cable: You can use the USB of a computer, or directly to the power socket using a regular USB power adapter.
-  * or via the barrel jack: Anything between 5V and 12V with __400mA__ should be fine
-     * It is possible to get the power from the datasette port, or the expansion port, or user port using and ad-hoc cable. Just make sure that there is enough current (400mA)
-     * A regular 9V battery works, although it is not very efficient
-* Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
+The WiFi device goes attached to the Commodore 64, and is the one that generates the real joystick movements. It does so by opening/closing the joystick lines.
+
+In order to work it needs power. Unfortunately the C64 joystick ports DON'T have enough current to power it. The options to power it are:
+
+* Using the barrel jack:
+  * Anything between 5v and 12v
+  * With at least 400mA
+  * Examples:
+    * Getting power from the Datasette port [with a custom cable](http://store.go4retro.com/c2n-power/) (recommended, but might need a [PSU with enough amps](http://personalpages.tds.net/~rcarlsen/custom%20ps.html))
+    * Using a regular 9v battery (inefficient but works)
+* Using the micro USB socket:
+  * It can be connected to a computer
+  * or using a wall charger
 
 <img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
 
-After a booting it, you should be able to see a WiFi network called "unijoysticle-xxyy". From your smartphone Settings, connect to it...:
+### Booting the WiFi device
+
+* DO NOT plug the UniJoystiCle WiFi device to the Commodore 64 yet (if you plug it, you won't break anything, it is that it just might not boot)
+* Power the UniJoystiCle WiFi device (see above)
+* Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
+  * If you don't see the two LEDs, please go to [Troubleshooting](#troubleshooting)
+* Now, you can plug it to the Commodore 64
+
+By default, the WiFi device will start in Access Point mode, and will create a WiFi network named "unijoysticle-xxyyzz". From your smartphone Settings, connect to it...:
 
 <img src="https://lh3.googleusercontent.com/Kkt_ynCu6Gr-lRwZIv7FD3NPJe9ThwKV7B7o-ehp1mntRX290XKERHdLl_rzuo9orh3iG9IrgRdVJg=w1242-h642-no" width="277" height="143" />
 
-...and then launch the UniJoystiCle Controller app.
+...and then launch the UniJoystiCle smartphone app.
 
-<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="682" height="204" />
+## Smartphone Application
+
+The smartphone application can be download for free from the App Store / Google Play:
+
+<a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a><a href='https://play.google.com/store/apps/details?id=moe.retro.unijoysticle&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://lh3.googleusercontent.com/nUm_upw_pznWfcD9pp71LPhpwdTMd6L7LVBK2Bw3UoAaiD0AFkTc1P6Gfl1MXiy7mOaApxVLdUMWXA=w564-h168-no' width="162" height="48"/></a>
+
+It sends "joystick commands" to the WiFi device. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
 There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Linear mode_.
+
+<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="477" height="142" />
+
 
 ### UniJoystiCle mode
 
@@ -202,7 +225,7 @@ You will need the following components (BOM):
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
-The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 400mA should be enough. 
+The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 400mA should be enough.
 If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__.
 
 After assembling the PCB, it should look like this:
@@ -215,6 +238,7 @@ After assembling the PCB, it should look like this:
 
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device, by using a micro USB cable, to the computer
+* Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
 * Install [PlatformIO](http://platformio.org)
 * Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
 * And do `make && make upload`
@@ -247,8 +271,9 @@ If you don't see two LEDs on the NodeMCU then:
 
 If that doesn't work (you don't see the two LEDs), probably:
 
-* your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
-* you are using power from c64 (datasette, user port or expansion port), and the C64 doesn't have enough current
+* try booting it again. Just press the `RST` button that is in the NodeMCU
+* or perhaps your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+* you are using power from c64 (datasette, user port or expansion port), and the C64 doesn't have enough current. See [When using power from the C64](#when-using-power-from-the-c64))
 
 #### When using power from the C64
 
@@ -311,4 +336,3 @@ The c64 keyboard won't work correctly if you keep moving a regular joystick whil
 Did you find a bug? Please report it here:
 
 * [UniJoystiCle Bugs](https://github.com/ricardoquesada/unijoysticle/issues)
-
