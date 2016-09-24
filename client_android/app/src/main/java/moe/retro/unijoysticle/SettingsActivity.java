@@ -168,7 +168,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             serverAddress = "http://" + inetAddress.getHostAddress();
                         else
                             return false;
+                    }  else  {
+                        serverAddress = "http://" + serverAddress;
                     }
+
                     Uri uri = Uri.parse(serverAddress);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
