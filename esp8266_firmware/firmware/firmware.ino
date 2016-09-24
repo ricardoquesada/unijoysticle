@@ -19,7 +19,7 @@ limitations under the License.
 // based on http://www.esp8266.com/viewtopic.php?f=29&t=2222
 
 
-#define UNIJOYSTICLE_VERSION "v0.4.1"
+#define UNIJOYSTICLE_VERSION "v0.4.2"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -606,6 +606,37 @@ void createWebServer()
 </html>
 )html";
 
+    static const char* htmlupgradeconfirm = R"html(<html>
+<h1>Upgrade firmware:</h1>
+<p>You are about to upgrade the UniJoystiCle WiFi device.</p>
+
+<br>
+The WiFi device will do:
+<ul>
+  <li>it will download latest firmware <a href="http://ricardoquesada.github.io/unijoysticle/bin/firmware.bin">from here</a></li>
+  <li>it WILL NOT compare versions. If you already have the latest one, it will install it again (shame on me)</li>
+  <ul>
+    <li>the latest firmware available is: <a href="http://ricardoquesada.github.io/unijoysticle/bin/LATEST_VERSION.txt">LATEST_VERSION.txt</a></li>
+    <li>current firmware version is: %s</li>
+  </ul>
+  <li>it will apply the new firmware</li>
+  <li>it will try to reboot the device... but it won't reboot. When you see just one LED, please boot it manually by pressing "RST"</li>
+</ul>
+
+<strong>DO NOT UNPLUG THE DEVICE WHILE THE UPGRADE IS IN PROGRESS</strong>
+
+<form method='get' action='upgrade_confirm'>
+ <input type='submit' value='Really Upgrade Firmware'>
+</form>
+</body></html>
+</html>
+)html";
+
+    static const char* htmlupgrading= R"html(<html>
+<h2>Upgrading firmware... don't unplug the device</h2>
+</html>
+)html";
+
     __settingsServer.on("/", []() {
         char buf[2048];
         const int mode = getMode();
@@ -672,8 +703,16 @@ void createWebServer()
         }
         __settingsServer.send(200, "text/html", htmlredirectok);
     });
+
     __settingsServer.on("/upgrade", []() {
-        Serial.println("Update sketch...");
+        char buf[1024];
+        snprintf(buf, sizeof(buf)-1, htmlupgradeconfirm,
+                 UNIJOYSTICLE_VERSION);
+        __settingsServer.send(200, "text/html", buf);
+    });
+    __settingsServer.on("/upgrade_confirm", []() {
+        __settingsServer.send(200, "text/html", htmlupgrading);
+        delay(500);
         t_httpUpdate_return ret = ESPhttpUpdate.update("http://ricardoquesada.github.io/unijoysticle/bin/firmware.bin");
 
         switch(ret) {
