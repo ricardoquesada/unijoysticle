@@ -713,7 +713,7 @@ The WiFi device will do:
     __settingsServer.on("/upgrade_confirm", []() {
         __settingsServer.send(200, "text/html", htmlupgrading);
         delay(500);
-        t_httpUpdate_return ret = ESPhttpUpdate.update("http://ricardoquesada.github.io/unijoysticle/bin/firmware.bin");
+        t_httpUpdate_return ret = ESPhttpUpdate.update("http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin");
 
         switch(ret) {
             case HTTP_UPDATE_FAILED:
