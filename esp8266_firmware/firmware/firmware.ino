@@ -613,7 +613,7 @@ void createWebServer()
 <br>
 The WiFi device will do:
 <ul>
-  <li>it will download latest firmware <a href="http://ricardoquesada.github.io/unijoysticle/bin/firmware.bin">from here</a></li>
+  <li>it will download latest firmware <a href="http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin">from here</a></li>
   <li>it WILL NOT compare versions. If you already have the latest one, it will install it again (shame on me)</li>
   <ul>
     <li>the latest firmware available is: <a href="http://ricardoquesada.github.io/unijoysticle/bin/LATEST_VERSION.txt">LATEST_VERSION.txt</a></li>
