@@ -239,6 +239,16 @@ After assembling the PCB, it should look like this:
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device, by using a micro USB cable, to the computer
 * Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
+
+### Option A: For users
+* Download the latest firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
+* Install [esptool](https://github.com/themadinventor/esptool)
+  * `$ pip install esptool`
+* Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
+
+Since firmware v0.4.2, this step is no longer needed to. It has an option to upgrade itself.
+
+### Option B: For developers
 * Install [PlatformIO](http://platformio.org)
 * Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
 * And do `make && make upload`
