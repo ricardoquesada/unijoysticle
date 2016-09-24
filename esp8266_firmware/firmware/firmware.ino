@@ -24,8 +24,10 @@ limitations under the License.
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <WiFiUDP.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 #include <ESP8266mDNS.h>
+#include <WiFiUDP.h>
 #include <EEPROM.h>
 
 extern "C" {
@@ -665,6 +667,25 @@ void createWebServer()
             __joyTimeUsed1[i] = 0;
         }
         __settingsServer.send(200, "text/html", htmlredirectok);
+    });
+    __settingsServer.on("/upgrade", []() {
+            Serial.println("Update sketch...");
+            ret = ESPhttpUpdate.update("http://server/file.bin");
+
+            switch(ret) {
+                case HTTP_UPDATE_FAILED:
+                    Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    break;
+
+                case HTTP_UPDATE_NO_UPDATES:
+                    Serial.println("HTTP_UPDATE_NO_UPDATES");
+                    break;
+
+                case HTTP_UPDATE_OK:
+                    Serial.println("HTTP_UPDATE_OK");
+                    break;
+            }
+        }
     });
 }
 
