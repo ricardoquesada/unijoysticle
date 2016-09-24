@@ -674,8 +674,7 @@ void createWebServer()
     });
     __settingsServer.on("/upgrade", []() {
         Serial.println("Update sketch...");
-        const char* fingerprint="D7 9F 07 61 10 B3 92 93 E3 49 AC 89 84 5B 03 80 C1 9E 2F 8B";
-        t_httpUpdate_return ret = ESPhttpUpdate.update("https://github.com/ricardoquesada/unijoysticle/blob/master/esp8266_firmware/firmware/bin/firmware.bin?raw=true","",fingerprint);
+        t_httpUpdate_return ret = ESPhttpUpdate.update("http://ricardoquesada.github.io/unijoysticle/bin/firmware.bin");
 
         switch(ret) {
             case HTTP_UPDATE_FAILED:
