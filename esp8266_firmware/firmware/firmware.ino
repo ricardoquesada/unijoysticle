@@ -582,6 +582,10 @@ void createWebServer()
 <form method='get' action='restart'>
  <input type='submit' value='Reboot'>
 </form>
+<h4>Upgrade firmware:</h4>
+<form method='get' action='upgrade'>
+ <input type='submit' value='Upgrade Firmware'>
+</form>
 <hr><p><a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
 </body></html>
 )html";
@@ -669,22 +673,22 @@ void createWebServer()
         __settingsServer.send(200, "text/html", htmlredirectok);
     });
     __settingsServer.on("/upgrade", []() {
-            Serial.println("Update sketch...");
-            ret = ESPhttpUpdate.update("http://server/file.bin");
+        Serial.println("Update sketch...");
+        const char* fingerprint="D7 9F 07 61 10 B3 92 93 E3 49 AC 89 84 5B 03 80 C1 9E 2F 8B";
+        t_httpUpdate_return ret = ESPhttpUpdate.update("https://github.com/ricardoquesada/unijoysticle/blob/master/esp8266_firmware/firmware/bin/firmware.bin?raw=true","",fingerprint);
 
-            switch(ret) {
-                case HTTP_UPDATE_FAILED:
-                    Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                    break;
+        switch(ret) {
+            case HTTP_UPDATE_FAILED:
+                Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                break;
 
-                case HTTP_UPDATE_NO_UPDATES:
-                    Serial.println("HTTP_UPDATE_NO_UPDATES");
-                    break;
+            case HTTP_UPDATE_NO_UPDATES:
+                Serial.println("HTTP_UPDATE_NO_UPDATES");
+                break;
 
-                case HTTP_UPDATE_OK:
-                    Serial.println("HTTP_UPDATE_OK");
-                    break;
-            }
+            case HTTP_UPDATE_OK:
+                Serial.println("HTTP_UPDATE_OK");
+                break;
         }
     });
 }
