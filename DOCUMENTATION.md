@@ -18,7 +18,7 @@ In order to work it needs power. Unfortunately the C64 joystick ports DON'T have
 
 * Using the barrel jack:
   * Anything between 5v and 12v
-  * With at least 400mA
+  * With at least 320mA
   * Examples:
     * Getting power from the Datasette port [with a custom cable](http://store.go4retro.com/c2n-power/) (recommended, but might need a [PSU with enough amps](http://personalpages.tds.net/~rcarlsen/custom%20ps.html))
     * Using a regular 9v battery (inefficient but works)
@@ -206,6 +206,49 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=eKlaUfoTuYQ)
 
+## Installing the firmware
+
+* Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
+* Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
+* Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
+
+And from here you have two options: the "easy" one for users, and the "hard" one for developers:
+
+### Option A: For users only
+
+Either you can use:
+* [esptool.py](https://github.com/themadinventor/esptool) (a CLI tool for Windows, Linux and Mac)
+* or [NodeMCU flasher](https://github.com/nodemcu/nodemcu-flasher) a GUI tool (Windows only)
+
+For `esptool.py` you should do:
+
+* Download the latest UniJoystiCle firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
+* Install [esptool](https://github.com/themadinventor/esptool)
+  * `$ pip install esptool`
+* Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
+
+In case it is needed, it uses a:
+  * ESP8266-12e module
+  * It has a 4Mbyte (32Mbit) flash
+  * use 0x00000000 as offset
+
+For detailed info, read: [Flashing the NodeMCU firmware](https://nodemcu.readthedocs.io/en/dev/en/flash/)
+
+Since firmware v0.4.2, manual upgrading no longer needed to. It has an option to upgrade itself.
+
+### Option B: For developers only
+* Install [PlatformIO](http://platformio.org)
+* Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
+* And do `make && make upload`
+
+Example:
+```
+$ git clone https://github.com/ricardoquesada/unijoysticle.git
+$ cd unijoysticle/esp8266_firmware/firmware
+$ make
+$ make upload
+```
+
 ## Assembling the PCB
 
 The hardware as well as the software are open source. So you can build one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
@@ -225,7 +268,7 @@ You will need the following components (BOM):
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
-The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 400mA should be enough.
+The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 320mA should be enough.
 If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__.
 
 After assembling the PCB, it should look like this:
@@ -234,43 +277,6 @@ After assembling the PCB, it should look like this:
 
 <img src="https://lh3.googleusercontent.com/EzcB9pZfIeSFlQqB6ONgqUOGPxgydRiCND_uexf3BiooADe20sfCTA-bgKs2NJLEUY6ANjG9HFU8dA=w2528-h1586-no" width="482" height="302" />
 
-## Installing the firmware
-
-* Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
-* Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
-* Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
-
-And from here you have two options: the "easy" one for users, and the "hard" one for developers:
-
-### Option A: For users only
-
-Either you can use:
-* [esptool.py](https://github.com/themadinventor/esptool) (a CLI tool for Windows, Linux and Mac)
-* or [NodeMCU flasher](https://github.com/nodemcu/nodemcu-flasher) a GUI tool (Windows only)
-
-Here are the instructions for `esptool.py`:
-
-* Download the latest UniJoystiCle firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
-* Install [esptool](https://github.com/themadinventor/esptool)
-  * `$ pip install esptool`
-* Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
-
-For detailed info, read: [Flashing the NodeMCU firmware](https://nodemcu.readthedocs.io/en/dev/en/flash/)
-
-Since firmware v0.4.2, manual upgrading no longer needed to. It has an option to upgrade itself.
-
-### Option B: For developers only
-* Install [PlatformIO](http://platformio.org)
-* Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
-* And do `make && make upload`
-
-Example:
-```
-$ git clone https://github.com/ricardoquesada/unijoysticle.git
-$ cd unijoysticle/esp8266_firmware/firmware
-$ make
-$ make upload
-```
 
 ## Troubleshooting
 
@@ -287,7 +293,7 @@ If you don't see two LEDs on the NodeMCU then:
 * Make sure it is NOT plugged into the Commmodore 64
 * Power it either:
   * via the micro USB cable
-  * or by using the barrel jack: anything between 5V and 12V with __at least 400mA__ should be Ok.
+  * or by using the barrel jack: anything between 5V and 12V with __at least 320mA__ should be Ok.
 * Press the RST (reset) button on the NodeMCU
 
 If that doesn't work (you don't see the two LEDs), probably:
@@ -300,22 +306,23 @@ If that doesn't work (you don't see the two LEDs), probably:
 
 You should know that all the connected devices compete for the current. Example: If you have an 1541 Ultimate II, a WiModem and the UniJoystiCle, then the three of them will compete for current. If that is the case, most probably one of them won't work.
 
-Tested configurations:
+Tested configurations with __current taken from the datasette port__:
 
-* UniJoystiCle (current from the datasette port) + regular PSU: Works Ok.
-* UniJoystiCle (current from the datasette port) + 1541 Ultimate II + regular PSU: Works Ok.
-* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + regular PSU: Sometimes it works, sometimes it doesn't
-* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok
-* UniJoystiCle (current from the datasette port) + Turbo Chameleon 64 + WiModem + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html): Works Ok
+* UniJoystiCle + regular c64 PSU + C64: Works Ok.
+* UniJoystiCle + 1541 Ultimate II + regular c64 PSU + c64: Works Ok.
+* UniJoystiCle + Turbo Chameleon 64 + regular c64 PSU + c64: Sometimes it works, sometimes it doesn't
+* UniJoystiCle + Turbo Chameleon 64 + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html) + c64: Works Ok
+* UniJoystiCle + Turbo Chameleon 64 + WiModem + [Ray Carlen's PSU](http://personalpages.tds.net/~rcarlsen/custom%20ps.html) + c64: Works Ok
+* UniJoystiCle + C128D: Works Ok
 
 #### So, How much power does The UniJoystiCle use ?
 
 The WiFi module alone uses up to 200mA, depending on the type of WiFi network used (B, G or N).  
-It also uses 20mA for each joystick line that is ON. For example, if 3 lines are On (Joy #1 Up, Joy #1 Fire, joy #Left) then it will use 60mA for that alone.
-So, a max of 400mA might be needed:
+It also uses 12mA for each joystick line that is High. For example, if 3 lines are High (Joy #1 Up, Joy #1 Fire, joy #Left) then it will use 36mA for that alone.
+So, a max of 320mA might be needed:
 
-* 200mA for the WiFi module
-* 200mA if all the ten joystick lines are On
+* Up to 200mA for the WiFi module
+* 320mA if all the ten joystick lines are High
 
 
 ### Joysticks don't work
@@ -323,8 +330,9 @@ So, a max of 400mA might be needed:
 * From your smartphone, make sure that you are connected to the Unijoysticle WiFi network
   * If it fails to connect, try again. Sometimes it take a few tries to connect
   * No more than 2 connections will be accepted (at least in firmware 0.3.1)
-* From the smartphone UniJoystiCle application, make sure that the server address is `192.168.4.1`
-
+* From the smartphone UniJoystiCle application, make sure that the WiFi device address is:
+  * `192.168.4.1` (when in Access Point mode)
+  * or `unijoysticle.local` (which will work both for Access Point and Station modes)
 
 ### The C64 keyboard doesn't work
 
@@ -334,14 +342,17 @@ Just make sure that the UniJoystiCle smartphone application is not running.
 This is not a bug/limitation of the UniJoystiCle. It is a c64 limitation.
 The c64 keyboard won't work correctly if you keep moving a regular joystick while using the keyboard.
 
+Since firmware v0.4.3, a default inactivity timeout of 10 seconds was added.
+If no data is received within that period of time, the joysticks are going to be reset.
+
 
 ### The game controllers don't work
 
 * For iOS, all MFi (the official) and all iCade (the "old" unofficial) game controllers should work.
-* For Android, all the official (including Amazon game controllers) and the OUYA game controllers should work.
+* For Android, all the official (including Amazon, Nvidia, Moga game controllers) and the OUYA game controllers should work.
 * Make sure that the Game Controller is paired via Bluetooth to the smartphone
   * If unsure, [read this guide](http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/)
-* When the game controller is paired to the smartphone, you can use it in the D-pad mode.
+* When the game controller is paired to the smartphone, you can use it in the D-pad or Commando modes:
   * on iOS you should see a legend that says "Game controller detected" (MFi controllers). Or nothing if using iCade controllers.
   * on Android you should see the name of the game controller in the title
 
