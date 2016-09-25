@@ -236,11 +236,11 @@ After assembling the PCB, it should look like this:
 
 ## Installing the firmware
 
-### Common to all
-
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
-* Connect the UniJoystiCle Wifi device, by using a micro USB cable, to the computer
+* Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
 * Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
+
+And from here you have two options: the "easy" one for users, and the "hard" one for developers:
 
 ### Option A: For users only
 
