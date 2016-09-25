@@ -236,11 +236,13 @@ After assembling the PCB, it should look like this:
 
 ## Installing the firmware
 
+### Common to all
+
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device, by using a micro USB cable, to the computer
 * Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
 
-### Option A: For users
+### Option A: For users only
 * Download the latest firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
 * Install [esptool](https://github.com/themadinventor/esptool)
   * `$ pip install esptool`
@@ -248,7 +250,7 @@ After assembling the PCB, it should look like this:
 
 Since firmware v0.4.2, this step is no longer needed to. It has an option to upgrade itself.
 
-### Option B: For developers
+### Option B: For developers only
 * Install [PlatformIO](http://platformio.org)
 * Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
 * And do `make && make upload`
