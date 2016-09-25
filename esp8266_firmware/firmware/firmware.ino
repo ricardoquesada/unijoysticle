@@ -19,7 +19,7 @@ limitations under the License.
 // based on http://www.esp8266.com/viewtopic.php?f=29&t=2222
 
 
-#define UNIJOYSTICLE_VERSION "v0.4.2"
+#define UNIJOYSTICLE_VERSION "v0.4.3"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -50,9 +50,14 @@ enum {
     MODE_WPS = 2,       // WPS, tries to connect to SSID. If it fails, then WPS, if it fails AP.
 };
 
+static const uint8_t DEFAULT_MODE = MODE_AP;
+static const uint8_t DEFAULT_INACTIVITY_TIMEOUT = 10;
+
 static const unsigned int localPort = 6464;     // local port to listen for UDP packets
 static IPAddress __ipAddress;                   // local IP Address
-static uint8_t __mode = MODE_AP;                // how to connect ?
+static uint8_t __mode = DEFAULT_MODE;           // how to connect ?
+static uint8_t __inactivityTimeout = DEFAULT_INACTIVITY_TIMEOUT;    // inactivity seconds
+static int __lastTimeActivity = 0;              // last time when there was activity
 static bool __in_ap_mode = false;               // in AP connection? different than __mode, since
                                                 // this is not a "mode" but how the connection was established
 
@@ -94,11 +99,12 @@ void setup()
 
     delay(500);
 
+    __inactivityTimeout = getInactivityTimeout();
     __mode = getMode();
     __in_ap_mode = false;
 
     Serial.printf("\n*** The UniJoystiCle " UNIJOYSTICLE_VERSION " ***\n");
-    Serial.printf("\nMode: %d\n", __mode);
+    Serial.printf("\nMode: %d, inactivity timeout:%d\n", __mode, __inactivityTimeout);
 
     // setting up Station AP
     setupWiFi();
@@ -144,13 +150,36 @@ void loop()
 
 static void loopUDP()
 {
+    // this flag is not really needed, but I don't know if digitalWrite()
+    // consumes battery... so we just avoid calling it if not needed
+    static bool inactivityActivated = false;
+    const int now = millis();
+
     int noBytes = __udp.parsePacket();
-    if (noBytes == 0)
+    if (noBytes == 0) {
+        // after 48 days of use, this might trigger an invalid condition
+        if ((__inactivityTimeout > 0) && 
+            ((now - __lastTimeActivity) / 1000.0f) >= __inactivityTimeout &&
+            !inactivityActivated
+            ) {
+            for (int i=0; i<TOTAL_PINS; i++)
+            {
+                digitalWrite(__pinsPort0[i], LOW);
+                digitalWrite(__pinsPort1[i], LOW);
+            }
+
+            inactivityActivated = true;
+        }
         return;
+    }
+    inactivityActivated = false;
+
+    // FIXME: if a packet is received, then that count as activity
+    // even invalid packets... but invalid packets should be ignored
+    // but not a big deal really
+    __lastTimeActivity = now;
 
     String received_command = "";
-
-    const int now = millis();
 
     if (noBytes == 2)
     {
@@ -400,7 +429,10 @@ static void printWifiStatus()
 //    3: mode: 0 = AP, creates the unijoysticle wifi network
 //             1 = STA, tries to connect to SSID. If it fails, then AP
 //             2 = WPS, tries to connect to SSID. If it fails, then WPS, if it fails AP.
-//  4-7: reserved
+//    4: inactivity seconds
+//             0 = don't check innactivity
+//             any other value = how many seconds should pass before reseting the lines
+//  5-7: reserved
 //  asciiz: SSID
 //  asciiz: password
 //
@@ -490,13 +522,22 @@ static bool isValidEEPROM()
 
 static void setDefaultCredentials()
 {
-    for (int i=0; i<8; i++) {
-        if (i<3)
-            EEPROM.write(i, __signature[i]);
-        else
-            EEPROM.write(i, 8);
+    for (int i=0; i<3; i++) {
+        EEPROM.write(i, __signature[i]);
     }
+    // Mode
+    EEPROM.write(3, DEFAULT_MODE);
+    // Inactivity timeout
+    EEPROM.write(4, DEFAULT_INACTIVITY_TIMEOUT);
+
+    // unused
+    EEPROM.write(5, 0);
+    EEPROM.write(6, 0);
+    EEPROM.write(7, 0);
+
+    // SSID name (asciiz)
     EEPROM.write(8, 0);
+    // SSDI passwrod (asciiz)
     EEPROM.write(9, 0);
     EEPROM.commit();
 }
@@ -517,6 +558,25 @@ static void setMode(uint8_t mode)
         setDefaultCredentials();
     }
     EEPROM.write(3, mode);
+    EEPROM.commit();
+}
+
+// in seconds
+static uint8_t getInactivityTimeout()
+{
+    if (!isValidEEPROM()) {
+        setDefaultCredentials();
+        return 0;
+    }
+    return EEPROM.read(4);
+}
+
+static void setInactivityTimeout(uint8_t seconds)
+{
+    if (!isValidEEPROM()) {
+        setDefaultCredentials();
+    }
+    EEPROM.write(4, seconds);
     EEPROM.commit();
 }
 
@@ -565,6 +625,8 @@ void createWebServer()
  <input type='radio' name='mode' value='2' %s> STA+WPS<br>
  <input type='submit' value='Submit'>
 </form>
+<small>Reboot to apply changes</small>
+
 <br>
 <p>Mode description:</p>
 <ul>
@@ -574,18 +636,29 @@ void createWebServer()
 </ul>
 <h4>Set SSID/Password (to be used when in STA mode):</h4>
 <form method='get' action='setting'>
- <label>SSID: </label><input name='ssid' length=32>
- <label>Password: </label><input name='pass' length=64>
+ <label>SSID: </label><input name='ssid' length=32/>
+ <label>Password: </label><input name='pass' length=64/>
+ <br/>
  <input type='submit' value='Submit'>
 </form>
-<h4>Reset device:</h4>
+<small>Reboot to apply changes</small>
+
+<h4>Inactivity timeout:</h4>
+<form method='get' action='inactivity'>
+ <label>Inactivity Timeout:</label><input type="text" name="inactivity" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="%d">(in seconds, from 0 to 255)</input>
+ <br/>
+ <input type='submit' value='Submit'>
+</form>
+After how many seconds of inactivity, should it reset the joysticks. "0" disables this feature. Useful in case one of the joystick lines, unintentinally, is left closed (on).
+
+<h4>Reboot device:</h4>
 <form method='get' action='restart'>
  <input type='submit' value='Reboot'>
 </form>
+
 <h4>Upgrade firmware:</h4>
-<form method='get' action='upgrade'>
- <input type='submit' value='Upgrade Firmware'>
-</form>
+<a href="/upgrade">Upgrade page</a>
+
 <hr><p><a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
 </body></html>
 )html";
@@ -607,38 +680,32 @@ void createWebServer()
 )html";
 
     static const char* htmlupgradeconfirm = R"html(<html>
-<h1>Upgrade firmware:</h1>
-<p>You are about to upgrade the UniJoystiCle WiFi device.</p>
+<h1>Firmware upgrade:</h1>
+<p>You are about to upgrade the UniJoystiCle WiFi device's firmware.</p>
 
-<br>
-The WiFi device will do:
 <ul>
-  <li>it will download latest firmware <a href="http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin">from here</a></li>
-  <li>it WILL NOT compare versions. If you already have the latest one, it will install it again (shame on me)</li>
-  <ul>
-    <li>the latest firmware available is: <a href="http://ricardoquesada.github.io/unijoysticle/bin/LATEST_VERSION.txt">LATEST_VERSION.txt</a></li>
-    <li>current firmware version is: %s</li>
-  </ul>
-  <li>it will apply the new firmware</li>
-  <li>it will try to reboot the device... but it won't reboot. When you see just one LED, please boot it manually by pressing "RST"</li>
+  <li>Current firmware version: %s</li>
+  <li>Latest stable firmware version: <a href="http://ricardoquesada.github.io/unijoysticle/bin/LATEST_VERSION.txt">LATEST_VERSION</a></li>
 </ul>
 
-<strong>DO NOT UNPLUG THE DEVICE WHILE THE UPGRADE IS IN PROGRESS</strong>
+<p>As a backup plan (should the worse happen), please read the following:
+<a href="https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md#installing-the-firmware">Installing the firmware</a>
+</p>
 
-<form method='get' action='upgrade_confirm'>
- <input type='submit' value='Really Upgrade Firmware'>
-</form>
+<button onclick="location.href = '/upgrade_confirm';">UPGRADE</button>
 </body></html>
 </html>
 )html";
 
     static const char* htmlupgrading= R"html(<html>
-<h2>Upgrading firmware... don't unplug the device</h2>
+<h2>Upgrading firmware... don't unplug the device.</h2>
+<p>Upgrade should finish in less than one minute (depends on your internet connection).</p>
+<p>Manually reboot the device after the upgrade is finished.</p>
 </html>
 )html";
 
     __settingsServer.on("/", []() {
-        char buf[2048];
+        char buf[2816];
         const int mode = getMode();
         snprintf(buf, sizeof(buf)-1, htmlraw,
                  UNIJOYSTICLE_VERSION,
@@ -658,7 +725,9 @@ The WiFi device will do:
                  __joyTimeUsed1[4], __joyPushes1[4],
                  (mode == 0) ? "checked" : "",
                  (mode == 1) ? "checked" : "",
-                 (mode == 2) ? "checked" : "");
+                 (mode == 2) ? "checked" : "",
+                 getInactivityTimeout()
+                 );
         buf[sizeof(buf)-1] = 0;
 
         delay(0);
@@ -685,6 +754,13 @@ The WiFi device will do:
         String arg = __settingsServer.arg("mode");
         int mode = arg.toInt();
         setMode(mode);
+        __settingsServer.send(200, "text/html", htmlredirectok);
+    });
+
+    __settingsServer.on("/inactivity", []() {
+        String arg = __settingsServer.arg("inactivity");
+        int inactivity = arg.toInt();
+        setInactivityTimeout(inactivity);
         __settingsServer.send(200, "text/html", htmlredirectok);
     });
 
