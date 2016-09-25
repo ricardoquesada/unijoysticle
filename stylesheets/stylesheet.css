@@ -165,13 +165,13 @@ a.button span {
   margin-right: 0;
 }
 #download-ios span {
-  background: transparent url(../images/download-ios.png) 12px 50% no-repeat;
+  background: transparent url(../images/ios-icon.png) 12px 50% no-repeat;
 }
 #download-android span {
-  background: transparent url(../images/download-android.png) 12px 50% no-repeat;
+  background: transparent url(../images/android-icon.png) 12px 50% no-repeat;
 }
 #download-firmware span {
-  background: transparent url(../images/download-firmware.png) 12px 50% no-repeat;
+  background: transparent url(../images/firmware-icon.png) 12px 50% no-repeat;
 }
 
 code, pre {
