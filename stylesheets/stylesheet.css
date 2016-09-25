@@ -366,7 +366,7 @@ footer a:hover {
   #downloads {
     margin-bottom: 25px;
   }
-  #download-zip, #download-tar-gz {
+  #download-zip, #download-tar-gz, #download-android, #download-ios, #download-firmware {
     display: none;
   }
   .inner {
