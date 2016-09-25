@@ -164,6 +164,15 @@ a.button span {
 #view-on-github {
   margin-right: 0;
 }
+#download-ios span {
+  background: transparent url(../images/download-ios.png) 12px 50% no-repeat;
+}
+#download-android span {
+  background: transparent url(../images/download-android.png) 12px 50% no-repeat;
+}
+#download-firmware span {
+  background: transparent url(../images/download-firmware.png) 12px 50% no-repeat;
+}
 
 code, pre {
   margin-bottom: 30px;
