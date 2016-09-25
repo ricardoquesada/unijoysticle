@@ -243,12 +243,21 @@ After assembling the PCB, it should look like this:
 * Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
 
 ### Option A: For users only
-* Download the latest firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
+
+Either you can use:
+* [esptool.py](https://github.com/themadinventor/esptool) (a CLI tool for Windows, Linux and Mac)
+* or [NodeMCU flasher](https://github.com/nodemcu/nodemcu-flasher) a GUI tool (Windows only)
+
+Here are the instructions for `esptool.py`:
+
+* Download the latest UniJoystiCle firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
 * Install [esptool](https://github.com/themadinventor/esptool)
   * `$ pip install esptool`
 * Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
 
-Since firmware v0.4.2, this step is no longer needed to. It has an option to upgrade itself.
+For detailed info, read: [Flashing the NodeMCU firmware](https://nodemcu.readthedocs.io/en/dev/en/flash/)
+
+Since firmware v0.4.2, manual upgrading no longer needed to. It has an option to upgrade itself.
 
 ### Option B: For developers only
 * Install [PlatformIO](http://platformio.org)
