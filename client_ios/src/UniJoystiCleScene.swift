@@ -58,7 +58,7 @@ class UniJoystiCleScene: ControllerScene {
         }
 
         // setup labes and other stuff
-        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
 
         let names_bits = [
                            "SKSpriteNode_left": JoyBits.Left.rawValue,

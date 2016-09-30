@@ -50,8 +50,8 @@ class LinearScene: ControllerScene {
 
 
         // setup sprites
-        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
-        labelSlider = (childNodeWithName("SKLabelNode_value") as! SKLabelNode?)!
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
+        labelSlider = childNodeWithName("SKLabelNode_value") as! SKLabelNode!
 
         let names_bits = [
             "SKSpriteNode_left": JoyBits.Left.rawValue,

@@ -87,8 +87,8 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
             buttons_sprites.append(sprite)
         }
 
-        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
-        labelGController = (childNodeWithName("SKLabelNode_controller") as! SKLabelNode?)!
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
+        labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode!
         labelGController.text = "Connect a Game Controller"
 
         //

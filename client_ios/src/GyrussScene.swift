@@ -57,9 +57,9 @@ class GyrussScene: ControllerScene {
         }
 
         // setup sprites
-        labelBack = (childNodeWithName("SKLabelNode_back") as! SKLabelNode?)!
-        spriteFire = (childNodeWithName("SKSpriteNode_fire") as! SKSpriteNode?)!
-        spriteBall = (childNodeWithName("SKSpriteNode_ball") as! SKSpriteNode?)!
+        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
+        spriteFire = childNodeWithName("SKSpriteNode_fire") as! SKSpriteNode!
+        spriteBall = childNodeWithName("SKSpriteNode_ball") as! SKSpriteNode!
 
         let circleSprite = childNodeWithName("SKSpriteNode_outerCircle")
 
