@@ -84,17 +84,14 @@
             android:layout_height="wrap_content"
             android:text="@string/joystick1"
             android:id="@+id/radioButtonJ1"
-            android:checked="true"
-            android:layout_below="@+id/radioGroupMode" />
+            android:checked="false" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/joystick2"
             android:id="@+id/radioButtonJ2"
-            android:checked="false"
-            android:layout_alignTop="@+id/radioButtonJ1"
-            android:layout_toEndOf="@+id/radioButtonJ1" />
+            android:checked="true" />
     </RadioGroup>
 
 </RelativeLayout>
