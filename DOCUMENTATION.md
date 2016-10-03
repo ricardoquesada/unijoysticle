@@ -317,12 +317,12 @@ Tested configurations with __current taken from the datasette port__:
 
 #### So, How much power does The UniJoystiCle use ?
 
-The WiFi module alone uses up to 200mA, depending on the type of WiFi network used (B, G or N).  
+The WiFi module alone uses up to 200mA when it is in Access Point and the clients try to connect to it. But on average it uses ~56mA. More info here: [ESP8266 Power Consumption](http://bbs.espressif.com/viewtopic.php?t=133).
 It also uses 12mA for each joystick line that is High. For example, if 3 lines are High (Joy #1 Up, Joy #1 Fire, joy #Left) then it will use 36mA for that alone.
 So, a max of 320mA might be needed:
 
-* Up to 200mA for the WiFi module
-* 320mA if all the ten joystick lines are High
+* Up to 200mA for the WiFi module (but the average ~56mA)
+* plus 120mA when all ten joystick lines are High
 
 
 ### Joysticks don't work
