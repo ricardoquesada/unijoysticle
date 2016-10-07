@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.6.0">
+<eagle version="7.7.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -73,22 +73,22 @@
 <packages>
 <package name="WEMOS">
 <description>WEMOS Controller socket</description>
-<pad name="3V3" x="0" y="0" drill="0.8" shape="octagon"/>
-<pad name="D8" x="0" y="2.54" drill="0.8" shape="octagon"/>
-<pad name="D7" x="0" y="5.08" drill="0.8" shape="octagon"/>
-<pad name="D6" x="0" y="7.62" drill="0.8" shape="octagon"/>
-<pad name="D5" x="0" y="10.16" drill="0.8" shape="octagon"/>
-<pad name="D0" x="0" y="12.7" drill="0.8" shape="octagon"/>
-<pad name="A0" x="0" y="15.24" drill="0.8" shape="octagon"/>
-<pad name="RST" x="0" y="17.78" drill="0.8" shape="octagon"/>
-<pad name="5V" x="22.86" y="0" drill="0.8" shape="octagon"/>
-<pad name="GND" x="22.86" y="2.54" drill="0.8" shape="octagon"/>
-<pad name="D4" x="22.86" y="5.08" drill="0.8" shape="octagon"/>
-<pad name="D3" x="22.86" y="7.62" drill="0.8" shape="octagon"/>
-<pad name="D2" x="22.86" y="10.16" drill="0.8" shape="octagon"/>
-<pad name="D1" x="22.86" y="12.7" drill="0.8" shape="octagon"/>
-<pad name="RX" x="22.86" y="15.24" drill="0.8" shape="octagon"/>
-<pad name="TX" x="22.86" y="17.78" drill="0.8" shape="octagon"/>
+<pad name="3V3" x="0" y="0" drill="0.8" shape="long"/>
+<pad name="D8" x="0" y="2.54" drill="0.8" shape="long"/>
+<pad name="D7" x="0" y="5.08" drill="0.8" shape="long"/>
+<pad name="D6" x="0" y="7.62" drill="0.8" shape="long"/>
+<pad name="D5" x="0" y="10.16" drill="0.8" shape="long"/>
+<pad name="D0" x="0" y="12.7" drill="0.8" shape="long"/>
+<pad name="A0" x="0" y="15.24" drill="0.8" shape="long"/>
+<pad name="RST" x="0" y="17.78" drill="0.8" shape="long"/>
+<pad name="5V" x="22.86" y="0" drill="0.8" shape="long"/>
+<pad name="GND" x="22.86" y="2.54" drill="0.8" shape="long"/>
+<pad name="D4" x="22.86" y="5.08" drill="0.8" shape="long"/>
+<pad name="D3" x="22.86" y="7.62" drill="0.8" shape="long"/>
+<pad name="D2" x="22.86" y="10.16" drill="0.8" shape="long"/>
+<pad name="D1" x="22.86" y="12.7" drill="0.8" shape="long"/>
+<pad name="RX" x="22.86" y="15.24" drill="0.8" shape="long"/>
+<pad name="TX" x="22.86" y="17.78" drill="0.8" shape="long"/>
 <rectangle x1="-1.27" y1="-1.27" x2="1.27" y2="19.05" layer="21"/>
 <rectangle x1="21.59" y1="-1.27" x2="24.13" y2="19.05" layer="21"/>
 <text x="8.89" y="19.05" size="0.8128" layer="21" font="vector"> WEMOS
