@@ -154,9 +154,9 @@
 <wire x1="49.53" y1="47.498" x2="47.498" y2="49.53" width="0" layer="20" curve="90"/>
 <wire x1="47.498" y1="49.53" x2="2.032" y2="49.53" width="0" layer="20"/>
 <wire x1="2.032" y1="49.53" x2="0" y2="47.498" width="0" layer="20" curve="90"/>
-<text x="47.8028" y="40.64" size="1.27" layer="21" rot="R270" align="top-left">&gt;REVISION</text>
+<text x="47.8028" y="33.02" size="1.27" layer="21" rot="R270" align="top-left">&gt;REVISION</text>
 <text x="23.6093" y="4.6355" size="1.27" layer="22" font="vector" rot="SMR270" align="top-right">http://retro.moe</text>
-<text x="47.8028" y="33.02" size="1.27" layer="21" rot="R270" align="top-left">UniJoystiCle</text>
+<text x="47.8028" y="25.4" size="1.27" layer="21" rot="R270" align="top-left">UniJoystiCle</text>
 <rectangle x1="22.479" y1="20.3708" x2="22.7838" y2="20.447" layer="22" rot="R90"/>
 <rectangle x1="22.479" y1="20.828" x2="22.7838" y2="20.9042" layer="22" rot="R90"/>
 <rectangle x1="21.717" y1="20.5994" x2="23.3934" y2="20.6756" layer="22" rot="R90"/>
