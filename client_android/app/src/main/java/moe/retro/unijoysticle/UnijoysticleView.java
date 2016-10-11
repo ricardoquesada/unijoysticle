@@ -57,13 +57,13 @@ public class UnijoysticleView extends View implements SensorEventListener {
     private final float mMovementThreshold;
     private final float mJumpThreshold;
     private final float mRotationRatio;
-    private Display mDisplay;
+    private final Display mDisplay;
 
 
     private ArrayList<Sprite> mSprites;
 
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
+    private final SensorManager mSensorManager;
+    private final Sensor mAccelerometer;
 
     // sprites order: Top, Top-Right, Left, Right, Bottom-Left, Bottom, Bottom-Right, Top-Left, Fire
     private final byte mSpritesJoyBits[] = {
@@ -164,25 +164,25 @@ public class UnijoysticleView extends View implements SensorEventListener {
         UnijoysticleActivity host = (UnijoysticleActivity) getContext();
 
         float x = 0;
-        float y = 0;
+//        float y = 0;
         float z = event.values[2];
 
         switch (mDisplay.getRotation()) {
             case Surface.ROTATION_0:
                 x = event.values[0];
-                y = event.values[1];
+//                y = event.values[1];
                 break;
             case Surface.ROTATION_90:
                 x = -event.values[1];
-                y = event.values[0];
+//                y = event.values[0];
                 break;
             case Surface.ROTATION_180:
                 x = -event.values[0];
-                y = -event.values[1];
+//                y = -event.values[1];
                 break;
             case Surface.ROTATION_270:
                 x = event.values[1];
-                y = -event.values[0];
+//                y = -event.values[0];
                 break;
         }
 
@@ -284,10 +284,10 @@ public class UnijoysticleView extends View implements SensorEventListener {
     class Sprite {
         public float mPosX;
         public float mPosY;
-        public int mIndex;
-        public Paint mPaint;
+        public final int mIndex;
+        public final Paint mPaint;
         public Bitmap mBitmap;
-        public Matrix mMatrix;
+        public final Matrix mMatrix;
 
         public Sprite(int i) {
             mIndex = i;

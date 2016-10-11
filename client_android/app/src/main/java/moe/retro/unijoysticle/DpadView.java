@@ -69,7 +69,7 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
     private final InputManager mInputManager;
     private Controller mController = null;
-    private SparseArray<PointF> mActivePointers;
+    private final SparseArray<PointF> mActivePointers;
     private final boolean mEnableButtonB;
     private final boolean mSwapButtonsAB;
 
@@ -92,7 +92,6 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
 
         mActivePointers = new SparseArray<>();
 
-        DpadActivity host = (DpadActivity) getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mEnableButtonB = preferences.getBoolean(Constants.key_enableButtonB, false);
         mSwapButtonsAB = preferences.getBoolean(Constants.key_swapButtonsAB, false);
@@ -628,10 +627,10 @@ public class DpadView extends View implements InputManager.InputDeviceListener {
     class Sprite {
         public float mPosX;
         public float mPosY;
-        public int mIndex;
-        public Paint mPaint;
+        public final int mIndex;
+        public final Paint mPaint;
         public Bitmap mBitmap;
-        public Matrix mMatrix;
+        public final Matrix mMatrix;
 
         public Sprite(int i) {
             mIndex = i;
