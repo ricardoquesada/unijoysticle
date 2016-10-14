@@ -45,9 +45,7 @@ RESOURCES += \
     resources.qrc
 
 
-DISTFILES += \
-    res/unijoysticle-icon-mac.icns
-
+# linux and mac
 !win32 {
     QMAKE_CXXFLAGS += -Werror
 }
@@ -58,4 +56,7 @@ win32 {
 macx {
     ICON = res/unijoysticle-icon-mac.icns
     QMAKE_INFO_PLIST = res/Info.plist
+
+    DISTFILES += \
+        res/unijoysticle-icon-mac.icns
 }
