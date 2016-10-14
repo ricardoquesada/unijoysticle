@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#include "arrowswidget.h"
+#include "dpadwidget.h"
 
 #include <QGamepad>
 #include <QGamepadManager>
@@ -53,7 +53,7 @@ QImage tinted(const QImage &image, const QColor &color, QPainter::CompositionMod
     return resultImage;
 }
 
-ArrowsWidget::ArrowsWidget(QWidget *parent)
+DpadWidget::DpadWidget(QWidget *parent)
     : QWidget(parent)
     , _joyState(0)
 {
@@ -81,7 +81,7 @@ ArrowsWidget::ArrowsWidget(QWidget *parent)
     setFocus();
 }
 
-void ArrowsWidget::paintEvent(QPaintEvent *event)
+void DpadWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.begin(this);
@@ -153,17 +153,17 @@ void ArrowsWidget::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void ArrowsWidget::mousePressEvent(QMouseEvent *event)
+void DpadWidget::mousePressEvent(QMouseEvent *event)
 {
 
 }
 
-void ArrowsWidget::mouseMoveEvent(QMouseEvent *event)
+void DpadWidget::mouseMoveEvent(QMouseEvent *event)
 {
 
 }
 
-void ArrowsWidget::keyPressEvent(QKeyEvent *event)
+void DpadWidget::keyPressEvent(QKeyEvent *event)
 {
     bool acceptEvent = false;
     switch (event->key()) {
@@ -196,7 +196,7 @@ void ArrowsWidget::keyPressEvent(QKeyEvent *event)
         QWidget::keyPressEvent(event);
 }
 
-void ArrowsWidget::keyReleaseEvent(QKeyEvent *event)
+void DpadWidget::keyReleaseEvent(QKeyEvent *event)
 {
     bool acceptEvent = false;
     switch (event->key()) {

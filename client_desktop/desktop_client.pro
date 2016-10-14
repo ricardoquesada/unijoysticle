@@ -14,12 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    arrowswidget.cpp \
-    linearform.cpp
+    linearform.cpp \
+    commandowidget.cpp \
+    dpadwidget.cpp
 
 HEADERS  += mainwindow.h \
-    arrowswidget.h \
-    linearform.h
+    linearform.h \
+    commandowidget.h \
+    dpadwidget.h
 
 FORMS    += mainwindow.ui \
     linearform.ui

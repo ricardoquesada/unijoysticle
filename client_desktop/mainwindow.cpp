@@ -20,7 +20,8 @@ limitations under the License.
 
 #include <QMdiSubWindow>
 
-#include "arrowswidget.h"
+#include "dpadwidget.h"
+#include "commandowidget.h"
 #include "linearform.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -29,12 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    auto dpadWidget = new ArrowsWidget(this);
+    auto dpadWidget = new DpadWidget(this);
     auto subWindowDpad = ui->mdiArea->addSubWindow(dpadWidget, Qt::Widget);
     subWindowDpad->setWindowTitle(tr("D-Pad mode"));
     subWindowDpad->showMaximized();
 
-    auto commandoWidget = new ArrowsWidget(this);
+    auto commandoWidget = new CommandoWidget(this);
     auto subWindow = ui->mdiArea->addSubWindow(commandoWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Commando mode"));
     subWindow->showMaximized();
@@ -62,7 +63,7 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
     if (subwindow)
     {
         auto widget = subwindow->widget();
-        if (dynamic_cast<ArrowsWidget*>(widget)) {
+        if (dynamic_cast<CommandoWidget*>(widget)) {
             ui->groupBox_joy->setEnabled(false);
         } else {
             ui->groupBox_joy->setEnabled(true);

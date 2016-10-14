@@ -31,11 +31,11 @@ enum JoyBits {
     All    = 0b00011111,
 };
 
-class ArrowsWidget : public QWidget
+class DpadWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ArrowsWidget(QWidget *parent = 0);
+    explicit DpadWidget(QWidget *parent = 0);
 
 signals:
 
