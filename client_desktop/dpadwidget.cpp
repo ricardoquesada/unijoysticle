@@ -155,12 +155,12 @@ void DpadWidget::paintEvent(QPaintEvent *event)
 
 void DpadWidget::mousePressEvent(QMouseEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 void DpadWidget::mouseMoveEvent(QMouseEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 void DpadWidget::keyPressEvent(QKeyEvent *event)

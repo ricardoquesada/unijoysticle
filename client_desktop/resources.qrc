@@ -3,5 +3,6 @@
         <file>images/arrow_bold_right.png</file>
         <file>images/arrow_bold_top_right.png</file>
         <file>images/button.png</file>
+        <file>images/logo512.png</file>
     </qresource>
 </RCC>

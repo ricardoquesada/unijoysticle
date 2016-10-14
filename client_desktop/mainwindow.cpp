@@ -29,21 +29,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QPixmap pixmap(1,1);
+    pixmap.fill(QColor(0,0,0,0));
+    QIcon icon(pixmap);
 
     auto dpadWidget = new DpadWidget(this);
     auto subWindowDpad = ui->mdiArea->addSubWindow(dpadWidget, Qt::Widget);
     subWindowDpad->setWindowTitle(tr("D-Pad mode"));
     subWindowDpad->showMaximized();
+    subWindowDpad->setWindowIcon(icon);
 
     auto commandoWidget = new CommandoWidget(this);
     auto subWindow = ui->mdiArea->addSubWindow(commandoWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Commando mode"));
     subWindow->showMaximized();
+    subWindow->setWindowIcon(icon);
 
     auto linearWidget = new LinearForm(this);
     subWindow = ui->mdiArea->addSubWindow(linearWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Linear mode"));
     subWindow->showMaximized();
+    subWindow->setWindowIcon(icon);
 
     ui->mdiArea->setActiveSubWindow(subWindowDpad);
 
