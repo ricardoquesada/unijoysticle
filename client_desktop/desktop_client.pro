@@ -14,12 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    arrowswidget.cpp
+    arrowswidget.cpp \
+    linearform.cpp
 
 HEADERS  += mainwindow.h \
-    arrowswidget.h
+    arrowswidget.h \
+    linearform.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    linearform.ui
 
 RESOURCES += \
     resources.qrc

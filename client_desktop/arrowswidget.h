@@ -19,6 +19,17 @@ limitations under the License.
 #define ARROWSWIDGET_H
 
 #include <QWidget>
+#include <QImage>
+
+enum JoyBits {
+    Up     = 0b00000001,
+    Down   = 0b00000010,
+    Left   = 0b00000100,
+    Right  = 0b00001000,
+    Fire   = 0b00010000,
+    DPad   = 0b00001111,
+    All    = 0b00011111,
+};
 
 class ArrowsWidget : public QWidget
 {
@@ -36,6 +47,11 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+
+    QImage _whiteImages[3];
+    QImage _redImages[3];
+
+    uint8_t _joyState;
 };
 
 #endif // ARROWSWIDGET_H

@@ -20,6 +20,10 @@ limitations under the License.
 
 #include <QMainWindow>
 
+QT_BEGIN_NAMESPACE
+class QMdiSubWindow;
+QT_END_NAMESPACE
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,6 +35,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void onSubWindowActivated(QMdiSubWindow* subwindow);
 
 private:
     Ui::MainWindow *ui;

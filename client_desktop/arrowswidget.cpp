@@ -18,20 +18,75 @@ limitations under the License.
 #include "arrowswidget.h"
 
 #include <QGamepad>
+#include <QGamepadManager>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QTransform>
 #include <QImage>
+#include <QDebug>
 
-ArrowsWidget::ArrowsWidget(QWidget *parent) : QWidget(parent)
+// Code taken from here:
+// https://github.com/anak10thn/graphics-dojo-qt5/blob/master/imagetint/imagetint.cpp
+// Convert an image to grayscale and return it as a new image
+QImage grayscaled(const QImage &image)
 {
+    QImage img = image;
+    int pixels = img.width() * img.height();
+    unsigned int *data = (unsigned int *)img.bits();
+    for (int i = 0; i < pixels; ++i) {
+        int val = qGray(data[i]);
+        data[i] = qRgba(val, val, val, qAlpha(data[i]));
+    }
+    return img;
+}
+// Tint an image with the specified color and return it as a new image
+QImage tinted(const QImage &image, const QColor &color, QPainter::CompositionMode mode = QPainter::CompositionMode_Screen)
+{
+    QImage resultImage(image.size(), QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&resultImage);
+    painter.drawImage(0, 0, grayscaled(image));
+    painter.setCompositionMode(mode);
+    painter.fillRect(resultImage.rect(), color);
+    painter.end();
+    resultImage.setAlphaChannel(image.alphaChannel());
 
+    return resultImage;
+}
+
+ArrowsWidget::ArrowsWidget(QWidget *parent)
+    : QWidget(parent)
+    , _joyState(0)
+{
+    QImage button(":/images/button.png");
+    QImage arrow_top_right(":/images/arrow_bold_top_right.png");
+    QImage arrow_right(":/images/arrow_bold_right.png");
+
+    _whiteImages[0] = arrow_top_right;
+    _whiteImages[1] = arrow_right;
+    _whiteImages[2] = button;
+
+    _redImages[0] = tinted(arrow_top_right, QColor(255,0,0), QPainter::CompositionMode_Source);
+    _redImages[1] = tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
+    _redImages[2] = tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
+
+    connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
+
+        qDebug() << QGamepadManager::instance()->connectedGamepads();
+    });
+
+    qDebug() << "Connected gamepads:";
+    qDebug() << QGamepadManager::instance()->connectedGamepads();
+
+    setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+    setFocus();
 }
 
 void ArrowsWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.begin(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
 
     // paint with default background color
     painter.fillRect(event->rect(), QWidget::palette().color(QWidget::backgroundRole()));
@@ -42,28 +97,36 @@ void ArrowsWidget::paintEvent(QPaintEvent *event)
     pen.setStyle(Qt::PenStyle::SolidLine);
     painter.setPen(pen);
 
-    QImage button(":/images/button.png");
-    QImage arrow_top_right(":/images/arrow_bold_top_right.png");
-    QImage arrow_right(":/images/arrow_bold_right.png");
 
-    QSize imageSize = arrow_top_right.size();
+    QSize imageSize = _whiteImages[0].size();
 
-    QPoint coords[9] = {
+    const QPoint coords[9] = {
         QPoint(-1,-1), QPoint(0,-1), QPoint(1,-1),
         QPoint(-1,0), QPoint(0,0), QPoint(1,0),
         QPoint(-1,1), QPoint(0,1), QPoint(1,1)
     };
-    int angles[9] = {
+    const int angles[9] = {
         -90, -90,   0,
         180,   0,   0,
         180,  90,  90,
     };
-    int imagesToUse[9] = {
+    const int imagesToUse[9] = {
         0, 1, 0,
         1, 2, 1,
         0, 1, 0
     };
-    QImage images[] = {arrow_top_right, arrow_right, button};
+    const uint8_t joyMask[9] = {
+        0b0101, /* top-left */
+        0b0001, /* top */
+        0b1001, /* top-right */
+        0b0100, /* left */
+        0b10000, /* fire */
+        0b1000, /* right */
+        0b0110, /* bottom-left */
+        0b0010, /* bottom */
+        0b1010, /* bottom-right */
+    };
+
 
     for(int i=0; i<9; ++i) {
         int x = (coords[i].x() + 1) * imageSize.width();
@@ -71,7 +134,19 @@ void ArrowsWidget::paintEvent(QPaintEvent *event)
 
         QTransform rotating;
         rotating.rotate(angles[i]);
-        QImage image = images[imagesToUse[i]].transformed(rotating);
+        QImage image;
+        if (joyMask[i] & 0b00001111) {
+            if (joyMask[i] == (_joyState & 0b00001111))
+                image = _redImages[imagesToUse[i]].transformed(rotating);
+            else
+                image = _whiteImages[imagesToUse[i]].transformed(rotating);
+        } else {
+            if (joyMask[i] == (_joyState & 0b00010000))
+                image = _redImages[imagesToUse[i]].transformed(rotating);
+            else
+                image = _whiteImages[imagesToUse[i]].transformed(rotating);
+        }
+
         painter.drawImage(QPoint(x,y), image);
     }
 
@@ -90,10 +165,66 @@ void ArrowsWidget::mouseMoveEvent(QMouseEvent *event)
 
 void ArrowsWidget::keyPressEvent(QKeyEvent *event)
 {
-
+    bool acceptEvent = false;
+    switch (event->key()) {
+    case Qt::Key_Left:
+        _joyState |= JoyBits::Left;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Right:
+        _joyState |= JoyBits::Right;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Down:
+        _joyState |= JoyBits::Down;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Up:
+        _joyState |= JoyBits::Up;
+        acceptEvent = true;
+        break;
+    case Qt::Key_X:
+        _joyState |= JoyBits::Fire;
+        acceptEvent = true;
+        break;
+    }
+    if (acceptEvent) {
+        event->accept();
+        repaint();
+    }
+    else
+        QWidget::keyPressEvent(event);
 }
 
 void ArrowsWidget::keyReleaseEvent(QKeyEvent *event)
 {
-
+    bool acceptEvent = false;
+    switch (event->key()) {
+    case Qt::Key_Left:
+        _joyState &= ~JoyBits::Left;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Right:
+        _joyState &= ~JoyBits::Right;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Down:
+        _joyState &= ~JoyBits::Down;
+        acceptEvent = true;
+        break;
+    case Qt::Key_Up:
+        _joyState &= ~JoyBits::Up;
+        acceptEvent = true;
+        break;
+    case Qt::Key_X:
+        _joyState &= ~JoyBits::Fire;
+        acceptEvent = true;
+        break;
+    }
+    if (acceptEvent) {
+        event->accept();
+        repaint();
+    }
+    else
+        QWidget::keyPressEvent(event);
 }
