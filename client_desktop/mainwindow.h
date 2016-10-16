@@ -15,8 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -42,5 +41,3 @@ public slots:
 private:
     Ui::MainWindow *ui;
 };
-
-#endif // MAINWINDOW_H

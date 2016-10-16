@@ -15,32 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#pragma once
-
 #include "basewidget.h"
 
-#include <QImage>
-
-
-class CommandoWidget : public BaseWidget
+BaseWidget::BaseWidget(QWidget *parent) : QWidget(parent)
 {
-    Q_OBJECT
-public:
-    explicit CommandoWidget(QWidget *parent = 0);
 
-signals:
-
-public slots:
-
-protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-
-    QImage _whiteImages[3];
-    QImage _redImages[3];
-
-    uint8_t _joyState;
-};
+}

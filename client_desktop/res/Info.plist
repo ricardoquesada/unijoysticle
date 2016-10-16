@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>UniJoystiCle Controller, Copyright 2016 Ricardo Quesada</string>
 	<key>CFBundleIconFile</key>
-    <string>unijoysticle-icon-mac</string>
+	<string>unijoysticle-icon-mac</string>
 	<key>CFBundleIdentifier</key>
 	<string>moe.retro.unijoysticle</string>
 	<key>CFBundleInfoDictionaryVersion</key>

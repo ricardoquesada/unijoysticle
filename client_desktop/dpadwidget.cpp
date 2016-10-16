@@ -25,36 +25,10 @@ limitations under the License.
 #include <QImage>
 #include <QDebug>
 
-// Code taken from here:
-// https://github.com/anak10thn/graphics-dojo-qt5/blob/master/imagetint/imagetint.cpp
-// Convert an image to grayscale and return it as a new image
-QImage grayscaled(const QImage &image)
-{
-    QImage img = image;
-    int pixels = img.width() * img.height();
-    unsigned int *data = (unsigned int *)img.bits();
-    for (int i = 0; i < pixels; ++i) {
-        int val = qGray(data[i]);
-        data[i] = qRgba(val, val, val, qAlpha(data[i]));
-    }
-    return img;
-}
-// Tint an image with the specified color and return it as a new image
-QImage tinted(const QImage &image, const QColor &color, QPainter::CompositionMode mode = QPainter::CompositionMode_Screen)
-{
-    QImage resultImage(image.size(), QImage::Format_ARGB32_Premultiplied);
-    QPainter painter(&resultImage);
-    painter.drawImage(0, 0, grayscaled(image));
-    painter.setCompositionMode(mode);
-    painter.fillRect(resultImage.rect(), color);
-    painter.end();
-    resultImage.setAlphaChannel(image.alphaChannel());
-
-    return resultImage;
-}
+#include "utils.h"
 
 DpadWidget::DpadWidget(QWidget *parent)
-    : QWidget(parent)
+    : BaseWidget(parent)
     , _joyState(0)
 {
     QImage button(":/images/button.png");
@@ -65,9 +39,9 @@ DpadWidget::DpadWidget(QWidget *parent)
     _whiteImages[1] = arrow_right;
     _whiteImages[2] = button;
 
-    _redImages[0] = tinted(arrow_top_right, QColor(255,0,0), QPainter::CompositionMode_Source);
-    _redImages[1] = tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
-    _redImages[2] = tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
+    _redImages[0] = utils_tinted(arrow_top_right, QColor(255,0,0), QPainter::CompositionMode_Source);
+    _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
+    _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
     connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
 
@@ -127,10 +101,12 @@ void DpadWidget::paintEvent(QPaintEvent *event)
         0b1010, /* bottom-right */
     };
 
+    auto s = size();
 
     for(int i=0; i<9; ++i) {
-        int x = (coords[i].x() + 1) * imageSize.width();
-        int y = (coords[i].y() + 1) * imageSize.height();
+        // 0.5 is the "anchor point". Use its center as the anchor point
+        int x = (coords[i].x() - 0.5) * imageSize.width() + s.width() / 2;
+        int y = (coords[i].y() - 0.5) * imageSize.height() + s.height() / 2;
 
         QTransform rotating;
         rotating.rotate(angles[i]);

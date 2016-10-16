@@ -31,12 +31,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     linearform.cpp \
     commandowidget.cpp \
-    dpadwidget.cpp
+    dpadwidget.cpp \
+    basewidget.cpp \
+    utils.cpp
 
 HEADERS  += mainwindow.h \
     linearform.h \
     commandowidget.h \
-    dpadwidget.h
+    dpadwidget.h \
+    basewidget.h \
+    utils.h
 
 FORMS    += mainwindow.ui \
     linearform.ui

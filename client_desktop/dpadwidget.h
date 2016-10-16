@@ -15,23 +15,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#ifndef ARROWSWIDGET_H
-#define ARROWSWIDGET_H
+#pragma once
 
-#include <QWidget>
+#include "basewidget.h"
+
 #include <QImage>
 
-enum JoyBits {
-    Up     = 0b00000001,
-    Down   = 0b00000010,
-    Left   = 0b00000100,
-    Right  = 0b00001000,
-    Fire   = 0b00010000,
-    DPad   = 0b00001111,
-    All    = 0b00011111,
-};
-
-class DpadWidget : public QWidget
+class DpadWidget : public BaseWidget
 {
     Q_OBJECT
 public:
@@ -53,5 +43,3 @@ protected:
 
     uint8_t _joyState;
 };
-
-#endif // ARROWSWIDGET_H

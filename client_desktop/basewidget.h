@@ -17,30 +17,25 @@ limitations under the License.
 
 #pragma once
 
-#include "basewidget.h"
+#include <QWidget>
 
-#include <QImage>
+enum JoyBits {
+    Up     = 0b00000001,
+    Down   = 0b00000010,
+    Left   = 0b00000100,
+    Right  = 0b00001000,
+    Fire   = 0b00010000,
+    DPad   = 0b00001111,
+    All    = 0b00011111,
+};
 
-
-class CommandoWidget : public BaseWidget
+class BaseWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CommandoWidget(QWidget *parent = 0);
+    explicit BaseWidget(QWidget *parent = 0);
 
 signals:
 
 public slots:
-
-protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-
-    QImage _whiteImages[3];
-    QImage _redImages[3];
-
-    uint8_t _joyState;
 };
