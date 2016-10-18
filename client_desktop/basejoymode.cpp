@@ -15,22 +15,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#pragma once
-
 #include "basejoymode.h"
 
-namespace Ui {
-class LinearForm;
+#include <QDebug>
+
+static const quint16 SERVER_PORT = 6464;
+
+BaseJoyMode::BaseJoyMode(QWidget *parent)
+    : QWidget(parent)
+{
+    _socket = new QUdpSocket(this);
+    _proto.version = 2;
+    _proto.joyControl = 3;          // default, enable joy#1 and joy#2
 }
 
-class LinearForm : public BaseJoyMode
+void BaseJoyMode::setServerAddress(const QHostAddress& address)
 {
-    Q_OBJECT
+    _host = address;
+}
 
-public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
+void BaseJoyMode::sendState()
+{
+    // send it two times
+    for (int i=0; i<2; ++i)
+        _socket->writeDatagram((char*)&_proto, sizeof(_proto), _host, SERVER_PORT);
+}
 
-private:
-    Ui::LinearForm *ui;
-};
+void BaseJoyMode::selectJoystick(uint8_t joystick)
+{
+    _proto.joyControl = joystick;
+}

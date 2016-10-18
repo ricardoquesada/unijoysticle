@@ -15,33 +15,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#include "basewidget.h"
+#include "dpadsettings.h"
+#include "ui_dpadsettings.h"
 
-#include <QDebug>
+#include <QRadioButton>
 
-static const quint16 SERVER_PORT = 6464;
+#include "basejoymode.h"
 
-BaseWidget::BaseWidget(QWidget *parent)
-    : QWidget(parent)
+DpadSettings::DpadSettings(BaseJoyMode* joyMode, QWidget *parent)
+    : BaseSettings(joyMode, parent)
+    , ui(new Ui::DpadSettings)
 {
-    _socket = new QUdpSocket(this);
-    _proto.version = 2;
-    _proto.joyControl = 3;          // default, enable joy#1 and joy#2
+    ui->setupUi(this);
+
+    connect(ui->radioButton_joy1, &QRadioButton::clicked, [&]() {
+        this->_joyMode->selectJoystick(1);
+    });
+
+    connect(ui->radioButton_joy2, &QRadioButton::clicked, [&]() {
+        this->_joyMode->selectJoystick(2);
+    });
+
+    // default
+    _joyMode->selectJoystick(2);
 }
 
-void BaseWidget::setServerAddress(const QHostAddress& address)
+DpadSettings::~DpadSettings()
 {
-    _host = address;
-}
-
-void BaseWidget::sendState()
-{
-    // send it two times
-    for (int i=0; i<2; ++i)
-        _socket->writeDatagram((char*)&_proto, sizeof(_proto), _host, SERVER_PORT);
-}
-
-void BaseWidget::setEnabledJoysticks(uint8_t joyEnabled)
-{
-    _proto.joyControl = joyEnabled;
+    delete ui;
 }

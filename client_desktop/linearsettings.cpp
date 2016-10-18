@@ -15,22 +15,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#pragma once
+#include "linearsettings.h"
+#include "ui_linearsettings.h"
 
 #include "basejoymode.h"
 
-namespace Ui {
-class LinearForm;
+LinearSettings::LinearSettings(BaseJoyMode *joyMode, QWidget *parent) :
+    BaseSettings(joyMode, parent),
+    ui(new Ui::LinearSettings)
+{
+    ui->setupUi(this);
+
+    connect(ui->radioButton_joy1, &QRadioButton::clicked, [&]() {
+        this->_joyMode->selectJoystick(1);
+    });
+
+    connect(ui->radioButton_joy2, &QRadioButton::clicked, [&]() {
+        this->_joyMode->selectJoystick(2);
+    });
+
+    // default
+    _joyMode->selectJoystick(2);
 }
 
-class LinearForm : public BaseJoyMode
+LinearSettings::~LinearSettings()
 {
-    Q_OBJECT
-
-public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
-
-private:
-    Ui::LinearForm *ui;
-};
+    delete ui;
+}

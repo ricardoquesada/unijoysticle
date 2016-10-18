@@ -32,20 +32,28 @@ SOURCES += main.cpp\
     linearform.cpp \
     commandowidget.cpp \
     dpadwidget.cpp \
-    basewidget.cpp \
     utils.cpp \
-    qMDNS.cpp
+    qMDNS.cpp \
+    dpadsettings.cpp \
+    linearsettings.cpp \
+    basejoymode.cpp \
+    basesettings.cpp
 
 HEADERS  += mainwindow.h \
     linearform.h \
     commandowidget.h \
     dpadwidget.h \
-    basewidget.h \
     utils.h \
-    qMDNS.h
+    qMDNS.h \
+    dpadsettings.h \
+    linearsettings.h \
+    basejoymode.h \
+    basesettings.h
 
 FORMS    += mainwindow.ui \
-    linearform.ui
+    linearform.ui \
+    linearsettings.ui \
+    dpadsettings.ui
 
 RESOURCES += \
     resources.qrc

@@ -22,7 +22,7 @@ limitations under the License.
 
 
 LinearForm::LinearForm(QWidget *parent) :
-    BaseWidget(parent),
+    BaseJoyMode(parent),
     ui(new Ui::LinearForm)
 {
     ui->setupUi(this);

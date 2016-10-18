@@ -15,22 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ****************************************************************************/
 
-#pragma once
-
+#include "basesettings.h"
 #include "basejoymode.h"
 
-namespace Ui {
-class LinearForm;
-}
-
-class LinearForm : public BaseJoyMode
+BaseSettings::BaseSettings(BaseJoyMode* joyMode, QWidget* parent)
+    : QWidget(parent)
+    , _joyMode(joyMode)
 {
-    Q_OBJECT
-
-public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
-
-private:
-    Ui::LinearForm *ui;
-};
+}

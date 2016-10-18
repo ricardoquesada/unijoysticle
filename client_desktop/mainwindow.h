@@ -23,6 +23,7 @@ QT_BEGIN_NAMESPACE
 class QMdiSubWindow;
 class QHostInfo;
 class QHostAddress;
+class QWidget;
 QT_END_NAMESPACE
 
 namespace Ui {
@@ -49,4 +50,6 @@ private:
     void setServerAddress(const QHostAddress& address);
 
     QString _lastServerName;
+
+    QWidget *_settingsWidget;
 };

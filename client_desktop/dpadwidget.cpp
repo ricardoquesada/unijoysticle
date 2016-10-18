@@ -28,7 +28,7 @@ limitations under the License.
 #include "utils.h"
 
 DpadWidget::DpadWidget(QWidget *parent)
-    : BaseWidget(parent)
+    : BaseJoyMode(parent)
     , _joyState(0)
 {
     QImage button(":/images/button.png");

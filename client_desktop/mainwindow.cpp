@@ -17,19 +17,26 @@ limitations under the License.
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_linearsettings.h"
 
 #include <QMdiSubWindow>
 #include <QHostInfo>
+#include <QPushButton>
+#include <QDesktopServices>
+#include <QUrl>
 
-#include "dpadwidget.h"
+#include "dpadsettings.h"
+#include "linearsettings.h"
 #include "commandowidget.h"
+#include "dpadwidget.h"
 #include "linearform.h"
 #include "qMDNS.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _lastServerName("")
+    _lastServerName(""),
+    _settingsWidget(nullptr)
 {
     ui->setupUi(this);
     QPixmap pixmap(1,1);
@@ -62,8 +69,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::onSubWindowActivated);
     connect(qMDNS::getInstance(), &qMDNS::hostFound, this, &MainWindow::onDeviceDiscovered);
     connect(ui->lineEdit_server, &QLineEdit::editingFinished, this, &MainWindow::onResolveTriggered);
+    connect(ui->pushButton_stats, &QPushButton::clicked, [&](){
+        QDesktopServices::openUrl(QUrl(QString("http://") + ui->lineEdit_server->text()));
+    });
 
     setUnifiedTitleAndToolBarOnMac(true);
+
+    auto linearSettings = new LinearSettings(linearWidget, this);
+    ui->verticalLayout_settings->insertWidget(1, linearSettings);
+    _settingsWidget = linearSettings;
 
     onResolveTriggered();
 }
@@ -78,11 +92,21 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
     // subwindow can be nullptr when closing the app
     if (subwindow)
     {
-        auto widget = subwindow->widget();
-        if (dynamic_cast<CommandoWidget*>(widget)) {
-            ui->groupBox_joy->setEnabled(false);
-        } else {
-            ui->groupBox_joy->setEnabled(true);
+        delete _settingsWidget;
+        _settingsWidget = nullptr;
+
+        auto widget = static_cast<BaseJoyMode*>(subwindow->widget());
+
+        if (dynamic_cast<DpadWidget*>(widget)) {
+            auto settings = new DpadSettings(widget);
+            ui->verticalLayout_settings->insertWidget(1, settings);
+            _settingsWidget = settings;
+        } else if (dynamic_cast<CommandoWidget*>(widget)) {
+            /* no settings for Commando */
+        } else if (dynamic_cast<LinearForm*>(widget)) {
+            auto settings = new LinearSettings(widget);
+            ui->verticalLayout_settings->insertWidget(1, settings);
+            _settingsWidget = settings;
         }
     }
 }
@@ -129,7 +153,7 @@ void MainWindow::setEnableTabs(bool enabled)
 void MainWindow::setServerAddress(const QHostAddress& address)
 {
     for(auto& subwindow: ui->mdiArea->subWindowList()) {
-        BaseWidget *widget = static_cast<BaseWidget*>(subwindow->widget());
+        BaseJoyMode *widget = static_cast<BaseJoyMode*>(subwindow->widget());
         widget->setServerAddress(address);
     }
 }

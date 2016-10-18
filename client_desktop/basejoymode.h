@@ -40,13 +40,13 @@ struct ProtoHeader {
 #pragma pack(pop)
 static_assert(sizeof(ProtoHeader) == 4, "Invalid size");
 
-class BaseWidget : public QWidget
+class BaseJoyMode : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BaseWidget(QWidget *parent = 0);
+    explicit BaseJoyMode(QWidget *parent = 0);
     void setServerAddress(const QHostAddress& address);
-    void setEnabledJoysticks(uint8_t joyEnabled);
+    void selectJoystick(uint8_t joystick);
 
 signals:
 

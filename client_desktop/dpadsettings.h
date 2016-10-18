@@ -17,20 +17,20 @@ limitations under the License.
 
 #pragma once
 
-#include "basejoymode.h"
+#include "basesettings.h"
 
 namespace Ui {
-class LinearForm;
+class DpadSettings;
 }
 
-class LinearForm : public BaseJoyMode
+class DpadSettings : public BaseSettings
 {
     Q_OBJECT
 
 public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
+    explicit DpadSettings(BaseJoyMode* joyMode, QWidget *parent = 0);
+    ~DpadSettings();
 
 private:
-    Ui::LinearForm *ui;
+    Ui::DpadSettings *ui;
 };

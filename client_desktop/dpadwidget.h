@@ -17,11 +17,11 @@ limitations under the License.
 
 #pragma once
 
-#include "basewidget.h"
+#include "basejoymode.h"
 
 #include <QImage>
 
-class DpadWidget : public BaseWidget
+class DpadWidget : public BaseJoyMode
 {
     Q_OBJECT
 public:

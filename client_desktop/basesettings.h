@@ -17,20 +17,17 @@ limitations under the License.
 
 #pragma once
 
-#include "basejoymode.h"
+#include <QWidget>
 
-namespace Ui {
-class LinearForm;
-}
+class BaseJoyMode;
 
-class LinearForm : public BaseJoyMode
+class BaseSettings: public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
+    explicit BaseSettings(BaseJoyMode* joyMode, QWidget *parent = 0);
 
-private:
-    Ui::LinearForm *ui;
+protected:
+    // weak ref
+    BaseJoyMode* _joyMode;
 };

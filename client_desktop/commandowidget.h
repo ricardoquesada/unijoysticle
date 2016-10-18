@@ -17,12 +17,12 @@ limitations under the License.
 
 #pragma once
 
-#include "basewidget.h"
+#include "basejoymode.h"
 
 #include <QImage>
 
 
-class CommandoWidget : public BaseWidget
+class CommandoWidget : public BaseJoyMode
 {
     Q_OBJECT
 public:
@@ -38,6 +38,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+
+    void send();
 
     QImage _whiteImages[3];
     QImage _redImages[3];

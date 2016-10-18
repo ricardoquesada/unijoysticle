@@ -29,7 +29,7 @@ limitations under the License.
 
 
 CommandoWidget::CommandoWidget(QWidget *parent)
-    : BaseWidget(parent)
+    : BaseJoyMode(parent)
     , _joyState(0)
 {
     QImage button(":/images/button.png");
@@ -54,6 +54,9 @@ CommandoWidget::CommandoWidget(QWidget *parent)
 
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
+
+    // send two joysticks
+    _proto.joyControl = 3;
 }
 
 void CommandoWidget::paintEvent(QPaintEvent *event)
@@ -170,6 +173,7 @@ void CommandoWidget::keyPressEvent(QKeyEvent *event)
     if (acceptEvent) {
         event->accept();
         repaint();
+        send();
     }
     else
         QWidget::keyPressEvent(event);
@@ -203,7 +207,15 @@ void CommandoWidget::keyReleaseEvent(QKeyEvent *event)
     if (acceptEvent) {
         event->accept();
         repaint();
+        send();
     }
     else
         QWidget::keyPressEvent(event);
+}
+
+void CommandoWidget::send()
+{
+    _proto.joyStates[0] = _joyState;
+    _proto.joyStates[1] = _joyState;
+    sendState();
 }
