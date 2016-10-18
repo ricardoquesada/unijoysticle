@@ -38,6 +38,8 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
+    void send();
+
     QImage _whiteImages[3];
     QImage _redImages[3];
 

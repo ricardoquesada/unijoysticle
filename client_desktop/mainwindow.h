@@ -21,6 +21,8 @@ limitations under the License.
 
 QT_BEGIN_NAMESPACE
 class QMdiSubWindow;
+class QHostInfo;
+class QHostAddress;
 QT_END_NAMESPACE
 
 namespace Ui {
@@ -37,7 +39,14 @@ public:
 
 public slots:
     void onSubWindowActivated(QMdiSubWindow* subwindow);
+    void onDeviceDiscovered (const QHostInfo& info);
+    void onResolveTriggered ();
 
 private:
     Ui::MainWindow *ui;
+
+    void setEnableTabs(bool enabled);
+    void setServerAddress(const QHostAddress& address);
+
+    QString _lastServerName;
 };

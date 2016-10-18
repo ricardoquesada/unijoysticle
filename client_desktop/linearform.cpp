@@ -27,8 +27,12 @@ LinearForm::LinearForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    _proto.joyControl = 1;
+
     connect(ui->horizontalSlider, &QSlider::valueChanged, [&](int value){
         ui->label->setText(QString::number(value));
+        _proto.joyStates[_proto.joyControl-1] = (uint8_t)value;
+        sendState();
     });
 }
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui gamepad
+QT       += core gui gamepad network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,14 +33,16 @@ SOURCES += main.cpp\
     commandowidget.cpp \
     dpadwidget.cpp \
     basewidget.cpp \
-    utils.cpp
+    utils.cpp \
+    qMDNS.cpp
 
 HEADERS  += mainwindow.h \
     linearform.h \
     commandowidget.h \
     dpadwidget.h \
     basewidget.h \
-    utils.h
+    utils.h \
+    qMDNS.h
 
 FORMS    += mainwindow.ui \
     linearform.ui

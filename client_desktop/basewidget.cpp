@@ -17,7 +17,31 @@ limitations under the License.
 
 #include "basewidget.h"
 
-BaseWidget::BaseWidget(QWidget *parent) : QWidget(parent)
-{
+#include <QDebug>
 
+static const quint16 SERVER_PORT = 6464;
+
+BaseWidget::BaseWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    _socket = new QUdpSocket(this);
+    _proto.version = 2;
+    _proto.joyControl = 3;          // default, enable joy#1 and joy#2
+}
+
+void BaseWidget::setServerAddress(const QHostAddress& address)
+{
+    _host = address;
+}
+
+void BaseWidget::sendState()
+{
+    // send it two times
+    for (int i=0; i<2; ++i)
+        _socket->writeDatagram((char*)&_proto, sizeof(_proto), _host, SERVER_PORT);
+}
+
+void BaseWidget::setEnabledJoysticks(uint8_t joyEnabled)
+{
+    _proto.joyControl = joyEnabled;
 }

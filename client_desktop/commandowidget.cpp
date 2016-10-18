@@ -104,27 +104,29 @@ void CommandoWidget::paintEvent(QPaintEvent *event)
 
     auto s = size();
 
-    for(int i=0; i<9; ++i) {
-        // 0.5 is the "anchor point". Use its center as the anchor point
-        int x = (coords[i].x() - 0.5) * imageSize.width() + s.width() / 2;
-        int y = (coords[i].y() - 0.5) * imageSize.height() + s.height() / 2;
+    for (int j=0; j<2; ++j) {
+        for(int i=0; i<9; ++i) {
+            // 0.5 is the "anchor point". Use its center as the anchor point
+            int x = (coords[i].x() - 0.5) * imageSize.width() + (s.width() / 4) * (j*2+1);
+            int y = (coords[i].y() - 0.5) * imageSize.height() + s.height() / 2;
 
-        QTransform rotating;
-        rotating.rotate(angles[i]);
-        QImage image;
-        if (joyMask[i] & 0b00001111) {
-            if (joyMask[i] == (_joyState & 0b00001111))
-                image = _redImages[imagesToUse[i]].transformed(rotating);
-            else
-                image = _whiteImages[imagesToUse[i]].transformed(rotating);
-        } else {
-            if (joyMask[i] == (_joyState & 0b00010000))
-                image = _redImages[imagesToUse[i]].transformed(rotating);
-            else
-                image = _whiteImages[imagesToUse[i]].transformed(rotating);
+            QTransform rotating;
+            rotating.rotate(angles[i]);
+            QImage image;
+            if (joyMask[i] & 0b00001111) {
+                if (joyMask[i] == (_joyState & 0b00001111))
+                    image = _redImages[imagesToUse[i]].transformed(rotating);
+                else
+                    image = _whiteImages[imagesToUse[i]].transformed(rotating);
+            } else {
+                if (joyMask[i] == (_joyState & 0b00010000))
+                    image = _redImages[imagesToUse[i]].transformed(rotating);
+                else
+                    image = _whiteImages[imagesToUse[i]].transformed(rotating);
+            }
+
+            painter.drawImage(QPoint(x,y), image);
         }
-
-        painter.drawImage(QPoint(x,y), image);
     }
 
     painter.end();

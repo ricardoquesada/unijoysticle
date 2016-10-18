@@ -53,6 +53,9 @@ DpadWidget::DpadWidget(QWidget *parent)
 
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
+
+    // default: joy 1
+    _proto.joyControl = 1;
 }
 
 void DpadWidget::paintEvent(QPaintEvent *event)
@@ -167,6 +170,7 @@ void DpadWidget::keyPressEvent(QKeyEvent *event)
     if (acceptEvent) {
         event->accept();
         repaint();
+        send();
     }
     else
         QWidget::keyPressEvent(event);
@@ -200,7 +204,17 @@ void DpadWidget::keyReleaseEvent(QKeyEvent *event)
     if (acceptEvent) {
         event->accept();
         repaint();
+        send();
     }
     else
         QWidget::keyPressEvent(event);
+}
+
+void DpadWidget::send()
+{
+    // copy local state to "protocol"
+    _proto.joyStates[_proto.joyControl-1] = _joyState;
+
+    // send it
+    sendState();
 }

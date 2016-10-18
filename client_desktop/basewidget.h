@@ -18,6 +18,7 @@ limitations under the License.
 #pragma once
 
 #include <QWidget>
+#include <QUdpSocket>
 
 enum JoyBits {
     Up     = 0b00000001,
@@ -29,13 +30,34 @@ enum JoyBits {
     All    = 0b00011111,
 };
 
+// Protocol v2
+#pragma pack(push, 0)
+struct ProtoHeader {
+    uint8_t version;        // should be 2
+    uint8_t joyControl;     // 1, 2, or 3. which joysticks are enabled
+    uint8_t joyStates[2];   // states for joy1 and joy2
+};
+#pragma pack(pop)
+static_assert(sizeof(ProtoHeader) == 4, "Invalid size");
+
 class BaseWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit BaseWidget(QWidget *parent = 0);
+    void setServerAddress(const QHostAddress& address);
+    void setEnabledJoysticks(uint8_t joyEnabled);
 
 signals:
 
 public slots:
+
+protected:
+    void sendState();
+
+    QUdpSocket* _socket;
+    QHostAddress _host;
+    QByteArray _datagram;
+
+    ProtoHeader _proto;
 };
