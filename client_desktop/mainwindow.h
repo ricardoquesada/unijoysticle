@@ -43,6 +43,12 @@ public slots:
     void onDeviceDiscovered (const QHostInfo& info);
     void onResolveTriggered ();
 
+protected:
+    void saveSettings();
+
+private slots:
+    void on_actionQuit_triggered();
+
 private:
     Ui::MainWindow *ui;
 

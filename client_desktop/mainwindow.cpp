@@ -157,3 +157,14 @@ void MainWindow::setServerAddress(const QHostAddress& address)
         widget->setServerAddress(address);
     }
 }
+
+void MainWindow::on_actionQuit_triggered()
+{
+    saveSettings();
+    QApplication::exit();
+}
+
+void MainWindow::saveSettings()
+{
+    /* */
+}
