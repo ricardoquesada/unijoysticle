@@ -26,7 +26,6 @@ limitations under the License.
 #include <QUrl>
 
 #include "dpadsettings.h"
-#include "linearsettings.h"
 #include "commandowidget.h"
 #include "dpadwidget.h"
 #include "linearform.h"
@@ -103,9 +102,7 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
         } else if (dynamic_cast<CommandoWidget*>(widget)) {
             /* no settings for Commando */
         } else if (dynamic_cast<LinearForm*>(widget)) {
-            auto settings = new LinearSettings(widget);
-            ui->verticalLayout_settings->insertWidget(1, settings);
-            _settingsWidget = settings;
+            /* no settings for Linear */
         }
     }
 }
@@ -113,19 +110,17 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
 void MainWindow::onDeviceDiscovered (const QHostInfo& info)
 {
     qDebug() << "";
-    qDebug() << info.hostName().toStdString().c_str()
+    qDebug() << info.hostName()
              << "has the following IPs:";
+    foreach (QHostAddress address, info.addresses())
+        qDebug() << "  -" << address.toString();
+    qDebug() << "";
 
-    if(info.addresses().length() > 0) {
-        foreach (QHostAddress address, info.addresses())
-            qDebug() << "  -" << address.toString();
-
+    if(info.hostName() == ui->lineEdit_server->text() && info.addresses().length() > 0) {
         QHostAddress serverAddr(info.addresses().at(0));
         setServerAddress(serverAddr);
         setEnableTabs(true);
     }
-
-    qDebug() << "";
 }
 
 void MainWindow::onResolveTriggered()
