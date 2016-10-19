@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     qMDNS.cpp \
     dpadsettings.cpp \
     basejoymode.cpp \
-    basesettings.cpp
+    basesettings.cpp \
+    preferences.cpp
 
 HEADERS  += mainwindow.h \
     linearform.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     qMDNS.h \
     dpadsettings.h \
     basejoymode.h \
-    basesettings.h
+    basesettings.h \
+    preferences.h
 
 FORMS    += mainwindow.ui \
     linearform.ui \

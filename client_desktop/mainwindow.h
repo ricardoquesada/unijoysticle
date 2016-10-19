@@ -44,8 +44,11 @@ public slots:
     void onResolveTriggered ();
 
 protected:
+    void restoreSettings();
     void saveSettings();
+
     void showEvent(QShowEvent *ev);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_actionQuit_triggered();

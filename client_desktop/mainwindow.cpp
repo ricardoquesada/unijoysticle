@@ -24,12 +24,16 @@ limitations under the License.
 #include <QPushButton>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QCloseEvent>
 
+#include "preferences.h"
 #include "dpadsettings.h"
 #include "commandowidget.h"
 #include "dpadwidget.h"
 #include "linearform.h"
 #include "qMDNS.h"
+
+static const int STATE_VERSION = 1;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -78,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     setUnifiedTitleAndToolBarOnMac(true);
+
+    restoreSettings();
 }
 
 MainWindow::~MainWindow()
@@ -161,9 +167,32 @@ void MainWindow::on_actionQuit_triggered()
     QApplication::exit();
 }
 
+void MainWindow::restoreSettings()
+{
+    // before restoring settings, save the current layout
+    // needed for "reset layout"
+    auto& preferences = Preferences::getInstance();
+    preferences.setMainWindowDefaultGeometry(saveGeometry());
+    preferences.setMainWindowDefaultState(saveState(STATE_VERSION));
+
+    auto geom = preferences.getMainWindowGeometry();
+    auto state = preferences.getMainWindowState();
+
+    restoreState(state, STATE_VERSION);
+    restoreGeometry(geom);
+
+    auto serverAddress = preferences.getServerIPAddress();
+    ui->lineEdit_server->setText(serverAddress);
+}
+
 void MainWindow::saveSettings()
 {
-    /* */
+    auto& preferences = Preferences::getInstance();
+    preferences.setMainWindowGeometry(saveGeometry());
+    preferences.setMainWindowState(saveState(STATE_VERSION));
+
+    auto serverAddress = ui->lineEdit_server->text();
+    preferences.setServerIPAddress(serverAddress);
 }
 
 void MainWindow::showEvent( QShowEvent* event ) {
@@ -171,4 +200,10 @@ void MainWindow::showEvent( QShowEvent* event ) {
 
     // execute this after the main window has been created
     onResolveTriggered();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    event->accept();
+    saveSettings();
 }
