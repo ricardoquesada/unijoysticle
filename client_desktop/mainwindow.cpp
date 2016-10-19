@@ -147,6 +147,9 @@ void MainWindow::setEnableTabs(bool enabled)
         subwindow->setEnabled(enabled);
     }
     ui->mdiArea->setEnabled(enabled);
+    ui->pushButton_stats->setEnabled(enabled);
+    if (_settingsWidget)
+        _settingsWidget->setEnabled(enabled);
 }
 
 void MainWindow::setServerAddress(const QHostAddress& address)
