@@ -60,6 +60,4 @@ private:
     void setServerAddress(const QHostAddress& address);
 
     QString _lastServerName;
-
-    QWidget *_settingsWidget;
 };

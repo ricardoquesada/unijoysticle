@@ -117,3 +117,34 @@ QString Preferences::getServerIPAddress() const
 {
     return _settings.value(QLatin1String("server/ipaddress"), "unijoysticle.local").toString();
 }
+
+// dpad
+void Preferences::setDpadJumpWithB(bool enabled)
+{
+    _settings.setValue(QLatin1String("dpad/jumpWithB"), enabled);
+}
+
+bool Preferences::getDpadJumpWithB() const
+{
+    return _settings.value(QLatin1String("dpad/jumpWithB"), false).toBool();
+}
+
+void Preferences::setDpadSwapAB(bool enabled)
+{
+    _settings.setValue(QLatin1String("dpad/swapAB"), enabled);
+}
+
+bool Preferences::getDpadSwapAB() const
+{
+    return _settings.value(QLatin1String("dpad/swapAB"), false).toBool();
+}
+
+void Preferences::setDpadJoystick(int joy)
+{
+    _settings.setValue(QLatin1String("dpad/joystick"), joy);
+}
+
+int Preferences::getDpadJoystick() const
+{
+    return _settings.value(QLatin1String("dpad/joystick"), 2).toInt();
+}

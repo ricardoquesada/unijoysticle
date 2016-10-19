@@ -26,6 +26,7 @@ limitations under the License.
 #include <QDebug>
 
 #include "utils.h"
+#include "preferences.h"
 
 DpadWidget::DpadWidget(QWidget *parent)
     : BaseJoyMode(parent)
@@ -231,3 +232,25 @@ void DpadWidget::send()
     // send it
     sendState();
 }
+
+// slots
+void DpadWidget::onJoy1Clicked()
+{
+    _proto.joyControl = 1;
+}
+
+void DpadWidget::onJoy2Clicked()
+{
+    _proto.joyControl = 2;
+}
+
+void DpadWidget::onJumpBChecked(bool checked)
+{
+    _jumpWithB = checked;
+}
+
+void DpadWidget::onSwapABChecked(bool checked)
+{
+    _swapAB = checked;
+}
+

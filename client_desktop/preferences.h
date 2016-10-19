@@ -51,6 +51,15 @@ public:
     void setServerIPAddress(const QString& ipaddress);
     QString getServerIPAddress() const;
 
+    void setDpadJumpWithB(bool enabled);
+    bool getDpadJumpWithB() const;
+
+    void setDpadSwapAB(bool enabled);
+    bool getDpadSwapAB() const;
+
+    void setDpadJoystick(int joy);
+    int getDpadJoystick() const;
+
 private:
     Preferences();
     ~Preferences();

@@ -34,7 +34,6 @@ SOURCES += main.cpp\
     dpadwidget.cpp \
     utils.cpp \
     qMDNS.cpp \
-    dpadsettings.cpp \
     basejoymode.cpp \
     basesettings.cpp \
     preferences.cpp
@@ -45,14 +44,12 @@ HEADERS  += mainwindow.h \
     dpadwidget.h \
     utils.h \
     qMDNS.h \
-    dpadsettings.h \
     basejoymode.h \
     basesettings.h \
     preferences.h
 
 FORMS    += mainwindow.ui \
-    linearform.ui \
-    dpadsettings.ui
+    linearform.ui
 
 RESOURCES += \
     resources.qrc

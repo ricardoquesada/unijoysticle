@@ -27,7 +27,6 @@ limitations under the License.
 #include <QCloseEvent>
 
 #include "preferences.h"
-#include "dpadsettings.h"
 #include "commandowidget.h"
 #include "dpadwidget.h"
 #include "linearform.h"
@@ -35,11 +34,10 @@ limitations under the License.
 
 static const int STATE_VERSION = 1;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _lastServerName(""),
-    _settingsWidget(nullptr)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+    , _lastServerName("")
 {
     ui->setupUi(this);
     QPixmap pixmap(1,1);
@@ -81,6 +79,15 @@ MainWindow::MainWindow(QWidget *parent) :
         QDesktopServices::openUrl(QUrl(QString("http://") + ui->lineEdit_server->text()));
     });
 
+    // dpad settings
+    connect(ui->radioButton_joy1, &QRadioButton::clicked, dpadWidget, &DpadWidget::onJoy1Clicked);
+    connect(ui->radioButton_joy2, &QRadioButton::clicked, dpadWidget, &DpadWidget::onJoy2Clicked);
+    connect(ui->checkBox_swapAB, &QCheckBox::clicked, dpadWidget, &DpadWidget::onSwapABChecked);
+    connect(ui->checkBox_jumpB, &QCheckBox::clicked, dpadWidget, &DpadWidget::onJumpBChecked);
+    connect(ui->checkBox_jumpB, &QCheckBox::clicked, [&](bool checked){
+        this->ui->checkBox_swapAB->setEnabled(checked);
+    });
+
     setUnifiedTitleAndToolBarOnMac(true);
 
     restoreSettings();
@@ -96,19 +103,14 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
     // subwindow can be nullptr when closing the app
     if (subwindow)
     {
-        delete _settingsWidget;
-        _settingsWidget = nullptr;
-
         auto widget = static_cast<BaseJoyMode*>(subwindow->widget());
 
         if (dynamic_cast<DpadWidget*>(widget)) {
-            auto settings = new DpadSettings(widget);
-            ui->verticalLayout_settings->insertWidget(1, settings);
-            _settingsWidget = settings;
+            ui->groupBox_dpad->show();
         } else if (dynamic_cast<CommandoWidget*>(widget)) {
-            /* no settings for Commando */
+            ui->groupBox_dpad->hide();
         } else if (dynamic_cast<LinearForm*>(widget)) {
-            /* no settings for Linear */
+            ui->groupBox_dpad->hide();
         }
     }
 }
@@ -149,8 +151,6 @@ void MainWindow::setEnableTabs(bool enabled)
     }
     ui->mdiArea->setEnabled(enabled);
     ui->pushButton_stats->setEnabled(enabled);
-    if (_settingsWidget)
-        _settingsWidget->setEnabled(enabled);
 }
 
 void MainWindow::setServerAddress(const QHostAddress& address)
@@ -183,6 +183,18 @@ void MainWindow::restoreSettings()
 
     auto serverAddress = preferences.getServerIPAddress();
     ui->lineEdit_server->setText(serverAddress);
+
+    bool jumpB = preferences.getDpadJumpWithB();
+    ui->checkBox_jumpB->setChecked(jumpB);
+
+    bool swapAB = preferences.getDpadSwapAB();
+    ui->checkBox_swapAB->setChecked(swapAB);
+    ui->checkBox_swapAB->setEnabled(jumpB);
+
+    int joy = preferences.getDpadJoystick();
+    if (joy == 1)
+        ui->radioButton_joy1->setChecked(true);
+    else ui->radioButton_joy2->setChecked(true);
 }
 
 void MainWindow::saveSettings()
@@ -193,6 +205,10 @@ void MainWindow::saveSettings()
 
     auto serverAddress = ui->lineEdit_server->text();
     preferences.setServerIPAddress(serverAddress);
+
+    preferences.setDpadJumpWithB(ui->checkBox_jumpB->isChecked());
+    preferences.setDpadSwapAB(ui->checkBox_swapAB->isChecked());
+    preferences.setDpadJoystick(ui->radioButton_joy1->isChecked() ? 1 : 2);
 }
 
 void MainWindow::showEvent( QShowEvent* event ) {

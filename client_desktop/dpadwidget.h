@@ -33,6 +33,10 @@ public:
 signals:
 
 public slots:
+    void onJoy1Clicked();
+    void onJoy2Clicked();
+    void onJumpBChecked(bool checked);
+    void onSwapABChecked(bool checked);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
