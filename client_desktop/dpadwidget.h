@@ -27,6 +27,9 @@ class DpadWidget : public BaseJoyMode
 public:
     explicit DpadWidget(QWidget *parent = 0);
 
+    void setJumpWithB(bool enabled);
+    void setSwapAB(bool enabled);
+
 signals:
 
 public slots:
@@ -44,4 +47,6 @@ protected:
     QImage _redImages[3];
 
     uint8_t _joyState;
+    bool _jumpWithB;
+    bool _swapAB;
 };

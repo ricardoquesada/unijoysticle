@@ -19,8 +19,10 @@ limitations under the License.
 #include "ui_dpadsettings.h"
 
 #include <QRadioButton>
+#include <QCheckBox>
 
 #include "basejoymode.h"
+#include "dpadwidget.h"
 
 DpadSettings::DpadSettings(BaseJoyMode* joyMode, QWidget *parent)
     : BaseSettings(joyMode, parent)
@@ -35,6 +37,16 @@ DpadSettings::DpadSettings(BaseJoyMode* joyMode, QWidget *parent)
     connect(ui->radioButton_joy2, &QRadioButton::clicked, [&]() {
         this->_joyMode->selectJoystick(2);
     });
+
+    connect(ui->checkBox_jumpB, &QCheckBox::clicked, [&](bool checked) {
+        ui->checkBox_swapAB->setEnabled(checked);
+        static_cast<DpadWidget*>(_joyMode)->setJumpWithB(checked);
+    });
+
+    connect(ui->checkBox_swapAB, &QCheckBox::clicked, [&](bool checked) {
+        static_cast<DpadWidget*>(_joyMode)->setSwapAB(checked);
+    });
+
 
     // default
     _joyMode->selectJoystick(2);

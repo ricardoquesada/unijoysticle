@@ -45,6 +45,7 @@ public slots:
 
 protected:
     void saveSettings();
+    void showEvent(QShowEvent *ev);
 
 private slots:
     void on_actionQuit_triggered();

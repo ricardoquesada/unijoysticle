@@ -43,27 +43,32 @@ MainWindow::MainWindow(QWidget *parent) :
     pixmap.fill(QColor(0,0,0,0));
     QIcon icon(pixmap);
 
-    auto dpadWidget = new DpadWidget(this);
+    auto dpadWidget = new DpadWidget;
     auto subWindowDpad = ui->mdiArea->addSubWindow(dpadWidget, Qt::Widget);
     subWindowDpad->setWindowTitle(tr("D-Pad mode"));
     subWindowDpad->setWindowIcon(icon);
     subWindowDpad->showMaximized();
+    subWindowDpad->layout()->setContentsMargins(2, 2, 2, 2);
 
-    auto commandoWidget = new CommandoWidget(this);
+    auto commandoWidget = new CommandoWidget;
     auto subWindow = ui->mdiArea->addSubWindow(commandoWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Commando mode"));
     subWindow->setWindowIcon(icon);
     subWindow->showMaximized();
+    subWindow->layout()->setContentsMargins(2, 2, 2, 2);
 
-    auto linearWidget = new LinearForm(this);
+    auto linearWidget = new LinearForm;
     subWindow = ui->mdiArea->addSubWindow(linearWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Linear mode"));
     subWindow->setWindowIcon(icon);
     subWindow->showMaximized();
+    subWindow->layout()->setContentsMargins(2, 2, 2, 2);
 
     // enable tab #1
-//    subWindowDpad->show();
 //    ui->mdiArea->setActiveSubWindow(subWindowDpad);
+//    ui->mdiArea->setFocus();
+//    subWindowDpad->show();
+//    subWindowDpad->setFocus();
 
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::onSubWindowActivated);
@@ -74,12 +79,6 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     setUnifiedTitleAndToolBarOnMac(true);
-
-    auto linearSettings = new LinearSettings(linearWidget, this);
-    ui->verticalLayout_settings->insertWidget(1, linearSettings);
-    _settingsWidget = linearSettings;
-
-    onResolveTriggered();
 }
 
 MainWindow::~MainWindow()
@@ -167,4 +166,11 @@ void MainWindow::on_actionQuit_triggered()
 void MainWindow::saveSettings()
 {
     /* */
+}
+
+void MainWindow::showEvent( QShowEvent* event ) {
+    QMainWindow::showEvent( event );
+
+    // execute this after the main window has been created
+    onResolveTriggered();
 }

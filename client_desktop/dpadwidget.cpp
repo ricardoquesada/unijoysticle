@@ -30,6 +30,8 @@ limitations under the License.
 DpadWidget::DpadWidget(QWidget *parent)
     : BaseJoyMode(parent)
     , _joyState(0)
+    , _jumpWithB(false)
+    , _swapAB(false)
 {
     QImage button(":/images/button.png");
     QImage arrow_top_right(":/images/arrow_bold_top_right.png");
@@ -209,6 +211,17 @@ void DpadWidget::keyReleaseEvent(QKeyEvent *event)
     else
         QWidget::keyPressEvent(event);
 }
+
+void DpadWidget::setJumpWithB(bool enabled)
+{
+    _jumpWithB = enabled;
+}
+
+void DpadWidget::setSwapAB(bool enabled)
+{
+    _swapAB = enabled;
+}
+
 
 void DpadWidget::send()
 {
