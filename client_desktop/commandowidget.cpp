@@ -30,7 +30,6 @@ limitations under the License.
 
 CommandoWidget::CommandoWidget(QWidget *parent)
     : BaseJoyMode(parent)
-    , _joyState(0)
 {
     QImage button(":/images/button.png");
     QImage arrow_top_right(":/images/arrow_bold_top_right.png");
@@ -57,6 +56,8 @@ CommandoWidget::CommandoWidget(QWidget *parent)
 
     // send two joysticks
     _proto.joyControl = 3;
+    _joyState[0] = 0;
+    _joyState[1] = 0;
 }
 
 void CommandoWidget::paintEvent(QPaintEvent *event)
@@ -117,12 +118,12 @@ void CommandoWidget::paintEvent(QPaintEvent *event)
             rotating.rotate(angles[i]);
             QImage image;
             if (joyMask[i] & 0b00001111) {
-                if (joyMask[i] == (_joyState & 0b00001111))
+                if (joyMask[i] == (_joyState[j] & 0b00001111))
                     image = _redImages[imagesToUse[i]].transformed(rotating);
                 else
                     image = _whiteImages[imagesToUse[i]].transformed(rotating);
             } else {
-                if (joyMask[i] == (_joyState & 0b00010000))
+                if (joyMask[i] == (_joyState[j] & 0b00010000))
                     image = _redImages[imagesToUse[i]].transformed(rotating);
                 else
                     image = _whiteImages[imagesToUse[i]].transformed(rotating);
@@ -149,24 +150,54 @@ void CommandoWidget::keyPressEvent(QKeyEvent *event)
 {
     bool acceptEvent = false;
     switch (event->key()) {
+
+    // Joy #2
     case Qt::Key_Left:
-        _joyState |= JoyBits::Left;
+    case Qt::Key_J:
+        _joyState[1] |= JoyBits::Left;
         acceptEvent = true;
         break;
     case Qt::Key_Right:
-        _joyState |= JoyBits::Right;
+    case Qt::Key_L:
+        _joyState[1] |= JoyBits::Right;
         acceptEvent = true;
         break;
     case Qt::Key_Down:
-        _joyState |= JoyBits::Down;
+    case Qt::Key_K:
+        _joyState[1] |= JoyBits::Down;
         acceptEvent = true;
         break;
     case Qt::Key_Up:
-        _joyState |= JoyBits::Up;
+    case Qt::Key_I:
+        _joyState[1] |= JoyBits::Up;
         acceptEvent = true;
         break;
+    case Qt::Key_Z:
+    case Qt::Key_O:
+        _joyState[1] |= JoyBits::Fire;
+        acceptEvent = true;
+        break;
+
+    // Joy #1
+    case Qt::Key_A:
+        _joyState[0] |= JoyBits::Left;
+        acceptEvent = true;
+        break;
+    case Qt::Key_D:
+        _joyState[0] |= JoyBits::Right;
+        acceptEvent = true;
+        break;
+    case Qt::Key_S:
+        _joyState[0] |= JoyBits::Down;
+        acceptEvent = true;
+        break;
+    case Qt::Key_W:
+        _joyState[0] |= JoyBits::Up;
+        acceptEvent = true;
+        break;
+    case Qt::Key_E:
     case Qt::Key_X:
-        _joyState |= JoyBits::Fire;
+        _joyState[0] |= JoyBits::Fire;
         acceptEvent = true;
         break;
     }
@@ -183,24 +214,53 @@ void CommandoWidget::keyReleaseEvent(QKeyEvent *event)
 {
     bool acceptEvent = false;
     switch (event->key()) {
+    // Joy #2
     case Qt::Key_Left:
-        _joyState &= ~JoyBits::Left;
+    case Qt::Key_J:
+        _joyState[1] &= ~JoyBits::Left;
         acceptEvent = true;
         break;
     case Qt::Key_Right:
-        _joyState &= ~JoyBits::Right;
+    case Qt::Key_L:
+        _joyState[1] &= ~JoyBits::Right;
         acceptEvent = true;
         break;
     case Qt::Key_Down:
-        _joyState &= ~JoyBits::Down;
+    case Qt::Key_K:
+        _joyState[1] &= ~JoyBits::Down;
         acceptEvent = true;
         break;
     case Qt::Key_Up:
-        _joyState &= ~JoyBits::Up;
+    case Qt::Key_I:
+        _joyState[1] &= ~JoyBits::Up;
         acceptEvent = true;
         break;
+    case Qt::Key_Z:
+    case Qt::Key_O:
+        _joyState[1] &= ~JoyBits::Fire;
+        acceptEvent = true;
+        break;
+
+    // Joy #1
+    case Qt::Key_A:
+        _joyState[0] &= ~JoyBits::Left;
+        acceptEvent = true;
+        break;
+    case Qt::Key_D:
+        _joyState[0] &= ~JoyBits::Right;
+        acceptEvent = true;
+        break;
+    case Qt::Key_S:
+        _joyState[0] &= ~JoyBits::Down;
+        acceptEvent = true;
+        break;
+    case Qt::Key_W:
+        _joyState[0] &= ~JoyBits::Up;
+        acceptEvent = true;
+        break;
+    case Qt::Key_E:
     case Qt::Key_X:
-        _joyState &= ~JoyBits::Fire;
+        _joyState[0] &= ~JoyBits::Fire;
         acceptEvent = true;
         break;
     }
@@ -215,7 +275,7 @@ void CommandoWidget::keyReleaseEvent(QKeyEvent *event)
 
 void CommandoWidget::send()
 {
-    _proto.joyStates[0] = _joyState;
-    _proto.joyStates[1] = _joyState;
+    _proto.joyStates[0] = _joyState[0];
+    _proto.joyStates[1] = _joyState[1];
     sendState();
 }

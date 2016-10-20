@@ -44,5 +44,5 @@ protected:
     QImage _whiteImages[3];
     QImage _redImages[3];
 
-    uint8_t _joyState;
+    uint8_t _joyState[2];
 };
