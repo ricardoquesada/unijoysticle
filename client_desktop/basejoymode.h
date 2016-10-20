@@ -26,8 +26,11 @@ enum JoyBits {
     Left   = 0b00000100,
     Right  = 0b00001000,
     Fire   = 0b00010000,
-    DPad   = 0b00001111,
-    All    = 0b00011111,
+
+    Button_B = 0b00100000,
+
+    DPad_Mask   = 0b00001111,
+    All_Mask    = 0b00011111,
 };
 
 // Protocol v2

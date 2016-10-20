@@ -46,11 +46,14 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
     void send();
+    void processJoyState();
 
     QImage _whiteImages[3];
     QImage _redImages[3];
 
     uint8_t _joyState;
+    uint8_t _processedJoyState;
+
     bool _jumpWithB;
     bool _swapAB;
 };

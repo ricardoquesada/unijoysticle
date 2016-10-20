@@ -44,8 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     pixmap.fill(QColor(0,0,0,0));
     QIcon icon(pixmap);
 
-    auto dpadWidget = new DpadWidget;
-    auto subWindowDpad = ui->mdiArea->addSubWindow(dpadWidget, Qt::Widget);
+    _dpadWidget = new DpadWidget;
+    auto subWindowDpad = ui->mdiArea->addSubWindow(_dpadWidget, Qt::Widget);
     subWindowDpad->setWindowTitle(tr("D-Pad mode"));
     subWindowDpad->setWindowIcon(icon);
     subWindowDpad->showMaximized();
@@ -80,10 +80,10 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     // dpad settings
-    connect(ui->radioButton_joy1, &QRadioButton::clicked, dpadWidget, &DpadWidget::onJoy1Clicked);
-    connect(ui->radioButton_joy2, &QRadioButton::clicked, dpadWidget, &DpadWidget::onJoy2Clicked);
-    connect(ui->checkBox_swapAB, &QCheckBox::clicked, dpadWidget, &DpadWidget::onSwapABChecked);
-    connect(ui->checkBox_jumpB, &QCheckBox::clicked, dpadWidget, &DpadWidget::onJumpBChecked);
+    connect(ui->radioButton_joy1, &QRadioButton::clicked, _dpadWidget, &DpadWidget::onJoy1Clicked);
+    connect(ui->radioButton_joy2, &QRadioButton::clicked, _dpadWidget, &DpadWidget::onJoy2Clicked);
+    connect(ui->checkBox_swapAB, &QCheckBox::clicked, _dpadWidget, &DpadWidget::onSwapABChecked);
+    connect(ui->checkBox_jumpB, &QCheckBox::clicked, _dpadWidget, &DpadWidget::onJumpBChecked);
     connect(ui->checkBox_jumpB, &QCheckBox::clicked, [&](bool checked){
         this->ui->checkBox_swapAB->setEnabled(checked);
     });
@@ -184,17 +184,21 @@ void MainWindow::restoreSettings()
     auto serverAddress = preferences.getServerIPAddress();
     ui->lineEdit_server->setText(serverAddress);
 
+    // dpad
     bool jumpB = preferences.getDpadJumpWithB();
     ui->checkBox_jumpB->setChecked(jumpB);
+    _dpadWidget->setJumpWithB(jumpB);
 
     bool swapAB = preferences.getDpadSwapAB();
     ui->checkBox_swapAB->setChecked(swapAB);
     ui->checkBox_swapAB->setEnabled(jumpB);
+    _dpadWidget->setSwapAB(swapAB);
 
     int joy = preferences.getDpadJoystick();
     if (joy == 1)
         ui->radioButton_joy1->setChecked(true);
     else ui->radioButton_joy2->setChecked(true);
+    _dpadWidget->selectJoystick(joy);
 }
 
 void MainWindow::saveSettings()

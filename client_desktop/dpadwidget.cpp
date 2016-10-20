@@ -31,6 +31,7 @@ limitations under the License.
 DpadWidget::DpadWidget(QWidget *parent)
     : BaseJoyMode(parent)
     , _joyState(0)
+    , _processedJoyState(0)
     , _jumpWithB(false)
     , _swapAB(false)
 {
@@ -118,12 +119,12 @@ void DpadWidget::paintEvent(QPaintEvent *event)
         rotating.rotate(angles[i]);
         QImage image;
         if (joyMask[i] & 0b00001111) {
-            if (joyMask[i] == (_joyState & 0b00001111))
+            if (joyMask[i] == (_processedJoyState & 0b00001111))
                 image = _redImages[imagesToUse[i]].transformed(rotating);
             else
                 image = _whiteImages[imagesToUse[i]].transformed(rotating);
         } else {
-            if (joyMask[i] == (_joyState & 0b00010000))
+            if (joyMask[i] == (_processedJoyState & 0b00010000))
                 image = _redImages[imagesToUse[i]].transformed(rotating);
             else
                 image = _whiteImages[imagesToUse[i]].transformed(rotating);
@@ -165,13 +166,20 @@ void DpadWidget::keyPressEvent(QKeyEvent *event)
         _joyState |= JoyBits::Up;
         acceptEvent = true;
         break;
-    case Qt::Key_X:
+    case Qt::Key_Z:
+        // button A
         _joyState |= JoyBits::Fire;
+        acceptEvent = true;
+        break;
+    case Qt::Key_X:
+        // button B
+        _joyState |= JoyBits::Button_B;
         acceptEvent = true;
         break;
     }
     if (acceptEvent) {
         event->accept();
+        processJoyState();
         repaint();
         send();
     }
@@ -199,18 +207,48 @@ void DpadWidget::keyReleaseEvent(QKeyEvent *event)
         _joyState &= ~JoyBits::Up;
         acceptEvent = true;
         break;
-    case Qt::Key_X:
+    case Qt::Key_Z:
+        // Button A
         _joyState &= ~JoyBits::Fire;
+        acceptEvent = true;
+        break;
+    case Qt::Key_X:
+        // Button B
+        _joyState &= ~JoyBits::Button_B;
         acceptEvent = true;
         break;
     }
     if (acceptEvent) {
         event->accept();
+        processJoyState();
         repaint();
         send();
     }
     else
         QWidget::keyPressEvent(event);
+}
+
+void DpadWidget::processJoyState()
+{
+    _processedJoyState = _joyState;
+
+    if (_jumpWithB) {
+        if (_swapAB) {
+            // swap bit 4 and 5
+            uint8_t ab = (_processedJoyState & 0b00010000) << 1;  // button A -> B
+            ab |=        (_processedJoyState & 0b00100000) >> 1;  // button B -> A
+
+            _processedJoyState &= 0b11001111;
+            _processedJoyState |= ab;
+        }
+        // turn of jump
+        _processedJoyState &= 0b11111110;
+
+        // get "b" value and put it in bit 0
+        uint8_t jump_with_b= (_processedJoyState & 0b00100000) >> 5;
+        _processedJoyState |= jump_with_b;
+        _processedJoyState &= 0b11011111;         // turn off "button b" bit
+    }
 }
 
 void DpadWidget::setJumpWithB(bool enabled)
@@ -227,7 +265,7 @@ void DpadWidget::setSwapAB(bool enabled)
 void DpadWidget::send()
 {
     // copy local state to "protocol"
-    _proto.joyStates[_proto.joyControl-1] = _joyState;
+    _proto.joyStates[_proto.joyControl-1] = _processedJoyState;
 
     // send it
     sendState();
