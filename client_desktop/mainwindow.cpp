@@ -26,6 +26,7 @@ limitations under the License.
 #include <QUrl>
 #include <QCloseEvent>
 
+#include "aboutdialog.h"
 #include "preferences.h"
 #include "commandowidget.h"
 #include "dpadwidget.h"
@@ -226,4 +227,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     event->accept();
     saveSettings();
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog aboutDialog(this);
+    aboutDialog.exec();
 }

@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     qMDNS.cpp \
     basejoymode.cpp \
     basesettings.cpp \
-    preferences.cpp
+    preferences.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     linearform.h \
@@ -46,10 +47,12 @@ HEADERS  += mainwindow.h \
     qMDNS.h \
     basejoymode.h \
     basesettings.h \
-    preferences.h
+    preferences.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
-    linearform.ui
+    linearform.ui \
+    aboutdialog.ui
 
 RESOURCES += \
     resources.qrc

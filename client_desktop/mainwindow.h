@@ -55,6 +55,8 @@ protected:
 private slots:
     void on_actionQuit_triggered();
 
+    void on_actionAbout_triggered();
+
 private:
     Ui::MainWindow *ui;
 
