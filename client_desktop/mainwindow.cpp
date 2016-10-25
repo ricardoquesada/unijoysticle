@@ -17,7 +17,7 @@ limitations under the License.
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ui_linearsettings.h"
+
 
 #include <QMdiSubWindow>
 #include <QHostInfo>

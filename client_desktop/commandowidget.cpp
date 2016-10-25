@@ -43,13 +43,13 @@ CommandoWidget::CommandoWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-    connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
+//    connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
 
-        qDebug() << QGamepadManager::instance()->connectedGamepads();
-    });
+//        qDebug() << QGamepadManager::instance()->connectedGamepads();
+//    });
 
-    qDebug() << "Connected gamepads:";
-    qDebug() << QGamepadManager::instance()->connectedGamepads();
+//    qDebug() << "Connected gamepads:";
+//    qDebug() << QGamepadManager::instance()->connectedGamepads();
 
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
@@ -272,6 +272,23 @@ void CommandoWidget::keyReleaseEvent(QKeyEvent *event)
     else
         QWidget::keyPressEvent(event);
 }
+
+void CommandoWidget::showEvent(QShowEvent *event)
+{
+    BaseJoyMode::showEvent(event);
+    if (!event->spontaneous())
+        qDebug() << "showEvent:" << isVisible() << this;
+
+}
+
+void CommandoWidget::hideEvent(QHideEvent* event)
+{
+    BaseJoyMode::hideEvent(event);
+    if (!event->spontaneous())
+        qDebug() << "hideEvent:" << isVisible() << this;
+
+}
+
 
 void CommandoWidget::send()
 {

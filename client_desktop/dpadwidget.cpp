@@ -34,6 +34,9 @@ DpadWidget::DpadWidget(QWidget *parent)
     , _processedJoyState(0)
     , _jumpWithB(false)
     , _swapAB(false)
+    , _gamepadId(-1)
+    , _gamepad(nullptr)
+
 {
     QImage button(":/images/button.png");
     QImage arrow_top_right(":/images/arrow_bold_top_right.png");
@@ -47,13 +50,12 @@ DpadWidget::DpadWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-    connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
+    connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
+    connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
 
-        qDebug() << QGamepadManager::instance()->connectedGamepads();
-    });
-
-    qDebug() << "Connected gamepads:";
-    qDebug() << QGamepadManager::instance()->connectedGamepads();
+    auto gamepads = QGamepadManager::instance()->connectedGamepads();
+    if (!gamepads.isEmpty())
+        onGamepadConnected(gamepads.at(0));
 
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
@@ -292,3 +294,63 @@ void DpadWidget::onSwapABChecked(bool checked)
     _swapAB = checked;
 }
 
+void DpadWidget::onGamepadConnected(int id)
+{
+    if (!_gamepad) {
+        _gamepadId = id;
+        _gamepad = new QGamepad(id, this);
+
+        qDebug() << "Gamepad: " << _gamepad->name();
+
+        connect(_gamepad, &QGamepad::nameChanged, this, [](const QString& name){
+            qDebug() << "Name: " << name;
+        });
+
+        connect(_gamepad, &QGamepad::axisLeftXChanged, this, [](double value){
+            qDebug() << "Left X" << value;
+        });
+        connect(_gamepad, &QGamepad::axisLeftYChanged, this, [](double value){
+            qDebug() << "Left Y" << value;
+        });
+        connect(_gamepad, &QGamepad::axisRightXChanged, this, [](double value){
+            qDebug() << "Right X" << value;
+        });
+        connect(_gamepad, &QGamepad::axisRightYChanged, this, [](double value){
+            qDebug() << "Right Y" << value;
+        });
+        connect(_gamepad, &QGamepad::buttonAChanged, this, [](bool pressed){
+            qDebug() << "Button A" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonBChanged, this, [](bool pressed){
+            qDebug() << "Button B" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonXChanged, this, [](bool pressed){
+            qDebug() << "Button X" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonYChanged, this, [](bool pressed){
+            qDebug() << "Button Y" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonUpChanged, this, [](bool pressed){
+            qDebug() << "Button Up" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonDownChanged, this, [](bool pressed){
+            qDebug() << "Button Down" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonLeftChanged, this, [](bool pressed){
+            qDebug() << "Button Left" << pressed;
+        });
+        connect(_gamepad, &QGamepad::buttonRightChanged, this, [](bool pressed){
+            qDebug() << "Button Right" << pressed;
+        });
+
+    }
+}
+
+void DpadWidget::onGamepadDisconnected(int id)
+{
+    if (_gamepadId == id) {
+        delete _gamepad;
+        _gamepad = nullptr;
+        _gamepadId = -1;
+    }
+}

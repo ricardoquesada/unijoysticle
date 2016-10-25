@@ -21,6 +21,11 @@ limitations under the License.
 
 #include <QImage>
 
+QT_BEGIN_NAMESPACE
+class QGamepad;
+QT_END_NAMESPACE
+
+
 class DpadWidget : public BaseJoyMode
 {
     Q_OBJECT
@@ -37,6 +42,9 @@ public slots:
     void onJoy2Clicked();
     void onJumpBChecked(bool checked);
     void onSwapABChecked(bool checked);
+
+    void onGamepadConnected(int id);
+    void onGamepadDisconnected(int id);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -56,4 +64,7 @@ protected:
 
     bool _jumpWithB;
     bool _swapAB;
+
+    int _gamepadId;
+    QGamepad* _gamepad;
 };

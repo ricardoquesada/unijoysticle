@@ -27,7 +27,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     const char *htmlraw = R"html(
 <p align="center"><img height="92" width="92" src=":/images/logo512.png"></p>
-<p align="center"><font size="+2"><b>VChar64</b></font><br><i>Version %1</i></p>
+<p align="center"><font size="+2"><b>UniJoystiCle Controller</b></font><br><i>Version %1</i></p>
 <p align="center">Copyright 2016 <a href="http://retro.moe">Ricardo Quesada</a><br></p>
 <p align="center">You may modify and redistribute this program under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0.<a/>
 <p align="center"><a href="https://github.com/ricardoquesada/unijoysticle/">https://github.com/ricardoquesada/unijoysticle</a></p>
