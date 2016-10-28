@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
 //                        case R.id.radioButtonGyruss:
 //                            i = new Intent(getApplicationContext(), GyrussActivity.class);
 //                            break;
-                        case R.id.radioButtonLinear:
-                            i = new Intent(getApplicationContext(), LinearActivity.class);
+                        case R.id.radioButtonHome:
+                            i = new Intent(getApplicationContext(), HomeActivity.class);
                             break;
                         case R.id.radioButtonUniJoystiCle:
                             i = new Intent(getApplicationContext(), UnijoysticleActivity.class);

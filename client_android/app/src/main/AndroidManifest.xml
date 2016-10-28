@@ -15,7 +15,7 @@
             android:name="moe.retro.unijoysticle.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="landscape">
+            android:screenOrientation="sensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +24,13 @@
         </activity>
         <activity
             android:name="moe.retro.unijoysticle.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="sensor"
+            />
         <activity
-            android:name="moe.retro.unijoysticle.LinearActivity"
-            android:screenOrientation="landscape" />
+            android:name="moe.retro.unijoysticle.HomeActivity"
+            android:screenOrientation="sensor"
+            />
         <activity
             android:name="moe.retro.unijoysticle.UnijoysticleActivity"
             android:screenOrientation="landscape" />

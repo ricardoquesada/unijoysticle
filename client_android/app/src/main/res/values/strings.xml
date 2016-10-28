@@ -44,7 +44,7 @@
 
     <!-- ActionBar Titles -->
     <string name="action_bar_title_dpad">Dpad mode</string>
-    <string name="action_bar_title_linear">Linear mode</string>
+    <string name="action_bar_title_home">Commodore Home mode</string>
     <string name="action_bar_title_unijoysticle">UniJoystiCle mode</string>
     <string name="action_bar_title_commando">Commando mode</string>
 
@@ -53,11 +53,35 @@
     <string name="error_dialog_title">Could not resolve:</string>
     <string name="error_dialog_message">Make sure that the UniJoystiCle WiFi device is On</string>
     <string name="unijoysticle">UniJoystiCle</string>
-    <string name="dpad">D-pad</string>
+    <string name="dpad">Dpad</string>
     <string name="commando">Commando</string>
-    <string name="linear">Linear</string>
+    <string name="c_home">C= Home</string>
     <string name="joystick1">Joystick #1</string>
     <string name="joystick2">Joystick #2</string>
     <string name="zero">0</string>
 
+    <!-- Home Activity -->
+    <string name="composeButtonLabel">Hello</string>
+    <string name="checkboxesLabel">Music</string>
+    <string name="jetpackCheckboxLabel">Checkbox 1</string>
+    <string name="hyperspaceCheckboxLabel">Checkbox 2</string>
+    <string name="imagesAndTextLabel">Dimmer</string>
+    <string name="button_play">Play</string>
+    <string name="button_stop">Stop</string>
+    <string name="assistant">Personal Assistant</string>
+    <string name="activated">Activated:</string>
+    <string name="alarm">Alarm</string>
+    <string name="hey_commodore">Hey Commodore</string>
+
+    <!-- Spinner -->
+    <string-array name="songs">
+        <item>Ashes to ashes</item>
+        <item>The final countdown</item>
+        <item>Pop goes the world</item>
+        <item>Jump</item>
+        <item>Enola gay</item>
+        <item>Billie Jean</item>
+        <item>Another day in paradise</item>
+        <item>Wind of change</item>
+    </string-array>
 </resources>

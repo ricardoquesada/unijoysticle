@@ -6,12 +6,12 @@ android {
         apply from: project.property("MyProject.signing") + ".gradle";
     }
 
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId 'moe.retro.unijoysticle'
         minSdkVersion 18
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 12
         versionName '0.4.8'
         signingConfig signingConfigs.release
@@ -29,9 +29,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.google.android.gms:play-services-appindexing:9.6.1'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.google.android.gms:play-services-analytics:9.6.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.8.0'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.google.android.gms:play-services-analytics:9.8.0'
 }

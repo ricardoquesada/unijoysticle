@@ -17,12 +17,14 @@
 package moe.retro.unijoysticle;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
-public class LinearActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
+public class HomeActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
 
     private TextView mValueText;
 
@@ -30,13 +32,22 @@ public class LinearActivity extends BaseActivity implements SeekBar.OnSeekBarCha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.action_bar_title_linear));
+        setTitle(getString(R.string.action_bar_title_home));
 
-        setContentView(R.layout.activity_linear);
+        setContentView(R.layout.activity_home);
 
-        mValueText = (TextView) findViewById(R.id.textViewLinear);
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBarLinear);
-        seekBar.setOnSeekBarChangeListener(this);
+//        mValueText = (TextView) findViewById(R.id.textViewLinear);
+//        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBarLinear);
+//        seekBar.setOnSeekBarChangeListener(this);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_songs);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.songs, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
 
     }
 
