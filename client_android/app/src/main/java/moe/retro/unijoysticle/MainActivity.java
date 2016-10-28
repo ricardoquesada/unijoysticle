@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +65,13 @@ public class MainActivity extends AppCompatActivity {
         final RadioGroup radioButtonGroupMode = (RadioGroup) findViewById(R.id.radioGroupMode);
         final RadioGroup radioButtonGroupJoy = (RadioGroup) findViewById(R.id.radioGroupJoy);
 
+        // Comamnd and Home use both Joy#1 and Joy#2
         radioButtonGroupMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                boolean enabled = (checkedId != R.id.radioButtonCommando);
+                boolean enabled = (checkedId != R.id.radioButtonCommando &&
+                        checkedId != R.id.radioButtonHome);
                 for(int i = 0; i < radioButtonGroupJoy.getChildCount(); i++){
                     radioButtonGroupJoy.getChildAt(i).setEnabled(enabled);
                 }

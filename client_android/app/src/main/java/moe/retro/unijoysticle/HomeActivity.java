@@ -14,19 +14,71 @@
  * limitations under the License.
  */
 
+
 package moe.retro.unijoysticle;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import moe.retro.unijoysticle.unijosyticle.R;
 
-public class HomeActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
+public class HomeActivity extends BaseActivity implements
+        SeekBar.OnSeekBarChangeListener, View.OnClickListener, Spinner.OnItemSelectedListener  {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private TextView mValueText;
+    private Boolean mFirstTime = true;
+
+    private enum HomeCommands {
+        NOTHING((byte)0),
+        SONG_0((byte)1),
+        SONG_1((byte)2),
+        SONG_2((byte)3),
+        SONG_3((byte)4),
+        SONG_4((byte)5),
+        SONG_5((byte)6),
+        SONG_6((byte)7),
+        SONG_7((byte)8),
+        SONG_STOP((byte)9),
+        SONG_PLAY((byte)10),
+        SONG_PAUSE((byte)11),
+        SONG_RESUME((byte)12),
+        SONG_NEXT((byte)13),
+        SONG_PREV((byte)14),
+        DIMMER_0((byte)15),
+        DIMMER_25((byte)16),
+        DIMMER_50((byte)17),
+        DIMMER_75((byte)18),
+        DIMMER_100((byte)19),
+        ALARM_OFF((byte)20),
+        ALARM_ON((byte)21),
+        RESERVED_0((byte)22),
+        RESERVED_1((byte)23),
+        RESERVED_2((byte)24),
+        RESERVED_3((byte)25),
+        RESERVED_4((byte)26),
+        RESERVED_5((byte)27),
+        RESERVED_6((byte)28),
+        RESERVED_7((byte)29),
+        RESERVED_8((byte)30),
+        RESERVED_9((byte)31);
+
+        private final byte value;
+        HomeCommands(byte v) {
+            this.value = v;
+        }
+        public byte getValue() {
+            return this.value;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,28 +88,51 @@ public class HomeActivity extends BaseActivity implements SeekBar.OnSeekBarChang
 
         setContentView(R.layout.activity_home);
 
-//        mValueText = (TextView) findViewById(R.id.textViewLinear);
-//        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBarLinear);
-//        seekBar.setOnSeekBarChangeListener(this);
+        // dimmer
+        mValueText = (TextView) findViewById(R.id.textView_dimmer);
+        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar_dimmer);
+        seekBar.setOnSeekBarChangeListener(this);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_songs);
+        // Songs
+        Button buttonPlay = (Button) findViewById(R.id.button_play);
+        Button buttonStop = (Button) findViewById(R.id.button_stop);
+        buttonPlay.setOnClickListener(this);
+        buttonStop.setOnClickListener(this);
+
+        Spinner spinnerSong = (Spinner) findViewById(R.id.spinner_songs);
+        spinnerSong.setOnItemSelectedListener(this);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.songs, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        spinnerSong.setAdapter(adapter);
 
+
+        mProtoVersion = 2;
+        mProtoHeader.joyState1 = 0;     // reset joystick values
+        mProtoHeader.joyState2 = 0;
+        mProtoHeader.joyControl = 3;    // both joyticks (1 and 2)
     }
+
+    //
+    // Dimmer
+    //
 
     // OnSeekBarChangeListener methods :
     @Override
     public void onProgressChanged(SeekBar seek, int value, boolean fromTouch)
     {
-        String t = String.valueOf(value);
-        mValueText.setText(t);
-        mJoyState = (byte) value;
+        String values[] = {"Off", "25%", "50%", "75%", "100%"};
+        HomeCommands[] commands = {HomeCommands.DIMMER_0,
+                HomeCommands.DIMMER_25,
+                HomeCommands.DIMMER_50,
+                HomeCommands.DIMMER_75,
+                HomeCommands.DIMMER_100};
+        mValueText.setText(values[value]);
+
+        mProtoHeader.joyState2 = commands[value].getValue();
         sendJoyState();
     }
     @Override
@@ -65,4 +140,36 @@ public class HomeActivity extends BaseActivity implements SeekBar.OnSeekBarChang
     @Override
     public void onStopTrackingTouch(SeekBar seek) {}
 
+
+    //
+    // Songs
+    //
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.button_play:
+                mProtoHeader.joyState2 = HomeCommands.SONG_PLAY.getValue();
+                break;
+            case R.id.button_stop:
+                mProtoHeader.joyState2 = HomeCommands.SONG_STOP.getValue();
+                break;
+
+        }
+        sendJoyState();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
+
+        // ignore first time since this will be called right after selecting the HomeActivity
+        if (!mFirstTime) {
+            mProtoHeader.joyState2 = (byte) ((byte) i + 1);
+            sendJoyState();
+        }
+        mFirstTime = false;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+    }
 }

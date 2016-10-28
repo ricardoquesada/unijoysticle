@@ -119,24 +119,12 @@ limitations under the License.
             />
 
         <TextView
+            android:text="@string/off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/assistant"
-            android:id="@+id/home_input"
             android:layout_below="@+id/seekBar_dimmer"
-            android:layout_marginTop="20dp"
-            />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:layout_below="@+id/home_input"
-            android:id="@+id/editText_assistant"
-            android:nextFocusUp="@+id/seekBar_dimmer"
-            android:nextFocusDown="@+id/switch_alarm"
-            android:hint="@string/hey_commodore" />
+            android:layout_centerHorizontal="true"
+            android:id="@+id/textView_dimmer" />
 
     </RelativeLayout>
 </ScrollView>

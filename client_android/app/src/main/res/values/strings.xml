@@ -72,6 +72,12 @@
     <string name="activated">Activated:</string>
     <string name="alarm">Alarm</string>
     <string name="hey_commodore">Hey Commodore</string>
+    <string name="number_hint">0</string>
+    <string name="advanced">Advanced</string>
+    <string name="joy_1">Joy #1</string>
+    <string name="joy_2">Joy #2</string>
+    <string name="textview">TextView</string>
+    <string name="off">Off</string>
 
     <!-- Spinner -->
     <string-array name="songs">
