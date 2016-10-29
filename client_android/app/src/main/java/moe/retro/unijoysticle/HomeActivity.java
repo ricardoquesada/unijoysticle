@@ -27,6 +27,10 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import moe.retro.unijoysticle.unijosyticle.R;
 
 public class HomeActivity extends BaseActivity implements
@@ -36,6 +40,8 @@ public class HomeActivity extends BaseActivity implements
 
     private TextView mValueText;
     private Boolean mFirstTime = true;
+    private ScheduledExecutorService mScheduleTaskExecutor;
+    private boolean mClearJoyState = false;
 
     private enum HomeCommands {
         NOTHING((byte)0),
@@ -114,6 +120,26 @@ public class HomeActivity extends BaseActivity implements
         mProtoHeader.joyState1 = 0;     // reset joystick values
         mProtoHeader.joyState2 = 0;
         mProtoHeader.joyControl = 3;    // both joyticks (1 and 2)
+
+
+        // schedule a handler every 60 per second
+        mScheduleTaskExecutor = Executors.newScheduledThreadPool(2);
+        mScheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                try {
+                    if (mClearJoyState) {
+                        Thread.sleep(160);
+                        mProtoHeader.joyState2 = 0;
+                        sendJoyState();
+                        mClearJoyState = false;
+                    }
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 16, TimeUnit.MILLISECONDS);       // ~60Hz
+
     }
 
     //
@@ -134,6 +160,7 @@ public class HomeActivity extends BaseActivity implements
 
         mProtoHeader.joyState2 = commands[value].getValue();
         sendJoyState();
+        mClearJoyState = true;
     }
     @Override
     public void onStartTrackingTouch(SeekBar seek) {}
@@ -156,6 +183,7 @@ public class HomeActivity extends BaseActivity implements
 
         }
         sendJoyState();
+        mClearJoyState = true;
     }
 
     @Override
@@ -165,6 +193,7 @@ public class HomeActivity extends BaseActivity implements
         if (!mFirstTime) {
             mProtoHeader.joyState2 = (byte) ((byte) i + 1);
             sendJoyState();
+            mClearJoyState = true;
         }
         mFirstTime = false;
     }
