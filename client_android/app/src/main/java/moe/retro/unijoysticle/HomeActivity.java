@@ -23,8 +23,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.concurrent.Executors;
@@ -34,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import moe.retro.unijoysticle.unijosyticle.R;
 
 public class HomeActivity extends BaseActivity implements
-        SeekBar.OnSeekBarChangeListener, View.OnClickListener, Spinner.OnItemSelectedListener  {
+        SeekBar.OnSeekBarChangeListener, View.OnClickListener, Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -115,6 +117,10 @@ public class HomeActivity extends BaseActivity implements
         // Apply the adapter to the spinner
         spinnerSong.setAdapter(adapter);
 
+        // alarm
+        Switch alarmSwitch = (Switch) findViewById(R.id.switch_alarm);
+        alarmSwitch.setOnCheckedChangeListener(this);
+
 
         mProtoVersion = 2;
         mProtoHeader.joyState1 = 0;     // reset joystick values
@@ -180,11 +186,22 @@ public class HomeActivity extends BaseActivity implements
             case R.id.button_stop:
                 mProtoHeader.joyState2 = HomeCommands.SONG_STOP.getValue();
                 break;
-
         }
         sendJoyState();
         mClearJoyState = true;
     }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if (b) {
+            mProtoHeader.joyState2 = HomeCommands.ALARM_ON.getValue();
+        } else {
+            mProtoHeader.joyState2 = HomeCommands.ALARM_OFF.getValue();
+        }
+        sendJoyState();
+        mClearJoyState = true;
+    }
+
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
