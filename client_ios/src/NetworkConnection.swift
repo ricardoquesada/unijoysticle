@@ -71,10 +71,11 @@ class NetworkConnection {
             sendto(fd, data, data.count, 0, UnsafePointer($0), socklen_t(sizeofValue(toAddress)))
         }
     }
-
 }
 
 class ControllerScene: SKScene {
+
+    var net:NetworkConnection? = nil
 
     // assign nodes to buttons
     enum JoyBits: UInt8 {
@@ -86,9 +87,6 @@ class ControllerScene: SKScene {
         case DPad   = 0b00001111
         case All    = 0b00011111
     }
-
-    var net:NetworkConnection?
-
 
     var protoVersion = 1                        // default version
 
@@ -107,8 +105,6 @@ class ControllerScene: SKScene {
     var protoHeader:ProtoHeader = ProtoHeader()
 
     func sendJoyState() {
-        assert(net != nil, "net is nil")
-
         for _ in 1...2 {
             if protoVersion == 1 {
                 net!.sendState(joyControl, joyState)

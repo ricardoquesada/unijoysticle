@@ -1,4 +1,4 @@
-v0.4 - 2016-10-XX
+v0.4 - 2016-11-XX
 
 - [NEW] Docs: Added documentation. See DOCUMENTATION.md
 - [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and SX-64
@@ -12,11 +12,13 @@ v0.4 - 2016-10-XX
         view the stats and change to Station mode
 - [NEW] Client: Added Commando Mode: Control both c64 joysticks with one game controller.
         Ideal for games like Commando were the granedes can be thrown with button B
+- [NEW] Client: Added Commodore Home mode: For home automation
+		Replaced the old Linear mode
 - [NEW] Android Client: new client for android. Supports:
         UniJoystiCle mode
         Dpad mode + controllers: Generic and OUYA game controllers
         Commando mode: Generic and OUYA game controllers
-        Linear mode
+        Commodore Home mode
         Settings
 		Resolves unijoyticle.local address
 		Can display the server stats from Settings

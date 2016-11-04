@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50129C061D4E5ABD00157D90 /* GyrussScene.swift */; };
 		50129C091D4E5B1000157D90 /* GyrussScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50129C081D4E5B1000157D90 /* GyrussScene.sks */; };
-		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
+		508EF7611CC7F08E0082E38D /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* NetworkConnection.swift */; };
 		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */; };
 		50B482CD1DCC020300B5B629 /* CommodoreHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B482CC1DCC020300B5B629 /* CommodoreHomeViewController.swift */; };
@@ -36,7 +36,7 @@
 /* Begin PBXFileReference section */
 		50129C061D4E5ABD00157D90 /* GyrussScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GyrussScene.swift; sourceTree = "<group>"; };
 		50129C081D4E5B1000157D90 /* GyrussScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GyrussScene.sks; sourceTree = "<group>"; };
-		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
+		508EF7601CC7F08E0082E38D /* NetworkConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkConnection.swift; path = src/NetworkConnection.swift; sourceTree = SOURCE_ROOT; };
 		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		50B482CC1DCC020300B5B629 /* CommodoreHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommodoreHomeViewController.swift; sourceTree = "<group>"; };
@@ -124,7 +124,7 @@
 				50DD05901CC6642C0080240F /* raw */,
 				50AD8A141D504E18003F3040 /* Scenes */,
 				50DD05851CC6642C0080240F /* Assets.xcassets */,
-				508EF7601CC7F08E0082E38D /* ControllerScene.swift */,
+				508EF7601CC7F08E0082E38D /* NetworkConnection.swift */,
 				50DD05841CC6642C0080240F /* AppDelegate.swift */,
 				50DD05861CC6642C0080240F /* LaunchScreen.storyboard */,
 				50DD05881CC6642C0080240F /* Main.storyboard */,
@@ -237,7 +237,7 @@
 				509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */,
 				50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */,
 				50E2D9FB1D8337E2001984EE /* CommandoScene.swift in Sources */,
-				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
+				508EF7611CC7F08E0082E38D /* NetworkConnection.swift in Sources */,
 				50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */,
