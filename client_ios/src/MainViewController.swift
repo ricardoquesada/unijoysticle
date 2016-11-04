@@ -45,8 +45,6 @@ class MainViewController: UIViewController {
                 sceneToLoad = COMMANDO_SCENE
             } else if (controllerSegment.selectedSegmentIndex == 3) {
                 sceneToLoad = GYRUSS_SCENE
-            } else if (controllerSegment.selectedSegmentIndex == 4) {
-                sceneToLoad = LINEAR_SCENE
             }
 
             let gameViewController = segue.destinationViewController as! GameViewController
@@ -55,8 +53,16 @@ class MainViewController: UIViewController {
         }
     }
 
+    @IBAction func startTouchUpInside(sender: AnyObject) {
+        if (controllerSegment.selectedSegmentIndex == 4) {
+            self.performSegueWithIdentifier("CommodoreHomeVC", sender: sender)
+        } else {
+            self.performSegueWithIdentifier("GameVC", sender: sender)
+        }
+    }
+
     @IBAction func controllerValueChanged(sender: AnyObject) {
-        // In command mode, disable Joysticks, since it will use both of them
-        joystickSegment.enabled = ( controllerSegment.selectedSegmentIndex != 2)
+        // In Commando and Commodore Home modes, disable Joysticks, since it will use both of them
+        joystickSegment.enabled = !(controllerSegment.selectedSegmentIndex == 2 || controllerSegment.selectedSegmentIndex == 4)
     }
 }

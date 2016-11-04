@@ -12,8 +12,7 @@
 		508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508EF7601CC7F08E0082E38D /* ControllerScene.swift */; };
 		5094A5F51CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */; };
 		509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */; };
-		50AD8A121D504DF7003F3040 /* LinearScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50AD8A101D504DF7003F3040 /* LinearScene.sks */; };
-		50AD8A131D504DF7003F3040 /* LinearScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AD8A111D504DF7003F3040 /* LinearScene.swift */; };
+		50B482CD1DCC020300B5B629 /* CommodoreHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B482CC1DCC020300B5B629 /* CommodoreHomeViewController.swift */; };
 		50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD05841CC6642C0080240F /* AppDelegate.swift */; };
 		50DD05991CC6642C0080240F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05851CC6642C0080240F /* Assets.xcassets */; };
 		50DD059A1CC6642C0080240F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50DD05861CC6642C0080240F /* LaunchScreen.storyboard */; };
@@ -40,8 +39,7 @@
 		508EF7601CC7F08E0082E38D /* ControllerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerScene.swift; path = src/ControllerScene.swift; sourceTree = SOURCE_ROOT; };
 		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		50AD8A101D504DF7003F3040 /* LinearScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LinearScene.sks; sourceTree = "<group>"; };
-		50AD8A111D504DF7003F3040 /* LinearScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearScene.swift; sourceTree = "<group>"; };
+		50B482CC1DCC020300B5B629 /* CommodoreHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommodoreHomeViewController.swift; sourceTree = "<group>"; };
 		50B7C59D1D89C6AE000445A8 /* DOCUMENTATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = DOCUMENTATION.md; path = ../DOCUMENTATION.md; sourceTree = "<group>"; };
 		50BEF5091CC94B3D00505A7F /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGELOG; path = ../CHANGELOG; sourceTree = "<group>"; };
 		50CCB4241CA5C214002CFD1E /* UniJoystiCle Controller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UniJoystiCle Controller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,8 +94,7 @@
 				50E2D9FA1D8337E2001984EE /* CommandoScene.swift */,
 				50129C081D4E5B1000157D90 /* GyrussScene.sks */,
 				50129C061D4E5ABD00157D90 /* GyrussScene.swift */,
-				50AD8A101D504DF7003F3040 /* LinearScene.sks */,
-				50AD8A111D504DF7003F3040 /* LinearScene.swift */,
+				50B482CC1DCC020300B5B629 /* CommodoreHomeViewController.swift */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -216,7 +213,6 @@
 				50E2D9FD1D833849001984EE /* CommandoScene.sks in Resources */,
 				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
 				50DD05A51CC6642C0080240F /* splash_screen.png in Resources */,
-				50AD8A121D504DF7003F3040 /* LinearScene.sks in Resources */,
 				50129C091D4E5B1000157D90 /* GyrussScene.sks in Resources */,
 				50DD05991CC6642C0080240F /* Assets.xcassets in Resources */,
 				50DD05A21CC6642C0080240F /* icon-120.png in Resources */,
@@ -240,13 +236,13 @@
 				50DD059D1CC6642C0080240F /* DPadScene.swift in Sources */,
 				509B16BE1CC73CBF00A7426C /* SettingsViewController.swift in Sources */,
 				50129C071D4E5ABD00157D90 /* GyrussScene.swift in Sources */,
-				50AD8A131D504DF7003F3040 /* LinearScene.swift in Sources */,
 				50E2D9FB1D8337E2001984EE /* CommandoScene.swift in Sources */,
 				508EF7611CC7F08E0082E38D /* ControllerScene.swift in Sources */,
 				50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */,
 				50DD05981CC6642C0080240F /* AppDelegate.swift in Sources */,
 				50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */,
 				50DD05A01CC6642C0080240F /* MainViewController.swift in Sources */,
+				50B482CD1DCC020300B5B629 /* CommodoreHomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

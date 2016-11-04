@@ -33,7 +33,7 @@ let UNIJOYSTICLE_SCENE = "UniJoystiCleScene"
 let DPAD_SCENE = "DPadScene"
 let COMMANDO_SCENE = "CommandoScene"
 let GYRUSS_SCENE = "GyrussScene"
-let LINEAR_SCENE = "LinearScene"
+let COMMODORE_HOME = "CommodoreHome"
 
 // settings const
 let SETTINGS_IP_ADDRESS_KEY = "ipaddress"

@@ -72,8 +72,6 @@ class GameViewController: UIViewController {
             scene = CommandoScene(fileNamed: COMMANDO_SCENE)
         } else if selectedScene == GYRUSS_SCENE {
             scene = GyrussScene(fileNamed: GYRUSS_SCENE)
-        } else if selectedScene == LINEAR_SCENE {
-            scene = LinearScene(fileNamed: LINEAR_SCENE)
         } else {
             assert(false, "Invalid scene")
         }
