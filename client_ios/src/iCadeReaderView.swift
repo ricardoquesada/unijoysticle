@@ -26,35 +26,35 @@ import UIKit
 
 enum iCadeButtons:UInt16 {
 
-    case JoystickNone       = 0b00000000
-    case JoystickUp         = 0b00000001
-    case JoystickDown       = 0b00000010
-    case JoystickLeft       = 0b00000100
-    case JoystickRight      = 0b00001000
+    case joystickNone       = 0b00000000
+    case joystickUp         = 0b00000001
+    case joystickDown       = 0b00000010
+    case joystickLeft       = 0b00000100
+    case joystickRight      = 0b00001000
 
-    case JoystickUpRight    = 0b00001001
-    case JoystickDownRight  = 0b00001010
-    case JoystickUpLeft     = 0b00000101
-    case JoystickDownLeft   = 0b00000110
+    case joystickUpRight    = 0b00001001
+    case joystickDownRight  = 0b00001010
+    case joystickUpLeft     = 0b00000101
+    case joystickDownLeft   = 0b00000110
 
     /* Buttons layout in the iCade
        A C E G
        B D F H
     */
-    case ButtonA            = 0b00010000
-    case ButtonB            = 0b00100000
-    case ButtonC            = 0b01000000
-    case ButtonD            = 0b10000000
-    case ButtonE            = 0b100000000
-    case ButtonF            = 0b1000000000
-    case ButtonG            = 0b10000000000
-    case ButtonH            = 0b100000000000
+    case buttonA            = 0b00010000
+    case buttonB            = 0b00100000
+    case buttonC            = 0b01000000
+    case buttonD            = 0b10000000
+    case buttonE            = 0b100000000
+    case buttonF            = 0b1000000000
+    case buttonG            = 0b10000000000
+    case buttonH            = 0b100000000000
 }
 
 protocol iCadeEventDelegate {
-    func stateChanged(state:UInt16) -> Void
-    func buttonDown(state:UInt16) -> Void
-    func buttonUp(state:UInt16) -> Void
+    func stateChanged(_ state:UInt16) -> Void
+    func buttonDown(_ state:UInt16) -> Void
+    func buttonUp(_ state:UInt16) -> Void
 }
 
 class iCadeReaderView: UIView, UIKeyInput {
@@ -107,9 +107,9 @@ class iCadeReaderView: UIView, UIKeyInput {
     override init (frame: CGRect) {
         super.init(frame: frame)
         newInputView = UIView(frame: CGRect.zero)
-        let notiCenter = NSNotificationCenter.defaultCenter()
-        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didEnterBackground), name: UIApplicationDidEnterBackgroundNotification, object: nil)
-        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        let notiCenter = NotificationCenter.default
+        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
 
     convenience init () {
@@ -132,20 +132,20 @@ class iCadeReaderView: UIView, UIKeyInput {
         }
     }
 
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder : Bool {
         return true
     }
 
     //
     // UIKeyInput protocol implementation
     //
-    func hasText() -> Bool {
+    var hasText : Bool {
         return false
     }
 
-    func insertText(text: String) {
+    func insertText(_ text: String) {
         var stateChanged = false
-        let indexOn = iCadeReaderView.ON_STATES.indexOf(text)
+        let indexOn = iCadeReaderView.ON_STATES.index(of: text)
         if (indexOn != nil) {
             joyState |= (UInt16)(1 << indexOn!)
             stateChanged = true;
@@ -153,7 +153,7 @@ class iCadeReaderView: UIView, UIKeyInput {
                 delegate!.buttonDown((UInt16)(1 << indexOn!))
             }
         } else {
-            let indexOff = iCadeReaderView.OFF_STATES.indexOf(text)
+            let indexOff = iCadeReaderView.OFF_STATES.index(of: text)
             if (indexOff != nil) {
                 joyState &= ~(UInt16)(1 << indexOff!)
                 stateChanged = true;

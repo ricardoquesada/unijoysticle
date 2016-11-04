@@ -20,11 +20,11 @@ import SpriteKit
 import CoreMotion
 
 // from: http://stackoverflow.com/a/25089974
-func circleInRect(rect:CGRect) -> CGPath {
+func circleInRect(_ rect:CGRect) -> CGPath {
     // Adjust position so path is centered in shape
-    let adjustedRect = CGRectMake(rect.origin.x-rect.size.width/2, rect.origin.y-rect.size.height/2, rect.size.width, rect.size.height);
-    let bezierPath = UIBezierPath(ovalInRect: adjustedRect)
-    return bezierPath.CGPath;
+    let adjustedRect = CGRect(x: rect.origin.x-rect.size.width/2, y: rect.origin.y-rect.size.height/2, width: rect.size.width, height: rect.size.height);
+    let bezierPath = UIBezierPath(ovalIn: adjustedRect)
+    return bezierPath.cgPath;
 }
 
 class GyrussScene: ControllerScene {
@@ -42,55 +42,55 @@ class GyrussScene: ControllerScene {
     var spriteFire:SKSpriteNode = SKSpriteNode()
     var spriteBall:SKSpriteNode = SKSpriteNode()
     // will be used to calculate the angle. this will be used as the "center"
-    var centerPos:CGPoint = CGPointZero
+    var centerPos:CGPoint = CGPoint.zero
 
-    let operationQueue = NSOperationQueue()
+    let operationQueue = OperationQueue()
 
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
 
         // read settings
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
 
-        let gravityValue = settings.valueForKey(SETTINGS_GRAVITY_FACTOR_KEY)
+        let gravityValue = settings.value(forKey: SETTINGS_GRAVITY_FACTOR_KEY)
         if (gravityValue != nil) {
             gravityFactor = Double(gravityValue as! Float)
         }
 
         // setup sprites
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
-        spriteFire = childNodeWithName("SKSpriteNode_fire") as! SKSpriteNode!
-        spriteBall = childNodeWithName("SKSpriteNode_ball") as! SKSpriteNode!
+        labelBack = childNode(withName: "SKLabelNode_back") as! SKLabelNode!
+        spriteFire = childNode(withName: "SKSpriteNode_fire") as! SKSpriteNode!
+        spriteBall = childNode(withName: "SKSpriteNode_ball") as! SKSpriteNode!
 
-        let circleSprite = childNodeWithName("SKSpriteNode_outerCircle")
+        let circleSprite = childNode(withName: "SKSpriteNode_outerCircle")
 
         let names_bits = [
-            "SKSpriteNode_left": JoyBits.Left.rawValue,
-            "SKSpriteNode_top": JoyBits.Up.rawValue,
-            "SKSpriteNode_bottom": JoyBits.Down.rawValue,
-            "SKSpriteNode_right": JoyBits.Right.rawValue,
-            "SKSpriteNode_fire": JoyBits.Fire.rawValue]
+            "SKSpriteNode_left": JoyBits.left.rawValue,
+            "SKSpriteNode_top": JoyBits.up.rawValue,
+            "SKSpriteNode_bottom": JoyBits.down.rawValue,
+            "SKSpriteNode_right": JoyBits.right.rawValue,
+            "SKSpriteNode_fire": JoyBits.fire.rawValue]
 
         for (key,value) in names_bits {
-            let sprite = childNodeWithName(key) as! SKSpriteNode!
-            sprite.colorBlendFactor = 1
-            sprite.color = UIColor.grayColor()
+            let sprite = childNode(withName: key) as! SKSpriteNode!
+            sprite?.colorBlendFactor = 1
+            sprite?.color = UIColor.gray
             assert(sprite != nil, "Invalid name")
-            buttons[sprite] = value
+            buttons[sprite!] = value
         }
 
         var frame = circleSprite?.frame
-        frame?.origin = CGPointZero
+        frame?.origin = CGPoint.zero
         let path = circleInRect(frame!)
-        let body = SKPhysicsBody(edgeLoopFromPath: path)
+        let body = SKPhysicsBody(edgeLoopFrom: path)
         circleSprite?.physicsBody = body
         centerPos = (circleSprite?.position)!
 
         // accelerometer stuff
-        if motionManager.accelerometerAvailable == true {
+        if motionManager.isAccelerometerAvailable == true {
 
             // jump is very sensitive, should be as fast as possible
             motionManager.deviceMotionUpdateInterval = 1.0/120.0
-            motionManager.startDeviceMotionUpdatesToQueue(operationQueue, withHandler: {
+            motionManager.startDeviceMotionUpdates(to: operationQueue, withHandler: {
                 data, error in
                 if error == nil {
                     self.userAcceleration = data!.gravity
@@ -99,7 +99,7 @@ class GyrussScene: ControllerScene {
         }
     }
 
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
 
         let prevState = joyState;
 
@@ -117,7 +117,7 @@ class GyrussScene: ControllerScene {
 
 
         // start clean
-        joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue | JoyBits.Up.rawValue | JoyBits.Down.rawValue)
+        joyState &= ~(JoyBits.right.rawValue | JoyBits.left.rawValue | JoyBits.up.rawValue | JoyBits.down.rawValue)
 
         // Z and X movements are related in a pedal
         // When X has its peak, it means that Z is almost 0.
@@ -127,24 +127,24 @@ class GyrussScene: ControllerScene {
         // userAcceleration.z > 0 == Joy down
         // userAcceleration.z < 0 == Joy up
         if (angle > (90-ANGLE_COVER) && angle < (90+ANGLE_COVER)) {
-            joyState &= ~JoyBits.Down.rawValue
-            joyState |= JoyBits.Up.rawValue
+            joyState &= ~JoyBits.down.rawValue
+            joyState |= JoyBits.up.rawValue
         }
         else if (angle > (270-ANGLE_COVER) && angle < (270+ANGLE_COVER)){
-            joyState &= ~JoyBits.Up.rawValue
-            joyState |= JoyBits.Down.rawValue
+            joyState &= ~JoyBits.up.rawValue
+            joyState |= JoyBits.down.rawValue
         }
 
         // userAcceleration.z y (left and right) controls joy Left & Right for the unicycle game
         // userAcceleration.z.y > 0 == Joy Right
         // userAcceleration.z.y < 0 == Joy Left
         if (angle > (360-ANGLE_COVER) || angle < 0 + ANGLE_COVER) {
-            joyState &= ~JoyBits.Left.rawValue
-            joyState |= JoyBits.Right.rawValue
+            joyState &= ~JoyBits.left.rawValue
+            joyState |= JoyBits.right.rawValue
         }
         else if (angle > (180-ANGLE_COVER) && angle < (180+ANGLE_COVER)) {
-            joyState &= ~JoyBits.Right.rawValue
-            joyState |= JoyBits.Left.rawValue
+            joyState &= ~JoyBits.right.rawValue
+            joyState |= JoyBits.left.rawValue
         }
 
         if joyState != prevState {
@@ -153,37 +153,37 @@ class GyrussScene: ControllerScene {
             // update sprite colors
             for (sprite, bitmask) in buttons {
                 if (joyState & bitmask) != 0 {
-                    sprite.color = UIColor.redColor()
+                    sprite.color = UIColor.red
                 }
                 else {
-                    sprite.color = UIColor.grayColor()
+                    sprite.color = UIColor.gray
                 }
             }
         }
     }
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             if labelBack.frame.contains(location) {
-                self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
+                self.view!.window!.rootViewController!.dismiss(animated: false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
                     self.sendJoyState()
                     
                     // re-enable it.
-                    UIApplication.sharedApplication().idleTimerDisabled = false
+                    UIApplication.shared.isIdleTimerDisabled = false
                 })
             } else if spriteFire.frame.contains(location) {
-                joyState |= JoyBits.Fire.rawValue
+                joyState |= JoyBits.fire.rawValue
             }
         }
     }
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             if spriteFire.frame.contains(location) {
-                joyState &= ~JoyBits.Fire.rawValue
+                joyState &= ~JoyBits.fire.rawValue
             }
         }
     }

@@ -29,22 +29,22 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let prefValue = NSUserDefaults.standardUserDefaults().valueForKey(SETTINGS_IP_ADDRESS_KEY)
+        let prefValue = UserDefaults.standard.value(forKey: SETTINGS_IP_ADDRESS_KEY)
         if prefValue != nil {
             userServer = prefValue as! String
         }
         netConnection = NetworkConnection(serverName: userServer)
     }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return false
     }
 
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return [.LandscapeLeft]
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return [.landscapeLeft]
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         // only in landscape mode. Not really needed since "shouldAurotate" and "supportedInterfaceOrientations"
@@ -55,12 +55,12 @@ class GameViewController: UIViewController {
         var scene:ControllerScene? = nil
 
         if netConnection == nil {
-            let alertController = UIAlertController(title: "Invalid server", message: "Server not found: " + userServer, preferredStyle: .Alert)
-            let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: { uiAlertController in
-                self.dismissViewControllerAnimated(false, completion: nil)
+            let alertController = UIAlertController(title: "Invalid server", message: "Server not found: " + userServer, preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .default, handler: { uiAlertController in
+                self.dismiss(animated: false, completion: nil)
                 })
             alertController.addAction(defaultAction)
-            presentViewController(alertController, animated: true, completion: nil)
+            present(alertController, animated: true, completion: nil)
             return
         }
 
@@ -79,7 +79,7 @@ class GameViewController: UIViewController {
         if scene != nil {
 
             // don't turn off screen. usuful when in unijoysticle mode
-            UIApplication.sharedApplication().idleTimerDisabled = true
+            UIApplication.shared.isIdleTimerDisabled = true
 
             // Configure the view.
             let skView = self.view as! SKView
@@ -94,7 +94,7 @@ class GameViewController: UIViewController {
             }
             
             /* Set the scale mode to scale to fit the window */
-            scene!.scaleMode = .AspectFit
+            scene!.scaleMode = .aspectFit
 
             // FIXME: this should be part of the ControllerScene constructor
             // either there is a bug in SpriteKit, or I don't know how to override
@@ -112,7 +112,7 @@ class GameViewController: UIViewController {
         // Release any cached data, images, etc that aren't in use.
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }

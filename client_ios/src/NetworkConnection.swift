@@ -33,17 +33,17 @@ class NetworkConnection {
         if let addr = NetworkConnection.addresses[serverName] {
             self.toAddress = addr
         } else {
-            let hostRef = CFHostCreateWithName(nil, serverName).takeRetainedValue()
-            let resolved = CFHostStartInfoResolution(hostRef, CFHostInfoType.Addresses, nil)
+            let hostRef = CFHostCreateWithName(nil, serverName as CFString).takeRetainedValue()
+            let resolved = CFHostStartInfoResolution(hostRef, CFHostInfoType.addresses, nil)
             if resolved {
                 var success: DarwinBoolean = false
                 if let addresses = CFHostGetAddressing(hostRef, &success)?.takeUnretainedValue() as NSArray? {
                     let dataFirst = addresses.firstObject!
                     var addr = sockaddr()
-                    dataFirst.getBytes(&addr, length:sizeof(sockaddr))
-                    let addr4 = withUnsafePointer(&addr) { UnsafePointer<sockaddr_in>($0).memory }
+                    (dataFirst as AnyObject).getBytes(&addr, length:MemoryLayout<sockaddr>.size)
+                    let addr4 = withUnsafePointer(to: &addr) { UnsafeRawPointer($0).load(as: sockaddr_in.self) }
 
-                    self.toAddress.sin_len = UInt8(sizeofValue(self.toAddress))
+                    self.toAddress.sin_len = UInt8(MemoryLayout.size(ofValue: self.toAddress))
                     self.toAddress.sin_family = sa_family_t(AF_INET)
                     self.toAddress.sin_addr = addr4.sin_addr
                     self.toAddress.sin_port = in_port_t(serverPort.bigEndian)
@@ -58,17 +58,22 @@ class NetworkConnection {
         }
     }
 
-    func sendState(joyControl:UInt8, _ joyState:UInt8) {
+    func sendState(_ joyControl:UInt8, _ joyState:UInt8) {
         let data: [UInt8] = [joyControl, joyState]
-        withUnsafePointer(&toAddress) {
-            sendto(fd, data, data.count, 0, UnsafePointer($0), socklen_t(sizeofValue(toAddress)))
+        // Fill sockaddr_in fields
+        _ = withUnsafePointer(to: &toAddress) { ptr in
+            ptr.withMemoryRebound(to: sockaddr.self, capacity: 1, { ptrSockAddr in
+                sendto(fd, data, data.count, 0, UnsafePointer(ptrSockAddr), socklen_t(toAddress.sin_len))
+            })
         }
     }
 
-    func sendState2(data:[UInt8]) {
+    func sendState2(_ data:[UInt8]) {
         assert(data.count == 4, "Invalid data");
-        withUnsafePointer(&toAddress) {
-            sendto(fd, data, data.count, 0, UnsafePointer($0), socklen_t(sizeofValue(toAddress)))
+        _ = withUnsafePointer(to: &toAddress) { ptr in
+            ptr.withMemoryRebound(to: sockaddr.self, capacity: 1, { ptrSockAddr in
+                sendto(fd, data, data.count, 0, UnsafePointer(ptrSockAddr), socklen_t(toAddress.sin_len))
+            })
         }
     }
 }
@@ -79,13 +84,13 @@ class ControllerScene: SKScene {
 
     // assign nodes to buttons
     enum JoyBits: UInt8 {
-        case Up     = 0b00000001
-        case Down   = 0b00000010
-        case Left   = 0b00000100
-        case Right  = 0b00001000
-        case Fire   = 0b00010000
-        case DPad   = 0b00001111
-        case All    = 0b00011111
+        case up     = 0b00000001
+        case down   = 0b00000010
+        case left   = 0b00000100
+        case right  = 0b00001000
+        case fire   = 0b00010000
+        case dPad   = 0b00001111
+        case all    = 0b00011111
     }
 
     var protoVersion = 1                        // default version

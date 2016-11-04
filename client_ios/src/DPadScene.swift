@@ -33,15 +33,15 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
                          "SKSpriteNode_topleft",
                          "SKSpriteNode_bottomleft",
                          "SKSpriteNode_bottomright"]
-    let buttons_bitmaks = [JoyBits.Up.rawValue,
-                           JoyBits.Down.rawValue,
-                           JoyBits.Left.rawValue,
-                           JoyBits.Right.rawValue,
-                           JoyBits.Fire.rawValue,
-                           JoyBits.Up.rawValue | JoyBits.Right.rawValue,
-                           JoyBits.Up.rawValue | JoyBits.Left.rawValue,
-                           JoyBits.Down.rawValue | JoyBits.Left.rawValue,
-                           JoyBits.Down.rawValue | JoyBits.Right.rawValue]
+    let buttons_bitmaks = [JoyBits.up.rawValue,
+                           JoyBits.down.rawValue,
+                           JoyBits.left.rawValue,
+                           JoyBits.right.rawValue,
+                           JoyBits.fire.rawValue,
+                           JoyBits.up.rawValue | JoyBits.right.rawValue,
+                           JoyBits.up.rawValue | JoyBits.left.rawValue,
+                           JoyBits.down.rawValue | JoyBits.left.rawValue,
+                           JoyBits.down.rawValue | JoyBits.right.rawValue]
 
     var labelBack:SKLabelNode = SKLabelNode()
     var labelGController:SKLabelNode = SKLabelNode()
@@ -49,47 +49,47 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
     var buttonBEnabled = BUTTON_B_ENABLED
     var swapABEnabled = SWAP_A_B_ENABLED
 
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         /* Setup your scene here */
 //        for (index, value) in self.children.enumerate() {
 //             print("Item \(index + 1): \(value)")
 //        }
 
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
 
         // Button B enabled?
-        let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
+        let buttonBValue = settings.value(forKey: SETTINGS_BUTTON_B_KEY)
         if (buttonBValue != nil) {
             buttonBEnabled = buttonBValue as! Bool
         }
         // Swap Buttons A & B?
-        let swapABValue = settings.valueForKey(SETTINGS_SWAP_A_B_KEY)
+        let swapABValue = settings.value(forKey: SETTINGS_SWAP_A_B_KEY)
         if (swapABValue != nil) {
             swapABEnabled = swapABValue as! Bool
         }
 
         for name in buttons_names {
-            let sprite = childNodeWithName(name) as! SKSpriteNode!
-            sprite.colorBlendFactor = 1
-            sprite.color = UIColor.grayColor()
+            let sprite = childNode(withName: name) as! SKSpriteNode!
+            sprite?.colorBlendFactor = 1
+            sprite?.color = UIColor.gray
             assert(sprite != nil, "Invalid name")
-            buttons_sprites.append(sprite)
+            buttons_sprites.append(sprite!)
         }
 
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
-        labelGController = childNodeWithName("SKLabelNode_controller") as! SKLabelNode!
-        labelGController.hidden = true
+        labelBack = childNode(withName: "SKLabelNode_back") as! SKLabelNode!
+        labelGController = childNode(withName: "SKLabelNode_controller") as! SKLabelNode!
+        labelGController.isHidden = true
 
         //
         // Game Controller Code
         //
-        let center = NSNotificationCenter.defaultCenter()
-        center.addObserver(self, selector: #selector(DPadScene.connectControllers), name: GCControllerDidConnectNotification, object: nil)
-        center.addObserver(self, selector: #selector(DPadScene.controllerDisconnected), name: GCControllerDidDisconnectNotification, object: nil)
+        let center = NotificationCenter.default
+        center.addObserver(self, selector: #selector(DPadScene.connectControllers), name: NSNotification.Name.GCControllerDidConnect, object: nil)
+        center.addObserver(self, selector: #selector(DPadScene.controllerDisconnected), name: NSNotification.Name.GCControllerDidDisconnect, object: nil)
 
         let controllers = GCController.controllers()
         if controllers.isEmpty {
-            GCController.startWirelessControllerDiscoveryWithCompletionHandler({
+            GCController.startWirelessControllerDiscovery(completionHandler: {
                 let controllers = GCController.controllers()
                 if controllers.isEmpty {
                     print("No Controllers found :(")
@@ -114,7 +114,7 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         enableGamecontroller()
     }
     func controllerDisconnected() {
-        labelGController.hidden = true
+        labelGController.isHidden = true
         joyState = 0
         sendJoyState()
     }
@@ -129,30 +129,30 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
                 if controller.extendedGamepad != nil {
                     registerExtendedGamepad(controller)
                 }
-                labelGController.hidden = false
+                labelGController.isHidden = false
                 break
             }
         }
     }
 
-    func registerGamepad(controller:GCController) {
+    func registerGamepad(_ controller:GCController) {
         // gamepad
         controller.gamepad?.dpad.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
-            self.joyState &= ~(JoyBits.Down.rawValue | JoyBits.Left.rawValue | JoyBits.Right.rawValue)
+            self.joyState &= ~(JoyBits.down.rawValue | JoyBits.left.rawValue | JoyBits.right.rawValue)
 
             // if buttonB (fire) is not enabled, then turn it off
             if !self.buttonBEnabled {
-                self.joyState &= ~JoyBits.Up.rawValue
+                self.joyState &= ~JoyBits.up.rawValue
             }
-            if dpad.right.pressed {
-                self.joyState |= JoyBits.Right.rawValue
-            } else if dpad.left.pressed {
-                self.joyState |= JoyBits.Left.rawValue
+            if dpad.right.isPressed {
+                self.joyState |= JoyBits.right.rawValue
+            } else if dpad.left.isPressed {
+                self.joyState |= JoyBits.left.rawValue
             }
-            if !self.buttonBEnabled && dpad.up.pressed {
-                self.joyState |= JoyBits.Up.rawValue
-            } else if dpad.down.pressed {
-                self.joyState |= JoyBits.Down.rawValue
+            if !self.buttonBEnabled && dpad.up.isPressed {
+                self.joyState |= JoyBits.up.rawValue
+            } else if dpad.down.isPressed {
+                self.joyState |= JoyBits.down.rawValue
             }
             self.repaintButtons()
         }
@@ -162,16 +162,16 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
             if self.buttonBEnabled && self.swapABEnabled {
                 // Jump Configuration
                 if pressed {
-                    self.joyState |= JoyBits.Up.rawValue
+                    self.joyState |= JoyBits.up.rawValue
                 } else {
-                    self.joyState &= ~JoyBits.Up.rawValue
+                    self.joyState &= ~JoyBits.up.rawValue
                 }
             } else {
                 // Shoot Configuration
                 if pressed {
-                    self.joyState |= JoyBits.Fire.rawValue
+                    self.joyState |= JoyBits.fire.rawValue
                 } else {
-                    self.joyState &= ~JoyBits.Fire.rawValue
+                    self.joyState &= ~JoyBits.fire.rawValue
                 }
             }
             self.repaintButtons()
@@ -187,35 +187,35 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
             if self.swapABEnabled {
                 // Shoot Configuration
                 if pressed {
-                    self.joyState |= JoyBits.Fire.rawValue
+                    self.joyState |= JoyBits.fire.rawValue
                 } else {
-                    self.joyState &= ~JoyBits.Fire.rawValue
+                    self.joyState &= ~JoyBits.fire.rawValue
                 }
             } else {
                 // Jump Configuration
                 if pressed {
-                    self.joyState |= JoyBits.Up.rawValue
+                    self.joyState |= JoyBits.up.rawValue
                 } else {
-                    self.joyState &= ~JoyBits.Up.rawValue
+                    self.joyState &= ~JoyBits.up.rawValue
                 }
             }
             self.repaintButtons()
         }
     }
 
-    func registerExtendedGamepad(controller:GCController) {
+    func registerExtendedGamepad(_ controller:GCController) {
         // left thumbstick
         controller.extendedGamepad?.leftThumbstick.valueChangedHandler = { (dpad:GCControllerDirectionPad, xValue:Float, yValue:Float) in
-            self.joyState &= ~(JoyBits.DPad.rawValue)
+            self.joyState &= ~(JoyBits.dPad.rawValue)
             if xValue > self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Right.rawValue
+                self.joyState |= JoyBits.right.rawValue
             } else if xValue < -self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Left.rawValue
+                self.joyState |= JoyBits.left.rawValue
             }
             if yValue > self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Up.rawValue
+                self.joyState |= JoyBits.up.rawValue
             } else if yValue < -self.STICK_THRESHLOLD {
-                self.joyState |= JoyBits.Down.rawValue
+                self.joyState |= JoyBits.down.rawValue
             }
             self.repaintButtons()
         }
@@ -224,19 +224,19 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
     func repaintButtons() {
         sendJoyState()
 
-        for (index, bitmask) in buttons_bitmaks.enumerate() {
-            if (bitmask & JoyBits.DPad.rawValue != 0) {
+        for (index, bitmask) in buttons_bitmaks.enumerated() {
+            if (bitmask & JoyBits.dPad.rawValue != 0) {
                 // testing dpad bitmask
-                if bitmask == (joyState & JoyBits.DPad.rawValue) {
-                    buttons_sprites[index].color = UIColor.redColor()
+                if bitmask == (joyState & JoyBits.dPad.rawValue) {
+                    buttons_sprites[index].color = UIColor.red
                 } else {
-                    buttons_sprites[index].color = UIColor.grayColor()
+                    buttons_sprites[index].color = UIColor.gray
                 }
             } else {
-                if bitmask == (joyState & JoyBits.Fire.rawValue) {
-                    buttons_sprites[index].color = UIColor.redColor()
+                if bitmask == (joyState & JoyBits.fire.rawValue) {
+                    buttons_sprites[index].color = UIColor.red
                 } else {
-                    buttons_sprites[index].color = UIColor.grayColor()
+                    buttons_sprites[index].color = UIColor.gray
                 }
             }
         }
@@ -245,20 +245,20 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
     //
     // Virtual D-Pad code
     //
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch begins */
 
         for touch in touches {
 
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             if labelBack.frame.contains(location) {
-                self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
+                self.view!.window!.rootViewController!.dismiss(animated: false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
                     self.sendJoyState()
 
                     // re-enable it.
-                    UIApplication.sharedApplication().idleTimerDisabled = false
+                    UIApplication.shared.isIdleTimerDisabled = false
 
                     // stop controllers discovery in case it still active
                     GCController.stopWirelessControllerDiscovery()
@@ -270,44 +270,44 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         }
     }
 
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            disableTouch(touch.previousLocationInNode(self))
-            enableTouch(touch.locationInNode(self))
+            disableTouch(touch.previousLocation(in: self))
+            enableTouch(touch.location(in: self))
             sendJoyState()
         }
     }
 
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            disableTouch(touch.previousLocationInNode(self))
-            disableTouch(touch.locationInNode(self))
+            disableTouch(touch.previousLocation(in: self))
+            disableTouch(touch.location(in: self))
             sendJoyState()
         }
     }
 
-    override func touchesCancelled(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            disableTouch(touch.previousLocationInNode(self))
-            disableTouch(touch.locationInNode(self))
+            disableTouch(touch.previousLocation(in: self))
+            disableTouch(touch.location(in: self))
             sendJoyState()
         }
     }
 
-    func enableTouch(location: CGPoint) {
-        for (index, sprite) in buttons_sprites.enumerate() {
+    func enableTouch(_ location: CGPoint) {
+        for (index, sprite) in buttons_sprites.enumerated() {
             if sprite.frame.contains(location) {
                 joyState = joyState | buttons_bitmaks[index]
-                sprite.color = UIColor.redColor()
+                sprite.color = UIColor.red
             }
         }
     }
 
-    func disableTouch(location: CGPoint) {
-        for (index, sprite) in buttons_sprites.enumerate() {
+    func disableTouch(_ location: CGPoint) {
+        for (index, sprite) in buttons_sprites.enumerated() {
             if sprite.frame.contains(location) {
                 joyState = joyState & ~buttons_bitmaks[index]
-                sprite.color = UIColor.grayColor()
+                sprite.color = UIColor.gray
             }
         }
     }
@@ -315,43 +315,43 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
     //
     // iCade Delegate
     //
-    func stateChanged(state:UInt16) -> Void {
+    func stateChanged(_ state:UInt16) -> Void {
         var extendedState = state
 
         // If Button "B" enabled, then deactivate the "joy up". You can only jump with Button B.
         // And if it is disabled, then deactivate Button B
         if !self.buttonBEnabled {
-            extendedState &= ~(iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue)
+            extendedState &= ~(iCadeButtons.buttonB.rawValue | iCadeButtons.buttonC.rawValue)
         } else {
-            extendedState &= ~iCadeButtons.JoystickUp.rawValue
+            extendedState &= ~iCadeButtons.joystickUp.rawValue
         }
 
         if !swapABEnabled {
             // not swapped: A=Fire, B=Jump
-            if extendedState & (iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue) != 0 {
-                extendedState |= iCadeButtons.JoystickUp.rawValue
+            if extendedState & (iCadeButtons.buttonB.rawValue | iCadeButtons.buttonC.rawValue) != 0 {
+                extendedState |= iCadeButtons.joystickUp.rawValue
             }
-            if extendedState & (iCadeButtons.ButtonA.rawValue | iCadeButtons.ButtonD.rawValue) != 0 {
-                extendedState |= iCadeButtons.ButtonA.rawValue
+            if extendedState & (iCadeButtons.buttonA.rawValue | iCadeButtons.buttonD.rawValue) != 0 {
+                extendedState |= iCadeButtons.buttonA.rawValue
             }
         } else {
             // swapped: A=Jump, B=Fire
-            if extendedState & (iCadeButtons.ButtonA.rawValue | iCadeButtons.ButtonD.rawValue) != 0 {
-                extendedState &= ~iCadeButtons.ButtonA.rawValue
-                extendedState |= iCadeButtons.JoystickUp.rawValue
+            if extendedState & (iCadeButtons.buttonA.rawValue | iCadeButtons.buttonD.rawValue) != 0 {
+                extendedState &= ~iCadeButtons.buttonA.rawValue
+                extendedState |= iCadeButtons.joystickUp.rawValue
             }
-            if extendedState & (iCadeButtons.ButtonB.rawValue | iCadeButtons.ButtonC.rawValue) != 0 {
-                extendedState |= iCadeButtons.ButtonA.rawValue
+            if extendedState & (iCadeButtons.buttonB.rawValue | iCadeButtons.buttonC.rawValue) != 0 {
+                extendedState |= iCadeButtons.buttonA.rawValue
             }
         }
 
         joyState = (UInt8)(extendedState & 0b00011111)
         repaintButtons()
     }
-    func buttonDown(state:UInt16) -> Void {
+    func buttonDown(_ state:UInt16) -> Void {
         // empty line. just to comply with the protocol
     }
-    func buttonUp(state:UInt16) -> Void {
+    func buttonUp(_ state:UInt16) -> Void {
         // empty line. just to comply with the protocol
     }
 

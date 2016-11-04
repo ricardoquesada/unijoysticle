@@ -19,7 +19,7 @@
 import SpriteKit
 import CoreMotion
 
-func radiansToDegrees(rads: Double) -> Double {
+func radiansToDegrees(_ rads: Double) -> Double {
     return rads * 180 / M_PI
 }
 
@@ -38,50 +38,50 @@ class UniJoystiCleScene: ControllerScene {
     var labelBack:SKLabelNode = SKLabelNode()
     var doTheJump:Bool = false
 
-    let operationQueue = NSOperationQueue()
+    let operationQueue = OperationQueue()
 
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
 
         // read settings
-        let settings = NSUserDefaults.standardUserDefaults()
-        let handicapValue = settings.valueForKey(SETTINGS_ROTATION_RATE_KEY)
+        let settings = UserDefaults.standard
+        let handicapValue = settings.value(forKey: SETTINGS_ROTATION_RATE_KEY)
         if (handicapValue != nil) {
             wheelRotationRate = Double(handicapValue as! Float)
         }
-        let jumpValue = settings.valueForKey(SETTINGS_JUMP_THRESHOLD_KEY)
+        let jumpValue = settings.value(forKey: SETTINGS_JUMP_THRESHOLD_KEY)
         if (jumpValue != nil) {
             jumpThreshold = Double(jumpValue as! Float)
         }
-        let movementValue = settings.valueForKey(SETTINGS_MOVEMENT_THRESHOLD_KEY)
+        let movementValue = settings.value(forKey: SETTINGS_MOVEMENT_THRESHOLD_KEY)
         if (movementValue != nil) {
             movementThreshold = Double(movementValue as! Float)
         }
 
         // setup labes and other stuff
-        labelBack = childNodeWithName("SKLabelNode_back") as! SKLabelNode!
+        labelBack = childNode(withName: "SKLabelNode_back") as! SKLabelNode!
 
         let names_bits = [
-                           "SKSpriteNode_left": JoyBits.Left.rawValue,
-                           "SKSpriteNode_top": JoyBits.Up.rawValue,
-                           "SKSpriteNode_bottom": JoyBits.Down.rawValue,
-                           "SKSpriteNode_right": JoyBits.Right.rawValue,
-                           "SKSpriteNode_fire": JoyBits.Fire.rawValue]
+                           "SKSpriteNode_left": JoyBits.left.rawValue,
+                           "SKSpriteNode_top": JoyBits.up.rawValue,
+                           "SKSpriteNode_bottom": JoyBits.down.rawValue,
+                           "SKSpriteNode_right": JoyBits.right.rawValue,
+                           "SKSpriteNode_fire": JoyBits.fire.rawValue]
 
         for (key,value) in names_bits {
-            let sprite = childNodeWithName(key) as! SKSpriteNode!
-            sprite.colorBlendFactor = 1
-            sprite.color = UIColor.grayColor()
+            let sprite = childNode(withName: key) as! SKSpriteNode!
+            sprite?.colorBlendFactor = 1
+            sprite?.color = UIColor.gray
             assert(sprite != nil, "Invalid name")
-            buttons[sprite] = value
+            buttons[sprite!] = value
         }
 
 
         // accelerometer stuff
-        if motionManager.accelerometerAvailable == true {
+        if motionManager.isAccelerometerAvailable == true {
 
             // jump is very sensitive, should be as fast as possible
             motionManager.deviceMotionUpdateInterval = 1.0/120.0
-            motionManager.startDeviceMotionUpdatesToQueue(operationQueue, withHandler: {
+            motionManager.startDeviceMotionUpdates(to: operationQueue, withHandler: {
                 data, error in
                 if error == nil {
                     self.userAcceleration = data!.userAcceleration
@@ -97,7 +97,7 @@ class UniJoystiCleScene: ControllerScene {
     }
 
     // taken from here: http://stackoverflow.com/a/26181323/1119460
-    func pad(string : String, toSize: Int) -> String {
+    func pad(_ string : String, toSize: Int) -> String {
         var padded = string
         for _ in 0..<toSize - string.characters.count {
             padded = "0" + padded
@@ -105,7 +105,7 @@ class UniJoystiCleScene: ControllerScene {
         return padded
     }
 
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
 
 
         let prevState = joyState
@@ -124,7 +124,7 @@ class UniJoystiCleScene: ControllerScene {
             if angle < 0 {
                 angle += (2 * M_PI)
             }
-            angle = radiansToDegrees(angle) * self.wheelRotationRate % 360
+            angle = (radiansToDegrees(angle) * self.wheelRotationRate).truncatingRemainder(dividingBy: 360)
             validAngle = true
 //            print (angle)
         }
@@ -132,21 +132,21 @@ class UniJoystiCleScene: ControllerScene {
         // Jumping? The press button
         if doTheJump || userAcceleration.z < -jumpThreshold {
             /* && abs(self.userAcceleration.y) < noMovementThreshold { */
-            joyState |= JoyBits.Fire.rawValue
+            joyState |= JoyBits.fire.rawValue
             doTheJump = false
         }
         // hold it pressed until jump starts descend
         else if userAcceleration.z >= 0 {
-            joyState &= ~JoyBits.Fire.rawValue
+            joyState &= ~JoyBits.fire.rawValue
         }
 
         // if Fire don't do anything else
-        if joyState & JoyBits.Fire.rawValue != 0 {
-            joyState = JoyBits.Fire.rawValue
+        if joyState & JoyBits.fire.rawValue != 0 {
+            joyState = JoyBits.fire.rawValue
         }
 
         // start clean
-        joyState &= ~(JoyBits.Right.rawValue | JoyBits.Left.rawValue | JoyBits.Up.rawValue | JoyBits.Down.rawValue)
+        joyState &= ~(JoyBits.right.rawValue | JoyBits.left.rawValue | JoyBits.up.rawValue | JoyBits.down.rawValue)
 
         // allow jumping and moving at the same time. Don't use "else"
         if (validAngle) {
@@ -159,24 +159,24 @@ class UniJoystiCleScene: ControllerScene {
             // userAcceleration.z > 0 == Joy down
             // userAcceleration.z < 0 == Joy up
             if (angle > (90-67.5) && angle < (90+67.5)) {
-                joyState &= ~JoyBits.Down.rawValue
-                joyState |= JoyBits.Up.rawValue
+                joyState &= ~JoyBits.down.rawValue
+                joyState |= JoyBits.up.rawValue
             }
             else if (angle > (270-67.5) && angle < (270+67.5)){
-                joyState &= ~JoyBits.Up.rawValue
-                joyState |= JoyBits.Down.rawValue
+                joyState &= ~JoyBits.up.rawValue
+                joyState |= JoyBits.down.rawValue
             }
 
             // userAcceleration.z y (left and right) controls joy Left & Right for the unicycle game
             // userAcceleration.z.y > 0 == Joy Right
             // userAcceleration.z.y < 0 == Joy Left
             if (angle > (360-67.5) || angle < 0 + 67.5) {
-                joyState &= ~JoyBits.Left.rawValue
-                joyState |= JoyBits.Right.rawValue
+                joyState &= ~JoyBits.left.rawValue
+                joyState |= JoyBits.right.rawValue
             }
             else if (angle > (180-67.5) && angle < (180+67.5)) {
-                joyState &= ~JoyBits.Right.rawValue
-                joyState |= JoyBits.Left.rawValue
+                joyState &= ~JoyBits.right.rawValue
+                joyState |= JoyBits.left.rawValue
             }
         }
 
@@ -186,26 +186,26 @@ class UniJoystiCleScene: ControllerScene {
             // update labels and sprites
             for (sprite, bitmask) in buttons {
                 if (joyState & bitmask) != 0 {
-                    sprite.color = UIColor.redColor()
+                    sprite.color = UIColor.red
                 }
                 else {
-                    sprite.color = UIColor.grayColor()
+                    sprite.color = UIColor.gray
                 }
             }
         }
     }
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             if labelBack.frame.contains(location) {
-                self.view!.window!.rootViewController!.dismissViewControllerAnimated(false, completion: {
+                self.view!.window!.rootViewController!.dismiss(animated: false, completion: {
                     // reset state to avoid having the joystick pressed
                     self.joyState = 0
                     self.sendJoyState()
 
                     // re-enable it.
-                    UIApplication.sharedApplication().idleTimerDisabled = false
+                    UIApplication.shared.isIdleTimerDisabled = false
                 })
             }
         }

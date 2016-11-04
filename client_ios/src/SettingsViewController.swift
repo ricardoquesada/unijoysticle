@@ -44,10 +44,10 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         // iCade setup
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
 
         // ip address
-        let addr = settings.valueForKey(SETTINGS_IP_ADDRESS_KEY)
+        let addr = settings.value(forKey: SETTINGS_IP_ADDRESS_KEY)
         if (addr != nil) {
             ipaddress.text = addr as! String?
         }
@@ -56,7 +56,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         }
 
         // rotation rate
-        let handicapValue = settings.valueForKey(SETTINGS_ROTATION_RATE_KEY)
+        let handicapValue = settings.value(forKey: SETTINGS_ROTATION_RATE_KEY)
         var handiFloat = Float(ROTATION_RATE)
         if (handicapValue != nil) {
             handiFloat = handicapValue as! Float
@@ -65,7 +65,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         handicapLabel.text = "\(handiFloat)"
 
         // movement threshold
-        let movementValue = settings.valueForKey(SETTINGS_MOVEMENT_THRESHOLD_KEY)
+        let movementValue = settings.value(forKey: SETTINGS_MOVEMENT_THRESHOLD_KEY)
         var movementFloat = Float(MOVEMENT_THRESHOLD)
         if (movementValue != nil) {
             movementFloat = movementValue as! Float
@@ -74,7 +74,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         movementLabel.text = "\(movementFloat)"
 
         // jump threshold
-        let jumpValue = settings.valueForKey(SETTINGS_JUMP_THRESHOLD_KEY)
+        let jumpValue = settings.value(forKey: SETTINGS_JUMP_THRESHOLD_KEY)
         var jumpFloat = Float(JUMP_THRESHOLD)
         if (jumpValue != nil) {
             jumpFloat = jumpValue as! Float
@@ -83,7 +83,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         jumpLabel.text = "\(jumpFloat)"
 
         // gravity
-        let gravityValue = settings.valueForKey(SETTINGS_GRAVITY_FACTOR_KEY)
+        let gravityValue = settings.value(forKey: SETTINGS_GRAVITY_FACTOR_KEY)
         var gravityFloat = Float(GRAVITY_FACTOR)
         if (gravityValue != nil) {
             gravityFloat = gravityValue as! Float
@@ -92,7 +92,7 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         gravityLabel.text = "\(gravityFloat)"
 
         // button B
-        let buttonBValue = settings.valueForKey(SETTINGS_BUTTON_B_KEY)
+        let buttonBValue = settings.value(forKey: SETTINGS_BUTTON_B_KEY)
         var buttonBBool = BUTTON_B_ENABLED
         if (buttonBValue != nil) {
             buttonBBool = buttonBValue as! Bool
@@ -100,74 +100,74 @@ class SettingsViewController: UITableViewController, UITextFieldDelegate {
         buttonBSwitch.setOn(buttonBBool, animated: false)
 
         // swap AB
-        let swapABValue = settings.valueForKey(SETTINGS_SWAP_A_B_KEY)
+        let swapABValue = settings.value(forKey: SETTINGS_SWAP_A_B_KEY)
         var swapABBool = SWAP_A_B_ENABLED
         if (swapABValue != nil) {
             swapABBool = swapABValue as! Bool
         }
         swapABSwitch.setOn(swapABBool, animated: false)
-        swapABSwitch.enabled = buttonBBool
+        swapABSwitch.isEnabled = buttonBBool
 
         // version
-        let nsObject: AnyObject? = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"]
+        let nsObject: AnyObject? = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as AnyObject?
         let version = nsObject as! String
         versionLabel.text = "version: " + version
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        let settings = NSUserDefaults.standardUserDefaults()
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let settings = UserDefaults.standard
         settings.setValue(textField.text, forKey: SETTINGS_IP_ADDRESS_KEY)
         textField.resignFirstResponder()
         return true
     }
 
-    @IBAction func sliderValueChanged(sender: UISlider) {
+    @IBAction func sliderValueChanged(_ sender: UISlider) {
         let steppedValue = round(handicapSlider.value / sliderStep) * sliderStep
         handicapLabel.text = "\(steppedValue)"
         handicapSlider.value = steppedValue
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
         settings.setValue(steppedValue, forKey: SETTINGS_ROTATION_RATE_KEY)
     }
 
-    @IBAction func movementValueChanged(sender: AnyObject) {
+    @IBAction func movementValueChanged(_ sender: AnyObject) {
         let steppedValue = round(movementSlider.value / sliderStep) * sliderStep
         movementLabel.text = "\(steppedValue)"
         movementSlider.value = steppedValue
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
         settings.setValue(steppedValue, forKey: SETTINGS_MOVEMENT_THRESHOLD_KEY)
     }
-    @IBAction func jumpValueChanged(sender: AnyObject) {
+    @IBAction func jumpValueChanged(_ sender: AnyObject) {
         let steppedValue = round(jumpSlider.value / sliderStep) * sliderStep
         jumpLabel.text = "\(steppedValue)"
         jumpSlider.value = steppedValue
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
         settings.setValue(steppedValue, forKey: SETTINGS_JUMP_THRESHOLD_KEY)
     }
 
-    @IBAction func gravityValueChanged(sender: AnyObject) {
+    @IBAction func gravityValueChanged(_ sender: AnyObject) {
         let steppedValue = round(gravitySlider.value / 0.5) * 0.5
         gravityLabel.text = "\(steppedValue)"
         gravitySlider.value = steppedValue
-        let settings = NSUserDefaults.standardUserDefaults()
+        let settings = UserDefaults.standard
         settings.setValue(steppedValue, forKey: SETTINGS_GRAVITY_FACTOR_KEY)
     }
 
-    @IBAction func buttonBValueChanged(sender: AnyObject) {
-        let value = buttonBSwitch.on
-        let settings = NSUserDefaults.standardUserDefaults()
+    @IBAction func buttonBValueChanged(_ sender: AnyObject) {
+        let value = buttonBSwitch.isOn
+        let settings = UserDefaults.standard
         settings.setValue(value, forKey: SETTINGS_BUTTON_B_KEY)
-        swapABSwitch.enabled = value;
+        swapABSwitch.isEnabled = value;
     }
 
-    @IBAction func swapABValueChanged(sender: AnyObject) {
-        let value = swapABSwitch.on
-        let settings = NSUserDefaults.standardUserDefaults()
+    @IBAction func swapABValueChanged(_ sender: AnyObject) {
+        let value = swapABSwitch.isOn
+        let settings = UserDefaults.standard
         settings.setValue(value, forKey: SETTINGS_SWAP_A_B_KEY)
     }
 
-    @IBAction func statsAndSettingsTouchUpInside(sender: AnyObject) {
-        if let checkURL = NSURL(string: "http://" + ipaddress.text!) {
-            if UIApplication.sharedApplication().openURL(checkURL) {
+    @IBAction func statsAndSettingsTouchUpInside(_ sender: AnyObject) {
+        if let checkURL = URL(string: "http://" + ipaddress.text!) {
+            if UIApplication.shared.openURL(checkURL) {
                 print("url successfully opened")
             }
         } else {

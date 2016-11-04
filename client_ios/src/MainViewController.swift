@@ -24,12 +24,12 @@ class MainViewController: UIViewController {
     @IBOutlet weak var joystickSegment: UISegmentedControl!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         activityIndicator.stopAnimating()
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
         activityIndicator.startAnimating()
 
@@ -49,22 +49,22 @@ class MainViewController: UIViewController {
                 sceneToLoad = GYRUSS_SCENE
             }
 
-            let gameViewController = segue.destinationViewController as! GameViewController
+            let gameViewController = segue.destination as! GameViewController
             gameViewController.selectedScene = sceneToLoad
             gameViewController.selectedJoystick = UInt8(joystickSegment.selectedSegmentIndex)
         }
     }
 
-    @IBAction func startTouchUpInside(sender: AnyObject) {
+    @IBAction func startTouchUpInside(_ sender: AnyObject) {
         if (controllerSegment.selectedSegmentIndex == 4) {
-            self.performSegueWithIdentifier("CommodoreHomeVC", sender: sender)
+            self.performSegue(withIdentifier: "CommodoreHomeVC", sender: sender)
         } else {
-            self.performSegueWithIdentifier("GameVC", sender: sender)
+            self.performSegue(withIdentifier: "GameVC", sender: sender)
         }
     }
 
-    @IBAction func controllerValueChanged(sender: AnyObject) {
+    @IBAction func controllerValueChanged(_ sender: AnyObject) {
         // In Commando and Commodore Home modes, disable Joysticks, since it will use both of them
-        joystickSegment.enabled = !(controllerSegment.selectedSegmentIndex == 2 || controllerSegment.selectedSegmentIndex == 4)
+        joystickSegment.isEnabled = !(controllerSegment.selectedSegmentIndex == 2 || controllerSegment.selectedSegmentIndex == 4)
     }
 }
