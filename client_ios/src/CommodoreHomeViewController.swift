@@ -20,6 +20,16 @@ import UIKit
 
 class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource {
 
+    var pickerData: [String] = ["Ashes to Ashes",
+                                "Final Countdown",
+                                "Pop Goes the World",
+                                "Jump",
+                                "Enola Gay",
+                                "Billie Jean",
+                                "Another Day in Paradise",
+                                "Wind of Change"]
+
+    @IBOutlet weak var dimmerLabel: UILabel!
     @IBOutlet weak var musicPickerView: UIPickerView!
     @IBOutlet weak var dimmerSlider: UISlider!
     @IBOutlet weak var alertSwitch: UISwitch!
@@ -32,17 +42,31 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
     }
 
     @IBAction func alertValueChanged(sender: AnyObject) {
+        print("\(alertSwitch.on)")
     }
     @IBAction func dimmerValueChanged(sender: AnyObject) {
+        // step: 25
+        let steppedValue = round(dimmerSlider.value / 25) * 25
+        dimmerLabel.text = "\(steppedValue)"
+        dimmerSlider.value = steppedValue
+        print("\(steppedValue)")
     }
 
     // UIPickerView Data Source Protocol
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 8
+        return 1
+    }
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerData.count
+    }
+    
+    // UIPickerView Delegate
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return pickerData[row]
     }
 
-    // returns the # of rows in each component..
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 0
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("\(pickerData[row])")
     }
+
 }

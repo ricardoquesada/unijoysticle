@@ -33,7 +33,9 @@ class MainViewController: UIViewController {
 
         activityIndicator.startAnimating()
 
-        if ((segue.destinationViewController as? GameViewController) != nil) {
+        // Possible identifiers:
+        //  GameVC, SettingsVC, CommodoreHomeVC
+        if segue.identifier == "GameVC" {
 
             var sceneToLoad = ""
 
