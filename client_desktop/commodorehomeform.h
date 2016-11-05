@@ -20,17 +20,17 @@ limitations under the License.
 #include "basejoymode.h"
 
 namespace Ui {
-class LinearForm;
+class CommodoreHomeForm;
 }
 
-class LinearForm : public BaseJoyMode
+class CommodoreHomeForm : public BaseJoyMode
 {
     Q_OBJECT
 
 public:
-    explicit LinearForm(QWidget *parent = 0);
-    ~LinearForm();
+    explicit CommodoreHomeForm(QWidget *parent = 0);
+    ~CommodoreHomeForm();
 
 private:
-    Ui::LinearForm *ui;
+    Ui::CommodoreHomeForm *ui;
 };

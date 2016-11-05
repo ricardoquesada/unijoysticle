@@ -29,7 +29,6 @@ CONFIG += debug_and_release
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    linearform.cpp \
     commandowidget.cpp \
     dpadwidget.cpp \
     utils.cpp \
@@ -37,10 +36,10 @@ SOURCES += main.cpp\
     basejoymode.cpp \
     basesettings.cpp \
     preferences.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    commodorehomeform.cpp
 
 HEADERS  += mainwindow.h \
-    linearform.h \
     commandowidget.h \
     dpadwidget.h \
     utils.h \
@@ -48,11 +47,12 @@ HEADERS  += mainwindow.h \
     basejoymode.h \
     basesettings.h \
     preferences.h \
-    aboutdialog.h
+    aboutdialog.h \
+    commodorehomeform.h
 
 FORMS    += mainwindow.ui \
-    linearform.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    commodorehomeform.ui
 
 RESOURCES += \
     resources.qrc

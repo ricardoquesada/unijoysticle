@@ -30,7 +30,7 @@ limitations under the License.
 #include "preferences.h"
 #include "commandowidget.h"
 #include "dpadwidget.h"
-#include "linearform.h"
+#include "commodorehomeform.h"
 #include "qMDNS.h"
 
 static const int STATE_VERSION = 1;
@@ -59,9 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     subWindow->showMaximized();
     subWindow->layout()->setContentsMargins(2, 2, 2, 2);
 
-    auto linearWidget = new LinearForm;
-    subWindow = ui->mdiArea->addSubWindow(linearWidget, Qt::Widget);
-    subWindow->setWindowTitle(tr("Linear mode"));
+    auto chomeWidget = new CommodoreHomeForm;
+    subWindow = ui->mdiArea->addSubWindow(chomeWidget, Qt::Widget);
+    subWindow->setWindowTitle(tr("Commodore Home mode"));
     subWindow->setWindowIcon(icon);
     subWindow->showMaximized();
     subWindow->layout()->setContentsMargins(2, 2, 2, 2);
@@ -110,7 +110,7 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
             ui->groupBox_dpad->show();
         } else if (dynamic_cast<CommandoWidget*>(widget)) {
             ui->groupBox_dpad->hide();
-        } else if (dynamic_cast<LinearForm*>(widget)) {
+        } else if (dynamic_cast<CommodoreHomeForm*>(widget)) {
             ui->groupBox_dpad->hide();
         }
     }
