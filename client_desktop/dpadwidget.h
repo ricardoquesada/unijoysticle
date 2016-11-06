@@ -53,6 +53,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
+    void processEvents();
     void send();
     void processJoyState();
 
