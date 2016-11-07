@@ -19,6 +19,7 @@ limitations under the License.
 #include "ui_commodorehomeform.h"
 
 #include <QSlider>
+#include <QTimer>
 
 enum HomeCommands {
     NOTHING = 0,
@@ -61,6 +62,8 @@ CommodoreHomeForm::CommodoreHomeForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    _timer = new QTimer(this);
+
     _proto.version = 2;     // version 2
     _proto.joyControl = 3;  // joy 1 and 2
     _proto.joyStates[0] = 0;
@@ -84,13 +87,13 @@ CommodoreHomeForm::CommodoreHomeForm(QWidget *parent) :
             _proto.joyStates[1] = ALARM_OFF;
         else
             _proto.joyStates[1] = ALARM_ON;
-        sendState();
+        sendStateAndReset();
     });
 
     connect(ui->comboBox_music, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [&](int index) {
         qDebug() << index;
         _proto.joyStates[1] = SONG_0 + (uint8_t)index;
-        sendState();
+        sendStateAndReset();
     });
 
     connect(ui->horizontalSlider_dimmer , &QSlider::valueChanged, [&](int value) {
@@ -99,14 +102,18 @@ CommodoreHomeForm::CommodoreHomeForm(QWidget *parent) :
         ui->label_dimmer->setText(QString::number(value) + "%");
         ui->horizontalSlider_dimmer->setValue(value);
         _proto.joyStates[1] = DIMMER_0 + (uint8_t)value/25;
-        sendState();
+        sendStateAndReset();
     });
 
-//    connect(ui->horizontalSlider_joy2, &QSlider::valueChanged, [&](int value){
-//        ui->label_joy2->setText(QString::number(value));
-//        _proto.joyStates[1] = (uint8_t)value;
-//        sendState();
-//    });
+    connect(ui->pushButton_play, &QPushButton::clicked, [&]() {
+        _proto.joyStates[1] = SONG_PLAY;
+        sendStateAndReset();
+    });
+
+    connect(ui->pushButton_stop, &QPushButton::clicked, [&]() {
+        _proto.joyStates[1] = SONG_STOP;
+        sendStateAndReset();
+    });
 
 }
 
@@ -118,4 +125,13 @@ CommodoreHomeForm::~CommodoreHomeForm()
 void CommodoreHomeForm::enable(bool enabled)
 {
     Q_UNUSED(enabled);
+}
+
+void CommodoreHomeForm::sendStateAndReset()
+{
+    sendState();
+    _timer->singleShot(160, [&]() {
+        _proto.joyStates[1] = 0;
+        sendState();
+    });
 }

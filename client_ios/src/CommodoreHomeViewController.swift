@@ -100,11 +100,21 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
         }
     }
 
-    func sendJoyState(_ joy2Value:UInt8) {
+    func sendJoyStateAndReset(_ joy2Value:UInt8) {
         for _ in 1...2 {
             let version:UInt8 = 2     // should be 2
             let joysticks:UInt8 = 3    // 1 and 2
             let data:[UInt8] = [version, joysticks, 0, joy2Value]
+            netConnection!.sendState2(data)
+        }
+        Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reset), userInfo: nil, repeats: false)
+    }
+
+    func reset() {
+        for _ in 1...2 {
+            let version:UInt8 = 2     // should be 2
+            let joysticks:UInt8 = 3    // 1 and 2
+            let data:[UInt8] = [version, joysticks, 0, 0]
             netConnection!.sendState2(data)
         }
     }
@@ -112,9 +122,9 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
     @IBAction func alertValueChanged(_ sender: AnyObject) {
         print("\(alertSwitch.isOn)")
         if alertSwitch.isOn {
-            sendJoyState(HomeCommands.alarmOn.rawValue)
+            sendJoyStateAndReset(HomeCommands.alarmOn.rawValue)
         } else {
-            sendJoyState(HomeCommands.alarmOff.rawValue)
+            sendJoyStateAndReset(HomeCommands.alarmOff.rawValue)
         }
     }
     @IBAction func dimmerValueChanged(_ sender: AnyObject) {
@@ -128,7 +138,7 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
             dimmerLastValue = steppedValue
 
             let offset:UInt8 = (UInt8)(steppedValue) / 25
-            sendJoyState(HomeCommands.dimmer0.rawValue + offset)
+            sendJoyStateAndReset(HomeCommands.dimmer0.rawValue + offset)
         }
     }
 
@@ -147,8 +157,17 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         print("\(pickerData[row])")
-        sendJoyState(HomeCommands.song0.rawValue + (UInt8)(row))
+        sendJoyStateAndReset(HomeCommands.song0.rawValue + (UInt8)(row))
+    }
 
+    // play button
+    @IBAction func playTouchUpInside(_ sender: Any) {
+        sendJoyStateAndReset(HomeCommands.songPlay.rawValue)
+    }
+
+    // stop button
+    @IBAction func stopTouchUpInside(_ sender: Any) {
+        sendJoyStateAndReset(HomeCommands.songStop.rawValue)
     }
 
 }

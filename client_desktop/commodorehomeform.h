@@ -19,6 +19,10 @@ limitations under the License.
 
 #include "basejoymode.h"
 
+QT_BEGIN_NAMESPACE
+class QTimer;
+QT_END_NAMESPACE
+
 namespace Ui {
 class CommodoreHomeForm;
 }
@@ -34,5 +38,7 @@ public:
     void enable(bool enabled);
 
 private:
+    void sendStateAndReset();
     Ui::CommodoreHomeForm *ui;
+    QTimer* _timer;
 };
