@@ -43,13 +43,8 @@ CommandoWidget::CommandoWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-//    connect(QGamepadManager::instance(), &QGamepadManager::connectedGamepadsChanged, [&](){
-
-//        qDebug() << QGamepadManager::instance()->connectedGamepads();
-//    });
-
-//    qDebug() << "Connected gamepads:";
-//    qDebug() << QGamepadManager::instance()->connectedGamepads();
+    connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &CommandoWidget::onGamepadConnected);
+    connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &CommandoWidget::onGamepadDisconnected);
 
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
@@ -289,10 +284,255 @@ void CommandoWidget::hideEvent(QHideEvent* event)
 
 }
 
+void CommandoWidget::processEvents()
+{
+    repaint();
+    send();
+}
 
 void CommandoWidget::send()
 {
     _proto.joyStates[0] = _joyState[0];
     _proto.joyStates[1] = _joyState[1];
     sendState();
+}
+
+void CommandoWidget::onGamepadConnected(int id)
+{
+    if (!_gamepad) {
+        _gamepadId = id;
+        _gamepad = new QGamepad(id, this);
+
+        connect(_gamepad, &QGamepad::axisLeftXChanged, this, &CommandoWidget::onAxisLeftXChanged);
+        connect(_gamepad, &QGamepad::axisLeftYChanged, this, &CommandoWidget::onAxisLeftYChanged);
+        connect(_gamepad, &QGamepad::axisRightXChanged, this, &CommandoWidget::onAxisRightXChanged);
+        connect(_gamepad, &QGamepad::axisRightYChanged, this, &CommandoWidget::onAxisRightYChanged);
+        connect(_gamepad, &QGamepad::buttonAChanged, this, &CommandoWidget::onButtonAChanged);
+        connect(_gamepad, &QGamepad::buttonBChanged, this, &CommandoWidget::onButtonBChanged);
+        connect(_gamepad, &QGamepad::buttonXChanged, this, &CommandoWidget::onButtonXChanged);
+        connect(_gamepad, &QGamepad::buttonYChanged, this, &CommandoWidget::onButtonYChanged);
+        connect(_gamepad, &QGamepad::buttonUpChanged, this, &CommandoWidget::onButtonUpChanged);
+        connect(_gamepad, &QGamepad::buttonDownChanged, this, &CommandoWidget::onButtonDownChanged);
+        connect(_gamepad, &QGamepad::buttonLeftChanged, this, &CommandoWidget::onButtonLeftChanged);
+        connect(_gamepad, &QGamepad::buttonRightChanged, this, &CommandoWidget::onButtonRightChanged);
+    }
+}
+
+void CommandoWidget::onGamepadDisconnected(int id)
+{
+    if (_gamepadId == id) {
+        unregisterGamepad();
+    }
+}
+
+void CommandoWidget::enable(bool enabled)
+{
+    if (enabled)
+        registerGamepad();
+    else
+        unregisterGamepad();
+}
+
+void CommandoWidget::registerGamepad()
+{
+    if (!_gamepad) {
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &CommandoWidget::onGamepadConnected);
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &CommandoWidget::onGamepadDisconnected);
+
+        auto connectedDevices = QGamepadManager::instance()->connectedGamepads();
+        if (connectedDevices.length() > 0)
+            onGamepadConnected(connectedDevices.at(0));
+    }
+}
+
+void CommandoWidget::unregisterGamepad()
+{
+    if (_gamepad) {
+        disconnect(_gamepad, &QGamepad::axisLeftXChanged, this, &CommandoWidget::onAxisLeftXChanged);
+        disconnect(_gamepad, &QGamepad::axisLeftYChanged, this, &CommandoWidget::onAxisLeftYChanged);
+        disconnect(_gamepad, &QGamepad::axisRightXChanged, this, &CommandoWidget::onAxisRightXChanged);
+        disconnect(_gamepad, &QGamepad::axisRightYChanged, this, &CommandoWidget::onAxisRightYChanged);
+        disconnect(_gamepad, &QGamepad::buttonAChanged, this, &CommandoWidget::onButtonAChanged);
+        disconnect(_gamepad, &QGamepad::buttonBChanged, this, &CommandoWidget::onButtonBChanged);
+        disconnect(_gamepad, &QGamepad::buttonXChanged, this, &CommandoWidget::onButtonXChanged);
+        disconnect(_gamepad, &QGamepad::buttonYChanged, this, &CommandoWidget::onButtonYChanged);
+        disconnect(_gamepad, &QGamepad::buttonUpChanged, this, &CommandoWidget::onButtonUpChanged);
+        disconnect(_gamepad, &QGamepad::buttonDownChanged, this, &CommandoWidget::onButtonDownChanged);
+        disconnect(_gamepad, &QGamepad::buttonLeftChanged, this, &CommandoWidget::onButtonLeftChanged);
+        disconnect(_gamepad, &QGamepad::buttonRightChanged, this, &CommandoWidget::onButtonRightChanged);
+
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &CommandoWidget::onGamepadConnected);
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &CommandoWidget::onGamepadDisconnected);
+
+        delete _gamepad;
+        _gamepad = nullptr;
+        _gamepadId = -1;
+    }
+}
+
+void CommandoWidget::onAxisLeftXChanged(double value)
+{
+    qDebug() << "CommandoWidget Left X" << value;
+    bool changed = false;
+    if (value > 0.8) {
+        this->_joyState[1] |= JoyBits::Right;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState[1] |= JoyBits::Left;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState[1] &= ~JoyBits::Right;
+        this->_joyState[1] &= ~JoyBits::Left;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void CommandoWidget::onAxisLeftYChanged(double value)
+{
+    qDebug() << "Left Y" << value;
+    bool changed = false;
+
+    if (value > 0.8) {
+        this->_joyState[1] |= JoyBits::Down;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState[1] |= JoyBits::Up;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState[1] &= ~JoyBits::Up;
+        this->_joyState[1] &= ~JoyBits::Down;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void CommandoWidget::onAxisRightXChanged(double value)
+{
+    qDebug() << "CommandoWidget Left X" << value;
+    bool changed = false;
+    if (value > 0.8) {
+        this->_joyState[0] |= JoyBits::Right;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState[0] |= JoyBits::Left;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState[0] &= ~JoyBits::Right;
+        this->_joyState[0] &= ~JoyBits::Left;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void CommandoWidget::onAxisRightYChanged(double value)
+{
+    qDebug() << "Left Y" << value;
+    bool changed = false;
+
+    if (value > 0.8) {
+        this->_joyState[0] |= JoyBits::Down;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState[0] |= JoyBits::Up;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState[0] &= ~JoyBits::Up;
+        this->_joyState[0] &= ~JoyBits::Down;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void CommandoWidget::onButtonAChanged(bool pressed)
+{
+    qDebug() << "Button A" << pressed;
+    if (pressed)
+        _joyState[1] |= JoyBits::Fire;
+    else
+        _joyState[1] &= ~JoyBits::Fire;
+    processEvents();
+}
+
+void CommandoWidget::onButtonBChanged(bool pressed)
+{
+    qDebug() << "Button B" << pressed;
+    if (pressed)
+        _joyState[0] |= JoyBits::Fire;
+    else
+        _joyState[0] &= ~JoyBits::Fire;
+    processEvents();
+}
+
+void CommandoWidget::onButtonXChanged(bool pressed)
+{
+    qDebug() << "Button B" << pressed;
+    if (pressed)
+        _joyState[0] |= JoyBits::Down;
+    else
+        _joyState[0] &= ~JoyBits::Down;
+    processEvents();
+}
+
+void CommandoWidget::onButtonYChanged(bool pressed)
+{
+    qDebug() << "Button B" << pressed;
+    if (pressed)
+        _joyState[0] |= JoyBits::Right;
+    else
+        _joyState[0] &= ~JoyBits::Right;
+    processEvents();
+}
+
+
+void CommandoWidget::onButtonUpChanged(bool pressed)
+{
+    qDebug() << "Button Up" << pressed;
+    if (pressed)
+        _joyState[1] |= JoyBits::Up;
+    else
+        _joyState[1] &= ~JoyBits::Up;
+    processEvents();
+}
+
+void CommandoWidget::onButtonDownChanged(bool pressed)
+{
+    qDebug() << "Button Down" << pressed;
+    if (pressed)
+        _joyState[1] |= JoyBits::Down;
+    else
+        _joyState[1] &= ~JoyBits::Down;
+    processEvents();
+}
+
+void CommandoWidget::onButtonLeftChanged(bool pressed)
+{
+    qDebug() << "Button Left" << pressed;
+    if (pressed)
+        _joyState[1] |= JoyBits::Left;
+    else
+        _joyState[1] &= ~JoyBits::Left;
+    processEvents();
+}
+
+void CommandoWidget::onButtonRightChanged(bool pressed)
+{
+    qDebug() << "Button Right" << pressed;
+    if (pressed)
+        _joyState[1] |= JoyBits::Right;
+    else
+        _joyState[1] &= ~JoyBits::Right;
+    processEvents();
 }

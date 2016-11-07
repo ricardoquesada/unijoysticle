@@ -52,15 +52,15 @@ MainWindow::MainWindow(QWidget *parent)
     subWindowDpad->showMaximized();
     subWindowDpad->layout()->setContentsMargins(2, 2, 2, 2);
 
-    auto commandoWidget = new CommandoWidget;
-    auto subWindow = ui->mdiArea->addSubWindow(commandoWidget, Qt::Widget);
+    _commandoWidget = new CommandoWidget;
+    auto subWindow = ui->mdiArea->addSubWindow(_commandoWidget, Qt::Widget);
     subWindow->setWindowTitle(tr("Commando mode"));
     subWindow->setWindowIcon(icon);
     subWindow->showMaximized();
     subWindow->layout()->setContentsMargins(2, 2, 2, 2);
 
-    auto chomeWidget = new CommodoreHomeForm;
-    subWindow = ui->mdiArea->addSubWindow(chomeWidget, Qt::Widget);
+    _commodoreHomeForm = new CommodoreHomeForm;
+    subWindow = ui->mdiArea->addSubWindow(_commodoreHomeForm, Qt::Widget);
     subWindow->setWindowTitle(tr("Commodore Home mode"));
     subWindow->setWindowIcon(icon);
     subWindow->showMaximized();
@@ -106,12 +106,21 @@ void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)
     {
         auto widget = static_cast<BaseJoyMode*>(subwindow->widget());
 
-        if (dynamic_cast<DpadWidget*>(widget)) {
+        if (widget == _dpadWidget) {
             ui->groupBox_dpad->show();
-        } else if (dynamic_cast<CommandoWidget*>(widget)) {
+            _commandoWidget->enable(false);
+            _commodoreHomeForm->enable(false);
+            _dpadWidget->enable(true);
+        } else if (widget == _commandoWidget) {
             ui->groupBox_dpad->hide();
-        } else if (dynamic_cast<CommodoreHomeForm*>(widget)) {
+            _commodoreHomeForm->enable(false);
+            _dpadWidget->enable(false);
+            _commandoWidget->enable(true);
+        } else if (widget == _commodoreHomeForm) {
             ui->groupBox_dpad->hide();
+            _dpadWidget->enable(false);
+            _commandoWidget->enable(false);
+            _commodoreHomeForm->enable(true);
         }
     }
 }

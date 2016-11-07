@@ -31,6 +31,8 @@ public:
     explicit CommodoreHomeForm(QWidget *parent = 0);
     ~CommodoreHomeForm();
 
+    void enable(bool enabled);
+
 private:
     Ui::CommodoreHomeForm *ui;
 };

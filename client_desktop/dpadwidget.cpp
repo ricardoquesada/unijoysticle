@@ -50,9 +50,6 @@ DpadWidget::DpadWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-    connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
-    connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
-
     auto gamepads = QGamepadManager::instance()->connectedGamepads();
     if (!gamepads.isEmpty())
         onGamepadConnected(gamepads.at(0));
@@ -306,119 +303,164 @@ void DpadWidget::onGamepadConnected(int id)
         _gamepadId = id;
         _gamepad = new QGamepad(id, this);
 
-        qDebug() << "Gamepad: " << _gamepad->name();
-
-        connect(_gamepad, &QGamepad::nameChanged, this, [](const QString& name){
-            qDebug() << "Name: " << name;
-        });
-
-        connect(_gamepad, &QGamepad::axisLeftXChanged, this, [&](double value){
-            qDebug() << "Left X" << value;
-            bool changed = false;
-            if (value > 0.8) {
-                this->_joyState |= JoyBits::Right;
-                changed = true;
-            } else if (value < -0.8) {
-                this->_joyState |= JoyBits::Left;
-                changed = true;
-            }
-            else if (value > -0.1 && value < 0.1) {
-                this->_joyState &= ~JoyBits::Right;
-                this->_joyState &= ~JoyBits::Left;
-                changed = true;
-            }
-            if (changed) {
-                processEvents();
-            }
-        });
-        connect(_gamepad, &QGamepad::axisLeftYChanged, this, [&](double value){
-            qDebug() << "Left Y" << value;
-            bool changed = false;
-
-            if (value > 0.8) {
-                this->_joyState |= JoyBits::Down;
-                changed = true;
-            } else if (value < -0.8) {
-                this->_joyState |= JoyBits::Up;
-                changed = true;
-            }
-            else if (value > -0.1 && value < 0.1) {
-                this->_joyState &= ~JoyBits::Up;
-                this->_joyState &= ~JoyBits::Down;
-                changed = true;
-            }
-            if (changed) {
-                processEvents();
-            }
-        });
-        connect(_gamepad, &QGamepad::axisRightXChanged, this, [](double value){
-            qDebug() << "Right X" << value;
-        });
-        connect(_gamepad, &QGamepad::axisRightYChanged, this, [](double value){
-            qDebug() << "Right Y" << value;
-        });
-        connect(_gamepad, &QGamepad::buttonAChanged, this, [&](bool pressed){
-            qDebug() << "Button A" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Fire;
-            else
-                _joyState &= ~JoyBits::Fire;
-            processEvents();
-        });
-        connect(_gamepad, &QGamepad::buttonBChanged, this, [&](bool pressed){
-            qDebug() << "Button B" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Button_B;
-            else
-                _joyState &= ~JoyBits::Button_B;
-            processEvents();
-        });
-        connect(_gamepad, &QGamepad::buttonXChanged, this, [&](bool pressed){
-            qDebug() << "Button X" << pressed;
-        });
-        connect(_gamepad, &QGamepad::buttonYChanged, this, [&](bool pressed){
-            qDebug() << "Button Y" << pressed;
-        });
-        connect(_gamepad, &QGamepad::buttonUpChanged, this, [&](bool pressed){
-            qDebug() << "Button Up" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Up;
-            else
-                _joyState &= ~JoyBits::Up;
-            processEvents();
-        });
-        connect(_gamepad, &QGamepad::buttonDownChanged, this, [&](bool pressed){
-            qDebug() << "Button Down" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Down;
-            else
-                _joyState &= ~JoyBits::Down;
-            processEvents();
-        });
-        connect(_gamepad, &QGamepad::buttonLeftChanged, this, [&](bool pressed){
-            qDebug() << "Button Left" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Left;
-            else
-                _joyState &= ~JoyBits::Left;
-            processEvents();
-        });
-        connect(_gamepad, &QGamepad::buttonRightChanged, this, [&](bool pressed){
-            qDebug() << "Button Right" << pressed;
-            if (pressed)
-                _joyState |= JoyBits::Right;
-            else
-                _joyState &= ~JoyBits::Right;
-            processEvents();
-        });
+        connect(_gamepad, &QGamepad::axisLeftXChanged, this, &DpadWidget::onAxisLeftXChanged);
+        connect(_gamepad, &QGamepad::axisLeftYChanged, this, &DpadWidget::onAxisLeftYChanged);
+        connect(_gamepad, &QGamepad::buttonAChanged, this, &DpadWidget::onButtonAChanged);
+        connect(_gamepad, &QGamepad::buttonBChanged, this, &DpadWidget::onButtonBChanged);
+        connect(_gamepad, &QGamepad::buttonUpChanged, this, &DpadWidget::onButtonUpChanged);
+        connect(_gamepad, &QGamepad::buttonDownChanged, this, &DpadWidget::onButtonDownChanged);
+        connect(_gamepad, &QGamepad::buttonLeftChanged, this, &DpadWidget::onButtonLeftChanged);
+        connect(_gamepad, &QGamepad::buttonRightChanged, this, &DpadWidget::onButtonRightChanged);
     }
 }
 
 void DpadWidget::onGamepadDisconnected(int id)
 {
     if (_gamepadId == id) {
+        unregisterGamepad();
+    }
+}
+
+void DpadWidget::enable(bool enabled)
+{
+    if (enabled)
+        registerGamepad();
+    else
+        unregisterGamepad();
+}
+
+void DpadWidget::registerGamepad()
+{
+    if (!_gamepad) {
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
+
+        auto connectedDevices = QGamepadManager::instance()->connectedGamepads();
+        if (connectedDevices.length() > 0)
+            onGamepadConnected(connectedDevices.at(0));
+    }
+}
+
+void DpadWidget::unregisterGamepad()
+{
+    if (_gamepad) {
+        disconnect(_gamepad, &QGamepad::axisLeftXChanged, this, &DpadWidget::onAxisLeftXChanged);
+        disconnect(_gamepad, &QGamepad::axisLeftYChanged, this, &DpadWidget::onAxisLeftYChanged);
+        disconnect(_gamepad, &QGamepad::buttonAChanged, this, &DpadWidget::onButtonAChanged);
+        disconnect(_gamepad, &QGamepad::buttonBChanged, this, &DpadWidget::onButtonBChanged);
+        disconnect(_gamepad, &QGamepad::buttonUpChanged, this, &DpadWidget::onButtonUpChanged);
+        disconnect(_gamepad, &QGamepad::buttonDownChanged, this, &DpadWidget::onButtonDownChanged);
+        disconnect(_gamepad, &QGamepad::buttonLeftChanged, this, &DpadWidget::onButtonLeftChanged);
+        disconnect(_gamepad, &QGamepad::buttonRightChanged, this, &DpadWidget::onButtonRightChanged);
+
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
+
         delete _gamepad;
         _gamepad = nullptr;
         _gamepadId = -1;
     }
+}
+
+void DpadWidget::onAxisLeftXChanged(double value)
+{
+    qDebug() << "DpadWidget Left X" << value;
+    bool changed = false;
+    if (value > 0.8) {
+        this->_joyState |= JoyBits::Right;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState |= JoyBits::Left;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState &= ~JoyBits::Right;
+        this->_joyState &= ~JoyBits::Left;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void DpadWidget::onAxisLeftYChanged(double value)
+{
+    qDebug() << "Left Y" << value;
+    bool changed = false;
+
+    if (value > 0.8) {
+        this->_joyState |= JoyBits::Down;
+        changed = true;
+    } else if (value < -0.8) {
+        this->_joyState |= JoyBits::Up;
+        changed = true;
+    }
+    else if (value > -0.1 && value < 0.1) {
+        this->_joyState &= ~JoyBits::Up;
+        this->_joyState &= ~JoyBits::Down;
+        changed = true;
+    }
+    if (changed) {
+        processEvents();
+    }
+}
+
+void DpadWidget::onButtonAChanged(bool pressed)
+{
+    qDebug() << "Button A" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Fire;
+    else
+        _joyState &= ~JoyBits::Fire;
+    processEvents();
+}
+
+void DpadWidget::onButtonBChanged(bool pressed)
+{
+    qDebug() << "Button B" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Button_B;
+    else
+        _joyState &= ~JoyBits::Button_B;
+    processEvents();
+}
+
+void DpadWidget::onButtonUpChanged(bool pressed)
+{
+    qDebug() << "Button Up" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Up;
+    else
+        _joyState &= ~JoyBits::Up;
+    processEvents();
+}
+
+void DpadWidget::onButtonDownChanged(bool pressed)
+{
+    qDebug() << "Button Down" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Down;
+    else
+        _joyState &= ~JoyBits::Down;
+    processEvents();
+}
+
+void DpadWidget::onButtonLeftChanged(bool pressed)
+{
+    qDebug() << "Button Left" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Left;
+    else
+        _joyState &= ~JoyBits::Left;
+    processEvents();
+}
+
+void DpadWidget::onButtonRightChanged(bool pressed)
+{
+    qDebug() << "Button Right" << pressed;
+    if (pressed)
+        _joyState |= JoyBits::Right;
+    else
+        _joyState &= ~JoyBits::Right;
+    processEvents();
 }

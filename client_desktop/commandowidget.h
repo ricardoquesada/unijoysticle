@@ -21,16 +21,36 @@ limitations under the License.
 
 #include <QImage>
 
+QT_BEGIN_NAMESPACE
+class QGamepad;
+QT_END_NAMESPACE
+
 
 class CommandoWidget : public BaseJoyMode
 {
     Q_OBJECT
 public:
     explicit CommandoWidget(QWidget *parent = 0);
+    void enable(bool enabled);
 
 signals:
 
 public slots:
+    void onGamepadConnected(int id);
+    void onGamepadDisconnected(int id);
+
+    void onAxisLeftXChanged(double value);
+    void onAxisLeftYChanged(double value);
+    void onAxisRightXChanged(double value);
+    void onAxisRightYChanged(double value);
+    void onButtonAChanged(bool pressed);
+    void onButtonBChanged(bool pressed);
+    void onButtonXChanged(bool pressed);
+    void onButtonYChanged(bool pressed);
+    void onButtonUpChanged(bool pressed);
+    void onButtonDownChanged(bool pressed);
+    void onButtonLeftChanged(bool pressed);
+    void onButtonRightChanged(bool pressed);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -41,10 +61,18 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
 
+    void registerGamepad();
+    void unregisterGamepad();
+
+    void processEvents();
     void send();
+
 
     QImage _whiteImages[3];
     QImage _redImages[3];
 
     uint8_t _joyState[2];
+
+    int _gamepadId;
+    QGamepad* _gamepad;
 };

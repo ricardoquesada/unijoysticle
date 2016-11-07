@@ -27,6 +27,8 @@ class QWidget;
 QT_END_NAMESPACE
 
 class DpadWidget;
+class CommandoWidget;
+class CommodoreHomeForm;
 
 namespace Ui {
 class MainWindow;
@@ -64,5 +66,7 @@ private:
     void setServerAddress(const QHostAddress& address);
 
     QString _lastServerName;
-    DpadWidget* _dpadWidget;        // weak ref
+    DpadWidget* _dpadWidget;                // weak ref
+    CommandoWidget* _commandoWidget;         // weak ref
+    CommodoreHomeForm* _commodoreHomeForm;  // weak ref
 };

@@ -34,6 +34,7 @@ public:
 
     void setJumpWithB(bool enabled);
     void setSwapAB(bool enabled);
+    void enable(bool enabled);
 
 signals:
 
@@ -46,12 +47,24 @@ public slots:
     void onGamepadConnected(int id);
     void onGamepadDisconnected(int id);
 
+    void onAxisLeftXChanged(double value);
+    void onAxisLeftYChanged(double value);
+    void onButtonAChanged(bool pressed);
+    void onButtonBChanged(bool pressed);
+    void onButtonUpChanged(bool pressed);
+    void onButtonDownChanged(bool pressed);
+    void onButtonLeftChanged(bool pressed);
+    void onButtonRightChanged(bool pressed);
+
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+
+    void registerGamepad();
+    void unregisterGamepad();
 
     void processEvents();
     void send();

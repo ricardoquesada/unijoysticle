@@ -114,3 +114,8 @@ CommodoreHomeForm::~CommodoreHomeForm()
 {
     delete ui;
 }
+
+void CommodoreHomeForm::enable(bool enabled)
+{
+    Q_UNUSED(enabled);
+}
