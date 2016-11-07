@@ -20,7 +20,7 @@
       <property name="minimumSize">
        <size>
         <width>480</width>
-        <height>320</height>
+        <height>260</height>
        </size>
       </property>
       <property name="viewMode">
