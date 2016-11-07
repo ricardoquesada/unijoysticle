@@ -30,6 +30,8 @@ limitations under the License.
 
 CommandoWidget::CommandoWidget(QWidget *parent)
     : BaseJoyMode(parent)
+    , _gamepadId(-1)
+    , _gamepad(nullptr)
 {
     QImage button(":/images/button.png");
     QImage arrow_top_right(":/images/arrow_bold_top_right.png");
@@ -50,6 +52,7 @@ CommandoWidget::CommandoWidget(QWidget *parent)
     setFocus();
 
     // send two joysticks
+    _proto.version = 2;
     _proto.joyControl = 3;
     _joyState[0] = 0;
     _joyState[1] = 0;
