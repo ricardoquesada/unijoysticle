@@ -415,6 +415,14 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                     directionPressed |= JOY_FIRE1;
                     processed = true;
                 }
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_X) {
+                    directionPressed |= JOY_DOWN1;
+                    processed = true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_BUTTON_Y) {
+                    directionPressed |= JOY_RIGHT1;
+                    processed = true;
+                }
             }
             if (processed)
                 return directionPressed;
@@ -435,8 +443,10 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
         static final int OUYA_DPAD_DOWN = 105;
         static final int OUYA_DPAD_LEFT = 109;
         static final int OUYA_DPAD_RIGHT = 108;
-        static final int OUYA_BUTTON_A = 96;
-        static final int OUYA_BUTTON_B = 99;
+        static final int OUYA_BUTTON_A = 96;    // O
+        static final int OUYA_BUTTON_B = 99;    // A
+        static final int OUYA_BUTTON_X = 97;    // U
+        static final int OUYA_BUTTON_Y = 98;   // Y
         static final int OUYA_STICK_BUTTON_LEFT = 102;
         static final int OUYA_STICK_BUTTON_RIGHT = 103;
 
@@ -531,6 +541,13 @@ public class CommandoView extends View implements InputManager.InputDeviceListen
                 if (keyCode == OUYA_STICK_BUTTON_RIGHT || keyCode == OUYA_BUTTON_B) {
                     directionPressed |= JOY_FIRE1;
                 }
+                if (keyCode == OUYA_BUTTON_X) {
+                    directionPressed |= JOY_DOWN1;
+                }
+                if (keyCode == OUYA_BUTTON_Y) {
+                    directionPressed |= JOY_RIGHT1;
+                }
+
             }
             return directionPressed;
         }

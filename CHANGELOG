@@ -11,7 +11,9 @@ v0.4 - 2016-11-XX
 - [NEW] Firmware: Added mini webserver (http://unijoysticle.local). Use it to
         view the stats and change to Station mode
 - [NEW] Client: Added Commando Mode: Control both c64 joysticks with one game controller.
-        Ideal for games like Commando were the granedes can be thrown with button B
+        Ideal for games like Commando or Turrican 2 were the granedes can be thrown with button B.
+		Buttons B, X and Y are mapped to Joy#1 fire (or space), Joy#1 down and
+		Joy#1 right respectively
 - [NEW] Client: Added Commodore Home mode: For home automation
 		Replaced the old Linear mode
 - [NEW] Android Client: new client for android. Supports:
