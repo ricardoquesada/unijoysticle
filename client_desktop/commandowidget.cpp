@@ -271,22 +271,6 @@ void CommandoWidget::keyReleaseEvent(QKeyEvent *event)
         QWidget::keyPressEvent(event);
 }
 
-void CommandoWidget::showEvent(QShowEvent *event)
-{
-    BaseJoyMode::showEvent(event);
-    if (!event->spontaneous())
-        qDebug() << "showEvent:" << isVisible() << this;
-
-}
-
-void CommandoWidget::hideEvent(QHideEvent* event)
-{
-    BaseJoyMode::hideEvent(event);
-    if (!event->spontaneous())
-        qDebug() << "hideEvent:" << isVisible() << this;
-
-}
-
 void CommandoWidget::processEvents()
 {
     repaint();

@@ -9,7 +9,8 @@ v0.4 - 2016-11-XX
 - [NEW] Firmware: Added stats: how many joysticks movements are done, and how
         many seconds are spent in each movement
 - [NEW] Firmware: Added mini webserver (http://unijoysticle.local). Use it to
-        view the stats and change to Station mode
+        view the stats, to set SSID/passwd, to change to Station mode, to
+		change the MDNS name, to set the interval timeout, and more
 - [NEW] Client: Added Commando Mode: Control both c64 joysticks with one game controller.
         Ideal for games like Commando or Turrican 2 were the granedes can be thrown with button B.
 		Buttons B, X and Y are mapped to Joy#1 fire (or space), Joy#1 down and

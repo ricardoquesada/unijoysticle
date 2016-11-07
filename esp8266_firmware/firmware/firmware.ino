@@ -19,7 +19,7 @@ limitations under the License.
 // based on http://www.esp8266.com/viewtopic.php?f=29&t=2222
 
 
-#define UNIJOYSTICLE_VERSION "v0.4.3"
+#define UNIJOYSTICLE_VERSION "v0.4.4"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -61,7 +61,6 @@ static int __lastTimeActivity = 0;              // last time when there was acti
 static bool __in_ap_mode = false;               // in AP connection? different than __mode, since
                                                 // this is not a "mode" but how the connection was established
 
-
 static const int INTERNAL_LED = D0; // Amica has two internals LEDs: D0 and D4
 static const int __pinsPort0[] = {D0, D1, D2, D3, D4};
 static const int __pinsPort1[] = {D5, D6, D7, D8, RX};
@@ -95,7 +94,7 @@ void setup()
     Serial.begin(115200);
     Serial.setDebugOutput(true);
 
-    EEPROM.begin(128);
+    EEPROM.begin(256);
 
     delay(500);
 
@@ -115,7 +114,10 @@ void setup()
 
     delay(2000);
 
-    if (MDNS.begin("unijoysticle"))
+    String mdnsName = getMDNSName();
+    Serial.printf("MDNS name: '%s.local'\n", mdnsName.c_str());
+
+    if (MDNS.begin(mdnsName.c_str()))
         Serial.println("MDNS responder started");
     else fatalError(ERROR_MDNS_FAIL);
 
@@ -432,10 +434,53 @@ static void printWifiStatus()
 //    4: inactivity seconds
 //             0 = don't check innactivity
 //             any other value = how many seconds should pass before reseting the lines
-//  5-7: reserved
+//  5: version. 0 = first version
+//              1 = includes MDNS name (128-160)
+//  6-7: reserved
 //  asciiz: SSID
 //  asciiz: password
+//  128-160: asciiz: MDNS name. default: "unijoysticle"
 //
+static bool isValidEEPROM()
+{
+    bool failed = false;
+    for (int i=0; i<3; ++i) {
+        char c = EEPROM.read(i);
+        failed |= (c != __signature[i]);
+    }
+    return !failed;
+}
+
+static void setDefaultValues()
+{
+    for (int i=0; i<3; i++) {
+        EEPROM.write(i, __signature[i]);
+    }
+    // Mode
+    EEPROM.write(3, DEFAULT_MODE);
+    // Inactivity timeout
+    EEPROM.write(4, DEFAULT_INACTIVITY_TIMEOUT);
+
+    // format version:
+    EEPROM.write(5, 1);
+
+    // unused
+    EEPROM.write(6, 0);
+    EEPROM.write(7, 0);
+
+    // SSID name (asciiz)
+    EEPROM.write(8, 0);
+    // SSDI passwrod (asciiz)
+    EEPROM.write(9, 0);
+
+    static const char* unistr = "unijoysticle";
+    for (int i=0; i<strlen(unistr); i++)
+        EEPROM.write(128+i, unistr[i]);
+    EEPROM.write(strlen(unistr),0);
+
+    EEPROM.commit();
+}
+
 static void readCredentials(char* ssid, char* pass)
 {
 
@@ -471,7 +516,7 @@ static void readCredentials(char* ssid, char* pass)
         Serial.printf("EEPROM signature failed: not 'uni'\n");
         ssid[0] = 0;
         pass[0] = 0;
-        setDefaultCredentials();
+        setDefaultValues();
         return;
     }
 
@@ -510,42 +555,10 @@ static void saveCredentials(const String& ssid, const String& pass)
     EEPROM.commit();
 }
 
-static bool isValidEEPROM()
-{
-    bool failed = false;
-    for (int i=0; i<3; ++i) {
-        char c = EEPROM.read(i);
-        failed |= (c != __signature[i]);
-    }
-    return !failed;
-}
-
-static void setDefaultCredentials()
-{
-    for (int i=0; i<3; i++) {
-        EEPROM.write(i, __signature[i]);
-    }
-    // Mode
-    EEPROM.write(3, DEFAULT_MODE);
-    // Inactivity timeout
-    EEPROM.write(4, DEFAULT_INACTIVITY_TIMEOUT);
-
-    // unused
-    EEPROM.write(5, 0);
-    EEPROM.write(6, 0);
-    EEPROM.write(7, 0);
-
-    // SSID name (asciiz)
-    EEPROM.write(8, 0);
-    // SSDI passwrod (asciiz)
-    EEPROM.write(9, 0);
-    EEPROM.commit();
-}
-
 static uint8_t getMode()
 {
     if (!isValidEEPROM()) {
-        setDefaultCredentials();
+        setDefaultValues();
         return MODE_AP;
     }
     uint8_t mode = EEPROM.read(3);
@@ -555,9 +568,50 @@ static uint8_t getMode()
 static void setMode(uint8_t mode)
 {
     if (!isValidEEPROM()) {
-        setDefaultCredentials();
+        setDefaultValues();
     }
     EEPROM.write(3, mode);
+    EEPROM.commit();
+}
+
+static String getMDNSName()
+{
+    if (!isValidEEPROM()) {
+        Serial.println("getMDNS.1");
+        setDefaultValues();
+    }
+
+    // Version 0?
+    if (EEPROM.read(5) == 0) {
+        return String("unijoysticle");
+    }
+
+    // max len is 32
+    char buf[64];
+
+    int idx=128;
+    for(int i=0;;i++) {
+        buf[i] = EEPROM.read(idx++);
+        if (buf[i] == 0)
+            break;
+    }
+    return String(buf);
+}
+
+static void setMDNSName(const String& name)
+{
+    int idx = 128;
+
+    for (int i=0; i<name.length(); ++i) {
+        EEPROM.write(idx, name[i]);
+        idx++;
+    }
+
+    EEPROM.write(idx, 0);
+
+    // make sure it is version 1
+    EEPROM.write(5,1);
+
     EEPROM.commit();
 }
 
@@ -565,7 +619,7 @@ static void setMode(uint8_t mode)
 static uint8_t getInactivityTimeout()
 {
     if (!isValidEEPROM()) {
-        setDefaultCredentials();
+        setDefaultValues();
         return 0;
     }
     return EEPROM.read(4);
@@ -574,7 +628,7 @@ static uint8_t getInactivityTimeout()
 static void setInactivityTimeout(uint8_t seconds)
 {
     if (!isValidEEPROM()) {
-        setDefaultCredentials();
+        setDefaultValues();
     }
     EEPROM.write(4, seconds);
     EEPROM.commit();
@@ -594,9 +648,8 @@ void createWebServer()
 <ul>
  <li>Firmware: %s</li>
  <li>IP Address: %d.%d.%d.%d</li>
+ <li>name: %s</li>
  <li>SSID: %s</li>
- <li>Chip ID: %d</li>
- <li>Last reset reason: %s</li>
  <li>Joy #1 (ms / # movements):</li>
  <ul>
   <li>Up: %dms / %d</li>
@@ -615,51 +668,48 @@ void createWebServer()
  </ul>
 </ul>
 <form method='get' action='resetstats'>
-  <input type='submit' value='Reset Joy Stats'>
+ <input type='submit' value='Reset Joy Stats'>
 </form>
 <h2>Settings</h2>
 <h4>Set WiFi mode:</h4>
 <form method='get' action='mode'>
- <input type='radio' name='mode' value='0' %s> AP<br>
- <input type='radio' name='mode' value='1' %s> STA<br>
- <input type='radio' name='mode' value='2' %s> STA+WPS<br>
+ <input type='radio' name='mode' value='0' %s> Access Point mode (AP)<br>
+ <input type='radio' name='mode' value='1' %s> Station mode (STA)<br>
+ <input type='radio' name='mode' value='2' %s> Station mode + WPS (STA+WPS)<br>
  <input type='submit' value='Submit'>
 </form>
 <small>Reboot to apply changes</small>
-
-<br>
-<p>Mode description:</p>
+<br><p>Mode description:</p>
 <ul>
- <li>AP (Access Point mode): creates its own WiFi network. The SSID will start with <i>unijoysticle-</i></li>
- <li>STA (Station mode): Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
- <li>STA+WPS (Station mode with WPS): Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
+ <li>AP: creates its own WiFi network. The SSID will start with <i>unijoysticle-</i></li>
+ <li>STA: Tries to connect to a WiFi network using the specified SSID/password. If it fails, it will go into AP mode</li>
+ <li>STA+WPS: Tries to connect to a WiFi network by using <a href='https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup'>WPS</a>. If it fails it will go into AP mode</li>
 </ul>
 <h4>Set SSID/Password (to be used when in STA mode):</h4>
 <form method='get' action='setting'>
  <label>SSID: </label><input name='ssid' length=32/>
- <label>Password: </label><input name='pass' length=64/>
- <br/>
+ <label>Password: </label><input name='pass' length=64/><br/>
  <input type='submit' value='Submit'>
 </form>
 <small>Reboot to apply changes</small>
 
 <h4>Inactivity timeout:</h4>
 <form method='get' action='inactivity'>
- <label>Inactivity Timeout:</label><input type="text" name="inactivity" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="%d">(in seconds, from 0 to 255)</input>
- <br/>
+ <label>Inactivity Timeout:</label><input type="text" name="inactivity" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="%d">(in seconds, from 0 to 255)</input><br/>
  <input type='submit' value='Submit'>
 </form>
 After how many seconds of inactivity, should it reset the joysticks. "0" disables this feature. Useful in case one of the joystick lines, unintentinally, is left closed (on).
 
-<h4>Reboot device:</h4>
-<form method='get' action='restart'>
- <input type='submit' value='Reboot'>
+<h4>MDNS name:</h4>
+<form method='get' action='name'>
+ <label>MDNS name:</label><input name="name" value="%s" length=32>.local (suffix ".local" is added automatically)</input><br/>
+ <input type='submit' value='Submit'>
 </form>
+<small>Reboot to apply changes</small>
 
-<h4>Upgrade firmware:</h4>
-<a href="/upgrade">Upgrade page</a>
+<h4>Reboot device:</h4><form method='get' action='restart'><input type='submit' value='Reboot'></form>
 
-<hr><p><a href='https://github.com/ricardoquesada/unijoysticle/blob/master/DOCUMENTATION.md'>The UniJoystiCle Documentation</a></p>
+<h4>Upgrade firmware:</h4><a href="/upgrade">Upgrade page</a><hr>
 </body></html>
 )html";
 
@@ -710,9 +760,8 @@ After how many seconds of inactivity, should it reset the joysticks. "0" disable
         snprintf(buf, sizeof(buf)-1, htmlraw,
                  UNIJOYSTICLE_VERSION,
                  __ipAddress[0], __ipAddress[1], __ipAddress[2], __ipAddress[3],
+                 getMDNSName().c_str(),
                  WiFi.SSID().c_str(),
-                 ESP.getChipId(),
-                 ESP.getResetReason().c_str(),
                  __joyTimeUsed0[0], __joyPushes0[0],
                  __joyTimeUsed0[1], __joyPushes0[1],
                  __joyTimeUsed0[2], __joyPushes0[2],
@@ -726,7 +775,8 @@ After how many seconds of inactivity, should it reset the joysticks. "0" disable
                  (mode == 0) ? "checked" : "",
                  (mode == 1) ? "checked" : "",
                  (mode == 2) ? "checked" : "",
-                 getInactivityTimeout()
+                 getInactivityTimeout(),
+                 getMDNSName().c_str()
                  );
         buf[sizeof(buf)-1] = 0;
 
@@ -754,6 +804,11 @@ After how many seconds of inactivity, should it reset the joysticks. "0" disable
         String arg = __settingsServer.arg("mode");
         int mode = arg.toInt();
         setMode(mode);
+        __settingsServer.send(200, "text/html", htmlredirectok);
+    });
+    __settingsServer.on("/name", []() {
+        String arg = __settingsServer.arg("name");
+        setMDNSName(arg);
         __settingsServer.send(200, "text/html", htmlredirectok);
     });
 

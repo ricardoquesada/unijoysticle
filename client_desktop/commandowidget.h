@@ -58,8 +58,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
 
     void registerGamepad();
     void unregisterGamepad();
