@@ -648,7 +648,7 @@ void createWebServer()
 <ul>
  <li>Firmware: %s</li>
  <li>IP Address: %d.%d.%d.%d</li>
- <li>name: %s</li>
+ <li>Name: %s</li>
  <li>SSID: %s</li>
  <li>Joy #1 (ms / # movements):</li>
  <ul>
