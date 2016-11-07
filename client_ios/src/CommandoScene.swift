@@ -190,6 +190,26 @@ class CommandoScene: ControllerScene, iCadeEventDelegate {
             }
             self.repaintButtons()
         }
+
+        // button X (???)
+        controller.gamepad?.buttonX.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+            if pressed {
+                self.protoHeader.joyState1 |= JoyBits.down.rawValue
+            } else {
+                self.protoHeader.joyState1 &= ~JoyBits.down.rawValue
+            }
+            self.repaintButtons()
+        }
+
+        // button Y (???)
+        controller.gamepad?.buttonY.pressedChangedHandler = { (button:GCControllerButtonInput, value:Float, pressed:Bool) in
+            if pressed {
+                self.protoHeader.joyState1 |= JoyBits.right.rawValue
+            } else {
+                self.protoHeader.joyState1 &= ~JoyBits.right.rawValue
+            }
+            self.repaintButtons()
+        }
     }
 
     func registerExtendedGamepad(_ controller:GCController) {
