@@ -8,7 +8,7 @@ QT       += core gui gamepad network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = UniJoystiCle
+TARGET = unijoysticle_controller
 target.path = $${PREFIX}/bin
 INSTALLS += target
 win32 {
