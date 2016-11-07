@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
-    <height>352</height>
+    <width>730</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,12 @@
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
     <item>
      <widget class="QMdiArea" name="mdiArea">
+      <property name="minimumSize">
+       <size>
+        <width>480</width>
+        <height>320</height>
+       </size>
+      </property>
       <property name="viewMode">
        <enum>QMdiArea::TabbedView</enum>
       </property>
@@ -146,7 +152,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>735</width>
+     <width>730</width>
      <height>22</height>
     </rect>
    </property>
@@ -155,7 +161,6 @@
      <string>File</string>
     </property>
     <addaction name="actionAbout"/>
-    <addaction name="actionPreferences"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
