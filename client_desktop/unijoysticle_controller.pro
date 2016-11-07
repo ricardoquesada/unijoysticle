@@ -14,7 +14,7 @@ INSTALLS += target
 win32 {
     DESTDIR = ..
 } else {
-    DESTDIR = ../bin
+    DESTDIR = bin/
 }
 
 TEMPLATE = app
@@ -67,6 +67,7 @@ win32 {
     RC_FILE = res/unijoysticle.rc
 }
 macx {
+    TARGET = "UniJoystiCle Controller"
     ICON = res/unijoysticle-icon-mac.icns
     QMAKE_INFO_PLIST = res/Info.plist
 
