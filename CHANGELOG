@@ -47,7 +47,7 @@ v0.4.0rc - 2016-11-07
 - [FIX] iOS Client: Settings: refactored. Looks nicer. Using Navigation Controller + TableView
 - [FIX] iOS Client: Launch screen is the same as the first initial screen. Better UX
 - [FIX] iOS Client: Settings + Launch screen work both in Portrait and Landscape modes
-- [FIX] iOS Client: source code migrated to Swift 2.3 (Xcode 8)
+- [FIX] iOS Client: source code migrated to Swift 3.0 (Xcode 8.1)
 
 v0.3.1 - 2016-08-02 (internal release)
 
