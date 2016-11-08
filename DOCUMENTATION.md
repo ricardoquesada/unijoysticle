@@ -55,7 +55,7 @@ It sends "joystick commands" to the WiFi device. These commands are regular joy
 
 There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Commodore Home mode_.
 
-<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="477" height="142" />
+<img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/nYAiBi__DMf7mfn9Q0mEoCiJhOkkty_lx2_7Smo93CdAordfdEVw96J4ZilSnAO9jJdXPfbrL6AUkg=w1808-h544-no" width="438" height="132" />
 
 
 ### UniJoystiCle mode
