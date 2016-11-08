@@ -8,10 +8,9 @@ v0.4.0rc - 2016-11-07
   - Desktop client: v0.4.0
 
 - [NEW] Docs: Added documentation. See DOCUMENTATION.md
-- [NEW] ESP8266 Schematic: Reduced realstate. Compatible with C128D and SX-64
+- [NEW] ESP8266 Schematic: Reduced real state. Compatible with C128D and SX-64
 - [NEW] ESP8266 Schematic: Using D1 Mini instead of NodeMCU to reduce the
-        realstate even more. Making it smaller than 5x5cm. Chepear to produce
-- [NEW] ESP8266 Schematic: Does not use diode anymore. It seems it was not needed.
+        real state even more. Making it smaller than 5x5cm. Cheaper to produce
 - [NEW] Firmware: Added support for Station mode with or without WPS.
 - [NEW] Firmware: Added stats: how many joysticks movements are done, and how
         many seconds are spent in each movement
@@ -36,7 +35,7 @@ v0.4.0rc - 2016-11-07
 - [NEW] iOS Client: D-Pad works with MFi and iCade game controllers.
         When in iCade mode, button A and D act as Fire, and buttons B and C and jump
 - [NEW] iOS Client: When using game controllers, optionally jump with button B.
-- [NEW] iOS Client: When using game controlelrs, buttons A and B can be swapped
+- [NEW] iOS Client: When using game controllers, buttons A and B can be swapped
 - [NEW] Tests: New Commodore 64 prg to test the UniJoystiCle + instructions
 - [FIX] Android Client / iOS Client: In settings, the default WiFi address is 'unijoysticle.local'
 		(instead of 192.168.4.1). Needed when in Station mode
