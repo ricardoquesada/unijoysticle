@@ -19,7 +19,7 @@ limitations under the License.
 // based on http://www.esp8266.com/viewtopic.php?f=29&t=2222
 
 
-#define UNIJOYSTICLE_VERSION "v0.4.4"
+#define UNIJOYSTICLE_VERSION "v0.4.5"
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -95,6 +95,8 @@ void setup()
     Serial.setDebugOutput(true);
 
     EEPROM.begin(256);
+    EEPROM.write(0,0);
+    EEPROM.commit();
 
     delay(500);
 
@@ -453,6 +455,8 @@ static bool isValidEEPROM()
 
 static void setDefaultValues()
 {
+    Serial.println("setDefaultValues()");
+
     for (int i=0; i<3; i++) {
         EEPROM.write(i, __signature[i]);
     }
@@ -476,7 +480,7 @@ static void setDefaultValues()
     static const char* unistr = "unijoysticle";
     for (int i=0; i<strlen(unistr); i++)
         EEPROM.write(128+i, unistr[i]);
-    EEPROM.write(strlen(unistr),0);
+    EEPROM.write(128+strlen(unistr), 0);
 
     EEPROM.commit();
 }
@@ -577,7 +581,6 @@ static void setMode(uint8_t mode)
 static String getMDNSName()
 {
     if (!isValidEEPROM()) {
-        Serial.println("getMDNS.1");
         setDefaultValues();
     }
 
@@ -589,11 +592,16 @@ static String getMDNSName()
     // max len is 32
     char buf[64];
 
-    int idx=128;
+    const int idx=128;
     for(int i=0;;i++) {
-        buf[i] = EEPROM.read(idx++);
+        buf[i] = EEPROM.read(idx+i);
         if (buf[i] == 0)
             break;
+        if (i>32) {
+            Serial.println("Error: getMDNSName()");
+            buf[i] = 0;
+            break;
+        }
     }
     return String(buf);
 }
