@@ -5,7 +5,7 @@ The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more!
 It consists of two major parts:
 
 * The UniJoystiCle WiFi device
-* The UniJoystiCle smartphone application
+* The UniJoystiCle client application: iOS, Android, Mac, Windows and Linux
 
 
 ## The WiFi device
@@ -17,11 +17,9 @@ The WiFi device goes attached to the Commodore 64, and is the one that generates
 In order to work it needs power. Unfortunately the C64 joystick ports DON'T have enough current to power it. The options to power it are:
 
 * Using the barrel jack:
-  * Anything between 5v and 12v
-  * With at least 320mA
+  * a +5v DC with at least 320mA
   * Examples:
     * Getting power from the Datasette port [with a custom cable](http://store.go4retro.com/c2n-power/) (recommended, but might need a [PSU with enough amps](http://personalpages.tds.net/~rcarlsen/custom%20ps.html))
-    * Using a regular 9v battery (inefficient but works)
 * Using the micro USB socket:
   * It can be connected to a computer
   * or using a wall charger
@@ -32,8 +30,8 @@ In order to work it needs power. Unfortunately the C64 joystick ports DON'T have
 
 * DO NOT plug the UniJoystiCle WiFi device to the Commodore 64 yet (if you plug it, you won't break anything, it is that it just might not boot)
 * Power the UniJoystiCle WiFi device (see above)
-* Wait a few seconds and you should see two LEDs. That means that the device booted, and you can connect to it.
-  * If you don't see the two LEDs, please go to [Troubleshooting](#troubleshooting)
+* Wait a few seconds and you should see one LED. That means that the device booted, and you can connect to it.
+  * If you don't see the one LED, please go to [Troubleshooting](#troubleshooting)
 * Now, you can plug it to the Commodore 64
 
 By default, the WiFi device will start in Access Point mode, and will create a WiFi network named "unijoysticle-xxyyzz". From your smartphone Settings, connect to it...:
@@ -42,15 +40,20 @@ By default, the WiFi device will start in Access Point mode, and will create a W
 
 ...and then launch the UniJoystiCle smartphone app.
 
-## Smartphone Application
+## Client Application
 
-The smartphone application can be download for free from the App Store / Google Play:
+The client application can be download for free from the App Store / Google Play:
 
 <a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a><a href='https://play.google.com/store/apps/details?id=moe.retro.unijoysticle&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://lh3.googleusercontent.com/nUm_upw_pznWfcD9pp71LPhpwdTMd6L7LVBK2Bw3UoAaiD0AFkTc1P6Gfl1MXiy7mOaApxVLdUMWXA=w564-h168-no' width="162" height="48"/></a>
 
+The desktop application can be downloaded from here:
+
+* Mac: [UniJoystiCle Controller.dmg](http://ricardoquesada.github.io/unijoysticle/bin/UniJoystiCle%20Controller-v0.4.0.dmg)
+* Win32: [unijoysticle_controller.win32.zip](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_controller-v0.4.0.win32.zip)
+
 It sends "joystick commands" to the WiFi device. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
-There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Linear mode_.
+There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Commodore Home mode_.
 
 <img style="border: 1px solid #000000;" src="https://lh3.googleusercontent.com/6WxRN1ab1AQC3IOeZ5FS5CqgPPqcXYg4DrP6QrpZ3I70MFmGeA08kEUJIg65USncftVCL6qaxCLXQw=w2208-h660-no" width="477" height="142" />
 
@@ -159,14 +162,15 @@ In this mode you control both joysticks at the same time. A game controller is n
 It is called "Commando" mode, since it allows you to play the Commando game by using:
 
 * The dpad to control the movements of the Hero
-* Button A to fire
-* and Button B to throw grenades. Spacebar is not needed anymore!
+* Button A to fire (mapped to Joy#2 fire)
+* Button B to throw grenades. Spacebar is not needed anymore! (mapped to Joy#1 fire)
+* and Button X and Y are mapped to Joy#1-down and Joy#1-right respectively
 
 You can do much more than that, since you control both joysticks. So you can play multiplayer games controlling both players at the same time. Not for the mere mortals.
 
 __Compatibility:__
 
-* Any game that uses Joystick #2 + spacebar can be used in this mode.
+* Any game that uses Joystick #2 + spacebar can be used in this mode. eg: [Commando](http://gamebase64.com/game.php?id=1602&d=18&h=0), [Turrican II](http://gamebase64.com/game.php?id=8234&d=18&h=0), [Dropzone](http://gamebase64.com/game.php?id=2362&d=18&h=0)
 * Any dual player game can be played in this mode.
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=VK-gzT5wkiw)
@@ -194,7 +198,7 @@ __Using this mode:__ [YouTube video](https://youtu.be/n2YHoj1pXB8)
 
 __Note__: This mode is only avaible on iOS. Android support coming soon.
 
-### Linear mode
+### Commodore Home mode
 
 <img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" />
 
@@ -202,15 +206,16 @@ This mode is not meant to play games. Instead, is meant to convert the joysticks
 
 __Compatibility:__
 
-* [C64 I.D.IoT.R](https://github.com/ricardoquesada/c64-idiotr), the Intelligent Dimmer for IoT RRRRR
+* [Commodore Home](https://retro.moe/2016/10/31/retro-challenge-commodore-home/), home automation for the masses, not the classes
 
-__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=eKlaUfoTuYQ)
+__Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY)
 
 ## Installing the firmware
 
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
-* Install the [CP2104 Serial-to-USB driver](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
+* Install the [CH340 Serial-to-USB driver](https://www.wemos.cc/downloads)
+  * For macOS Sierra, [follow these instructions](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/)
 
 And from here you have two options: the "easy" one for users, and the "hard" one for developers:
 
@@ -253,22 +258,21 @@ $ make upload
 
 The hardware as well as the software are open source. So you can build one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
 
-* board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.2.2)
-* schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/unijoysticle-v0.3/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.2.2)
+* board: <a href="https://github.com/ricardoquesada/unijoysticle/blob/master/schematic/unijoysticle.brd">unijoysticle.brd</a> (v0.4.1)
+* schematic: <a href="https://github.com/ricardoquesada/unijoysticle/blob/master/schematic/unijoysticle.sch">unijoysticle.sch</a> (v0.4.1)
 
 You will need the following components (BOM):
 
-* 1 x [NodeMCU ESP8266](http://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32303690854.html)
+* 1 x [Wemos D1 Mini v2](https://www.aliexpress.com/store/product/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/1331105_32529101036.html)
 * 2 x [DB9 female](https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800)
 * 3 x [4066 IC](https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726)
 * 3 x [sockets for the ICs](https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545)
 * 1 x [barrel jack](https://www.digikey.com/product-detail/en/cui-inc/PJ-002A/CP-002A-ND/96962)
 * 1 x [4001 diode](https://www.digikey.com/product-detail/en/micro-commercial-co/1N4001-TP/1N4001-TPMSCT-ND/773688)
-* [Pins](http://www.aliexpress.com/item/Free-shppping-3200pin-1x40-Pin-2-54mm-Single-Row-Female-Pin-Header-Connector-80PCS-LOT/1897568598.html)
 
 And solder them. It should be straightforward where to place the components. If not, [ping me](https://twitter.com/ricardoquesada)
 
-The barrel jack and the diode are optional. They are needed if you want to power the NodeMCU module with an external power source. eg: from the C64 datasette port, or from a 9v battery. Any DC power from 5v to 12v should be good. 320mA should be enough.
+The barrel jack and the diode are optional. They are needed if you want to power the device from an external power source. eg: from the C64 datasette port. Any +5v DC power with at least 320mA should be enough.
 If you want to avoid the soldering, you can __[order an already assembled PCB from here](https://retro.moe/unijoysticle/)__.
 
 After assembling the PCB, it should look like this:
@@ -286,20 +290,20 @@ The first thing to do: download and run this C64 program. Then follow its intruc
 
 <img src="https://lh3.googleusercontent.com/35TVPVQQHc_SImpSP1NEPhm6N-kkvyMSqXgO9m3gqSQUQoNxWX5dR6NjFWgl7NJoDzhtPdLpI9-djA=w384-h272-no" />
 
-### The device (NodeMCU) doesn't boot
+### The device (Wemos D1 Mini) doesn't boot
 
-If you don't see two LEDs on the NodeMCU then:
+If you don't see one LED on the device then:
 
 * Make sure it is NOT plugged into the Commmodore 64
 * Power it either:
   * via the micro USB cable
-  * or by using the barrel jack: anything between 5V and 12V with __at least 320mA__ should be Ok.
-* Press the RST (reset) button on the NodeMCU
+  * or by using the barrel jack: a +5V with __at least 320mA__ should be Ok.
+* Press the RESET button on the Wemos D1 Mini device
 
-If that doesn't work (you don't see the two LEDs), probably:
+If that doesn't work (you don't see the one LED), probably:
 
-* try booting it again. Just press the `RST` button that is in the NodeMCU
-* or perhaps your NodeMCU doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
+* try booting it again. Just press the `RESET` button that is in the device
+* or perhaps your device doesn't have the UniJoystiCle firmware. Go to the "Installing the firmware" section
 * you are using power from c64 (datasette, user port or expansion port), and the C64 doesn't have enough current. See [When using power from the C64](#when-using-power-from-the-c64))
 
 #### When using power from the C64
