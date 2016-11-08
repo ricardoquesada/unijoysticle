@@ -95,8 +95,6 @@ void setup()
     Serial.setDebugOutput(true);
 
     EEPROM.begin(256);
-    EEPROM.write(0,0);
-    EEPROM.commit();
 
     delay(500);
 
