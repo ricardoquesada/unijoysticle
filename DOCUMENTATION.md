@@ -10,7 +10,7 @@ It consists of two major parts:
 
 ## The WiFi device
 
-<img class="" src="https://lh3.googleusercontent.com/mFqRvn15aHQGBgtxXAztYggZdZfuW5j25pDKyW7hDaVNp3BLgNDDlKC3449NrG75C80gITnOUsPxNA=w914-h1670-no" width="279" height="153" />
+<img class="" src="https://lh3.googleusercontent.com/OmLhbq2kLmIZC0WUcI8J8vpe8m5mMwCQfM414QkjSXIkV9tuEEtxiied4YfagVgNWJMujdTqMisa9A=w1808-h1356-no" width="326" height="244" />
 
 The WiFi device goes attached to the Commodore 64, and is the one that generates the real joystick movements. It does so by opening/closing the joystick lines.
 
@@ -24,7 +24,7 @@ In order to work it needs power. Unfortunately the C64 joystick ports DON'T have
   * It can be connected to a computer
   * or using a wall charger
 
-<img class="" src="https://lh3.googleusercontent.com/5Uu3MAIQ_RIE29ikC09bHBXHAzwis3HkVDjGqDbxMKvbfI3rasiv1oEhlubsxZ-cT4UjkOkFRri1iA=w2228-h1670-no" width="326" height="244" />
+<img class="" src="https://lh3.googleusercontent.com/gO196vEiyIvPG43L3LmXH4K_y4zXNSC6uZXRtPKSt0Z_Xk__K37EgIHbk_xd5m6lqoPpWWHai93PQg=w1808-h1356-no" width="326" height="244" />
 
 ### Booting the WiFi device
 
@@ -277,9 +277,9 @@ If you want to avoid the soldering, you can __[order an already assembled PCB f
 
 After assembling the PCB, it should look like this:
 
-<img class="" src="https://lh3.googleusercontent.com/yPbYMpfy4th501PObRIPJa0vGIGubWI4YZfMf8zcqMMhFt0tN0teuPUGoLKu244fXXxJ_c4n95gNrQ=w2464-h1670-no" width="468" height="318" />
+<img src="https://lh3.googleusercontent.com/gNlc4ppVzey4jhuf_j-VzKw-Jdcv63ByIR6JOywGI48dioUzq06OsExR6KD_s7UWr7z4JC3EGJJ5qg=w1808-h1356-no" width="326" height="244" />
 
-<img src="https://lh3.googleusercontent.com/EzcB9pZfIeSFlQqB6ONgqUOGPxgydRiCND_uexf3BiooADe20sfCTA-bgKs2NJLEUY6ANjG9HFU8dA=w2528-h1586-no" width="482" height="302" />
+<img src="https://lh3.googleusercontent.com/VXA3M_wwyRIup84gGqBnlWgJilyodOyv67OypORbBkIm7MZrPq2ZvD0D3BRJUpRi5wB9O9YQp6pk1w=w1808-h1550-no" width="357" height="306" />
 
 
 ## Troubleshooting
