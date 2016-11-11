@@ -109,8 +109,8 @@
 <wire x1="0.145" y1="0.05" x2="24.43" y2="0.05" width="0" layer="20"/>
 <wire x1="24.43" y1="0.05" x2="24.43" y2="17.8" width="0" layer="20"/>
 <text x="23.75" y="12" size="0.8128" layer="21" rot="R90">&gt;REVISION</text>
-<text x="3.5" y="10.75" size="0.8128" layer="22" rot="MR90">http://retro.moe</text>
-<text x="3" y="17.75" size="0.8128" layer="22" rot="MR270">BOTTOM</text>
+<text x="4" y="9.75" size="0.8128" layer="22" rot="MR90">http://retro.moe</text>
+<text x="3" y="16.25" size="0.8128" layer="22" rot="MR270">BOTTOM</text>
 <text x="1.5" y="12.75" size="0.8128" layer="21" rot="R90">TOP</text>
 </plain>
 <libraries>
