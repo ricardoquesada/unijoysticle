@@ -17,6 +17,7 @@ limitations under the License.
 
 #include "mainwindow.h"
 #include <QApplication>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {

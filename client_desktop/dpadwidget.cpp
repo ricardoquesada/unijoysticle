@@ -28,6 +28,10 @@ limitations under the License.
 #include "utils.h"
 #include "preferences.h"
 
+static const int ZOOM_LEVEL = 1;
+static const float WIDTH = 480.0f;
+static const float HEIGHT = 260.0f;
+
 DpadWidget::DpadWidget(QWidget *parent)
     : BaseJoyMode(parent)
     , _joyState(0)
@@ -36,6 +40,7 @@ DpadWidget::DpadWidget(QWidget *parent)
     , _swapAB(false)
     , _gamepadId(-1)
     , _gamepad(nullptr)
+    , _zoomLevel(ZOOM_LEVEL)
 
 {
     QImage button(":/images/button.png");
@@ -55,6 +60,8 @@ DpadWidget::DpadWidget(QWidget *parent)
 
     // default: joy 1
     _proto.joyControl = 1;
+
+    setMinimumSize(QSize(WIDTH, HEIGHT));
 }
 
 void DpadWidget::paintEvent(QPaintEvent *event)
@@ -63,6 +70,11 @@ void DpadWidget::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    const auto s = size();
+    const auto tx = (s.width() - (WIDTH * _zoomLevel)) / 2.0f;
+    const auto ty = (s.height() - (HEIGHT * _zoomLevel)) / 2.0;
+    painter.translate(tx, ty);
+    painter.scale(_zoomLevel, _zoomLevel);
 
     // paint with default background color
     painter.fillRect(event->rect(), QWidget::palette().color(QWidget::backgroundRole()));
@@ -103,12 +115,10 @@ void DpadWidget::paintEvent(QPaintEvent *event)
         0b1010, /* bottom-right */
     };
 
-    auto s = size();
-
     for(int i=0; i<9; ++i) {
         // 0.5 is the "anchor point". Use its center as the anchor point
-        int x = (coords[i].x() - 0.5) * imageSize.width() + s.width() / 2;
-        int y = (coords[i].y() - 0.5) * imageSize.height() + s.height() / 2;
+        int x = (coords[i].x() - 0.5) * imageSize.width() + WIDTH / 2;
+        int y = (coords[i].y() - 0.5) * imageSize.height() + HEIGHT / 2;
 
         QTransform rotating;
         rotating.rotate(angles[i]);
@@ -129,6 +139,15 @@ void DpadWidget::paintEvent(QPaintEvent *event)
     }
 
     painter.end();
+}
+
+void DpadWidget::resizeEvent(QResizeEvent* event)
+{
+    Q_UNUSED(event);
+
+    // keep aspect ratio
+    _zoomLevel = qMin(size().width() / WIDTH, size().height() / HEIGHT);
+    update();
 }
 
 void DpadWidget::mousePressEvent(QMouseEvent *event)

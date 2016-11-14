@@ -27,11 +27,15 @@ limitations under the License.
 
 #include "utils.h"
 
+static const int ZOOM_LEVEL = 1;
+static const float WIDTH = 480.0f;
+static const float HEIGHT = 260.0f;
 
 CommandoWidget::CommandoWidget(QWidget *parent)
     : BaseJoyMode(parent)
     , _gamepadId(-1)
     , _gamepad(nullptr)
+    , _zoomLevel(ZOOM_LEVEL)
 {
     QImage button(":/images/button.png");
     QImage arrow_top_right(":/images/arrow_bold_top_right.png");
@@ -53,12 +57,21 @@ CommandoWidget::CommandoWidget(QWidget *parent)
     _proto.joyControl = 3;
     _joyState[0] = 0;
     _joyState[1] = 0;
+
+    setMinimumSize(QSize(WIDTH, HEIGHT));
 }
 
 void CommandoWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.begin(this);
+
+    const auto s = size();
+    const auto tx = (s.width() - (WIDTH * _zoomLevel)) / 2.0f;
+    const auto ty = (s.height() - (HEIGHT * _zoomLevel)) / 2.0;
+    painter.translate(tx, ty);
+    painter.scale(_zoomLevel, _zoomLevel);
+
     painter.setRenderHint(QPainter::Antialiasing);
 
 
@@ -101,13 +114,11 @@ void CommandoWidget::paintEvent(QPaintEvent *event)
         0b1010, /* bottom-right */
     };
 
-    auto s = size();
-
     for (int j=0; j<2; ++j) {
         for(int i=0; i<9; ++i) {
             // 0.5 is the "anchor point". Use its center as the anchor point
-            int x = (coords[i].x() - 0.5) * imageSize.width() + (s.width() / 4) * (j*2+1);
-            int y = (coords[i].y() - 0.5) * imageSize.height() + s.height() / 2;
+            int x = (coords[i].x() - 0.5) * imageSize.width() + (WIDTH / 4) * (j*2+1);
+            int y = (coords[i].y() - 0.5) * imageSize.height() + HEIGHT / 2;
 
             QTransform rotating;
             rotating.rotate(angles[i]);
@@ -129,6 +140,15 @@ void CommandoWidget::paintEvent(QPaintEvent *event)
     }
 
     painter.end();
+}
+
+void CommandoWidget::resizeEvent(QResizeEvent* event)
+{
+    Q_UNUSED(event);
+
+    // keep aspect ratio
+    _zoomLevel = qMin(size().width() / WIDTH, size().height() / HEIGHT);
+    update();
 }
 
 void CommandoWidget::mousePressEvent(QMouseEvent *event)

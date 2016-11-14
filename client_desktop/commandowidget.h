@@ -58,6 +58,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
     void registerGamepad();
     void unregisterGamepad();
@@ -73,4 +74,6 @@ protected:
 
     int _gamepadId;
     QGamepad* _gamepad;
+
+    float _zoomLevel;
 };
