@@ -1,3 +1,10 @@
+v0.4.0 - 2016-11-??
+
+- [NEW] Layout: Added new Datassette pass-through connector PCB.
+		Useful to power the UniJoystiCle board from the datasette port
+- [FIX] Client Desktop: Autoresize in Commando and D-Pad mode
+- [FIX] Client Desktop: Win client compiled with Qt5.7 so that it works on Win XP
+
 v0.4.0rc - 2016-11-07
 
 - Includes:
