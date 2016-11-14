@@ -50,10 +50,6 @@ DpadWidget::DpadWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-    auto gamepads = QGamepadManager::instance()->connectedGamepads();
-    if (!gamepads.isEmpty())
-        onGamepadConnected(gamepads.at(0));
-
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
 

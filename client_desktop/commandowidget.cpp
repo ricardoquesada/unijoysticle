@@ -45,9 +45,6 @@ CommandoWidget::CommandoWidget(QWidget *parent)
     _redImages[1] = utils_tinted(arrow_right, QColor(255,0,0), QPainter::CompositionMode_Source);
     _redImages[2] = utils_tinted(button, QColor(255,0,0), QPainter::CompositionMode_Source);
 
-    connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &CommandoWidget::onGamepadConnected);
-    connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &CommandoWidget::onGamepadDisconnected);
-
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     setFocus();
 

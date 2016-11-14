@@ -34,7 +34,7 @@ enum JoyBits {
 };
 
 // Protocol v2
-#pragma pack(push, 0)
+#pragma pack(push, 1)
 struct ProtoHeader {
     uint8_t version;        // should be 2
     uint8_t joyControl;     // 1, 2, or 3. which joysticks are enabled
