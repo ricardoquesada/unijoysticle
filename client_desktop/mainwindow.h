@@ -42,6 +42,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    static MainWindow *getInstance();
+
 public slots:
     void onSubWindowActivated(QMdiSubWindow* subwindow);
     void onDeviceDiscovered (const QHostInfo& info);

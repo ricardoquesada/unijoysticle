@@ -19,7 +19,7 @@ win32 {
 
 TEMPLATE = app
 
-VERSION = 0.4.1
+VERSION = 0.4.2
 GIT_VERSION = $$system(git describe --abbrev=4 --dirty --always --tags)
 DEFINES += GIT_VERSION=\\\"$$GIT_VERSION\\\" VERSION=\\\"$$VERSION\\\"
 

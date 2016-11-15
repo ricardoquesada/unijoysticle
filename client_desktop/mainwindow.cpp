@@ -25,6 +25,7 @@ limitations under the License.
 #include <QDesktopServices>
 #include <QUrl>
 #include <QCloseEvent>
+#include <QTimer>
 
 #include "aboutdialog.h"
 #include "preferences.h"
@@ -92,11 +93,25 @@ MainWindow::MainWindow(QWidget *parent)
     setUnifiedTitleAndToolBarOnMac(true);
 
     restoreSettings();
+
+    QTimer::singleShot(60, [&](){
+        statusBar()->showMessage(tr("UniJoystiCle Controller %1").arg(VERSION));
+    });
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+MainWindow* MainWindow::getInstance()
+{
+    for (auto &widget: qApp->topLevelWidgets()) {
+        if (dynamic_cast<MainWindow*>(widget))
+            return static_cast<MainWindow*>(widget);
+    }
+    qDebug() << "MainWindow not found";
+    return nullptr;
 }
 
 void MainWindow::onSubWindowActivated(QMdiSubWindow* subwindow)

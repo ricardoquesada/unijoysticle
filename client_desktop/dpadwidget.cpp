@@ -24,9 +24,11 @@ limitations under the License.
 #include <QTransform>
 #include <QImage>
 #include <QDebug>
+#include <QStatusBar>
 
 #include "utils.h"
 #include "preferences.h"
+#include "mainwindow.h"
 
 static const int ZOOM_LEVEL = 1;
 static const float WIDTH = 480.0f;
@@ -317,43 +319,52 @@ void DpadWidget::onGamepadConnected(int id)
     if (!_gamepad) {
         _gamepadId = id;
         _gamepad = new QGamepad(id, this);
-
-        connect(_gamepad, &QGamepad::axisLeftXChanged, this, &DpadWidget::onAxisLeftXChanged);
-        connect(_gamepad, &QGamepad::axisLeftYChanged, this, &DpadWidget::onAxisLeftYChanged);
-        connect(_gamepad, &QGamepad::buttonAChanged, this, &DpadWidget::onButtonAChanged);
-        connect(_gamepad, &QGamepad::buttonBChanged, this, &DpadWidget::onButtonBChanged);
-        connect(_gamepad, &QGamepad::buttonUpChanged, this, &DpadWidget::onButtonUpChanged);
-        connect(_gamepad, &QGamepad::buttonDownChanged, this, &DpadWidget::onButtonDownChanged);
-        connect(_gamepad, &QGamepad::buttonLeftChanged, this, &DpadWidget::onButtonLeftChanged);
-        connect(_gamepad, &QGamepad::buttonRightChanged, this, &DpadWidget::onButtonRightChanged);
     }
+
+    connect(_gamepad, &QGamepad::axisLeftXChanged, this, &DpadWidget::onAxisLeftXChanged);
+    connect(_gamepad, &QGamepad::axisLeftYChanged, this, &DpadWidget::onAxisLeftYChanged);
+    connect(_gamepad, &QGamepad::buttonAChanged, this, &DpadWidget::onButtonAChanged);
+    connect(_gamepad, &QGamepad::buttonBChanged, this, &DpadWidget::onButtonBChanged);
+    connect(_gamepad, &QGamepad::buttonUpChanged, this, &DpadWidget::onButtonUpChanged);
+    connect(_gamepad, &QGamepad::buttonDownChanged, this, &DpadWidget::onButtonDownChanged);
+    connect(_gamepad, &QGamepad::buttonLeftChanged, this, &DpadWidget::onButtonLeftChanged);
+    connect(_gamepad, &QGamepad::buttonRightChanged, this, &DpadWidget::onButtonRightChanged);
+
+    MainWindow::getInstance()->statusBar()->showMessage(tr("Gamepad: Connected '%1'").arg(_gamepad->name()));
+    qDebug() << "Gamepad: Connected";
 }
 
 void DpadWidget::onGamepadDisconnected(int id)
 {
-    if (_gamepadId == id) {
+    MainWindow::getInstance()->statusBar()->showMessage(tr("Gamepad: Disconnected"));
+    qDebug() << "Gamepad: Disconnected";
+
+    if (_gamepad && _gamepadId == id) {
         unregisterGamepad();
     }
 }
 
 void DpadWidget::enable(bool enabled)
 {
-    if (enabled)
-        registerGamepad();
-    else
+    if (enabled) {
+        MainWindow::getInstance()->statusBar()->showMessage(tr("Gamepad: Not found"));
+        Q_ASSERT(!_gamepad && _gamepadId == -1 && "logig error");
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
+        connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
+
+        auto& connectedDevices = QGamepadManager::instance()->connectedGamepads();
+        if (connectedDevices.length() > 0)
+            onGamepadConnected(connectedDevices.at(0));
+    } else {
         unregisterGamepad();
+
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
+        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
+    }
 }
 
 void DpadWidget::registerGamepad()
 {
-    if (!_gamepad) {
-        connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
-        connect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
-
-        auto connectedDevices = QGamepadManager::instance()->connectedGamepads();
-        if (connectedDevices.length() > 0)
-            onGamepadConnected(connectedDevices.at(0));
-    }
 }
 
 void DpadWidget::unregisterGamepad()
@@ -367,9 +378,6 @@ void DpadWidget::unregisterGamepad()
         disconnect(_gamepad, &QGamepad::buttonDownChanged, this, &DpadWidget::onButtonDownChanged);
         disconnect(_gamepad, &QGamepad::buttonLeftChanged, this, &DpadWidget::onButtonLeftChanged);
         disconnect(_gamepad, &QGamepad::buttonRightChanged, this, &DpadWidget::onButtonRightChanged);
-
-        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &DpadWidget::onGamepadConnected);
-        disconnect(QGamepadManager::instance(), &QGamepadManager::gamepadDisconnected, this, &DpadWidget::onGamepadDisconnected);
 
         delete _gamepad;
         _gamepad = nullptr;
