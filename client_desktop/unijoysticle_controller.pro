@@ -12,7 +12,7 @@ TARGET = unijoysticle_controller
 target.path = $${PREFIX}/bin
 INSTALLS += target
 win32 {
-    DESTDIR = ..
+    DESTDIR = ./
 } else {
     DESTDIR = bin/
 }
