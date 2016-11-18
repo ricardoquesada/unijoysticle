@@ -4,12 +4,13 @@
 * [The WiFi Device](#the-wifi-device)
 * [The Smartphone client controller](#smartphone-client-application)
 * [The Desktop client controller](#desktop-client-application)
-* [How to build one device](#how-to-build-one-device)
+* [The protocol](#the_protocol)
+* [Building the WiFi Device](#building_the_wifi_device)
 * [Troubleshooting](#troubleshooting)
 
 
 ## About
-The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more! It allows you to control the joysticks remotely... with anything that you have in mind like:
+The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more! It allows you to control the joystick lines remotely, with anything that you have in mind like:
 
 * play c64 games using modern game controllers (Xbox, iOS or Android game controllers)
 * play [The Uni Games](https://github.com/ricardoquesada/c64-the-uni-games), a c64 unicycle game, using a real unicycle
@@ -228,7 +229,43 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY
 
 FIXME
 
-## How to build one device
+## The Protocol
+
+You can create your own UniJoystiCle controller. Your controller just needs to "speak" the UniJoystiCle protocol, which is very simple.
+
+The WiFi receiver listens to UDP port 6464 and it expects a packet of 4 bytes:
+```
++----+----+----+----+
+|ver |mode|joy1|joy2|
++----+----+----+----+
+
+byte 0, version: must be 2
+byte 1, mode: contains state for which joysticks?. 1=joy1, 2=joy2, 3=joy1 and joy2
+byte 2, joy1 state
+byte 3: joy2 state
+```
+
+Joystick state values:
+* bit 0: Joystick up enable/disable
+* bit 1: Joystick down enable/disable
+* bit 2: Joystick left enable/disable
+* bit 3: Joysticke right enable/disable
+* bit 4: Joysticke fire enable/disable
+* bits 5,6,7: unused
+
+Example, a packet with these bytes:
+
+```
+0x02, 0x03, 0x11, 0x1f
+```
+
+* byte 0 = 0x02
+* byte 1 = 0x03: It means the both joy1 and joy2 states are being sent
+* byte 2 = 0x11 = %00010001 = It means that both fire and up are enabled. the rest are disabled
+* byte 3 = 0x1f = %00011111 = It means that all lines are enabled: up, down, left, right and fire
+
+
+## Building the WiFi device
 
 ### Assembling the PCB
 
@@ -239,7 +276,9 @@ The hardware as well as the software are open source. So you can build one yours
 
 You will need the following components (BOM):
 
-* 1 x [Wemos D1 Mini v2](https://www.aliexpress.com/store/product/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/1331105_32529101036.html)
+* 1 x Wemos D1 Mini device. Any of these devices:
+  * [Wemos D1 Mini v2](https://www.aliexpress.com/store/product/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/1331105_32529101036.html)
+  * or [Wemos D1 Mini Pro](https://www.aliexpress.com/store/product/WEMOS-D1-mini-Pro-16M-bytes-external-antenna-connector-ESP8266-WIFI-Internet-of-Things-development-board/1331105_32724692514.html)
 * 2 x [DB9 female](https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DF-09-A-KG-T2S/AE10921-ND/1241800)
 * 3 x [4066 IC](https://www.digikey.com/product-detail/en/texas-instruments/SN74HC4066N/296-8329-5-ND/376726)
 * 3 x [sockets for the ICs](https://www.digikey.com/product-detail/en/on-shore-technology-inc/SA143000/ED3014-ND/3313545)
