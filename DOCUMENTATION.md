@@ -225,7 +225,7 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY)
 
-## Smartphone Client Application
+## Desktop Client Application
 
 FIXME
 
