@@ -305,8 +305,11 @@ After assembling the PCB, it should look like this:
 ### Instaling the firmware
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
-* Install the [CH340 Serial-to-USB driver](https://www.wemos.cc/downloads)
-  * For macOS Sierra, [follow these instructions](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/)
+* If you are using the Wemos D1 Mini v2:
+   * Install the [CH340 USB-to-UART driver](https://www.wemos.cc/downloads)
+   * For macOS Sierra, [follow these instructions](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/)
+* If you are using the Wemos D1 Mini Pro:
+   * Install the [CP2104 USB-to-UART driver](http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx)
 
 And from here you have two options: the "easy" one for users, and the "hard" one for developers:
 
