@@ -9,7 +9,12 @@
 
 
 ## About
-The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more!
+The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more! It allows you to control the joysticks remotely... with anything that you have in mind like:
+
+* play games using game controllers (Xbox, iOS or Android controllers)
+* play unicycle games using a real unicycle
+* use you c64 as a home automation device
+* and more!
 
 It consists of two major parts:
 
@@ -218,6 +223,10 @@ __Compatibility:__
 * [Commodore Home](https://retro.moe/2016/10/31/retro-challenge-commodore-home/), home automation for the masses, not the classes
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY)
+
+## Smartphone Client Application
+
+FIXME
 
 ## How to build one device
 
