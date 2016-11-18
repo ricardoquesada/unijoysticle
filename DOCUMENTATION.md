@@ -4,8 +4,8 @@
 * [The WiFi Device](#the-wifi-device)
 * [The Smartphone client controller](#smartphone-client-application)
 * [The Desktop client controller](#desktop-client-application)
-* [The protocol](#the_protocol)
-* [Building the WiFi Device](#building_the_wifi_device)
+* [The protocol](#the-protocol)
+* [Building the WiFi Device](#building-the-wifi-device)
 * [Troubleshooting](#troubleshooting)
 
 
