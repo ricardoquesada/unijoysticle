@@ -253,7 +253,7 @@ Joystick state values:
 * bit 4: Joysticke fire enable/disable
 * bits 5,6,7: unused
 
-Example, a packet with these bytes:
+Example, a packet with these bytes means:
 
 ```
 0x02, 0x03, 0x11, 0x1f
