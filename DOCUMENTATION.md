@@ -1,5 +1,14 @@
 # The UniJoystiCle™ Documentation
 
+* [About](#about)
+* [The WiFi Device](#the-wifi-device)
+* [The Smartphone client controller](#smartphone-client-application)
+* [The Desktop client controller](#desktop-client-application)
+* [How to build one device](#how-to-build-one-device)
+* [Troubleshooting](#troubleshooting)
+
+
+## About
 The UniJoystiCle is a unicycle simulator for the Commodore 64, and much more!
 
 It consists of two major parts:
@@ -40,7 +49,7 @@ By default, the WiFi device will start in Access Point mode, and will create a W
 
 ...and then launch the UniJoystiCle smartphone app.
 
-## Client Application
+## Smartphone Client Application
 
 The client application can be download for free from the App Store / Google Play:
 
@@ -210,51 +219,9 @@ __Compatibility:__
 
 __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY)
 
-## Installing the firmware
+## How to build one device
 
-* Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
-* Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
-* Install the [CH340 Serial-to-USB driver](https://www.wemos.cc/downloads)
-  * For macOS Sierra, [follow these instructions](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/)
-
-And from here you have two options: the "easy" one for users, and the "hard" one for developers:
-
-### Option A: For users only
-
-Either you can use:
-* [esptool.py](https://github.com/themadinventor/esptool) (a CLI tool for Windows, Linux and Mac)
-* or [NodeMCU flasher](https://github.com/nodemcu/nodemcu-flasher) a GUI tool (Windows only)
-
-For `esptool.py` you should do:
-
-* Download the latest UniJoystiCle firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
-* Install [esptool](https://github.com/themadinventor/esptool)
-  * `$ pip install esptool`
-* Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
-
-In case it is needed, it uses a:
-  * ESP8266-12e module
-  * It has a 4Mbyte (32Mbit) flash
-  * use 0x00000000 as offset
-
-For detailed info, read: [Flashing the NodeMCU firmware](https://nodemcu.readthedocs.io/en/dev/en/flash/)
-
-Since firmware v0.4.2, manual upgrading no longer needed to. It has an option to upgrade itself.
-
-### Option B: For developers only
-* Install [PlatformIO](http://platformio.org)
-* Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
-* And do `make && make upload`
-
-Example:
-```
-$ git clone https://github.com/ricardoquesada/unijoysticle.git
-$ cd unijoysticle/esp8266_firmware/firmware
-$ make
-$ make upload
-```
-
-## Assembling the PCB
+### Assembling the PCB
 
 The hardware as well as the software are open source. So you can build one yourself. The schematic and board files are in [Eagle](https://cadsoft.io/) format:
 
@@ -280,7 +247,48 @@ After assembling the PCB, it should look like this:
 <img src="https://lh3.googleusercontent.com/gNlc4ppVzey4jhuf_j-VzKw-Jdcv63ByIR6JOywGI48dioUzq06OsExR6KD_s7UWr7z4JC3EGJJ5qg=w1808-h1356-no" width="326" height="244" />
 
 <img src="https://lh3.googleusercontent.com/VXA3M_wwyRIup84gGqBnlWgJilyodOyv67OypORbBkIm7MZrPq2ZvD0D3BRJUpRi5wB9O9YQp6pk1w=w1808-h1550-no" width="357" height="306" />
+### Instaling the firmware
+* Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
+* Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
+* Install the [CH340 Serial-to-USB driver](https://www.wemos.cc/downloads)
+  * For macOS Sierra, [follow these instructions](https://tzapu.com/ch340-ch341-serial-adapters-macos-sierra/)
 
+And from here you have two options: the "easy" one for users, and the "hard" one for developers:
+
+#### Option A: For users only
+
+Either you can use:
+* [esptool.py](https://github.com/themadinventor/esptool) (a CLI tool for Windows, Linux and Mac)
+* or [NodeMCU flasher](https://github.com/nodemcu/nodemcu-flasher) a GUI tool (Windows only)
+
+For `esptool.py` you should do:
+
+* Download the latest UniJoystiCle firmware from here: [unijoysticle_firmware.bin](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_firmware.bin)
+* Install [esptool](https://github.com/themadinventor/esptool)
+  * `$ pip install esptool`
+* Execute: `$ sudo python esptool.py --port /dev/cu.SLAB_USBtoUART write_flash -fm dio -fs 32m 0x00000 /path/to/unijoysticle_firmware.bin`
+
+In case it is needed, it uses a:
+  * ESP8266-12e module
+  * It has a 4Mbyte (32Mbit) flash
+  * use 0x00000000 as offset
+
+For detailed info, read: [Flashing the NodeMCU firmware](https://nodemcu.readthedocs.io/en/dev/en/flash/)
+
+Since firmware v0.4.2, manual upgrading no longer needed to. It has an option to upgrade itself.
+
+#### Option B: For developers only
+* Install [PlatformIO](http://platformio.org)
+* Clone the [UniJoystiCle github repo]("https://github.com/ricardoquesada/unijoysticle)
+* And do `make && make upload`
+
+Example:
+```
+$ git clone https://github.com/ricardoquesada/unijoysticle.git
+$ cd unijoysticle/esp8266_firmware/firmware
+$ make
+$ make upload
+```
 
 ## Troubleshooting
 
