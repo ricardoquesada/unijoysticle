@@ -61,11 +61,6 @@ The client application can be download for free from the App Store / Google Play
 
 <a href="https://itunes.apple.com/us/app/unijoysticle-controller/id1130131741?mt=8"><img src="https://lh3.googleusercontent.com/W88cz-0H1Xet1zHxNqrgjTsFjOMdxut9IwKQzOA0yrgjjGt6eGp2N3rq3AanWojjffyIEfCesYz6O18=w5760-h3600-no" width="162" height="48" /></a><a href='https://play.google.com/store/apps/details?id=moe.retro.unijoysticle&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://lh3.googleusercontent.com/nUm_upw_pznWfcD9pp71LPhpwdTMd6L7LVBK2Bw3UoAaiD0AFkTc1P6Gfl1MXiy7mOaApxVLdUMWXA=w564-h168-no' width="162" height="48"/></a>
 
-The desktop application can be downloaded from here:
-
-* Mac: [UniJoystiCle Controller.dmg](http://ricardoquesada.github.io/unijoysticle/bin/UniJoystiCle%20Controller-v0.4.0.dmg)
-* Win32: [unijoysticle_controller.win32.zip](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_controller-v0.4.0.win32.zip)
-
 It sends "joystick commands" to the WiFi device. These commands are regular joystick movements: _Up_, _Down_, _Left_, _Right_ and _Fire_. It can send one or multiple commands at the time.
 
 There are five modes: _UniJoystiCle mode_, _D-pad mode_, _Commando mode_, _Gyruss mode_ and _Commodore Home mode_.
@@ -174,14 +169,20 @@ For Android:
 
 
 In this mode you control both joysticks at the same time. A game controller is needed for this. Can't be played with the "virtual" dpad.
-It is called "Commando" mode, since it allows you to play the Commando game by using:
+It is called "Commando" mode, since it allows you to play games like Commando, Turrican II or Dropzone since:
 
-* The dpad to control the movements of the Hero
-* Button A to fire (mapped to Joy#2 fire)
-* Button B to throw grenades. Spacebar is not needed anymore! (mapped to Joy#1 fire)
-* and Button X and Y are mapped to Joy#1-down and Joy#1-right respectively
+* The dpad and the left stick are mapped to Joystick #2 direction movements
+* The right stick is mapped to Joysticke #1 directional movements
+* Button A is mapped to Joystick #2 Fire
+* Button B is mapped to Joystick #1 Fire
+* Button X is mapped to Joystick #1 Down
+* Button Y is mapped to Joystick #1 Rigth
 
-You can do much more than that, since you control both joysticks. So you can play multiplayer games controlling both players at the same time. Not for the mere mortals.
+For example:
+
+ * in Commando you can throw grenades by pressing button B.
+ * in Turrican II you can use the special weapon by pressing button B
+ * in Dropzone you can use button B to throw bombs and button X to active cloak
 
 __Compatibility:__
 
@@ -228,6 +229,12 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY
 ## Desktop Client Application
 
 FIXME
+The desktop application can be downloaded from here:
+
+* Mac: [UniJoystiCle Controller.dmg](http://ricardoquesada.github.io/unijoysticle/bin/UniJoystiCle%20Controller-v0.4.0.dmg)
+* Win32: [unijoysticle_controller.win32.zip](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_controller-v0.4.0.win32.zip)
+
+
 
 ## The Protocol
 
