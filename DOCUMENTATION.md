@@ -217,9 +217,9 @@ __Note__: This mode is only avaible on iOS. Android support coming soon.
 
 ### Commodore Home mode
 
-<img class="" src="https://lh3.googleusercontent.com/TcfUvufZWZBwNOpHt9y6_y6MEsXQ90xKGHmvJQAzr0p7kCwuvAfgm4LqLzYp0jDJMphJHG5LhnZQ25k=w5760-h3600-no" width="344" height="194" />
+<img class="" src="https://lh3.googleusercontent.com/hndS8fz9jWvdk7d-T9Qa1c9oBDD2zN--CpyJiE9m-RjVgUugtf77f-OvX2cfJP2XTtx-b8rAP5nOag=w1242-h1557-no" width="400" height="501" />
 
-This mode is not meant to play games. Instead, is meant to convert the joysticks signals into a numbers from 0 to 31. Since each joystick has 5 lines (5 bits), we have 5 ^^ 2 == 32 combinations.
+For more information about this mode, please visit the [Commodore Home homepage](https://retro.moe/2016/10/31/retro-challenge-commodore-home/)
 
 __Compatibility:__
 
@@ -270,6 +270,7 @@ The keyboard mapping is:
 
 <img src="https://lh3.googleusercontent.com/5nl8LjcW02x43n7JOmiJ_eukabkX9keB213YIesUvM_qyCmvOYe9IK8h7c4uqfu6yp5E8Z_sOkd1Cw=w1432-h676-no" width=600 height=283>
 
+For more information about this mode, please visit the [Commodore Home homepage](https://retro.moe/2016/10/31/retro-challenge-commodore-home/)
 
 ## The Protocol
 
