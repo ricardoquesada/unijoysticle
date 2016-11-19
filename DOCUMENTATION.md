@@ -335,7 +335,7 @@ After assembling the PCB, it should look like this:
 
 <img src="https://lh3.googleusercontent.com/gNlc4ppVzey4jhuf_j-VzKw-Jdcv63ByIR6JOywGI48dioUzq06OsExR6KD_s7UWr7z4JC3EGJJ5qg=w1808-h1356-no" width="326" height="244" />
 
-<img src="https://lh3.googleusercontent.com/VXA3M_wwyRIup84gGqBnlWgJilyodOyv67OypORbBkIm7MZrPq2ZvD0D3BRJUpRi5wB9O9YQp6pk1w=w1808-h1550-no" width="357" height="306" />
+<img src="https://lh3.googleusercontent.com/VXA3M_wwyRIup84gGqBnlWgJilyodOyv67OypORbBkIm7MZrPq2ZvD0D3BRJUpRi5wB9O9YQp6pk1w=w1808-h1550-no" width="326" height="279" />
 ### Instaling the firmware
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
