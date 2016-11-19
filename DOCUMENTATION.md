@@ -219,8 +219,6 @@ __Note__: This mode is only avaible on iOS. Android support coming soon.
 
 <img class="" src="https://lh3.googleusercontent.com/hndS8fz9jWvdk7d-T9Qa1c9oBDD2zN--CpyJiE9m-RjVgUugtf77f-OvX2cfJP2XTtx-b8rAP5nOag=w1242-h1557-no" width="400" height="501" />
 
-For more information about this mode, please visit the [Commodore Home homepage](https://retro.moe/2016/10/31/retro-challenge-commodore-home/)
-
 __Compatibility:__
 
 * [Commodore Home](https://retro.moe/2016/10/31/retro-challenge-commodore-home/), home automation for the masses, not the classes
@@ -270,7 +268,9 @@ The keyboard mapping is:
 
 <img src="https://lh3.googleusercontent.com/5nl8LjcW02x43n7JOmiJ_eukabkX9keB213YIesUvM_qyCmvOYe9IK8h7c4uqfu6yp5E8Z_sOkd1Cw=w1432-h676-no" width=600 height=283>
 
-For more information about this mode, please visit the [Commodore Home homepage](https://retro.moe/2016/10/31/retro-challenge-commodore-home/)
+__Compatibility:__
+
+* [Commodore Home](https://retro.moe/2016/10/31/retro-challenge-commodore-home/), home automation for the masses, not the classes
 
 ## The Protocol
 
