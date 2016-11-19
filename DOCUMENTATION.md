@@ -247,9 +247,9 @@ It can be used with a game controller, or with the keyboard.
 For win32, it supports any Xinput controller (like the xbox 360 controllers), and for Mac, it supports any MFi controller.
 The keyboard mapping is:
 
-* cursor keys: directional movement
-* z: fire
-* x: up
+* cursor arrows: directional movement
+* `z`: fire
+* `x`: up
 
 
 ### Commando mode
@@ -260,10 +260,10 @@ It can be used with a game controller, or with the keyboard.
 For win32, it supports any Xinput controller (like the xbox 360 controllers), and for Mac, it supports any MFi controller.
 The keyboard mapping is:
 
-* asdw: Joy #1 directional movement
-* x: Joy #1 fire
-* jkli and cursor arrows: Joy #2 direction movement
-* z: Joy #2 fire
+* `a`, `s`, `d`, and `w`: Joy #1 directional movement
+* `x`: Joy #1 fire
+* `j`, `k`, `l`, and `i` and cursor arrows: Joy #2 direction movement
+* `z`: Joy #2 fire
 
 ### Commodore Home mode
 
