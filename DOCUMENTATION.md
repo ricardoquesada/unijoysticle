@@ -119,7 +119,7 @@ __Video:__ [Using one foot to play C64anabalt](https://www.youtube.com/watch?v=n
 
 ### D-pad mode
 
-<img class="" src="https://lh3.googleusercontent.com/j2hgT6dzu-wSK1eEwbvD97THXVmokBJV3RkF1lzUeKNXd4A9eqhKjyRG_5rlkAtHfWi4_T6sw1AFdB8=w5760-h3600-no" width="343" height="193" />
+<img class="" src="https://lh3.googleusercontent.com/j2hgT6dzu-wSK1eEwbvD97THXVmokBJV3RkF1lzUeKNXd4A9eqhKjyRG_5rlkAtHfWi4_T6sw1AFdB8=w5760-h3600-no" width="304" height="171" />
 
 This mode converts the smartphone in a virtual D-pad. Just press the arrows for joysticks movements, and the circle to fire.
 
