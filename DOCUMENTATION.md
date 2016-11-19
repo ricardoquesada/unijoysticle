@@ -182,7 +182,7 @@ It is called "Commando" mode, since it allows you to play games like Commando, T
 For example:
 
  * in Commando you can throw grenades by pressing button B.
- * in Turrican II you can use the special weapon by pressing button B
+ * in Turrican II you can trigger the power lines by pressing button B, and trigger the super weapon by pressing button A and B simultaneously
  * in Dropzone you can use button B to throw bombs and button X to active cloak
 
 __Compatibility:__
