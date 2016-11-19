@@ -307,7 +307,6 @@ Example, a packet with these bytes means:
 * byte 2 = 0x11 = %00010001 = It means that both fire and up are enabled. the rest are disabled
 * byte 3 = 0x1f = %00011111 = It means that all lines are enabled: up, down, left, right and fire
 
-
 ## Building the WiFi device
 
 ### Assembling the PCB
@@ -338,6 +337,7 @@ After assembling the PCB, it should look like this:
 <img src="https://lh3.googleusercontent.com/gNlc4ppVzey4jhuf_j-VzKw-Jdcv63ByIR6JOywGI48dioUzq06OsExR6KD_s7UWr7z4JC3EGJJ5qg=w1808-h1356-no" width="326" height="244" />
 
 <img src="https://lh3.googleusercontent.com/VXA3M_wwyRIup84gGqBnlWgJilyodOyv67OypORbBkIm7MZrPq2ZvD0D3BRJUpRi5wB9O9YQp6pk1w=w1808-h1550-no" width="326" height="279" />
+
 ### Instaling the firmware
 * Make sure that the UniJoystiCle Wifi device is NOT plugged into the C64
 * Connect the UniJoystiCle Wifi device to the computer using the micro USB cable
@@ -457,13 +457,16 @@ If no data is received within that period of time, the joysticks are going to be
 
 ### The game controllers don't work
 
-* For iOS, all MFi (the official) and all iCade (the "old" unofficial) game controllers should work.
-* For Android, all the official (including Amazon, Nvidia, Moga game controllers) and the OUYA game controllers should work.
-* Make sure that the Game Controller is paired via Bluetooth to the smartphone
+* For iOS, both MFi and iCade (the "old" unofficial) game controllers should work.
+* For Android, any official (including Amazon, Nvidia, Moga game controllers) and the OUYA game controllers should work.
+* For Windows, any Xinput-based (the new joystick API) controller should work, like the Xbox 360. If you have a DirectInput-based game controller, try using [x360ce](http://www.x360ce.com/)
+* For Mac, any MFi game controllers are supported.
+* Make sure that the Game Controller is paired via Bluetooth to the smartphone / PC / Mac.
   * If unsure, [read this guide](http://www.howtogeek.com/242223/how-to-use-a-physical-game-controller-with-an-iphone-ipad-or-android-device/)
-* When the game controller is paired to the smartphone, you can use it in the D-pad or Commando modes:
+* When the game controller is paired to the smartphone/PC/Mac, you can use it in the D-pad and Commando modes:
   * on iOS you should see a legend that says "Game controller detected" (MFi controllers). Or nothing if using iCade controllers.
   * on Android you should see the name of the game controller in the title
+  * on Mac/Windows, you should see "Game controller: Connected" on the status bar (bottom-left)
 
 
 ### Some joystick movements work but others don't
