@@ -228,12 +228,46 @@ __Using this mode:__ [YouTube video](https://www.youtube.com/watch?v=wH3g09zsTdY
 
 ## Desktop Client Application
 
-FIXME
 The desktop application can be downloaded from here:
 
-* Mac: [UniJoystiCle Controller.dmg](http://ricardoquesada.github.io/unijoysticle/bin/UniJoystiCle%20Controller-v0.4.0.dmg)
-* Win32: [unijoysticle_controller.win32.zip](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_controller-v0.4.0.win32.zip)
+* Mac: [UniJoystiCle Controller.dmg](http://ricardoquesada.github.io/unijoysticle/bin/UniJoystiCle%20Controller-v0.4.2.dmg)
+* Win32: [unijoysticle_controller.win32.zip](http://ricardoquesada.github.io/unijoysticle/bin/unijoysticle_controller-v0.4.2.win32.zip)
 
+It supports three modes:
+
+* Dpad mode
+* Commando mode
+* Commodore Home mode
+
+### Dpad mode
+
+<img src="https://lh3.googleusercontent.com/k19d908XTUE2hsRCtrNIVNOuOfqmuFQqiO_ns4VKr9vUqAK-rb6RL9UnpsqK9tSVBdQMI8PFEKSlLWj92lAXid7In1a2SrPLtl5MNGNvfD6HXOHjFK147-ZnIhsw-G2J7rt0x9VHGIGVkbkxUJp9j8JFJIMQ3VxAuStKA1tgNrLTMeu-xeEWXeFqTA9Dqo3tD3XiIKFcyoK1ovv2_kimt1wTjezlOw0sECSsDw1f_Pgcg-N6VOjNaHen5kUrOfEQLnmep9EHAAihDabzOnGyA22nkv1pTQeQNwRx9Y9pIFOQhGHFacwg9Mxszq-0LhIQjqe1i5qnu207PNC21da63aDNVTkbIPNPwEwQaNnE7b1EpYDby83Y-xzltwT_CO7i1_L5PPfyTl03ADz5PSJidy9COKwnKTYgnhUlFpgJirNBvrXwG4efkf4nxudOpoLfq_I0XXiNEUSieM4KIVB96ZSNImNNP41wD-DMGeftHJTVjfjh8Q9Hvp-vjGpP51bJok4tgJYm0cNaS7FxNJW2rNj_42wjF6azha301PP6siRpCj5BwdCOgYB_OdS3jXLh8KSaKMnKILTX7YUoo1FrAX3C4mRbx62pIVzBQzDQrofOAPDCDw=w1432-h676-no">
+
+It can be used with a game controller, or with the keyboard.
+For win32, it supports any Xinput controller (like the xbox 360 controllers), and for Mac, it supports any MFi controller.
+The keyboard mapping is:
+
+* cursor keys: directional movement
+* z: fire
+* x: up
+
+
+### Commando mode
+
+<img src="https://lh3.googleusercontent.com/BCz46Sj9DGZuyTLOGrfnv9kNTMM11WGbTa3o73VrEqPGYzGm9bsczkOG5_7JRpBOsK0JMhSoF-UapQ=w1432-h676-no">
+
+It can be used with a game controller, or with the keyboard.
+For win32, it supports any Xinput controller (like the xbox 360 controllers), and for Mac, it supports any MFi controller.
+The keyboard mapping is:
+
+* asdw: Joy #1 directional movement
+* x: Joy #1 fire
+* jkli and cursor arrows: Joy #2 direction movement
+* z: Joy #2 fire
+
+### Commodore Home mode
+
+<img src="https://lh3.googleusercontent.com/5nl8LjcW02x43n7JOmiJ_eukabkX9keB213YIesUvM_qyCmvOYe9IK8h7c4uqfu6yp5E8Z_sOkd1Cw=w1432-h676-no">
 
 
 ## The Protocol
