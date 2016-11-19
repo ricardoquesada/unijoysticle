@@ -217,7 +217,7 @@ __Note__: This mode is only avaible on iOS. Android support coming soon.
 
 ### Commodore Home mode
 
-<img class="" src="https://lh3.googleusercontent.com/hndS8fz9jWvdk7d-T9Qa1c9oBDD2zN--CpyJiE9m-RjVgUugtf77f-OvX2cfJP2XTtx-b8rAP5nOag=w1242-h1557-no" width="400" height="501" />
+<img class="" src="https://lh3.googleusercontent.com/hndS8fz9jWvdk7d-T9Qa1c9oBDD2zN--CpyJiE9m-RjVgUugtf77f-OvX2cfJP2XTtx-b8rAP5nOag=w1242-h1557-no" width="304" height="380" />
 
 __Compatibility:__
 
