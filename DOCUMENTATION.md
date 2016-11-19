@@ -6,7 +6,7 @@
 * [The Desktop client controller](#desktop-client-application)
 * [The Protocol](#the-protocol)
 * [Building the WiFi Device](#building-the-wifi-device)
-* [Firmware Options](firmware-options)
+* [Firmware Options](#firmware-options)
 * [Troubleshooting](#troubleshooting)
 
 
