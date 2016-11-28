@@ -22,7 +22,9 @@ This repository contains:
 * [Documentation](DOCUMENTATION.md)
 * [Home page](http://retro.moe/unijoysticle)
 
-## Video
+## Videos
 
 [![The Uni Games v0.4](https://img.youtube.com/vi/ZLAgooXx4bo/0.jpg)](https://www.youtube.com/watch?v=ZLAgooXx4bo)
+
+[![Game Controllers](https://img.youtube.com/vi/2lZSAKbrHTo/0.jpg)](https://www.youtube.com/watch?v=2lZSAKbrHTo)
 
