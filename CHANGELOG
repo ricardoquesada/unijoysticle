@@ -1,4 +1,12 @@
-v0.4.0 - 2016-11-??
+v0.4.0 - 2016-11-27
+
+- Includes:
+  - PCB / Schematic: v0.4.1
+  - Firmware: v0.4.5
+  - Android client: v0.4.10
+  - iOS client: v0.4.6
+  - Desktop client: v0.4.2
+  - Datassette pass-through connector PCB: v0.0.1
 
 - [NEW] Layout: Added new Datassette pass-through connector PCB.
 		Useful to power the UniJoystiCle board from the datasette port
