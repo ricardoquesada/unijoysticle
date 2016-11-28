@@ -4,19 +4,25 @@
 
 The UniJoystiCle, the ultimate unicycle simulator.
 
-It allows you to play a Commodore 64 [unicycle video games](https://github.com/ricardoquesada/c64-the-uni-games) with your real unicycle. Unique immersive experience, much better than VR.
+It allows you to play Commodore 64 [unicycle video games](https://github.com/ricardoquesada/c64-the-uni-games) with real unicycles. Unique immersive experience, much better than VR.
 
 
 This repository contains:
 
 * the [schematic + PCB board](https://github.com/ricardoquesada/unijoysticle/tree/master/schematic) to build your own Wi-Fi receiver
 * the [firmware](https://github.com/ricardoquesada/unijoysticle/tree/master/esp8266_firmware) that runs on the Wi-Fi receiver
-* the [iOS client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_ios) / [Android client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_android): they send the packets to the Wi-Fi receiver
+* the [iOS client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_ios) / [Android client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_android) / [Desktop client](https://github.com/ricardoquesada/unijoysticle/tree/master/client_desktop): they send the packets to the Wi-Fi receiver
 
 
-![UniJoystiCle v0.3](https://lh3.googleusercontent.com/-bQ-NmN_HaEQ/V5ru2J4l-iI/AAAAAAABe7g/ebge4mLxYEQUrvy9Q1dEoyF8uOhtGbQDQCCo/s640/IMG_0303.jpg)
+![UniJoystiCle v0.4](https://lh3.googleusercontent.com/-bQ-NmN_HaEQ/V5ru2J4l-iI/AAAAAAABe7g/ebge4mLxYEQUrvy9Q1dEoyF8uOhtGbQDQCCo/s640/IMG_0303.jpg)
 
 
-## Documentation
+## Further info
 
-[Here](DOCUMENTATION.md)
+* [Documentation](DOCUMENTATION.md)
+* [Home page](http://retro.moe/unijoysticle)
+
+## Video
+
+[![The Uni Games v0.4](https://img.youtube.com/vi/ZLAgooXx4bo/0.jpg)](https://www.youtube.com/watch?v=ZLAgooXx4bo)
+
