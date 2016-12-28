@@ -50,7 +50,7 @@ limitations under the License.
             android:nextFocusUp="@+id/editText_assistant"
             android:nextFocusDown="@+id/spinner_songs"
             android:layout_marginStart="10dp"
-            />
+            android:layout_marginLeft="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,7 +60,7 @@ limitations under the License.
             android:layout_below="@+id/switch_alarm"
             android:layout_alignParentStart="true"
             android:layout_marginTop="20dp"
-            />
+            android:layout_alignParentLeft="true" />
 
         <Spinner
             android:layout_width="match_parent"
@@ -71,7 +71,7 @@ limitations under the License.
             android:layout_below="@+id/checkboxesLabel"
             android:nextFocusUp="@+id/switch_alarm"
             android:nextFocusDown="@+id/button_play"
-            />
+            android:layout_marginRight="122dp" />
 
         <Button
             android:text="@string/button_play"
@@ -93,7 +93,8 @@ limitations under the License.
             android:layout_marginEnd="21dp"
             android:nextFocusUp="@+id/spinner_play"
             android:nextFocusDown="@+id/seekBar_dimmer"
-            />
+            android:layout_marginRight="21dp"
+            android:layout_alignRight="@+id/spinner_songs" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -116,7 +117,7 @@ limitations under the License.
             android:id="@+id/seekBar_dimmer"
             android:nextFocusUp="@+id/button_stop"
             android:nextFocusDown="@+id/editText_assistant"
-            />
+            android:layout_alignParentLeft="true" />
 
         <TextView
             android:text="@string/off"
