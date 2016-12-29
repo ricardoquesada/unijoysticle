@@ -386,7 +386,8 @@ $ make upload
 ## Firmware options
 
 <img src="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk" />
-<a href="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk=w772-h1347-no">_Click here to enlarge_</a>
+
+<a href="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk=w772-h1347-no"><small></small>_Click here to enlarge_</small></a>
 
   * __A__: Use [http://unijoysticle.local/](http://unijoysticle.local/) to access the firmware options
   * __B__: Stats, includes: IP Address, firmware version, and other status
