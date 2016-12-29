@@ -386,6 +386,7 @@ $ make upload
 ## Firmware options
 
 <a href="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk=w772-h1347-no"></a><img src="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk" /></a>
+
 Click to enlarge.
 
   * __A__: Use [http://unijoysticle.local/](http://unijoysticle.local/) to access the firmware options
