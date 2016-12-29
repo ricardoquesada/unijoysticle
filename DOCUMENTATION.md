@@ -385,7 +385,20 @@ $ make upload
 ```
 ## Firmware options
 
-FIXME
+<a href="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk=w772-h1347-no"></a><img src="https://lh3.googleusercontent.com/GVWA4EnXclCFhNujWICYYmkRutvAdIUkPNW1X3dhdErm_LzYRWgoN1k_7n8xzdTlZNA6QjPF6NPu5FbpZSIHVoLCFT8RFHQs2geO2JHHv_Fj_gS4c265_htPTTEUIiO57DMbVSk" /></a>
+Click to enlarge.
+
+  * __A__: Use [http://unijoysticle.local/](http://unijoysticle.local/) to access the firmware options
+  * __B__: Stats, includes: IP Address, firmware version, and other status
+  * __C__: WiFi modes:
+     * Access Point mode: default mode. Creates its own WiFi network
+     * Station mode: uses SSID/password to join the WiFi network
+     * Station mode + WPS: Uses WPS to join a network
+  * __D__: Set the SSID/password here in order to use Station mode
+  * __E__: Inactivity timeout. Default: 10 secodns. After N seconds of inactivity, the joystick state will be reset
+  * __F__: Multicast DNS name. Default: "unijoysticle.local". Useful if you want to have more than one UniJoystiCle device in the same network
+  * __G__: To reboot the device
+  * __H__: Press here in order to upgrade the firmware
 
 ## Troubleshooting
 
