@@ -90,10 +90,11 @@ void main_loop(void* arg)
         // if not timeout, change the state
         if (uxBits != 0) {
 
-            gpio_set_level(GPIO_NUM_5, 0);
-            for (int i=0; i<g_potx * 50; i++)
-                __asm__("nop");
             gpio_set_level(GPIO_NUM_5, 1);
+            const int j = g_potx * 30;
+            for (int i=0; i<j; ++i)
+                __asm__("nop");
+            gpio_set_level(GPIO_NUM_5, 0);
         }
     }
 }
