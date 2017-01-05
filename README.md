@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/ricardoquesada/unijoysticle.svg)](https://gitter.im/ricardoquesada/unijoysticle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # The UniJoystiCle
 
 ![UniJoystiCle™](https://lh3.googleusercontent.com/-piAi8Qz3nnQ/VwL2T8DBSZI/AAAAAAABdos/jpiz2eBrA_U1MW8mXVZVmI68zLlmJoTvACCo/s640-Ic42/logo.png)
