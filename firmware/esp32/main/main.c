@@ -37,19 +37,20 @@ limitations under the License.
 
 //
 // contants
-// 
+//
 static const int WIFI_CONNECTED_BIT = 1 << 0;
 static const int POT_PORT1_BIT = 1 << 0;
 static const int POT_PORT2_BIT = 1 << 1;
 static const int BUFSIZE = 512;
+static const unsigned short UDP_PORT = 6464;
 
 
 //
 // global variables
 //
 static EventGroupHandle_t g_pot_event_group, g_wifi_event_group;
-static unsigned char g_potx = 0;
-static unsigned char g_poty = 0;
+static struct uni_proto_v3 g_joy_state;
+// static int g_pot_intr = 0;
 
 //
 // structs
@@ -73,6 +74,8 @@ void IRAM_ATTR gpio_isr_handler_up(void* arg)
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xEventGroupSetBitsFromISR(g_pot_event_group, POT_PORT1_BIT, &xHigherPriorityTaskWoken);
+
+//    g_pot_intr = 1;
     portYIELD_FROM_ISR();
 }
 
@@ -85,17 +88,24 @@ void main_loop(void* arg)
     while(1) {
 
         EventBits_t uxBits = xEventGroupWaitBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT), pdTRUE, pdFALSE, xTicksToWait);
-//        xEventGroupClearBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT));
+        xEventGroupClearBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT));
 
         // if not timeout, change the state
         if (uxBits != 0) {
 
-            gpio_set_level(GPIO_NUM_5, 1);
-            const int j = g_potx * 30;
+            const int j = g_joy_state.joy1_potx * 30;
             for (int i=0; i<j; ++i)
                 __asm__("nop");
+
+            gpio_set_level(GPIO_NUM_21, 1);
+            gpio_set_level(GPIO_NUM_5, 1);
+            for (int i=0; i<1000; ++i)
+                __asm__("nop");
+            gpio_set_level(GPIO_NUM_21, 0);
             gpio_set_level(GPIO_NUM_5, 0);
         }
+
+//        taskYIELD();
     }
 }
 
@@ -112,7 +122,7 @@ void wifi_loop(void* arg)
     int n;                              /* message byte size */
 
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sockfd < 0) 
+    if (sockfd < 0)
         printf("ERROR opening socket");
 
     /*
@@ -121,21 +131,19 @@ void wifi_loop(void* arg)
     memset((char *) &serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serveraddr.sin_port = htons(6464);
+    serveraddr.sin_port = htons(UDP_PORT);
 
-    if (bind(sockfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr)) < 0) 
+    if (bind(sockfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr)) < 0)
         printf("ERROR on binding\n");
 
     clientlen = sizeof(clientaddr);
 
-    struct uni_proto_v3* proto;
     while (1) {
 
         n = recvfrom(sockfd, buf, BUFSIZE, 0, (struct sockaddr *) &clientaddr, &clientlen);
         if (n == 8) {
-            proto = (struct uni_proto_v3*) &buf;
-            g_potx = proto->joy1_potx;
-            g_poty = proto->joy1_poty;
+            const struct uni_proto_v3 *proto = (struct uni_proto_v3*) &buf;
+            g_joy_state = *proto;
         }
     }
 }
@@ -165,36 +173,39 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
 
 static void setup_gpios()
 {
+    // Input:
+    //    36: Joy #2 Pot x
+    //
+    // Output:
+    //     5: Joy #1 Pot X
+    //    21: Joy #1 Pot X
+
     // internal LED
     ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_5, GPIO_MODE_OUTPUT) );
     ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_5, 1) );
+
+    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_21, GPIO_MODE_OUTPUT) );
+    ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_21, 0) );
 
     // read POT X
 //    gpio_config_t io_conf;
 //    io_conf.intr_type = GPIO_INTR_POSEDGE;
 //    io_conf.mode = GPIO_MODE_INPUT;
-    // PotX, PotY from port#1 and port#2
-//    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_36);
+//    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_22);
 //    io_conf.pull_down_en = 0;
 //    io_conf.pull_up_en = 1;
 //    ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_21, GPIO_MODE_INPUT) );
-    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_21, GPIO_INTR_POSEDGE) );
-    ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_21, GPIO_PULLUP_ONLY) );
-    ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_21) );
+    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_4, GPIO_MODE_INPUT) );
+    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_NEGEDGE) );
+    ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_4, GPIO_PULLUP_ONLY) );
+    ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_4) );
 
-    //create a queue to handle gpio event from isr
-//    gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
-    //start gpio task
-//    xTaskCreate(gpio_task_example, "gpio_task_example", 2048, NULL, 10, NULL);
-
-    //install gpio isr service
+    // install gpio isr service
     ESP_ERROR_CHECK( gpio_install_isr_service(0) );
 
     //hook isr handler for specific gpio pin
-//    ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_36, gpio_isr_handler_up, (void*) GPIO_NUM_36) );
-    ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_21, gpio_isr_handler_up, (void*) GPIO_NUM_21) );
+    ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_4, gpio_isr_handler_up, (void*) GPIO_NUM_4) );
 }
 
 static void setup_wifi()
@@ -217,6 +228,11 @@ static void setup_wifi()
     ESP_ERROR_CHECK( esp_wifi_connect() );
 }
 
+static void setup_variables()
+{
+    memset(&g_joy_state, 0, sizeof(g_joy_state));
+}
+
 void app_main(void)
 {
     nvs_flash_init();
@@ -224,6 +240,7 @@ void app_main(void)
     g_pot_event_group = xEventGroupCreate();
     g_wifi_event_group = xEventGroupCreate();
 
+    setup_variables();
     setup_wifi();
     setup_gpios();
 

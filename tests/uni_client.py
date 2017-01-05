@@ -38,6 +38,7 @@ if __name__ == "__main__":
 
     args = sys.argv[1:]
 
-    send_packet(*args)
+    for i in range(1,2):
+        send_packet(*args)
 
 
