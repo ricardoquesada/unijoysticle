@@ -82,8 +82,8 @@ void main_loop(void* arg)
 {
     (void)arg;
 
-    // timeout of 50ms
-    const TickType_t xTicksToWait = 50 / portTICK_PERIOD_MS;
+    // timeout of 200ms
+    const TickType_t xTicksToWait = 200 / portTICK_PERIOD_MS;
     while(1) {
 
         EventBits_t uxBits = xEventGroupWaitBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT), pdTRUE, pdFALSE, xTicksToWait);
@@ -178,31 +178,35 @@ static void setup_gpios()
     //    21: Joy #1 Pot X
 
     // internal LED
+    gpio_pad_select_gpio(GPIO_NUM_5);
     ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_5, GPIO_MODE_OUTPUT) );
     ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_5, 1) );
 
+    gpio_pad_select_gpio(GPIO_NUM_21);
     ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_21, GPIO_MODE_OUTPUT) );
     ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_21, 0) );
 
     // read POT X
-//    gpio_config_t io_conf;
-//    io_conf.intr_type = GPIO_INTR_POSEDGE;
-//    io_conf.mode = GPIO_MODE_INPUT;
-//    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_22);
-//    io_conf.pull_down_en = 0;
-//    io_conf.pull_up_en = 1;
-//    ESP_ERROR_CHECK( gpio_config(&io_conf) );
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_NEGEDGE;
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_4);
+    io_conf.pull_down_en = false;
+    io_conf.pull_up_en = true;
+    ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_4, GPIO_MODE_INPUT) );
-    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_POSEDGE) );       // should be NEGEDGE
-    ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_4, GPIO_PULLUP_ONLY) );
-    ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_4) );
+//    gpio_pad_select_gpio(GPIO_NUM_4);
+//    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_4, GPIO_MODE_INPUT) );
+//    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_NEGEDGE) );       // should be NEGEDGE
+//    ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_4, GPIO_PULLUP_ONLY) );
+//    ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_4) );
 
     // install gpio isr service
-    ESP_ERROR_CHECK( gpio_install_isr_service(0) );
-
+    ESP_ERROR_CHECK( gpio_install_isr_service(ESP_INTR_FLAG_IRAM) );
     //hook isr handler for specific gpio pin
     ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_4, gpio_isr_handler_up, (void*) GPIO_NUM_4) );
+
+ //   ESP_ERROR_CHECK( gpio_isr_register(gpio_isr_handler_up, (void*) GPIO_NUM_4, 0, NULL) );
 }
 
 static void setup_wifi()
