@@ -50,7 +50,7 @@ static const unsigned short UDP_PORT = 6464;
 //
 static EventGroupHandle_t g_pot_event_group, g_wifi_event_group;
 static struct uni_proto_v3 g_joy_state;
-// static int g_pot_intr = 0;
+
 
 //
 // structs
@@ -75,7 +75,6 @@ void IRAM_ATTR gpio_isr_handler_up(void* arg)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xEventGroupSetBitsFromISR(g_pot_event_group, POT_PORT1_BIT, &xHigherPriorityTaskWoken);
 
-//    g_pot_intr = 1;
     portYIELD_FROM_ISR();
 }
 
@@ -83,7 +82,7 @@ void main_loop(void* arg)
 {
     (void)arg;
 
-    // wait 50ms
+    // timeout of 50ms
     const TickType_t xTicksToWait = 50 / portTICK_PERIOD_MS;
     while(1) {
 
@@ -93,16 +92,16 @@ void main_loop(void* arg)
         // if not timeout, change the state
         if (uxBits != 0) {
 
-            const int j = g_joy_state.joy1_potx * 30;
-            for (int i=0; i<j; ++i)
-                __asm__("nop");
+            ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
             gpio_set_level(GPIO_NUM_5, 1);
-            for (int i=0; i<1000; ++i)
-                __asm__("nop");
+
+            ets_delay_us(20);
+
             gpio_set_level(GPIO_NUM_21, 0);
             gpio_set_level(GPIO_NUM_5, 0);
+
         }
 
 //        taskYIELD();
@@ -125,9 +124,7 @@ void wifi_loop(void* arg)
     if (sockfd < 0)
         printf("ERROR opening socket");
 
-    /*
-     * build the server's Internet address
-     */
+    /* build the server's Internet address */
     memset((char *) &serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -197,7 +194,7 @@ static void setup_gpios()
 //    ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
     ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_4, GPIO_MODE_INPUT) );
-    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_NEGEDGE) );
+    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_POSEDGE) );       // should be NEGEDGE
     ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_4, GPIO_PULLUP_ONLY) );
     ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_4) );
 
