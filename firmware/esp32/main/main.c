@@ -82,8 +82,8 @@ void main_loop(void* arg)
 {
     (void)arg;
 
-    // timeout of 200ms
-    const TickType_t xTicksToWait = 200 / portTICK_PERIOD_MS;
+    // timeout of 2000ms
+    const TickType_t xTicksToWait = 50 / portTICK_PERIOD_MS;
     while(1) {
 
         EventBits_t uxBits = xEventGroupWaitBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT), pdTRUE, pdFALSE, xTicksToWait);
@@ -92,12 +92,16 @@ void main_loop(void* arg)
         // if not timeout, change the state
         if (uxBits != 0) {
 
+            ets_delay_us(230);
+
             ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
             gpio_set_level(GPIO_NUM_5, 1);
 
-            ets_delay_us(20);
+//            const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
+//            vTaskDelay(xDelay);
+            ets_delay_us(50);
 
             gpio_set_level(GPIO_NUM_21, 0);
             gpio_set_level(GPIO_NUM_5, 0);
@@ -188,11 +192,11 @@ static void setup_gpios()
 
     // read POT X
     gpio_config_t io_conf;
-    io_conf.intr_type = GPIO_INTR_NEGEDGE;
+    io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pin_bit_mask = (1ULL << GPIO_NUM_4);
     io_conf.pull_down_en = false;
-    io_conf.pull_up_en = true;
+    io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
 //    gpio_pad_select_gpio(GPIO_NUM_4);
@@ -247,7 +251,9 @@ void app_main(void)
 
     printf("v3 size: %d\n", sizeof(struct uni_proto_v3));
 
-    xTaskCreate(main_loop, "main_loop", 2048, NULL, 10, NULL);
+//    xTaskCreate(main_loop, "main_loop", 2048, NULL, 10, NULL);
     xTaskCreate(wifi_loop, "wifi_loop", 2048, NULL, 10, NULL);
+
+    main_loop(NULL);
 }
 
