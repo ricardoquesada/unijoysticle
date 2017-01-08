@@ -92,20 +92,21 @@ void main_loop(void* arg)
         // if not timeout, change the state
         if (uxBits != 0) {
 
-            ets_delay_us(230);
+            ets_delay_us(190);
 
             ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
             gpio_set_level(GPIO_NUM_5, 1);
 
-//            const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
-//            vTaskDelay(xDelay);
-            ets_delay_us(50);
+            ets_delay_us(25);
 
             gpio_set_level(GPIO_NUM_21, 0);
             gpio_set_level(GPIO_NUM_5, 0);
 
+
+//            const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
+//            vTaskDelay(xDelay);
         }
 
 //        taskYIELD();
@@ -196,7 +197,7 @@ static void setup_gpios()
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pin_bit_mask = (1ULL << GPIO_NUM_4);
     io_conf.pull_down_en = false;
-    io_conf.pull_up_en = false;
+    io_conf.pull_up_en = true;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
 //    gpio_pad_select_gpio(GPIO_NUM_4);
@@ -251,9 +252,9 @@ void app_main(void)
 
     printf("v3 size: %d\n", sizeof(struct uni_proto_v3));
 
-//    xTaskCreate(main_loop, "main_loop", 2048, NULL, 10, NULL);
+    xTaskCreate(main_loop, "main_loop", 2048, NULL, 10, NULL);
     xTaskCreate(wifi_loop, "wifi_loop", 2048, NULL, 10, NULL);
 
-    main_loop(NULL);
+//    main_loop(NULL);
 }
 
