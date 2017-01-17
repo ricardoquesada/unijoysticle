@@ -87,19 +87,18 @@ void main_loop(void* arg)
     while(1) {
 
         EventBits_t uxBits = xEventGroupWaitBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT), pdTRUE, pdFALSE, xTicksToWait);
-        xEventGroupClearBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT));
+//        xEventGroupClearBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT));
 
         // if not timeout, change the state
         if (uxBits != 0) {
 
-            ets_delay_us(190);
-
+//            ets_delay_us(120);
             ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
             gpio_set_level(GPIO_NUM_5, 1);
 
-            ets_delay_us(25);
+            ets_delay_us(50);
 
             gpio_set_level(GPIO_NUM_21, 0);
             gpio_set_level(GPIO_NUM_5, 0);
@@ -150,6 +149,22 @@ void wifi_loop(void* arg)
     }
 }
 
+void test_loop(void* arg)
+{
+    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_22, GPIO_MODE_OUTPUT) );
+    ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_22, 0) );
+
+    while (1) {
+        /* Block for 500ms. */
+         const TickType_t xDelay = 10 / portTICK_PERIOD_MS;
+        vTaskDelay(xDelay);
+        gpio_set_level(GPIO_NUM_22, true);
+        vTaskDelay(xDelay);
+        gpio_set_level(GPIO_NUM_22, false);
+
+    }
+}
+
 esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id) {
@@ -176,38 +191,37 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
 static void setup_gpios()
 {
     // Input:
-    //    36: Joy #2 Pot x
+    //     4: Joy #2 Pot x
     //
     // Output:
     //     5: Joy #1 Pot X
     //    21: Joy #1 Pot X
 
-    // internal LED
-    gpio_pad_select_gpio(GPIO_NUM_5);
-    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_5, GPIO_MODE_OUTPUT) );
-    ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_5, 1) );
-
-    gpio_pad_select_gpio(GPIO_NUM_21);
-    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_21, GPIO_MODE_OUTPUT) );
-    ESP_ERROR_CHECK( gpio_set_level(GPIO_NUM_21, 0) );
-
-    // read POT X
+    // Output: 5 (LED) and 21
     gpio_config_t io_conf;
-    io_conf.intr_type = GPIO_INTR_POSEDGE;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_5 | 1ULL << GPIO_NUM_21);
+    io_conf.pull_down_en = false;
+    io_conf.pull_up_en = false;
+    ESP_ERROR_CHECK( gpio_config(&io_conf) );
+
+    // Input: read POT X
+    io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_4);
+    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_2;
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = true;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-//    gpio_pad_select_gpio(GPIO_NUM_4);
-//    ESP_ERROR_CHECK( gpio_set_direction(GPIO_NUM_4, GPIO_MODE_INPUT) );
-//    ESP_ERROR_CHECK( gpio_set_intr_type(GPIO_NUM_4, GPIO_INTR_NEGEDGE) );       // should be NEGEDGE
-//    ESP_ERROR_CHECK( gpio_set_pull_mode(GPIO_NUM_4, GPIO_PULLUP_ONLY) );
-//    ESP_ERROR_CHECK( gpio_intr_enable(GPIO_NUM_4) );
+    io_conf.intr_type = GPIO_INTR_POSEDGE;
+    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
+    io_conf.pull_up_en = false;
+    ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
     // install gpio isr service
-    ESP_ERROR_CHECK( gpio_install_isr_service(ESP_INTR_FLAG_IRAM) );
+    ESP_ERROR_CHECK( gpio_install_isr_service(0) );
+
     //hook isr handler for specific gpio pin
     ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_4, gpio_isr_handler_up, (void*) GPIO_NUM_4) );
 
@@ -254,6 +268,7 @@ void app_main(void)
 
     xTaskCreate(main_loop, "main_loop", 2048, NULL, 10, NULL);
     xTaskCreate(wifi_loop, "wifi_loop", 2048, NULL, 10, NULL);
+//    xTaskCreate(test_loop, "test_loop", 2048, NULL, 10, NULL);
 
 //    main_loop(NULL);
 }
