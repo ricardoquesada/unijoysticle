@@ -65,7 +65,7 @@ CommodoreHomeForm::CommodoreHomeForm(QWidget *parent) :
     _timer = new QTimer(this);
 
     _proto.version = 2;     // version 2
-    _proto.joyControl = 3;  // joy 1 and 2
+    _proto.joyControl = 2;  // joy 2
     _proto.joyStates[0] = 0;
     _proto.joyStates[1] = 0;
 
