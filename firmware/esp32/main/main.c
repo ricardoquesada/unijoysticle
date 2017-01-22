@@ -214,7 +214,7 @@ static void setup_gpios()
     io_conf.pull_up_en = true;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-    io_conf.intr_type = GPIO_INTR_POSEDGE;
+    io_conf.intr_type = GPIO_INTR_NEGEDGE;
     io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
     io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
