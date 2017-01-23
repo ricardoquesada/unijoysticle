@@ -22,3 +22,6 @@ run:
 clean:
 	rm -f bin/*.sym src/*.o
 
+testpot:
+	petcat -w2 -o testpot.prg testpot.bas
+	x64 testpot.prg

@@ -92,16 +92,20 @@ void main_loop(void* arg)
         // if not timeout, change the state
         if (uxBits != 0) {
 
-//            ets_delay_us(120);
+//            gpio_set_level(GPIO_NUM_5, 0);
+
+            gpio_set_level(GPIO_NUM_21, 0);
+            ets_delay_us(240);
             ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
-            gpio_set_level(GPIO_NUM_5, 1);
+//            gpio_set_level(GPIO_NUM_5, 1);
 
-            ets_delay_us(50);
+//            ets_delay_us(50);
 
-            gpio_set_level(GPIO_NUM_21, 0);
-            gpio_set_level(GPIO_NUM_5, 0);
+//            gpio_set_level(GPIO_NUM_21, 0);
+
+//            gpio_set_level(GPIO_NUM_5, 0);
 
 
 //            const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
@@ -201,20 +205,20 @@ static void setup_gpios()
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_5 | 1ULL << GPIO_NUM_21);
+    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_21);
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
     // Input: read POT X
-    io_conf.intr_type = GPIO_INTR_DISABLE;
+//    io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_2;
+//    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_2;
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = true;
-    ESP_ERROR_CHECK( gpio_config(&io_conf) );
+//    ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-    io_conf.intr_type = GPIO_INTR_NEGEDGE;
+    io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
     io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
