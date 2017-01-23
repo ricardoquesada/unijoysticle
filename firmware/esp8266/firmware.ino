@@ -278,6 +278,7 @@ static void loopUDP()
 
             // joy 2 enabled ?
             if (packetBuffer[1] & 0x2) {
+//                Serial.printf("Received: $%02x (%d)\n", packetBuffer[3], packetBuffer[3]);
                 for (int i=0; i<TOTAL_PINS; i++)
                 {
                     const uint8_t mask = 1<<i;

@@ -27,41 +27,42 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
                                 "Enola Gay",
                                 "Billie Jean",
                                 "Another Day in Paradise",
-                                "Wind of Change"]
+                                "Wind of Change",
+                                "Take my Breath Away"]
 
     enum HomeCommands: UInt8 {
         case nothing = 0
-        case song0 = 1
-        case song1 = 2
-        case song2 = 3
-        case song3 = 4
-        case song4 = 5
-        case song5 = 6
-        case song6 = 7
-        case song7 = 8
-        case songStop = 9
-        case songPlay = 10
-        case songPause = 11
-        case songResume = 12
-        case songNext = 13
-        case songPrev = 14
-        case dimmer0 = 15
-        case dimmer25 = 16
-        case dimmer50 = 17
-        case dimmer75 = 18
-        case dimmer100 = 19
-        case alarmOff = 20
-        case alarmOn = 21
-        case reserved0 = 22
-        case reserved1 = 23
-        case reserved2 = 24
-        case reserved3 = 25
-        case reserved4 = 26
-        case reserved5 = 27
-        case reserved6 = 28
-        case reserved7 = 29
-        case reserved8 = 30
-        case reserved9 = 31
+        case song0
+        case song1
+        case song2
+        case song3
+        case song4
+        case song5
+        case song6
+        case song7
+        case song8
+        case reserved0
+        case songStop
+        case songPlay
+        case songPause
+        case songResume
+        case songNext
+        case songPrev
+        case dimmer0
+        case dimmer25
+        case dimmer50
+        case dimmer75
+        case dimmer100
+        case alarmOff
+        case alarmOn
+        case reserved1
+        case reserved2
+        case reserved3
+        case reserved4
+        case reserved5
+        case reserved6
+        case reserved7
+        case reserved8 = 31
     }
     var dimmerLastValue:Float = 0
     var netConnection:NetworkConnection? = nil
