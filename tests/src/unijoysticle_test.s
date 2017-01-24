@@ -97,8 +97,22 @@ l1:
         cli
 
 main_loop:
-        jsr print_joy1
-        jsr print_joy2
+
+;        lda #%00111111                  ; enable joystick
+;        sta $dc00
+
+;        jsr print_joy1
+;        jsr print_joy2
+
+        lda #%01000000                  ; enable pot A
+        sta $dc00
+
+        jsr print_pot1
+
+;        lda #%10000000                  ; enable pot B
+;        sta $dc00
+;        jsr print_pot2
+;
         jmp main_loop
 .endproc
 
@@ -224,6 +238,49 @@ print_fire:
         rts
 .endproc
 
+.proc print_pot1
+        lda $d41a                       ; pot X
+        tay                             ; save A
+        and #%00001111
+        tax
+        lda hex,x                       ; print LSB
+        sta 1024 + 20 * 40 + 4
+
+        tya                             ; restore A
+
+        lsr
+        lsr
+        lsr
+        lsr
+        tax
+        lda hex,x                       ; print MSB
+        sta 1024 + 20 * 40 + 3
+
+
+
+        lda $d419                       ; pot Y
+        tay                             ; save it
+        and #%00001111
+        tax
+        lda hex,x                       ; print LSB
+        sta 1024 + 21 * 40 + 4
+
+        tya
+        lsr
+        lsr
+        lsr
+        lsr
+        tax
+        lda hex,x                       ; print MSB
+        sta 1024 + 21 * 40 + 3
+        rts
+.endproc
+
+.proc print_pot2
+        rts
+.endproc
+
+hex:    scrcode "0123456789abcdef"
 
 screen:
         .incbin "unijoysticle-map.bin"

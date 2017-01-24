@@ -5,9 +5,12 @@
 X64 = x64
 
 all: bin
-bin: unijoysticle_test run
+bin: res unijoysticle_test run
 
 SRC=src/unijoysticle_test.s
+
+res:
+	-cp res/unijoysticle-*.bin src/
 
 unijoysticle_test: ${SRC}
 	echo "Compiling..."
@@ -22,6 +25,6 @@ run:
 clean:
 	rm -f bin/*.sym src/*.o
 
-testpot:
-	petcat -w2 -o testpot.prg testpot.bas
-	x64 testpot.prg
+#testpot:
+#	petcat -w2 -o testpot.prg testpot.bas
+#	x64 testpot.prg

@@ -82,8 +82,8 @@ void main_loop(void* arg)
 {
     (void)arg;
 
-    // timeout of 2000ms
-    const TickType_t xTicksToWait = 50 / portTICK_PERIOD_MS;
+    // timeout of 500ms
+    const TickType_t xTicksToWait = 500 / portTICK_PERIOD_MS;
     while(1) {
 
         EventBits_t uxBits = xEventGroupWaitBits(g_pot_event_group, (POT_PORT1_BIT | POT_PORT2_BIT), pdTRUE, pdFALSE, xTicksToWait);
@@ -95,7 +95,7 @@ void main_loop(void* arg)
 //            gpio_set_level(GPIO_NUM_5, 0);
 
             gpio_set_level(GPIO_NUM_21, 0);
-            ets_delay_us(240);
+            ets_delay_us(223);
             ets_delay_us(g_joy_state.joy1_potx);
 
             gpio_set_level(GPIO_NUM_21, 1);
@@ -110,6 +110,9 @@ void main_loop(void* arg)
 
 //            const TickType_t xDelay = 100 / portTICK_PERIOD_MS;
 //            vTaskDelay(xDelay);
+        } else {
+            // timeout
+            gpio_set_level(GPIO_NUM_21, 0);
         }
 
 //        taskYIELD();
@@ -211,16 +214,11 @@ static void setup_gpios()
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
     // Input: read POT X
-//    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.mode = GPIO_MODE_INPUT;
-//    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_2;
+    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = true;
-//    ESP_ERROR_CHECK( gpio_config(&io_conf) );
-
-    io_conf.intr_type = GPIO_INTR_POSEDGE;
-    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
-    io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
     // install gpio isr service
