@@ -98,14 +98,18 @@ l1:
 
 main_loop:
 
-;        lda #%00111111                  ; enable joystick
-;        sta $dc00
+        lda #%00111111                  ; enable joystick
+        sta $dc00
 
-;        jsr print_joy1
-;        jsr print_joy2
+        jsr print_joy1
+        jsr print_joy2
 
         lda #%01000000                  ; enable pot A
         sta $dc00
+
+        ldx #0                          ; wait a few cycles
+@l0:    dex                             ; after enabling the POT
+        bne @l0
 
         jsr print_pot1
 
