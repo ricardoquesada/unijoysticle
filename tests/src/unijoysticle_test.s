@@ -98,11 +98,11 @@ l1:
 
 main_loop:
 
-        lda #%00111111                  ; enable joystick
-        sta $dc00
+;        lda #%00111111                  ; enable joystick
+;        sta $dc00
 
-        jsr print_joy1
-        jsr print_joy2
+;        jsr print_joy1
+;        jsr print_joy2
 
         lda #%01000000                  ; enable pot A
         sta $dc00

@@ -94,7 +94,10 @@ void main_loop(void* arg)
 
 //            gpio_set_level(GPIO_NUM_5, 0);
 
+//            gpio_set_level(GPIO_NUM_21, 1);
+//            ets_delay_us(50);
             gpio_set_level(GPIO_NUM_21, 0);
+
             ets_delay_us(223);
             ets_delay_us(g_joy_state.joy1_potx);
 
@@ -208,7 +211,7 @@ static void setup_gpios()
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = (1ULL << GPIO_NUM_21);
+    io_conf.pin_bit_mask = ((1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22));
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = false;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
@@ -216,7 +219,7 @@ static void setup_gpios()
     // Input: read POT X
     io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_4;
+    io_conf.pin_bit_mask = 1ULL << GPIO_NUM_18;
     io_conf.pull_down_en = false;
     io_conf.pull_up_en = true;
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
@@ -225,7 +228,7 @@ static void setup_gpios()
     ESP_ERROR_CHECK( gpio_install_isr_service(0) );
 
     //hook isr handler for specific gpio pin
-    ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_4, gpio_isr_handler_up, (void*) GPIO_NUM_4) );
+    ESP_ERROR_CHECK( gpio_isr_handler_add(GPIO_NUM_18, gpio_isr_handler_up, (void*) GPIO_NUM_18) );
 
  //   ESP_ERROR_CHECK( gpio_isr_register(gpio_isr_handler_up, (void*) GPIO_NUM_4, 0, NULL) );
 }

@@ -1,12 +1,14 @@
-ESP-IDF template app
+Bla
 ====================
 
-This is a template application to be used with `Espressif IoT Development Framework`_ (ESP-IDF). 
+Arduino Uno (Atmega328):
 
-Please check ESP-IDF docs for getting started instructions.
+- pullup resistor: pot-x value $2a-$2b
 
-Code in this repository is Copyright (C) 2016 Espressif Systems, licensed under the Apache License 2.0 as described in the file LICENSE.
 
-.. _Espressif IoT Development Framework: https://github.com/espressif/esp-idf
+ESP32:
+
+- pullup resistor: pot-x value $3e-$3f
+
 
 
