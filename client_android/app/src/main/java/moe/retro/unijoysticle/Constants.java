@@ -27,7 +27,7 @@ class Constants {
     static final String key_enableButtonB = "key_enableButtonB";
     static final String key_swapButtonsAB = "key_swapButtonsAB";
 
-    static final float default_movementThreshold = 2.1f;
+    static final float default_movementThreshold = 0.4f;
     static final float default_jumpThreshold = 2.1f;
     static final float default_rotationRatio = 1.0f;
 
