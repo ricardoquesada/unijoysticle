@@ -1,0 +1,65 @@
+{
+  "project_info": {
+    "project_number": "50773583907",
+    "firebase_url": "https://fir-unijoysticle.firebaseio.com",
+    "project_id": "firebase-unijoysticle",
+    "storage_bucket": "firebase-unijoysticle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50773583907:android:95a82665670454c6",
+        "android_client_info": {
+          "package_name": "moe.retro.unijoysticle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50773583907-r5v7bjd81j0cnvhu884jgh8b0ou3nvep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "moe.retro.unijoysticle",
+            "certificate_hash": "1AE9EBD4CF5715F44855244307DBD2BE0D9A71FA"
+          }
+        },
+        {
+          "client_id": "50773583907-t0ak3hicvkbj0h3ekschnsotletbhqto.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "moe.retro.unijoysticle",
+            "certificate_hash": "15B34C60B9092BAD7DB074350AC5878E4DD5345E"
+          }
+        },
+        {
+          "client_id": "50773583907-9ol8bp3e673cujnbp4btm2iv3ug33pdb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "50773583907-nviith2d4n26afl0uhkn1tfmh10t1fn4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9wzidW-JyfdO_-AgKACfxTaoowZPRxkA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-84340639-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
