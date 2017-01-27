@@ -42,7 +42,6 @@ public class HomeActivity extends BaseActivity implements
 
     private TextView mValueText;
     private Boolean mFirstTime = true;
-    private ScheduledExecutorService mScheduleTaskExecutor;
     private boolean mClearJoyState = false;
 
     private enum HomeCommands {
@@ -132,8 +131,8 @@ public class HomeActivity extends BaseActivity implements
 
 
         // schedule a handler every 60 per second
-        mScheduleTaskExecutor = Executors.newScheduledThreadPool(2);
-        mScheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(2);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 try {
                     if (mClearJoyState) {

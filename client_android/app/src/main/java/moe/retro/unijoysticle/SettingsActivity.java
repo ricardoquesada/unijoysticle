@@ -163,7 +163,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     String serverAddress = serverAddressPref.getText();
 
                     if (serverAddress.equals("unijoysticle.local")) {
-                        InetAddress inetAddress = Helpers.resolveUniJoysticleLocal(getActivity());
+                        InetAddress inetAddress = Helpers.resolveUniJoystiCleLocal(getActivity());
                         if (inetAddress != null)
                             serverAddress = "http://" + inetAddress.getHostAddress();
                         else

@@ -29,19 +29,22 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import moe.retro.unijoysticle.unijosyticle.R;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // init analytics
-        AnalyticsTrackers.initialize(this);
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -49,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (null != fab) {
+            // Log launch
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "documentation");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -84,23 +92,31 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.d(TAG, "Button pressed");
 
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "unknown");
+
                     int radioButtonModeID = radioButtonGroupMode.getCheckedRadioButtonId();
                     Intent i = null;
                     switch(radioButtonModeID) {
                         case R.id.radioButtonDPad:
                             i = new Intent(getApplicationContext(), DpadActivity.class);
+                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "d-pad mode");
                             break;
 //                        case R.id.radioButtonGyruss:
 //                            i = new Intent(getApplicationContext(), GyrussActivity.class);
+//                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "gyruss mode");
 //                            break;
                         case R.id.radioButtonHome:
                             i = new Intent(getApplicationContext(), HomeActivity.class);
+                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "commodore home mode");
                             break;
                         case R.id.radioButtonUniJoystiCle:
                             i = new Intent(getApplicationContext(), UnijoysticleActivity.class);
+                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "unijoysticle mode");
                             break;
                         case R.id.radioButtonCommando:
                             i = new Intent(getApplicationContext(), CommandoActivity.class);
+                            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "commando mode");
                             break;
                     }
                     if (i != null) {
@@ -112,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
 
                         i.putExtra("joyPort", (byte)idx);
                         startActivity(i);
+
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     } else {
                         Log.d(TAG, "Unknown error. Invalid radio button value");
                     }
@@ -138,6 +157,10 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "settings");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             return true;
         }
 

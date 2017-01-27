@@ -46,7 +46,7 @@ class Helpers {
     };
     private static NsdServiceInfo sServiceInfo = new NsdServiceInfo();
 
-    static InetAddress resolveUniJoysticleLocal(Context context) {
+    static InetAddress resolveUniJoystiCleLocal(Context context) {
 
         if (!sInProgress) {
             sServerInetAddress = null;

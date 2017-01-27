@@ -17,6 +17,7 @@
  ****************************************************************************/
 
 import UIKit
+import FirebaseAnalytics
 
 class MainViewController: UIViewController {
 
@@ -56,6 +57,12 @@ class MainViewController: UIViewController {
     }
 
     @IBAction func startTouchUpInside(_ sender: AnyObject) {
+
+        // events to log
+        let texts = ["unijoysticle mode", "d-pad mode", "commando mode", "gyruss mode", "commodore home mode"]
+        FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters:
+            [kFIRParameterContentType: texts[controllerSegment.selectedSegmentIndex] as NSObject])
+
         if (controllerSegment.selectedSegmentIndex == 4) {
             self.performSegue(withIdentifier: "CommodoreHomeVC", sender: sender)
         } else {
