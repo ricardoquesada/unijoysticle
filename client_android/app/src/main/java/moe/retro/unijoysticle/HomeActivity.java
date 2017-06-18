@@ -88,7 +88,7 @@ public class HomeActivity extends BaseActivity implements
         public byte getValue() {
             return this.value;
         }
-    };
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

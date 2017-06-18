@@ -5,7 +5,6 @@
     android:orientation="vertical">
 
     <moe.retro.unijoysticle.UnijoysticleView
-        android:id="@+id/game"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_margin="0dip"

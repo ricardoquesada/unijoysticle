@@ -11,7 +11,6 @@
     <string name="pref_title_cat_server">WiFi device</string>
     <string name="pref_title_cat_unijoysticle">UniJoystiCle mode</string>
     <string name="pref_title_cat_dpad">Dpad mode + Game controller</string>
-    <string name="pref_title_cat_gyruss">Gyruss mode</string>
 
     <string name="pref_title_server_name">Device address</string>
     <string name="pref_summary_server">%s</string>
@@ -24,11 +23,6 @@
     <string name="title_swapButtonsAB">Swap buttons A and B</string>
 
     <!-- Gyruss Gravity SeekBar -->
-    <string name="pref_summary_gravity">%s</string>
-    <string name="menu_settings">Settings</string>
-    <string name="settings_dialog_message">Here comes a message</string>
-    <string name="settings_unit">Km</string>
-    <string name="pref_title_gravity_factor">Gravity factor</string>
 
 
     <!-- pref default values -->
@@ -58,25 +52,14 @@
     <string name="c_home">C= Home</string>
     <string name="joystick1">Joystick #1</string>
     <string name="joystick2">Joystick #2</string>
-    <string name="zero">0</string>
 
     <!-- Home Activity -->
-    <string name="composeButtonLabel">Hello</string>
     <string name="checkboxesLabel">Music</string>
-    <string name="jetpackCheckboxLabel">Checkbox 1</string>
-    <string name="hyperspaceCheckboxLabel">Checkbox 2</string>
     <string name="imagesAndTextLabel">Dimmer</string>
     <string name="button_play">Play</string>
     <string name="button_stop">Stop</string>
-    <string name="assistant">Personal Assistant</string>
     <string name="activated">Activated:</string>
     <string name="alarm">Alarm</string>
-    <string name="hey_commodore">Hey Commodore</string>
-    <string name="number_hint">0</string>
-    <string name="advanced">Advanced</string>
-    <string name="joy_1">Joy #1</string>
-    <string name="joy_2">Joy #2</string>
-    <string name="textview">TextView</string>
     <string name="off">Off</string>
 
     <!-- Spinner -->

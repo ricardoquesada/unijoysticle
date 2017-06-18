@@ -38,11 +38,11 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "test":
         while True:
             for i in range(250):
-                send_packet('10.0.0.15', 0, 0, i, 0)
+                send_packet('10.0.0.23', 0, 0, i, 0)
                 time.sleep(0.05)
             time.sleep(2)
             for i in range(250):
-                send_packet('10.0.0.15', 0, 0, 250-i, 0)
+                send_packet('10.0.0.23', 0, 0, 250-i, 0)
                 time.sleep(0.05)
             time.sleep(2)
 
