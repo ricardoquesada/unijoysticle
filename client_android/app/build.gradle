@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId 'moe.retro.unijoysticle'
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 19
         versionName '0.4.14'
         signingConfig signingConfigs.release
