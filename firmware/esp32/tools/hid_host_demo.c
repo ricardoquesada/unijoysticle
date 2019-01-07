@@ -276,9 +276,52 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
  * Check if SHIFT is down and process first character (don't handle multiple key presses)
  * 
  */
-#define NUM_KEYS 6
-static uint8_t last_keys[NUM_KEYS];
-static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len){
+#define MAX_BUTTONS  16
+typedef struct gamepad {
+    // Usage Page: 0x01 (Generic Desktop Controls)
+    uint8_t hat;
+    int16_t x;
+    int16_t y;
+    int16_t z;
+    int16_t rx;
+    int16_t ry;
+    int16_t rz;
+
+    // Usage Page: 0x02 (Sim controls)
+    int32_t     brake;
+    int32_t     accelerator;
+
+    // Usage Page: 0x06 (Generic dev controls)
+    uint16_t    battery;
+
+    // Usage Page: 0x08 (LED)
+    uint8_t     num_lock;
+    uint8_t     caps_lock;
+    uint8_t     scroll_lock;
+    uint8_t     compose;
+
+    // Usage Page: 0x09 (Button)
+    _Bool   buttons[MAX_BUTTONS];
+
+    // Usage Page: 0x0c (Consumer)
+    uint8_t     ac_home;
+    uint8_t     ac_back;
+
+} gamepad_t;
+
+static gamepad_t g_gamepad;
+
+static void print_gamepad() {
+    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, accel=%d, brake=%d, ba=%d, bb=%d, bc=%d, bd=%d\n",
+            g_gamepad.x, g_gamepad.y, g_gamepad.z,
+            g_gamepad.rx, g_gamepad.ry, g_gamepad.rz,
+            g_gamepad.hat,
+            g_gamepad.accelerator, g_gamepad.brake,
+            g_gamepad.buttons[1], g_gamepad.buttons[2], g_gamepad.buttons[3], g_gamepad.buttons[4]
+          );
+}
+
+static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len) {
     // check if HID Input Report
     if (report_len < 1) return;
     if (*report != 0xa1) return; 
@@ -286,59 +329,106 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
     report_len--;
     btstack_hid_parser_t parser;
     btstack_hid_parser_init(&parser, hid_descriptor, hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
-    int shift = 0;
-    uint8_t new_keys[NUM_KEYS];
-    memset(new_keys, 0, sizeof(new_keys));
-    int     new_keys_count = 0;
     while (btstack_hid_parser_has_more(&parser)){
         uint16_t usage_page;
         uint16_t usage;
         int32_t  value;
         btstack_hid_parser_get_field(&parser, &usage_page, &usage, &value);
+
+
+        /*
         printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         printf("min=%d, max=%d, lmin=%d, lmax=%d\n", parser.usage_minimum, parser.usage_maximum, parser.global_logical_minimum, parser.global_logical_maximum);
+        */
 
-        if (usage_page != 0x07) continue;   
-        switch (usage){
-            case 0xe1:
-            case 0xe6:
-                if (value){
-                    shift = 1;
+        switch (usage_page) {
+            case 0x01:  // Generic Desktop controls
+                switch (usage) {
+                    case 0x30:  // x
+                        g_gamepad.x = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x31:  // y
+                        g_gamepad.y = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x32:  // z
+                        g_gamepad.z = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x33:  // rx
+                        g_gamepad.rx = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x34:  // ry
+                        g_gamepad.ry = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x35:  // rz
+                        g_gamepad.rz = value - (parser.global_logical_maximum/2);
+                        break;
+                    case 0x39:  // switch hat
+                        g_gamepad.hat = value;
+                        break;
+                    default:
+                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                        break;
                 }
-                continue;
-            case 0x00:
-                continue;
+                break;
+            case 0x02:  // Simulation controls
+                switch (usage) {
+                    case 0xc4:  // accelerator
+                        g_gamepad.accelerator = value;
+                        break;
+                    case 0xc5:  // brake 
+                        g_gamepad.brake = value;
+                        break;
+                    default:
+                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                        break;
+                };
+                break;
+            case 0x08:  // LEDs
+                switch (usage) {
+                    case 0x01:  // num lock
+                        g_gamepad.num_lock = value;
+                        break;
+                    case 0x02:  // caps lock
+                        g_gamepad.num_lock = value;
+                        break;
+                    case 0x03:  // scroll lock
+                        g_gamepad.num_lock = value;
+                        break;
+                    case 0x04:  // compose
+                        g_gamepad.compose = value;
+                        break;
+                    default:
+                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                        break;
+                }
+                break;
+            case 0x09:  // Button
+                if (usage >= 0 && usage < MAX_BUTTONS) {
+                    g_gamepad.buttons[usage] = value;
+                } else {
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                }
+                break;
+            case 0x0c:  // Consumer
+                switch (usage) {
+                    case 0x0223:    // home
+                        g_gamepad.ac_home = value;
+                        break;
+                    case 0x0224:    // back
+                        g_gamepad.ac_back = value;
+                        break;
+                    default:
+                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                        break;
+                }
+                break;
+
+            // unknown usage page
             default:
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
                 break;
         }
-        if (usage >= sizeof(keytable_us_none)) continue;
-
-        // store new keys
-        new_keys[new_keys_count++] = usage;
-
-        // check if usage was used last time (and ignore in that case)
-        int i;
-        for (i=0;i<NUM_KEYS;i++){
-            if (usage == last_keys[i]){
-                usage = 0;
-            }
-        }
-        if (usage == 0) continue;
-
-        uint8_t key;
-        if (shift){
-            key = keytable_us_shift[usage];
-        } else {
-            key = keytable_us_none[usage];
-        }
-        if (key == CHAR_ILLEGAL) continue;
-        if (key == CHAR_BACKSPACE){ 
-            printf("\b \b");    // go back one char, print space, go back one char again
-            continue;
-        }
-        printf("%c", key);
     }
-    memcpy(last_keys, new_keys, NUM_KEYS);
 }
 
 /*
@@ -358,7 +448,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
     /* LISTING_RESUME */
     switch (packet_type) {
-		case HCI_EVENT_PACKET:
+                case HCI_EVENT_PACKET:
             event = hci_event_packet_get_type(packet);
             switch (event) {            
                 /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
@@ -373,11 +463,11 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 /* LISTING_PAUSE */
                 case HCI_EVENT_PIN_CODE_REQUEST:
-					// inform about pin code request
+                                        // inform about pin code request
                     printf("Pin code request - using '0000'\n");
                     hci_event_pin_code_request_get_bd_addr(packet, event_addr);
                     gap_pin_code_response(event_addr, "0000");
-					break;
+                                        break;
 
                 case HCI_EVENT_USER_CONFIRMATION_REQUEST:
                     // inform about user confirmation request
@@ -416,6 +506,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                 hid_host_handle_interrupt_report(packet,  size);
                 printf("HID Packet: ");
                 printf_hexdump(packet, size);
+                print_gamepad();
             } else if (channel == l2cap_hid_control_cid){
                 printf("HID Control: ");
                 printf_hexdump(packet, size);
