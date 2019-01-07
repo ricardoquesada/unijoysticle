@@ -36,3 +36,6 @@ qrc_*.cpp
 ui_*.h
 *.autosave
 
+# Object files
+*.o
+
