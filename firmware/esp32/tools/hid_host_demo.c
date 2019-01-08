@@ -75,7 +75,8 @@ static uint16_t           l2cap_hid_interrupt_cid;
 // Ouya
 // static const char * remote_addr_string = "B8:5A:F7:C5:99:78";
 // Asus
-static const char * remote_addr_string = "54:A0:50:CD:A8:35";
+//static const char * remote_addr_string = "54:A0:50:CD:A8:35";
+static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
 
 static bd_addr_t remote_addr;
 
