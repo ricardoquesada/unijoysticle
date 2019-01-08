@@ -448,7 +448,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
     /* LISTING_RESUME */
     switch (packet_type) {
-                case HCI_EVENT_PACKET:
+        case HCI_EVENT_PACKET:
             event = hci_event_packet_get_type(packet);
             switch (event) {            
                 /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
@@ -496,7 +496,24 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         printf("HID Connection established\n");
                     }
                     break;
+                case HCI_EVENT_HID_META:
+                    switch (hci_event_hid_meta_get_subevent_code(packet)){
+                        case HID_SUBEVENT_CONNECTION_OPENED:
+                            printf("HID_SUBEVENT_CONNECTION_OPENED\n");
+                            break;
+                        case HID_SUBEVENT_CONNECTION_CLOSED:
+                            printf("HID_SUBEVENT_CONNECTION_CLOSED\n");
+                            break;
+                        case HID_SUBEVENT_CAN_SEND_NOW:
+                            printf("HID_SUBEVENT_CAN_SEND_NOW\n");
+                            break;
+                        default:
+                            printf("Unknown HCI_EVENT_HID_META\n");
+                            break;
+                    }
+                    break;                    
                 default:
+                    printf("Unknown HCI_EVENT_PACKET packet event: 0x%x\n", event);
                     break;
             }
             break;
