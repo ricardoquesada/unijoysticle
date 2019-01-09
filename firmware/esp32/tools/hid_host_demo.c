@@ -30,7 +30,7 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * Please inquire about commercial licensing options at 
+ * Please inquire about commercial licensing options at
  * contact@bluekitchen-gmbh.com
  *
  */
@@ -110,7 +110,7 @@ static const uint8_t keytable_us_none [] = {
     CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL,             /* 81-84 */
     '*', '-', '+', '\n', '1', '2', '3', '4', '5',                       /* 85-97 */
     '6', '7', '8', '9', '0', '.', 0xa7,                                 /* 97-100 */
-}; 
+};
 
 static const uint8_t keytable_us_shift[] = {
     CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL,             /*  0-3  */
@@ -129,12 +129,12 @@ static const uint8_t keytable_us_shift[] = {
     CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL, CHAR_ILLEGAL,             /* 81-84 */
     '*', '-', '+', '\n', '1', '2', '3', '4', '5',                       /* 85-97 */
     '6', '7', '8', '9', '0', '.', 0xb1,                                 /* 97-100 */
-}; 
+};
 
 
 /* @section Main application configuration
  *
- * @text In the application configuration, L2CAP is initialized 
+ * @text In the application configuration, L2CAP is initialized
  */
 
 /* LISTING_START(PanuSetup): Panu setup */
@@ -143,7 +143,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
 
 static void hid_host_setup(void){
 
-    // Initialize L2CAP 
+    // Initialize L2CAP
     l2cap_init();
 
     // register for HCI events
@@ -155,9 +155,9 @@ static void hid_host_setup(void){
 }
 /* LISTING_END */
 
-/* @section SDP parser callback 
- * 
- * @text The SDP parsers retrieves the BNEP PAN UUID as explained in  
+/* @section SDP parser callback
+ *
+ * @text The SDP parsers retrieves the BNEP PAN UUID as explained in
  * Section [on SDP BNEP Query example](#sec:sdpbnepqueryExample}.
  */
 
@@ -182,7 +182,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 if ((uint16_t)(sdp_event_query_attribute_byte_get_data_offset(packet)+1) == sdp_event_query_attribute_byte_get_attribute_length(packet)) {
                     switch(sdp_event_query_attribute_byte_get_attribute_id(packet)) {
                         case BLUETOOTH_ATTRIBUTE_PROTOCOL_DESCRIPTOR_LIST:
-                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {                                    
+                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
                                 des_iterator_init(&prot_it, des_element);
@@ -203,10 +203,10 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                             }
                             break;
                         case BLUETOOTH_ATTRIBUTE_ADDITIONAL_PROTOCOL_DESCRIPTOR_LISTS:
-                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {                                    
+                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
-                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {                                    
+                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {
                                     if (des_iterator_get_type(&additional_des_it) != DE_DES) continue;
                                     des_element = des_iterator_get_element(&additional_des_it);
                                     des_iterator_init(&prot_it, des_element);
@@ -231,7 +231,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                             for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
-                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {                                    
+                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {
                                     if (des_iterator_get_type(&additional_des_it) != DE_STRING) continue;
                                     element = des_iterator_get_element(&additional_des_it);
                                     const uint8_t * descriptor = de_get_string(element);
@@ -240,7 +240,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     printf("HID Descriptor:\n");
                                     printf_hexdump(hid_descriptor, hid_descriptor_len);
                                 }
-                            }                        
+                            }
                             break;
                         default:
                             break;
@@ -250,7 +250,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 fprintf(stderr, "SDP attribute value buffer size exceeded: available %d, required %d\n", attribute_value_buffer_size, sdp_event_query_attribute_byte_get_attribute_length(packet));
             }
             break;
-            
+
         case SDP_EVENT_QUERY_COMPLETE:
             if (!hid_control_psm) {
                 printf("HID Control PSM missing\n");
@@ -271,11 +271,11 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
 
 /*
  * @section HID Report Handler
- * 
+ *
  * @text Use BTstack's compact HID Parser to process incoming HID Report
  * Iterate over all fields and process fields with usage page = 0x07 / Keyboard
  * Check if SHIFT is down and process first character (don't handle multiple key presses)
- * 
+ *
  */
 #define MAX_BUTTONS  16
 typedef struct gamepad {
@@ -325,7 +325,7 @@ static void print_gamepad() {
 static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len) {
     // check if HID Input Report
     if (report_len < 1) return;
-    if (*report != 0xa1) return; 
+    if (*report != 0xa1) return;
     report++;
     report_len--;
     btstack_hid_parser_t parser;
@@ -376,7 +376,7 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
                     case 0xc4:  // accelerator
                         g_gamepad.accelerator = value;
                         break;
-                    case 0xc5:  // brake 
+                    case 0xc5:  // brake
                         g_gamepad.brake = value;
                         break;
                     default:
@@ -434,7 +434,7 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
 
 /*
  * @section Packet Handler
- * 
+ *
  * @text The packet handler responds to various HCI Events.
  */
 
@@ -451,7 +451,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
     switch (packet_type) {
         case HCI_EVENT_PACKET:
             event = hci_event_packet_get_type(packet);
-            switch (event) {            
+            switch (event) {
                 /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
                  * is received and the example is started in client mode, the remote SDP HID query is started.
                  */
@@ -478,7 +478,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 /* LISTING_RESUME */
 
-                case L2CAP_EVENT_CHANNEL_OPENED: 
+                case L2CAP_EVENT_CHANNEL_OPENED:
                     status = packet[2];
                     if (status){
                         printf("L2CAP Connection failed: 0x%02x\n", status);
@@ -492,10 +492,14 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             printf("Connecting to HID Control failed: 0x%02x\n", status);
                             break;
                         }
-                    }                        
+                    }
                     if (l2cap_cid == l2cap_hid_interrupt_cid){
                         printf("HID Connection established\n");
                     }
+                    break;
+                case L2CAP_EVENT_INCOMING_CONNECTION:
+                    l2cap_cid = l2cap_event_incoming_connection_get_local_cid(packet);
+                    l2cap_accept_connection(l2cap_cid);
                     break;
                 case HCI_EVENT_HID_META:
                     switch (hci_event_hid_meta_get_subevent_code(packet)){
@@ -512,7 +516,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             printf("Unknown HCI_EVENT_HID_META\n");
                             break;
                     }
-                    break;                    
+                    break;
                 default:
                     printf("Unknown HCI_EVENT_PACKET packet event: 0x%x\n", event);
                     break;
@@ -548,7 +552,7 @@ int btstack_main(int argc, const char * argv[]){
     // parse human readable Bluetooth address
     sscanf_bd_addr(remote_addr_string, remote_addr);
 
-    // Turn on the device 
+    // Turn on the device
     hci_power_control(HCI_POWER_ON);
     return 0;
 }
