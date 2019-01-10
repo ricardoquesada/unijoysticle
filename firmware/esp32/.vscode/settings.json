@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "btstack_config.h": "c",
+        "gpio.h": "c",
+        "esp_types.h": "c",
+        "gpio_reg.h": "c",
+        "btstack.h": "c"
+    }
+}
