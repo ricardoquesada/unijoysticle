@@ -77,7 +77,8 @@ static uint16_t           l2cap_hid_interrupt_cid;
 // Ouya
 // static const char * remote_addr_string = "B8:5A:F7:C5:99:78";
 // Asus
-static const char * remote_addr_string = "54:A0:50:CD:A8:35";
+//static const char * remote_addr_string = "54:A0:50:CD:A8:35";
+static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
 
 static bd_addr_t remote_addr;
 
@@ -403,7 +404,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
     /* LISTING_RESUME */
     switch (packet_type) {
-                case HCI_EVENT_PACKET:
+        case HCI_EVENT_PACKET:
             event = hci_event_packet_get_type(packet);
             switch (event) {
                 /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
@@ -431,14 +432,19 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     break;
 
                 /* LISTING_RESUME */
-
+                case L2CAP_EVENT_INCOMING_CONNECTION:
+                    printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
+                    break;
+                case L2CAP_EVENT_CAN_SEND_NOW:
+                    print("L2CAP_EVENT_CAN_SEND_NOW\n");
+                    break;
                 case L2CAP_EVENT_CHANNEL_OPENED:
                     status = packet[2];
                     if (status){
                         printf("L2CAP Connection failed: 0x%02x\n", status);
                         break;
                     }
-                    l2cap_cid  = little_endian_read_16(packet, 13);
+                    l2cap_cid = little_endian_read_16(packet, 13);
                     if (!l2cap_cid) break;
                     if (l2cap_cid == l2cap_hid_control_cid){
                         status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, 48, &l2cap_hid_interrupt_cid);
