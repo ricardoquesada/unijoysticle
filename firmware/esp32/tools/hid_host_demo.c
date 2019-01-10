@@ -479,6 +479,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                 /* LISTING_RESUME */
 
                 case L2CAP_EVENT_CHANNEL_OPENED:
+                    printf("L2CAP_EVENT_CHANNEL_OPENED\n");
                     status = packet[2];
                     if (status){
                         printf("L2CAP Connection failed: 0x%02x\n", status);
@@ -498,10 +499,12 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     }
                     break;
                 case L2CAP_EVENT_INCOMING_CONNECTION:
+                    printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
                     l2cap_cid = l2cap_event_incoming_connection_get_local_cid(packet);
                     l2cap_accept_connection(l2cap_cid);
                     break;
                 case HCI_EVENT_HID_META:
+                    printf("HCI_EVENT_HID_META\n");
                     switch (hci_event_hid_meta_get_subevent_code(packet)){
                         case HID_SUBEVENT_CONNECTION_OPENED:
                             printf("HID_SUBEVENT_CONNECTION_OPENED\n");
@@ -516,6 +519,9 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             printf("Unknown HCI_EVENT_HID_META\n");
                             break;
                     }
+                    break;
+                case L2CAP_EVENT_CAN_SEND_NOW:
+                    printf("L2CAP_EVENT_CAN_SEND_NOW\n");
                     break;
                 default:
                     printf("Unknown HCI_EVENT_PACKET packet event: 0x%x\n", event);
