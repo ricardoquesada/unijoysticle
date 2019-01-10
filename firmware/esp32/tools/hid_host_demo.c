@@ -456,6 +456,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                  * is received and the example is started in client mode, the remote SDP HID query is started.
                  */
                 case BTSTACK_EVENT_STATE:
+                    printf("BTSTACK_EVENT_STATE\n");
                     if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
                         printf("Start SDP HID query for remote HID Device.\n");
                         sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
@@ -464,13 +465,15 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 /* LISTING_PAUSE */
                 case HCI_EVENT_PIN_CODE_REQUEST:
-                                        // inform about pin code request
+                    printf("HCI_EVENT_PIN_CODE_REQUEST\n");
+                    // inform about pin code request
                     printf("Pin code request - using '0000'\n");
                     hci_event_pin_code_request_get_bd_addr(packet, event_addr);
                     gap_pin_code_response(event_addr, "0000");
-                                        break;
+                    break;
 
                 case HCI_EVENT_USER_CONFIRMATION_REQUEST:
+                    printf("HCI_EVENT_USER_CONFIRMATION_REQUEST\n");
                     // inform about user confirmation request
                     printf("SSP User Confirmation Request with numeric value '%"PRIu32"'\n", little_endian_read_32(packet, 8));
                     printf("SSP User Confirmation Auto accept\n");
@@ -524,7 +527,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     printf("L2CAP_EVENT_CAN_SEND_NOW\n");
                     break;
                 default:
-                    printf("Unknown HCI_EVENT_PACKET packet event: 0x%x\n", event);
+                    //printf("Unknown HCI_EVENT_PACKET packet event: 0x%x\n", event);
                     break;
             }
             break;
