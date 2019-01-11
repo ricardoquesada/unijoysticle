@@ -436,7 +436,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
                     break;
                 case L2CAP_EVENT_CAN_SEND_NOW:
-                    print("L2CAP_EVENT_CAN_SEND_NOW\n");
+                    printf("L2CAP_EVENT_CAN_SEND_NOW\n");
                     break;
                 case L2CAP_EVENT_CHANNEL_OPENED:
                     status = packet[2];
