@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -31,15 +31,11 @@
 		50E2D9FD1D833849001984EE /* CommandoScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 50E2D9FC1D833849001984EE /* CommandoScene.sks */; };
 		50EFD3301D5CE619000B8CA4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EFD32F1D5CE619000B8CA4 /* Constants.swift */; };
 		50F2FF721D700835003F76B6 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F2FF711D700835003F76B6 /* iCadeReaderView.swift */; };
-		50FD3B251E3AE2F9003F2581 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 50FD3B241E3AE2F9003F2581 /* GoogleService-Info.plist */; };
-		D1A935D69FC6A3F5BB1B1A97 /* Pods_UniJoystiCle_controller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97EC3679FC6CA4D70D3EE0EB /* Pods_UniJoystiCle_controller.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1E225490F6D7016170A3FB18 /* Pods-UniJoystiCle controller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UniJoystiCle controller.release.xcconfig"; path = "Pods/Target Support Files/Pods-UniJoystiCle controller/Pods-UniJoystiCle controller.release.xcconfig"; sourceTree = "<group>"; };
 		50129C061D4E5ABD00157D90 /* GyrussScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GyrussScene.swift; sourceTree = "<group>"; };
 		50129C081D4E5B1000157D90 /* GyrussScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GyrussScene.sks; sourceTree = "<group>"; };
-		5060A4B01E3AD92D0099F1F8 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		508EF7601CC7F08E0082E38D /* NetworkConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkConnection.swift; path = src/NetworkConnection.swift; sourceTree = SOURCE_ROOT; };
 		5094A5F41CEA044D00E3B57A /* C64_Pro_Mono-STYLE.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "C64_Pro_Mono-STYLE.ttf"; sourceTree = "<group>"; };
 		509B16BD1CC73CBF00A7426C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -66,10 +62,7 @@
 		50E2D9FC1D833849001984EE /* CommandoScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CommandoScene.sks; sourceTree = "<group>"; };
 		50EFD32F1D5CE619000B8CA4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		50F2FF711D700835003F76B6 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
-		50FD3B241E3AE2F9003F2581 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		50FD3B261E3AE8B0003F2581 /* UniJoystiCle Controller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "UniJoystiCle Controller.entitlements"; sourceTree = "<group>"; };
-		97EC3679FC6CA4D70D3EE0EB /* Pods_UniJoystiCle_controller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UniJoystiCle_controller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF2A27B1101B761B8557CB16 /* Pods-UniJoystiCle controller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UniJoystiCle controller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UniJoystiCle controller/Pods-UniJoystiCle controller.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +70,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1A935D69FC6A3F5BB1B1A97 /* Pods_UniJoystiCle_controller.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,14 +104,11 @@
 			isa = PBXGroup;
 			children = (
 				50FD3B261E3AE8B0003F2581 /* UniJoystiCle Controller.entitlements */,
-				50FD3B241E3AE2F9003F2581 /* GoogleService-Info.plist */,
 				50B7C59D1D89C6AE000445A8 /* DOCUMENTATION.md */,
 				50BEF5091CC94B3D00505A7F /* CHANGELOG */,
-				5060A4B01E3AD92D0099F1F8 /* Podfile */,
 				50DD05821CC6642C0080240F /* src */,
 				5094A5F31CEA044D00E3B57A /* res */,
 				50CCB4251CA5C214002CFD1E /* Products */,
-				91A89A42CB8D4C3FA442C11B /* Pods */,
 				F8B1C088C79AE6A320E3CB6D /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -163,19 +152,9 @@
 			path = raw;
 			sourceTree = "<group>";
 		};
-		91A89A42CB8D4C3FA442C11B /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				DF2A27B1101B761B8557CB16 /* Pods-UniJoystiCle controller.debug.xcconfig */,
-				1E225490F6D7016170A3FB18 /* Pods-UniJoystiCle controller.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		F8B1C088C79AE6A320E3CB6D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				97EC3679FC6CA4D70D3EE0EB /* Pods_UniJoystiCle_controller.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,11 +166,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50CCB4501CA5C215002CFD1E /* Build configuration list for PBXNativeTarget "UniJoystiCle controller" */;
 			buildPhases = (
-				53238DACC5912B99333FF521 /* [CP] Check Pods Manifest.lock */,
 				50CCB4201CA5C214002CFD1E /* Sources */,
 				50CCB4211CA5C214002CFD1E /* Frameworks */,
 				50CCB4221CA5C214002CFD1E /* Resources */,
-				F5A75B7AC8086522A3167047 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -214,7 +191,6 @@
 				TargetAttributes = {
 					50CCB4231CA5C214002CFD1E = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = V9GM3JGLHY;
 						LastSwiftMigration = 0810;
 						SystemCapabilities = {
 							com.apple.Push = {
@@ -225,7 +201,7 @@
 				};
 			};
 			buildConfigurationList = 50CCB41F1CA5C214002CFD1E /* Build configuration list for PBXProject "UniJoystiCle controller" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -247,7 +223,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50FD3B251E3AE2F9003F2581 /* GoogleService-Info.plist in Resources */,
 				50DD05A31CC6642C0080240F /* icon-180.png in Resources */,
 				50E2D9FD1D833849001984EE /* CommandoScene.sks in Resources */,
 				50DD059B1CC6642C0080240F /* Main.storyboard in Resources */,
@@ -264,45 +239,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		53238DACC5912B99333FF521 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-UniJoystiCle controller-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F5A75B7AC8086522A3167047 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-UniJoystiCle controller/Pods-UniJoystiCle controller-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UniJoystiCle controller/Pods-UniJoystiCle controller-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		50CCB4201CA5C214002CFD1E /* Sources */ = {
@@ -386,7 +322,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -428,9 +363,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -438,18 +373,20 @@
 		};
 		50CCB4511CA5C215002CFD1E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DF2A27B1101B761B8557CB16 /* Pods-UniJoystiCle controller.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "UniJoystiCle Controller.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = WT8E83A6FU;
 				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = moe.retro.unijoysticle;
 				PRODUCT_NAME = "UniJoystiCle Controller";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -457,18 +394,20 @@
 		};
 		50CCB4521CA5C215002CFD1E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E225490F6D7016170A3FB18 /* Pods-UniJoystiCle controller.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "UniJoystiCle Controller.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = WT8E83A6FU;
 				INFOPLIST_FILE = "$(SRCROOT)/src/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = moe.retro.unijoysticle;
 				PRODUCT_NAME = "UniJoystiCle Controller";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
