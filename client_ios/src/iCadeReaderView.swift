@@ -108,8 +108,8 @@ class iCadeReaderView: UIView, UIKeyInput {
         super.init(frame: frame)
         newInputView = UIView(frame: CGRect.zero)
         let notiCenter = NotificationCenter.default
-        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        notiCenter.addObserver(self, selector: #selector(iCadeReaderView.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
     convenience init () {
@@ -120,13 +120,13 @@ class iCadeReaderView: UIView, UIKeyInput {
         fatalError("This class does not support NSCoding")
     }
 
-    func didEnterBackground() -> Void {
+    @objc func didEnterBackground() -> Void {
         if active {
             resignFirstResponder()
         }
     }
 
-    func didBecomeActive() -> Void {
+    @objc func didBecomeActive() -> Void {
         if active {
             becomeFirstResponder()
         }

@@ -111,7 +111,7 @@ class CommodoreHomeViewController: UITableViewController, UIPickerViewDelegate, 
         Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(reset), userInfo: nil, repeats: false)
     }
 
-    func reset() {
+    @objc func reset() {
         for _ in 1...2 {
             let version:UInt8 = 2     // should be 2
             let joysticks:UInt8 = 3    // 1 and 2

@@ -110,10 +110,10 @@ class DPadScene: ControllerScene, iCadeEventDelegate {
         self.view?.addSubview(icadeView)
     }
 
-    func connectControllers() {
+    @objc func connectControllers() {
         enableGamecontroller()
     }
-    func controllerDisconnected() {
+    @objc func controllerDisconnected() {
         labelGController.isHidden = true
         joyState = 0
         sendJoyState()

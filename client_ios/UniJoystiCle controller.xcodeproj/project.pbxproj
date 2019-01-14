@@ -191,7 +191,7 @@
 				TargetAttributes = {
 					50CCB4231CA5C214002CFD1E = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0810;
+						LastSwiftMigration = 1010;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -387,7 +387,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = moe.retro.unijoysticle;
 				PRODUCT_NAME = "UniJoystiCle Controller";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -408,7 +409,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = moe.retro.unijoysticle;
 				PRODUCT_NAME = "UniJoystiCle Controller";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
