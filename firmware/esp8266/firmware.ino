@@ -21,6 +21,10 @@ limitations under the License.
 
 #define UNIJOYSTICLE_VERSION "v0.4.5"
 
+// Newer esp8266 come with WPS disabled by default, and you won't be able to
+// link. If you want WPS, enable it here.
+//#define ENABLE_WPS
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -327,8 +331,10 @@ static void setupWiFi()
     if (__mode == MODE_STA || __mode == MODE_WPS)
         ok = setupSTA();
 
+#ifdef ENABLE_WPS
     if (!ok && __mode == MODE_WPS)
         ok = setupWPS();
+#endif // ENABLE_WPS
 
     // always default to AP if couldn't connect with previous modes
     if (!ok)
@@ -378,6 +384,7 @@ static bool setupSTA()
     return (WiFi.waitForConnectResult() == WL_CONNECTED);
 }
 
+#ifdef ENABLE_WPS
 static bool setupWPS()
 {
     // Mode must be WIFI_STA, but it is already in that mode
@@ -404,6 +411,7 @@ static bool setupWPS()
     }
     return wpsSuccess;
 }
+#endif // ENABLE_WPS
 
 static void printWifiStatus()
 {
