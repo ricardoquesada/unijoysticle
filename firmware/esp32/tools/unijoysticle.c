@@ -48,7 +48,10 @@
  */
 
 #include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "btstack_config.h"
 #include "btstack.h"
@@ -96,10 +99,147 @@ static hid_host_state_t hid_host_state = HID_HOST_IDLE;
 static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 
-static void hid_host_setup(void){
+// #define REPORT_ID_DECLARED 
+// to enable demo text on POSIX systems
+// #undef HAVE_BTSTACK_STDIN
 
-    // Initialize L2CAP 
-    l2cap_init();
+/// HOST_DEVICE <--- BEGIN
+static uint8_t hid_service_buffer[512];
+static uint8_t device_id_sdp_service_buffer[100];
+static const char hid_device_name[] = "BTstack HID Keyboard";
+static btstack_packet_callback_registration_t hci_event_callback_registration;
+static uint16_t hid_cid;
+static bd_addr_t device_addr;
+static int     report_data_ready = 1;
+static uint8_t report_data[20];
+static uint8_t hid_boot_device = 1;
+static int send_mouse_on_interrupt_channel = 0;
+static int send_keyboard_on_interrupt_channel = 0;
+
+// from USB HID Specification 1.1, Appendix B.1
+const uint8_t hid_descriptor_keyboard_boot_mode[] = {
+    0x05, 0x01,                    // Usage Page (Generic Desktop)
+    0x09, 0x06,                    // Usage (Keyboard)
+    0xa1, 0x01,                    // Collection (Application)
+
+#ifdef REPORT_ID_DECLARED
+    0x85, 0x01,                   // Report ID 1
+#endif
+    // Modifier byte
+
+    0x75, 0x01,                    //   Report Size (1)
+    0x95, 0x08,                    //   Report Count (8)
+    0x05, 0x07,                    //   Usage Page (Key codes)
+    0x19, 0xe0,                    //   Usage Minimum (Keyboard LeftControl)
+    0x29, 0xe7,                    //   Usage Maxium (Keyboard Right GUI)
+    0x15, 0x00,                    //   Logical Minimum (0)
+    0x25, 0x01,                    //   Logical Maximum (1)
+    0x81, 0x02,                    //   Input (Data, Variable, Absolute)
+
+    // Reserved byte
+
+    0x75, 0x01,                    //   Report Size (1)
+    0x95, 0x08,                    //   Report Count (8)
+    0x81, 0x03,                    //   Input (Constant, Variable, Absolute)
+
+    // LED report + padding
+
+    0x95, 0x05,                    //   Report Count (5)
+    0x75, 0x01,                    //   Report Size (1)
+    0x05, 0x08,                    //   Usage Page (LEDs)
+    0x19, 0x01,                    //   Usage Minimum (Num Lock)
+    0x29, 0x05,                    //   Usage Maxium (Kana)
+    0x91, 0x02,                    //   Output (Data, Variable, Absolute)
+
+    0x95, 0x01,                    //   Report Count (1)
+    0x75, 0x03,                    //   Report Size (3)
+    0x91, 0x03,                    //   Output (Constant, Variable, Absolute)
+
+    // Keycodes
+
+    0x95, 0x06,                    //   Report Count (6)
+    0x75, 0x08,                    //   Report Size (8)
+    0x15, 0x00,                    //   Logical Minimum (0)
+    0x25, 0xff,                    //   Logical Maximum (1)
+    0x05, 0x07,                    //   Usage Page (Key codes)
+    0x19, 0x00,                    //   Usage Minimum (Reserved (no event indicated))
+    0x29, 0xff,                    //   Usage Maxium (Reserved)
+    0x81, 0x00,                    //   Input (Data, Array)
+
+    0xc0,                          // End collection  
+};
+
+static int hid_get_report_callback(uint16_t cid, hid_report_type_t report_type, uint16_t report_id, int * out_report_size, uint8_t * out_report){
+    UNUSED(cid);
+    UNUSED(report_type);
+    UNUSED(report_id);
+    UNUSED(out_report_size);
+    UNUSED(out_report);
+    printf("hid_get_report_callback\n");
+    return 1;
+}
+
+static void hid_set_report_callback(uint16_t cid, hid_report_type_t report_type, int report_size, uint8_t * report){
+    UNUSED(cid);
+    UNUSED(report_type);
+    UNUSED(report_size);
+    UNUSED(report);
+    printf("hid_set_report_callback\n");
+}
+
+static void hid_report_data_callback(uint16_t cid, hid_report_type_t report_type, uint16_t report_id, int report_size, uint8_t * report){
+    UNUSED(cid);
+    UNUSED(report_type);
+    UNUSED(report_id);
+    UNUSED(report_size);
+    UNUSED(report);
+    printf("hid_report_data_callback\n");
+}
+
+static void hid_device_setup(void) {
+    gap_discoverable_control(1);
+    gap_set_class_of_device(0x2540);
+    gap_set_local_name("HID Keyboard Demo 00:00:00:00:00:00");
+
+    // SDP Server
+    sdp_init();
+    memset(hid_service_buffer, 0, sizeof(hid_service_buffer));
+
+    uint8_t hid_reconnect_initiate = 1;
+    uint8_t hid_virtual_cable = 1;
+    // hid sevice subclass 2540 Keyboard, hid counntry code 33 US, hid virtual cable on, hid reconnect initiate on, hid boot device off 
+    hid_create_sdp_record(hid_service_buffer, 0x10001, 0x2540, 33, 
+        hid_virtual_cable, hid_reconnect_initiate, hid_boot_device, 
+        hid_descriptor_keyboard_boot_mode, sizeof(hid_descriptor_keyboard_boot_mode), hid_device_name);
+
+    printf("HID service record size: %u\n", de_get_len( hid_service_buffer));
+    sdp_register_service(hid_service_buffer);
+
+    // See https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers if you don't have a USB Vendor ID and need a Bluetooth Vendor ID
+    // device info: BlueKitchen GmbH, product 1, version 1
+    device_id_create_sdp_record(device_id_sdp_service_buffer, 0x10003, DEVICE_ID_VENDOR_ID_SOURCE_BLUETOOTH, BLUETOOTH_COMPANY_ID_BLUEKITCHEN_GMBH, 1, 1);
+    printf("Device ID SDP service record size: %u\n", de_get_len((uint8_t*)device_id_sdp_service_buffer));
+    sdp_register_service(device_id_sdp_service_buffer);
+
+    hid_device_init(hid_boot_device, sizeof(hid_descriptor_keyboard_boot_mode), hid_descriptor_keyboard_boot_mode);
+    // register for HCI events
+    hci_event_callback_registration.callback = &packet_handler;
+    hci_add_event_handler(&hci_event_callback_registration);
+
+    // register for HID events
+    hid_device_register_packet_handler(&packet_handler);
+    hid_device_register_report_request_callback(&hid_get_report_callback);
+    hid_device_register_set_report_callback(&hid_set_report_callback);
+    hid_device_register_report_data_callback(&hid_report_data_callback);
+
+    // sscanf_bd_addr(device_addr_string, device_addr);
+    // btstack_stdin_setup(stdin_process);
+    // turn on!
+    // hci_power_control(HCI_POWER_ON);
+ }
+/// HOST_DEVICE <--- END
+
+static void hid_host_setup(void){
 
     // register for HCI events
     hci_event_callback_registration.callback = &packet_handler;
@@ -533,11 +673,15 @@ int btstack_main(int argc, const char * argv[]){
     (void)argc;
     (void)argv;
 
+    // Initialize L2CAP 
+    l2cap_init();
+
+    hid_device_setup();
     hid_host_setup();
 
     // parse human readable Bluetooth address
     sscanf_bd_addr(remote_addr_string, remote_addr);
-    btstack_stdin_setup(stdin_process);
+    // btstack_stdin_setup(stdin_process);
     // Turn on the device 
     hci_power_control(HCI_POWER_ON);
     return 0;

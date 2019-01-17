@@ -52,7 +52,7 @@ clean_src:
 
 #all: ${EXAMPLES}
 
-unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o unijoysticle.c
+unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o hid_device.o btstack_hid_parser.o unijoysticle.c
 	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
 
 gap_inquiry: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_inquiry.c
