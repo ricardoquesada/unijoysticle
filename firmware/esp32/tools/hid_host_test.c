@@ -53,7 +53,7 @@
 #include "btstack_config.h"
 #include "btstack.h"
 
-#define MAX_ATTRIBUTE_VALUE_SIZE 300
+#define MAX_ATTRIBUTE_VALUE_SIZE 512
 
 // SDP
 static uint8_t            hid_descriptor[MAX_ATTRIBUTE_VALUE_SIZE];
@@ -70,8 +70,9 @@ static uint16_t           l2cap_hid_control_cid;
 static uint16_t           l2cap_hid_interrupt_cid;
 
 // MBP 2016
-static const char * remote_addr_string = "00-1F-20-86-DF-52";
+// static const char * remote_addr_string = "00-1F-20-86-DF-52";
 // iMpulse static const char * remote_addr_string = "64:6E:6C:C1:AA:B5";
+static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
 
 static bd_addr_t remote_addr;
 
