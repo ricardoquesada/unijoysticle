@@ -52,10 +52,19 @@ clean_src:
 
 #all: ${EXAMPLES}
 
-hid_host_demo: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o hid_host_demo.o
-	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
-
 gap_inquiry: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_inquiry.c
 	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
 
-all: hid_host_demo gap_inquiry
+gap_link_keys: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_link_keys.c
+	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
+
+hid_device_test: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o btstack_ring_buffer.o hid_device.o hid_device_test.o
+	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
+
+hid_host_test: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o hid_host_test.o
+	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
+
+hid_keyboard_demo: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o hid_device.o btstack_hid_parser.o hid_keyboard_demo.o
+	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
+
+all: gap_inquiry gap_link_keys hid_device_test hid_host_test hid_keyboard_demo
