@@ -59,6 +59,10 @@
 #define MAX_ATTRIBUTE_VALUE_SIZE 512
 #define MAX_DEVICES 20
 #define INQUIRY_INTERVAL 5
+#define MASK_COD_MAJOR_PERIPHERAL 0x0500   // 0b0000_0101_0000_0000
+#define MASK_COD_MINOR_GAMEPAD    0x0008
+#define MASK_COD_MINOR_JOYSTICK   0x0004
+#define MASK_COD_MINOR_ALL       0x003c   // 0b0011_1100
 
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
@@ -84,9 +88,11 @@ static uint16_t           l2cap_hid_interrupt_cid;
 
 enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
 struct device {
+    // For any bluetooth device
     bd_addr_t          address;
     uint8_t            pageScanRepetitionMode;
     uint16_t           clockOffset;
+    uint32_t           cod;
     enum DEVICE_STATE  state;
 };
 
@@ -359,9 +365,10 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     memcpy(devices[deviceCount].address, event_addr, 6);
                     devices[deviceCount].pageScanRepetitionMode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
                     devices[deviceCount].clockOffset = gap_event_inquiry_result_get_clock_offset(packet);
+                    devices[deviceCount].cod = gap_event_inquiry_result_get_class_of_device(packet);
                     // print info
                     printf("Device found: %s ",  bd_addr_to_str(event_addr));
-                    printf("with COD: 0x%06x, ", (unsigned int) gap_event_inquiry_result_get_class_of_device(packet));
+                    printf("with COD: 0x%06x, ", (unsigned int) devices[deviceCount].cod);
                     printf("pageScan %d, ",      devices[deviceCount].pageScanRepetitionMode);
                     printf("clock offset 0x%04x",devices[deviceCount].clockOffset);
                     if (gap_event_inquiry_result_get_rssi_available(packet)){
@@ -385,6 +392,15 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         // retry remote name request
                         if (devices[i].state == REMOTE_NAME_INQUIRED)
                             devices[i].state = REMOTE_NAME_REQUEST;
+                        if ((devices[i].cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
+                            // device is a peripheral: keyboard, mouse, joystick, gamepad...
+                            // but we only care about joysticks and gamepads
+                            uint32_t minor_cod = devices[i].cod & MASK_COD_MINOR_ALL;
+                            if (minor_cod == MASK_COD_MINOR_GAMEPAD || minor_cod == MASK_COD_MINOR_JOYSTICK) {
+                                memcpy(remote_addr, devices[i].address, 6);
+                                sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            }
+                        }
                     }
                     continue_remote_names();
                     break;
