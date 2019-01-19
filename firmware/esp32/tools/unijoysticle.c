@@ -467,7 +467,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     switch (l2cap_event_incoming_connection_get_psm(packet)){
                         case PSM_HID_CONTROL:
                         case PSM_HID_INTERRUPT:
-                            l2cap_event_incoming_connection_get_address(packet, event_addr); 
+                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
                             sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
                     }
@@ -528,43 +528,6 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
     }
 }
 /* LISTING_END */
-
-
-static uint8_t hid_host_get_output_report(uint16_t control_cid){
-    if (hid_host_state != HID_HOST_CONTROL_CONNECTION_ESTABLISHED) return 0;
-
-    hid_host_state = HID_HOST_W2_REQUEST_OUTPUT_REPORT;
-    l2cap_request_can_send_now_event(control_cid);
-    return ERROR_CODE_SUCCESS;
-}
-
-static void show_usage(void){
-    bd_addr_t      iut_address;
-    gap_local_bd_addr(iut_address);
-    printf("\n--- Bluetooth HID Host Test Console %s ---\n", bd_addr_to_str(iut_address));
-    printf("o      - get output report\n");
-    printf("Ctrl-c - exit\n");
-    printf("---\n");
-}
-
-static void stdin_process(char cmd){
-    uint8_t status = ERROR_CODE_SUCCESS;
-    switch (cmd){
-        case 'o':
-            printf("Get output report from %s\n", remote_addr_string);
-            status = hid_host_get_output_report(l2cap_hid_control_cid);
-            break;
-        case '\n':
-        case '\r':
-            break;
-        default:
-            show_usage();
-            break;
-    }
-    if (status != ERROR_CODE_SUCCESS){
-        printf("HID host cmd \'%c\' failed, status 0x%02x\n", cmd, status);
-    }
-}
 
 int btstack_main(int argc, const char * argv[]);
 int btstack_main(int argc, const char * argv[]){
