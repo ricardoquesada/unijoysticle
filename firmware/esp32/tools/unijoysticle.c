@@ -110,9 +110,9 @@ static btstack_packet_callback_registration_t hci_event_callback_registration;
 
 // Needed for queries
     typedef enum {
-    HID_HOST_IDLE,
-    HID_HOST_CONTROL_CONNECTION_ESTABLISHED,
-    HID_HOST_W2_REQUEST_OUTPUT_REPORT
+    HID_HOST_IDLE,              // host is doing nothing
+    HID_HOST_SCAN,              // host is scanning
+    HID_HOST_CONNECTED,         // host has a device connected
 } hid_host_state_t;
 
 static hid_host_state_t hid_host_state = HID_HOST_IDLE;
@@ -227,6 +227,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
             break;
             
         case SDP_EVENT_QUERY_COMPLETE:
+            printf("SDP_EVENT_QUERY_COMPLETE\n");
             if (!hid_control_psm) {
                 printf("HID Control PSM missing\n");
                 break;
@@ -236,9 +237,15 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 break;
             }
             printf("Setup HID\n");
-            status = l2cap_create_channel(packet_handler, remote_addr, hid_control_psm, 48, &l2cap_hid_control_cid);
-            if (status){
-                printf("Connecting to HID Control failed: 0x%02x\n", status);
+
+            if (hid_host_state != HID_HOST_CONNECTED) {
+                status = l2cap_create_channel(packet_handler, remote_addr, hid_control_psm, 48, &l2cap_hid_control_cid);
+                if (status){
+                    printf("Connecting to HID Control failed: 0x%02x\n", status);
+                } else {
+                    hid_host_state = HID_HOST_CONNECTED;
+                }
+
             }
             break;
     }
@@ -284,6 +291,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     break;
 
                 case HCI_EVENT_HID_META:
+                    printf("HCI_EVENT_HID_META\n");
                     switch (hci_event_hid_meta_get_subevent_code(packet)){
                         case HID_SUBEVENT_CONNECTION_OPENED:
                             status = hid_subevent_connection_opened_get_status(packet);
@@ -313,17 +321,28 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     }
                 /* LISTING_RESUME */
                 case L2CAP_EVENT_INCOMING_CONNECTION:
-                    printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
-                    switch (l2cap_event_incoming_connection_get_psm(packet)){
+                {
+                    uint16_t psm = l2cap_event_incoming_connection_get_psm(packet);
+                    printf("L2CAP_EVENT_INCOMING_CONNECTION. PSM = 0x%04x\n", psm);
+                    switch (psm) {
                         case PSM_HID_CONTROL:
+                            l2cap_accept_connection(channel);
+                            break;
                         case PSM_HID_INTERRUPT:
+                            l2cap_accept_connection(channel);
+                            break;
                             // FIXME: we decline connection, and we connect to them
                             // l2cap_decline_connection(channel);
-                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
-                            sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            // l2cap_accept_connection(channel);
+                            // l2cap_event_incoming_connection_get_address(packet, remote_addr); 
+                            // hid_host_state = HID_HOST_CONNECTED;
+                            // sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
+                        default:
+                            printf("Unknown PSM = 0x%02x\n", psm);
                     }
                     break;
+                }
                 case L2CAP_EVENT_CHANNEL_OPENED: 
                     printf("L2CAP_EVENT_CHANNEL_OPENED\n");
                     status = packet[2];
@@ -339,27 +358,15 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             printf("Connecting to HID Control failed: 0x%02x\n", status);
                             break;
                         }
-                        hid_host_state = HID_HOST_CONTROL_CONNECTION_ESTABLISHED;
                     }                        
                     if (l2cap_cid == l2cap_hid_interrupt_cid){
                         printf("HID Connection established\n");
+                        hid_host_state = HID_HOST_CONNECTED;
                     }
                     break;
                 case L2CAP_EVENT_CHANNEL_CLOSED:
-                    break;                    
-                case L2CAP_EVENT_CAN_SEND_NOW:
-                    switch(hid_host_state){
-                        case HID_HOST_W2_REQUEST_OUTPUT_REPORT:{
-                            uint8_t header = (HID_MESSAGE_TYPE_GET_REPORT << 4) | HID_REPORT_TYPE_OUTPUT;
-                            uint8_t report_id = 0x01;
-                            uint8_t report[] = { header, report_id };
-                            l2cap_send(l2cap_hid_control_cid, (uint8_t*) report, sizeof(report));
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-
+                    printf("L2CAP_EVENT_CHANNEL_CLOSED\n");
+                    break;                 
                 // GAP related
                 case GAP_EVENT_INQUIRY_RESULT:
                     // print info
@@ -441,6 +448,8 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                 printf("\nHID Control: ");
                 printf_hexdump(packet, size);
             } else {
+                printf("Packet from unknown cid: 0x%04x\n", channel);
+                printf_hexdump(packet, size);
                 break;
             }
         default:
