@@ -57,6 +57,16 @@
 #include "btstack.h"
 
 #define MAX_ATTRIBUTE_VALUE_SIZE 512
+#define MAX_DEVICES 20
+#define INQUIRY_INTERVAL 5
+
+static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
+static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
+static void print_gamepad(void);
+static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len);
+static int getDeviceIndexForAddress(bd_addr_t addr);
+static void continue_remote_names(void);
+static void start_scan(void);
 
 // SDP
 static uint8_t            hid_descriptor[MAX_ATTRIBUTE_VALUE_SIZE];
@@ -72,9 +82,18 @@ static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE
 static uint16_t           l2cap_hid_control_cid;
 static uint16_t           l2cap_hid_interrupt_cid;
 
-// MBP 2016
-// static const char * remote_addr_string = "00-1F-20-86-DF-52";
-// iMpulse static const char * remote_addr_string = "64:6E:6C:C1:AA:B5";
+enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
+struct device {
+    bd_addr_t          address;
+    uint8_t            pageScanRepetitionMode;
+    uint16_t           clockOffset;
+    enum DEVICE_STATE  state;
+};
+
+struct device devices[MAX_DEVICES];
+int deviceCount = 0;
+
+// Asus
 static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
 
 static bd_addr_t remote_addr;
@@ -89,19 +108,6 @@ static btstack_packet_callback_registration_t hci_event_callback_registration;
 } hid_host_state_t;
 
 static hid_host_state_t hid_host_state = HID_HOST_IDLE;
-
-/* @section Main application configuration
- *
- * @text In the application configuration, L2CAP is initialized 
- */
-
-/* LISTING_START(PanuSetup): Panu setup */
-static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
-static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
-
-// #define REPORT_ID_DECLARED 
-// to enable demo text on POSIX systems
-// #undef HAVE_BTSTACK_STDIN
 
 static void hid_host_setup(void){
 
@@ -230,6 +236,239 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
     }
 }
 
+static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
+{
+    /* LISTING_PAUSE */
+    uint8_t   event;
+    bd_addr_t event_addr;
+    uint8_t   status;
+    uint16_t  l2cap_cid;
+    int       index;
+
+    /* LISTING_RESUME */
+    switch (packet_type) {
+		case HCI_EVENT_PACKET:
+            event = hci_event_packet_get_type(packet);
+            switch (event) {            
+                /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
+                 * is received and the example is started in client mode, the remote SDP HID query is started.
+                 */
+                case BTSTACK_EVENT_STATE:
+                    if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
+                        printf("Start SDP HID query for remote HID Device.\n");
+                        start_scan();
+                        // sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                    }
+                    break;
+
+                /* LISTING_PAUSE */
+                case HCI_EVENT_PIN_CODE_REQUEST:
+					// inform about pin code request
+                    printf("Pin code request - using '0000'\n");
+                    hci_event_pin_code_request_get_bd_addr(packet, event_addr);
+                    gap_pin_code_response(event_addr, "0000");
+					break;
+
+                case HCI_EVENT_USER_CONFIRMATION_REQUEST:
+                    // inform about user confirmation request
+                    printf("SSP User Confirmation Request with numeric value '%"PRIu32"'\n", little_endian_read_32(packet, 8));
+                    printf("SSP User Confirmation Auto accept\n");
+                    break;
+
+                case HCI_EVENT_HID_META:
+                    switch (hci_event_hid_meta_get_subevent_code(packet)){
+                        case HID_SUBEVENT_CONNECTION_OPENED:
+                            status = hid_subevent_connection_opened_get_status(packet);
+                            if (status) {
+                                // outgoing connection failed
+                                printf("Connection failed, status 0x%x\n", status);
+                                return;
+                            }
+                            hid_subevent_connection_opened_get_bd_addr(packet, remote_addr);
+                            uint16_t hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
+                            printf("HID Connected to %s - %d\n", bd_addr_to_str(remote_addr), hid_cid);
+                            break;
+                        case HID_SUBEVENT_CONNECTION_CLOSED:
+                            printf("HID Disconnected\n");
+                            break;
+                        case HID_SUBEVENT_SUSPEND:
+                            printf("HID Suspend\n");
+                            break;
+                        case HID_SUBEVENT_EXIT_SUSPEND:
+                            printf("HID Exit Suspend\n");
+                            break;
+                        case HID_SUBEVENT_CAN_SEND_NOW:
+                            printf("HID_SUBEVENT_CAN_SEND_NOW\n");
+                            break;
+                        default:
+                            break;
+                    }
+                /* LISTING_RESUME */
+                case L2CAP_EVENT_INCOMING_CONNECTION:
+                    printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
+                    switch (l2cap_event_incoming_connection_get_psm(packet)){
+                        case PSM_HID_CONTROL:
+                        case PSM_HID_INTERRUPT:
+                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
+                            sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            break;
+                    }
+                    break;
+                case L2CAP_EVENT_CHANNEL_OPENED: 
+                    status = packet[2];
+                    if (status){
+                        printf("L2CAP Connection failed: 0x%02x\n", status);
+                        break;
+                    }
+                    l2cap_cid  = little_endian_read_16(packet, 13);
+                    if (!l2cap_cid) break;
+                    if (l2cap_cid == l2cap_hid_control_cid){
+                        status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, 48, &l2cap_hid_interrupt_cid);
+                        if (status){
+                            printf("Connecting to HID Control failed: 0x%02x\n", status);
+                            break;
+                        }
+                        hid_host_state = HID_HOST_CONTROL_CONNECTION_ESTABLISHED;
+                    }                        
+                    if (l2cap_cid == l2cap_hid_interrupt_cid){
+                        printf("HID Connection established\n");
+                    }
+                    break;
+                case L2CAP_EVENT_CHANNEL_CLOSED:
+                    break;                    
+                case L2CAP_EVENT_CAN_SEND_NOW:
+                    switch(hid_host_state){
+                        case HID_HOST_W2_REQUEST_OUTPUT_REPORT:{
+                            uint8_t header = (HID_MESSAGE_TYPE_GET_REPORT << 4) | HID_REPORT_TYPE_OUTPUT;
+                            uint8_t report_id = 0x01;
+                            uint8_t report[] = { header, report_id };
+                            l2cap_send(l2cap_hid_control_cid, (uint8_t*) report, sizeof(report));
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
+                // GAP related
+                case GAP_EVENT_INQUIRY_RESULT:
+                    if (deviceCount >= MAX_DEVICES) break;  // already full
+                    gap_event_inquiry_result_get_bd_addr(packet, event_addr);
+                    index = getDeviceIndexForAddress(event_addr);
+                    if (index >= 0) break;   // already in our list
+
+                    memcpy(devices[deviceCount].address, event_addr, 6);
+                    devices[deviceCount].pageScanRepetitionMode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
+                    devices[deviceCount].clockOffset = gap_event_inquiry_result_get_clock_offset(packet);
+                    // print info
+                    printf("Device found: %s ",  bd_addr_to_str(event_addr));
+                    printf("with COD: 0x%06x, ", (unsigned int) gap_event_inquiry_result_get_class_of_device(packet));
+                    printf("pageScan %d, ",      devices[deviceCount].pageScanRepetitionMode);
+                    printf("clock offset 0x%04x",devices[deviceCount].clockOffset);
+                    if (gap_event_inquiry_result_get_rssi_available(packet)){
+                        printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
+                    }
+                    if (gap_event_inquiry_result_get_name_available(packet)){
+                        char name_buffer[240];
+                        int name_len = gap_event_inquiry_result_get_name_len(packet);
+                        memcpy(name_buffer, gap_event_inquiry_result_get_name(packet), name_len);
+                        name_buffer[name_len] = 0;
+                        printf(", name '%s'", name_buffer);
+                        devices[deviceCount].state = REMOTE_NAME_FETCHED;;
+                    } else {
+                        devices[deviceCount].state = REMOTE_NAME_REQUEST;
+                    }
+                    printf("\n");
+                    deviceCount++;
+                    break;
+                case GAP_EVENT_INQUIRY_COMPLETE:
+                    for (int i=0;i<deviceCount;i++) {
+                        // retry remote name request
+                        if (devices[i].state == REMOTE_NAME_INQUIRED)
+                            devices[i].state = REMOTE_NAME_REQUEST;
+                    }
+                    continue_remote_names();
+                    break;
+
+                case HCI_EVENT_REMOTE_NAME_REQUEST_COMPLETE:
+                    reverse_bd_addr(&packet[3], event_addr);
+                    index = getDeviceIndexForAddress(event_addr);
+                    if (index >= 0) {
+                        if (packet[2] == 0) {
+                            printf("Name: '%s'\n", &packet[9]);
+                            devices[index].state = REMOTE_NAME_FETCHED;
+                        } else {
+                            printf("Failed to get name: page timeout\n");
+                        }
+                    }
+                    continue_remote_names();
+                    break;
+
+                default:
+                    break;
+            }
+            break;
+        case L2CAP_DATA_PACKET:
+            // for now, just dump incoming data
+            if (channel == l2cap_hid_interrupt_cid){
+                printf("HID Packet: ");
+                printf_hexdump(packet, size);
+                hid_host_handle_interrupt_report(packet,  size);
+                print_gamepad();
+            } else if (channel == l2cap_hid_control_cid){
+                printf("\nHID Control: ");
+                printf_hexdump(packet, size);
+            } else {
+                break;
+            }
+        default:
+            break;
+    }
+}
+
+static int getDeviceIndexForAddress( bd_addr_t addr){
+    int j;
+    for (j=0; j< deviceCount; j++){
+        if (bd_addr_cmp(addr, devices[j].address) == 0){
+            return j;
+        }
+    }
+    return -1;
+}
+
+static int has_more_remote_name_requests(void){
+    int i;
+    for (i=0;i<deviceCount;i++) {
+        if (devices[i].state == REMOTE_NAME_REQUEST) return 1;
+    }
+    return 0;
+}
+
+static void do_next_remote_name_request(void){
+    int i;
+    for (i=0;i<deviceCount;i++) {
+        // remote name request
+        if (devices[i].state == REMOTE_NAME_REQUEST){
+            devices[i].state = REMOTE_NAME_INQUIRED;
+            printf("Get remote name of %s...\n", bd_addr_to_str(devices[i].address));
+            gap_remote_name_request( devices[i].address, devices[i].pageScanRepetitionMode,  devices[i].clockOffset | 0x8000);
+            return;
+        }
+    }
+}
+
+static void continue_remote_names(void){
+    if (has_more_remote_name_requests()){
+        do_next_remote_name_request();
+        return;
+    }
+    start_scan();
+}
+
+static void start_scan(void){
+    printf("Starting inquiry scan..\n");
+    gap_inquiry_start(INQUIRY_INTERVAL);
+}
+
 
 /*
  * @section HID Report Handler
@@ -274,7 +513,7 @@ typedef struct gamepad {
 
 static gamepad_t g_gamepad;
 
-static void print_gamepad() {
+static void print_gamepad(void) {
     printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, accel=%d, brake=%d, ba=%d, bb=%d, bc=%d, bd=%d\n",
             g_gamepad.x, g_gamepad.y, g_gamepad.z,
             g_gamepad.rx, g_gamepad.ry, g_gamepad.rz,
@@ -396,137 +635,6 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
     }
 }
 
-static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
-{
-    /* LISTING_PAUSE */
-    uint8_t   event;
-    bd_addr_t event_addr;
-    uint8_t   status;
-    uint16_t  l2cap_cid;
-
-    /* LISTING_RESUME */
-    switch (packet_type) {
-		case HCI_EVENT_PACKET:
-            event = hci_event_packet_get_type(packet);
-            switch (event) {            
-                /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
-                 * is received and the example is started in client mode, the remote SDP HID query is started.
-                 */
-                case BTSTACK_EVENT_STATE:
-                    if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
-                        printf("Start SDP HID query for remote HID Device.\n");
-                        sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
-                    }
-                    break;
-
-                /* LISTING_PAUSE */
-                case HCI_EVENT_PIN_CODE_REQUEST:
-					// inform about pin code request
-                    printf("Pin code request - using '0000'\n");
-                    hci_event_pin_code_request_get_bd_addr(packet, event_addr);
-                    gap_pin_code_response(event_addr, "0000");
-					break;
-
-                case HCI_EVENT_USER_CONFIRMATION_REQUEST:
-                    // inform about user confirmation request
-                    printf("SSP User Confirmation Request with numeric value '%"PRIu32"'\n", little_endian_read_32(packet, 8));
-                    printf("SSP User Confirmation Auto accept\n");
-                    break;
-
-                case HCI_EVENT_HID_META:
-                    switch (hci_event_hid_meta_get_subevent_code(packet)){
-                        case HID_SUBEVENT_CONNECTION_OPENED:
-                            status = hid_subevent_connection_opened_get_status(packet);
-                            if (status) {
-                                // outgoing connection failed
-                                printf("Connection failed, status 0x%x\n", status);
-                                return;
-                            }
-                            hid_subevent_connection_opened_get_bd_addr(packet, remote_addr);
-                            uint16_t hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
-                            printf("HID Connected to %s - %d\n", bd_addr_to_str(remote_addr), hid_cid);
-                            break;
-                        case HID_SUBEVENT_CONNECTION_CLOSED:
-                            printf("HID Disconnected\n");
-                            break;
-                        case HID_SUBEVENT_SUSPEND:
-                            printf("HID Suspend\n");
-                            break;
-                        case HID_SUBEVENT_EXIT_SUSPEND:
-                            printf("HID Exit Suspend\n");
-                            break;
-                        case HID_SUBEVENT_CAN_SEND_NOW:
-                            printf("HID_SUBEVENT_CAN_SEND_NOW\n");
-                            break;
-                        default:
-                            break;
-                    }
-                /* LISTING_RESUME */
-                case L2CAP_EVENT_INCOMING_CONNECTION:
-                    printf("L2CAP_EVENT_INCOMING_CONNECTION\n");
-                    switch (l2cap_event_incoming_connection_get_psm(packet)){
-                        case PSM_HID_CONTROL:
-                        case PSM_HID_INTERRUPT:
-                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
-                            sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
-                            break;
-                    }
-                    break;
-                case L2CAP_EVENT_CHANNEL_OPENED: 
-                    status = packet[2];
-                    if (status){
-                        printf("L2CAP Connection failed: 0x%02x\n", status);
-                        break;
-                    }
-                    l2cap_cid  = little_endian_read_16(packet, 13);
-                    if (!l2cap_cid) break;
-                    if (l2cap_cid == l2cap_hid_control_cid){
-                        status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, 48, &l2cap_hid_interrupt_cid);
-                        if (status){
-                            printf("Connecting to HID Control failed: 0x%02x\n", status);
-                            break;
-                        }
-                        hid_host_state = HID_HOST_CONTROL_CONNECTION_ESTABLISHED;
-                    }                        
-                    if (l2cap_cid == l2cap_hid_interrupt_cid){
-                        printf("HID Connection established\n");
-                    }
-                    break;
-                case L2CAP_EVENT_CHANNEL_CLOSED:
-                    break;                    
-                case L2CAP_EVENT_CAN_SEND_NOW:
-                    switch(hid_host_state){
-                        case HID_HOST_W2_REQUEST_OUTPUT_REPORT:{
-                            uint8_t header = (HID_MESSAGE_TYPE_GET_REPORT << 4) | HID_REPORT_TYPE_OUTPUT;
-                            uint8_t report_id = 0x01;
-                            uint8_t report[] = { header, report_id };
-                            l2cap_send(l2cap_hid_control_cid, (uint8_t*) report, sizeof(report));
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                default:
-                    break;
-            }
-            break;
-        case L2CAP_DATA_PACKET:
-            // for now, just dump incoming data
-            if (channel == l2cap_hid_interrupt_cid){
-                printf("HID Packet: ");
-                printf_hexdump(packet, size);
-                hid_host_handle_interrupt_report(packet,  size);
-                print_gamepad();
-            } else if (channel == l2cap_hid_control_cid){
-                printf("\nHID Control: ");
-                printf_hexdump(packet, size);
-            } else {
-                break;
-            }
-        default:
-            break;
-    }
-}
 /* LISTING_END */
 
 int btstack_main(int argc, const char * argv[]);
