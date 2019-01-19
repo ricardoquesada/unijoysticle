@@ -318,13 +318,14 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         case PSM_HID_CONTROL:
                         case PSM_HID_INTERRUPT:
                             // FIXME: we decline connection, and we connect to them
-                            l2cap_decline_connection(channel);
+                            // l2cap_decline_connection(channel);
                             l2cap_event_incoming_connection_get_address(packet, remote_addr); 
                             sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
                     }
                     break;
                 case L2CAP_EVENT_CHANNEL_OPENED: 
+                    printf("L2CAP_EVENT_CHANNEL_OPENED\n");
                     status = packet[2];
                     if (status){
                         printf("L2CAP Connection failed: 0x%02x\n", status);
