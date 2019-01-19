@@ -56,13 +56,14 @@
 #include "btstack_config.h"
 #include "btstack.h"
 
-#define MAX_ATTRIBUTE_VALUE_SIZE 512
-#define MAX_DEVICES 20
-#define INQUIRY_INTERVAL 5
+#define INQUIRY_INTERVAL          5
 #define MASK_COD_MAJOR_PERIPHERAL 0x0500   // 0b0000_0101_0000_0000
+#define MASK_COD_MINOR_ALL        0x003c   // 0b0011_1100
 #define MASK_COD_MINOR_GAMEPAD    0x0008
 #define MASK_COD_MINOR_JOYSTICK   0x0004
-#define MASK_COD_MINOR_ALL       0x003c   // 0b0011_1100
+#define MAX_ATTRIBUTE_VALUE_SIZE  512
+#define MAX_DEVICES               20
+#define MTU                       100
 
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
@@ -71,6 +72,7 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
 static int getDeviceIndexForAddress(bd_addr_t addr);
 static void continue_remote_names(void);
 static void start_scan(void);
+static int is_device_gamepad(uint32_t cod);
 
 // SDP
 static uint8_t            hid_descriptor[MAX_ATTRIBUTE_VALUE_SIZE];
@@ -121,8 +123,8 @@ static void hid_host_setup(void){
     hci_event_callback_registration.callback = &packet_handler;
     hci_add_event_handler(&hci_event_callback_registration);
 
-    l2cap_register_service(packet_handler, PSM_HID_INTERRUPT, 100, LEVEL_2);
-    l2cap_register_service(packet_handler, PSM_HID_CONTROL,   100, LEVEL_2);                                      
+    l2cap_register_service(packet_handler, PSM_HID_INTERRUPT, MTU, LEVEL_2);
+    l2cap_register_service(packet_handler, PSM_HID_CONTROL,   MTU, LEVEL_2);                                      
 
     // Disable stdout buffering
     setbuf(stdout, NULL);
@@ -315,6 +317,8 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     switch (l2cap_event_incoming_connection_get_psm(packet)){
                         case PSM_HID_CONTROL:
                         case PSM_HID_INTERRUPT:
+                            // FIXME: we decline connection, and we connect to them
+                            l2cap_decline_connection(channel);
                             l2cap_event_incoming_connection_get_address(packet, remote_addr); 
                             sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
@@ -329,7 +333,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     l2cap_cid  = little_endian_read_16(packet, 13);
                     if (!l2cap_cid) break;
                     if (l2cap_cid == l2cap_hid_control_cid){
-                        status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, 48, &l2cap_hid_interrupt_cid);
+                        status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, MTU, &l2cap_hid_interrupt_cid);
                         if (status){
                             printf("Connecting to HID Control failed: 0x%02x\n", status);
                             break;
@@ -357,49 +361,51 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 // GAP related
                 case GAP_EVENT_INQUIRY_RESULT:
-                    if (deviceCount >= MAX_DEVICES) break;  // already full
-                    gap_event_inquiry_result_get_bd_addr(packet, event_addr);
-                    index = getDeviceIndexForAddress(event_addr);
-                    if (index >= 0) break;   // already in our list
-
-                    memcpy(devices[deviceCount].address, event_addr, 6);
-                    devices[deviceCount].pageScanRepetitionMode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
-                    devices[deviceCount].clockOffset = gap_event_inquiry_result_get_clock_offset(packet);
-                    devices[deviceCount].cod = gap_event_inquiry_result_get_class_of_device(packet);
                     // print info
+                    gap_event_inquiry_result_get_bd_addr(packet, event_addr);
+                    uint8_t pageScanRepetitionMode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
+                    uint16_t clockOffset = gap_event_inquiry_result_get_clock_offset(packet);
+                    uint32_t cod = gap_event_inquiry_result_get_class_of_device(packet);
+
                     printf("Device found: %s ",  bd_addr_to_str(event_addr));
-                    printf("with COD: 0x%06x, ", (unsigned int) devices[deviceCount].cod);
-                    printf("pageScan %d, ",      devices[deviceCount].pageScanRepetitionMode);
-                    printf("clock offset 0x%04x",devices[deviceCount].clockOffset);
+                    printf("with COD: 0x%06x, ", (unsigned int) cod);
+                    printf("pageScan %d, ",      pageScanRepetitionMode);
+                    printf("clock offset 0x%04x", clockOffset);
                     if (gap_event_inquiry_result_get_rssi_available(packet)){
                         printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
                     }
-                    if (gap_event_inquiry_result_get_name_available(packet)){
-                        char name_buffer[240];
-                        int name_len = gap_event_inquiry_result_get_name_len(packet);
-                        memcpy(name_buffer, gap_event_inquiry_result_get_name(packet), name_len);
-                        name_buffer[name_len] = 0;
-                        printf(", name '%s'", name_buffer);
-                        devices[deviceCount].state = REMOTE_NAME_FETCHED;;
-                    } else {
-                        devices[deviceCount].state = REMOTE_NAME_REQUEST;
+
+                    if (is_device_gamepad(cod)) {
+                        if (deviceCount >= MAX_DEVICES) break;  // already full
+                        index = getDeviceIndexForAddress(event_addr);
+                        if (index >= 0) break;   // already in our list
+
+                        memcpy(devices[deviceCount].address, event_addr, 6);
+                        devices[deviceCount].pageScanRepetitionMode = pageScanRepetitionMode;
+                        devices[deviceCount].clockOffset = clockOffset;
+                        devices[deviceCount].cod = cod;
+                        if (gap_event_inquiry_result_get_name_available(packet)){
+                            char name_buffer[240];
+                            int name_len = gap_event_inquiry_result_get_name_len(packet);
+                            memcpy(name_buffer, gap_event_inquiry_result_get_name(packet), name_len);
+                            name_buffer[name_len] = 0;
+                            printf(", name '%s'", name_buffer);
+                            devices[deviceCount].state = REMOTE_NAME_FETCHED;;
+                        } else {
+                            devices[deviceCount].state = REMOTE_NAME_REQUEST;
+                        }
+                        deviceCount++;
+                        memcpy(remote_addr, event_addr, 6);
+                        sdp_client_query_uuid16(&handle_sdp_client_query_result, event_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+
                     }
                     printf("\n");
-                    deviceCount++;
                     break;
                 case GAP_EVENT_INQUIRY_COMPLETE:
                     for (int i=0;i<deviceCount;i++) {
                         // retry remote name request
-                        if (devices[i].state == REMOTE_NAME_INQUIRED)
+                        if (devices[i].state == REMOTE_NAME_INQUIRED) {
                             devices[i].state = REMOTE_NAME_REQUEST;
-                        if ((devices[i].cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
-                            // device is a peripheral: keyboard, mouse, joystick, gamepad...
-                            // but we only care about joysticks and gamepads
-                            uint32_t minor_cod = devices[i].cod & MASK_COD_MINOR_ALL;
-                            if (minor_cod == MASK_COD_MINOR_GAMEPAD || minor_cod == MASK_COD_MINOR_JOYSTICK) {
-                                memcpy(remote_addr, devices[i].address, 6);
-                                sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
-                            }
                         }
                     }
                     continue_remote_names();
@@ -439,6 +445,16 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
         default:
             break;
     }
+}
+
+static int is_device_gamepad(uint32_t cod) {
+    if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
+        // device is a peripheral: keyboard, mouse, joystick, gamepad...
+        // but we only care about joysticks and gamepads
+        uint32_t minor_cod = cod & MASK_COD_MINOR_ALL;
+        return (minor_cod == MASK_COD_MINOR_GAMEPAD || minor_cod == MASK_COD_MINOR_JOYSTICK);
+    }
+    return 0;
 }
 
 static int getDeviceIndexForAddress( bd_addr_t addr){
@@ -494,7 +510,19 @@ static void start_scan(void){
  * Check if SHIFT is down and process first character (don't handle multiple key presses)
  * 
  */
-#define MAX_BUTTONS  16
+enum {
+    DPAD_UP = 1 << 0,
+    DPAD_DOWN = 1 << 1,
+    DPAD_RIGHT = 1 << 2,
+    DPAD_LEFT = 1 << 3,
+};
+
+enum {
+    MISC_AC_HOME = 1 << 0,
+    MISC_AC_BACK = 1 << 1,
+    MISC_SYS_MAIN_MENU = 1 << 2,
+};
+
 typedef struct gamepad {
     // Usage Page: 0x01 (Generic Desktop Controls)
     uint8_t hat;
@@ -504,6 +532,7 @@ typedef struct gamepad {
     int16_t rx;
     int16_t ry;
     int16_t rz;
+    uint8_t dpad;
 
     // Usage Page: 0x02 (Sim controls)
     int32_t     brake;
@@ -513,29 +542,27 @@ typedef struct gamepad {
     uint16_t    battery;
 
     // Usage Page: 0x08 (LED)
-    uint8_t     num_lock;
-    uint8_t     caps_lock;
-    uint8_t     scroll_lock;
-    uint8_t     compose;
+    uint8_t     leds;
 
     // Usage Page: 0x09 (Button)
-    _Bool   buttons[MAX_BUTTONS];
+    uint32_t    buttons;
 
-    // Usage Page: 0x0c (Consumer)
-    uint8_t     ac_home;
-    uint8_t     ac_back;
-
+    // Misc buttos (from 0x0c (Consumer) and others)
+    uint8_t    misc_buttons;
 } gamepad_t;
 
 static gamepad_t g_gamepad;
 
 static void print_gamepad(void) {
-    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, accel=%d, brake=%d, ba=%d, bb=%d, bc=%d, bd=%d\n",
+    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x, leds=0x%02x\n",
             g_gamepad.x, g_gamepad.y, g_gamepad.z,
             g_gamepad.rx, g_gamepad.ry, g_gamepad.rz,
             g_gamepad.hat,
+            g_gamepad.dpad,
             g_gamepad.accelerator, g_gamepad.brake,
-            g_gamepad.buttons[1], g_gamepad.buttons[2], g_gamepad.buttons[3], g_gamepad.buttons[4]
+            g_gamepad.buttons,
+            g_gamepad.misc_buttons,
+            g_gamepad.leds
           );
 
     // gpio_set_level(GPIO_NUM_23, g_gamepad.buttons[1] != 0);
@@ -565,25 +592,55 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
             case 0x01:  // Generic Desktop controls
                 switch (usage) {
                     case 0x30:  // x
-                        g_gamepad.x = value - (parser.global_logical_maximum/2);
+                        g_gamepad.x = value; //- (parser.global_logical_maximum/2);
                         break;
                     case 0x31:  // y
-                        g_gamepad.y = value - (parser.global_logical_maximum/2);
+                        g_gamepad.y = value; //- (parser.global_logical_maximum/2);
                         break;
                     case 0x32:  // z
-                        g_gamepad.z = value - (parser.global_logical_maximum/2);
+                        g_gamepad.z = value; // - (parser.global_logical_maximum/2);
                         break;
                     case 0x33:  // rx
-                        g_gamepad.rx = value - (parser.global_logical_maximum/2);
+                        g_gamepad.rx = value; // - (parser.global_logical_maximum/2);
                         break;
                     case 0x34:  // ry
-                        g_gamepad.ry = value - (parser.global_logical_maximum/2);
+                        g_gamepad.ry = value; // - (parser.global_logical_maximum/2);
                         break;
                     case 0x35:  // rz
-                        g_gamepad.rz = value - (parser.global_logical_maximum/2);
+                        g_gamepad.rz = value; // - (parser.global_logical_maximum/2);
                         break;
                     case 0x39:  // switch hat
                         g_gamepad.hat = value;
+                        break;
+                    case 0x85: // system main menu
+                        if (value)
+                            g_gamepad.misc_buttons |= MISC_SYS_MAIN_MENU;
+                        else
+                            g_gamepad.misc_buttons &= ~MISC_SYS_MAIN_MENU;
+                        break;
+                    case 0x90:  // dpad up
+                        if (value)
+                            g_gamepad.dpad |= DPAD_UP;
+                        else
+                            g_gamepad.dpad &= ~DPAD_UP;
+                        break;
+                    case 0x91:  // dpad down
+                        if (value)
+                            g_gamepad.dpad |= DPAD_DOWN;
+                        else
+                            g_gamepad.dpad &= ~DPAD_DOWN;
+                        break;
+                    case 0x92:  // dpad right
+                        if (value)
+                            g_gamepad.dpad |= DPAD_RIGHT;
+                        else
+                            g_gamepad.dpad &= ~DPAD_RIGHT;
+                        break;
+                    case 0x93:  // dpad left
+                        if (value)
+                            g_gamepad.dpad |= DPAD_LEFT;
+                        else
+                            g_gamepad.dpad &= ~DPAD_LEFT;
                         break;
                     default:
                         printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
@@ -603,39 +660,56 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
                         break;
                 };
                 break;
-            case 0x08:  // LEDs
+            case 0x06: // Generic Device Controls Page
                 switch (usage) {
-                    case 0x01:  // num lock
-                        g_gamepad.num_lock = value;
-                        break;
-                    case 0x02:  // caps lock
-                        g_gamepad.num_lock = value;
-                        break;
-                    case 0x03:  // scroll lock
-                        g_gamepad.num_lock = value;
-                        break;
-                    case 0x04:  // compose
-                        g_gamepad.compose = value;
+                    case 0x20: // Battery Strength
+                        g_gamepad.battery = value;
                         break;
                     default:
                         printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
                         break;
                 }
                 break;
-            case 0x09:  // Button
-                if (usage < MAX_BUTTONS) {
-                    g_gamepad.buttons[usage] = value;
+            case 0x08:  // LEDs
+            {
+                const uint8_t led_idx = usage - 1;
+                if (led_idx < 8) {
+                    if (value)
+                        g_gamepad.leds |= (1 << led_idx);
+                    else
+                        g_gamepad.leds &= ~(1 << led_idx);
                 } else {
                     printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
                 }
                 break;
+            }
+            case 0x09:  // Button
+            {
+                // we start with usage - 1 since "button 0" seems that is not being used
+                const uint16_t button_idx = usage-1;
+                if (button_idx < 32) {
+                    if (value)
+                        g_gamepad.buttons |= (1 << button_idx);
+                    else
+                        g_gamepad.buttons &= ~(1 << button_idx);
+                } else {
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                }
+                break;
+            }
             case 0x0c:  // Consumer
                 switch (usage) {
                     case 0x0223:    // home
-                        g_gamepad.ac_home = value;
+                        if (value)
+                            g_gamepad.misc_buttons |= MISC_AC_HOME;
+                        else
+                            g_gamepad.misc_buttons &= ~MISC_AC_HOME;
                         break;
                     case 0x0224:    // back
-                        g_gamepad.ac_back = value;
+                        if (value)
+                            g_gamepad.misc_buttons |= MISC_AC_BACK;
+                        else
+                            g_gamepad.misc_buttons &= ~MISC_AC_BACK;
                         break;
                     default:
                         printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
