@@ -238,15 +238,15 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
             }
             printf("Setup HID\n");
 
-            if (hid_host_state != HID_HOST_CONNECTED) {
-                status = l2cap_create_channel(packet_handler, remote_addr, hid_control_psm, 48, &l2cap_hid_control_cid);
-                if (status){
-                    printf("Connecting to HID Control failed: 0x%02x\n", status);
-                } else {
-                    hid_host_state = HID_HOST_CONNECTED;
-                }
+            // if (hid_host_state != HID_HOST_CONNECTED) {
+            //     status = l2cap_create_channel(packet_handler, remote_addr, hid_control_psm, 48, &l2cap_hid_control_cid);
+            //     if (status){
+            //         printf("Connecting to HID Control failed: 0x%02x\n", status);
+            //     } else {
+            //         hid_host_state = HID_HOST_CONNECTED;
+            //     }
 
-            }
+            // }
             break;
     }
 }
@@ -330,6 +330,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             break;
                         case PSM_HID_INTERRUPT:
                             l2cap_accept_connection(channel);
+                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
                             break;
                             // FIXME: we decline connection, and we connect to them
                             // l2cap_decline_connection(channel);
@@ -344,26 +345,44 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     break;
                 }
                 case L2CAP_EVENT_CHANNEL_OPENED: 
+                {
                     printf("L2CAP_EVENT_CHANNEL_OPENED\n");
                     status = packet[2];
                     if (status){
                         printf("L2CAP Connection failed: 0x%02x\n", status);
                         break;
                     }
-                    l2cap_cid  = little_endian_read_16(packet, 13);
-                    if (!l2cap_cid) break;
-                    if (l2cap_cid == l2cap_hid_control_cid){
-                        status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, MTU, &l2cap_hid_interrupt_cid);
-                        if (status){
-                            printf("Connecting to HID Control failed: 0x%02x\n", status);
+                    uint16_t psm = l2cap_event_channel_opened_get_psm(packet);
+                    printf("PSM: 0x%04x\n", psm);
+                    switch (psm){
+                        case PSM_HID_CONTROL:
+                            l2cap_hid_control_cid = hid_control_psm = l2cap_event_channel_opened_get_local_cid(packet);
+                            printf("HID Control opened, cid 0x%02x\n", hid_control_psm);
                             break;
-                        }
-                    }                        
-                    if (l2cap_cid == l2cap_hid_interrupt_cid){
-                        printf("HID Connection established\n");
-                        hid_host_state = HID_HOST_CONNECTED;
+                        case PSM_HID_INTERRUPT:
+                            l2cap_hid_interrupt_cid = hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
+                            printf("HID Interrupt opened, cid 0x%02x\n", hid_interrupt_psm);
+                            sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            break;
+                        default:
+                            break;
                     }
+ 
+                    // l2cap_cid = little_endian_read_16(packet, 13);
+                    // if (!l2cap_cid) break;
+                    // if (l2cap_cid == l2cap_hid_control_cid){
+                    //     status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, MTU, &l2cap_hid_interrupt_cid);
+                    //     if (status){
+                    //         printf("Connecting to HID Control failed: 0x%02x\n", status);
+                    //         break;
+                    //     }
+                    // }                        
+                    // if (l2cap_cid == l2cap_hid_interrupt_cid){
+                    //     printf("HID Connection established\n");
+                    //     hid_host_state = HID_HOST_CONNECTED;
+                    // }
                     break;
+                }
                 case L2CAP_EVENT_CHANNEL_CLOSED:
                     printf("L2CAP_EVENT_CHANNEL_CLOSED\n");
                     break;                 

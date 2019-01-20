@@ -288,6 +288,7 @@ static int prepare_keyboard_report(hid_report_type_t report_type, int modifier, 
 }
 
 static int hid_get_report_callback(uint16_t cid, hid_report_type_t report_type, uint16_t report_id, int * out_report_size, uint8_t * out_report){
+    printf("hid_get_report_callback\n");
     UNUSED(report_id);
     if (!report_data_ready){
         printf("report_data_ready not ready\n");
