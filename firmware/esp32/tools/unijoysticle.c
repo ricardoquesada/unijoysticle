@@ -78,13 +78,10 @@ static int is_device_gamepad(uint32_t cod);
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
 
-// L2CAP
-static uint16_t           l2cap_hid_control_cid;
-static uint16_t           l2cap_hid_interrupt_cid;
-
 enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
 struct device {
     bd_addr_t           address;
+    hci_con_handle_t    con_handle;
     uint8_t             page_scan_repetition_mode;
     uint16_t            clock_offset;
     uint32_t            cod;
@@ -97,6 +94,8 @@ struct device {
 
     uint16_t            hid_control_psm;
     uint16_t            hid_interrupt_psm;
+    uint16_t            local_hid_control_psm;
+    uint16_t            local_hid_interrupt_psm;
     enum DEVICE_STATE  state;
 };
 
@@ -172,8 +171,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     case BLUETOOTH_PROTOCOL_L2CAP:
                                         if (!des_iterator_has_more(&prot_it)) continue;
                                         des_iterator_next(&prot_it);
-                                        de_element_get_uint16(des_iterator_get_element(&prot_it), &devices[0].hid_control_psm);
-                                        printf("HID Control PSM: 0x%04x\n", (int) devices[0].hid_control_psm);
+                                        de_element_get_uint16(des_iterator_get_element(&prot_it), &devices[0].local_hid_control_psm);
+                                        printf("SDP HID Control PSM: 0x%04x\n", (int) devices[0].local_hid_control_psm);
                                         break;
                                     default:
                                         break;
@@ -195,8 +194,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                         case BLUETOOTH_PROTOCOL_L2CAP:
                                             if (!des_iterator_has_more(&prot_it)) continue;
                                             des_iterator_next(&prot_it);
-                                            de_element_get_uint16(des_iterator_get_element(&prot_it), &devices[0].hid_interrupt_psm);
-                                            printf("HID Interrupt PSM: 0x%04x\n", (int) devices[0].hid_interrupt_psm);
+                                            de_element_get_uint16(des_iterator_get_element(&prot_it), &devices[0].local_hid_interrupt_psm);
+                                            printf("SDP HID Interrupt PSM: 0x%04x\n", (int) devices[0].local_hid_interrupt_psm);
                                             break;
                                         default:
                                             break;
@@ -214,7 +213,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     const uint8_t * descriptor = de_get_string(element);
                                     devices[0].hid_descriptor_len = de_get_data_size(element);
                                     memcpy(devices[0].hid_descriptor, descriptor, devices[0].hid_descriptor_len);
-                                    printf("HID Descriptor:\n");
+                                    printf("SDP HID Descriptor:\n");
                                     printf_hexdump(devices[0].hid_descriptor, devices[0].hid_descriptor_len);
                                 }
                             }                        
@@ -239,25 +238,26 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
             break;
         case SDP_EVENT_QUERY_COMPLETE:
             printf("SDP_EVENT_QUERY_COMPLETE\n");
-            if (!devices[0].hid_control_psm) {
+            if (!devices[0].local_hid_control_psm) {
                 printf("HID Control PSM missing\n");
                 break;
             }
-            if (!devices[0].hid_interrupt_psm) {
+            if (!devices[0].local_hid_interrupt_psm) {
                 printf("HID Interrupt PSM missing\n");
                 break;
             }
             printf("Setup HID\n");
 
-            // if (hid_host_state != HID_HOST_CONNECTED) {
-            //     status = l2cap_create_channel(packet_handler, remote_addr, hid_control_psm, 48, &l2cap_hid_control_cid);
-            //     if (status){
-            //         printf("Connecting to HID Control failed: 0x%02x\n", status);
-            //     } else {
-            //         hid_host_state = HID_HOST_CONNECTED;
-            //     }
-
-            // }
+            if (!devices[0].incoming && hid_host_state != HID_HOST_CONNECTED) {
+                printf("Creating HID CONTROL channel\n");
+                status = l2cap_create_channel(packet_handler, remote_addr, PSM_HID_CONTROL, 48, &devices[0].hid_control_psm);
+                if (status){
+                    printf("Connecting to HID Control failed: 0x%02x\n", status);
+                } else {
+                    hid_host_state = HID_HOST_CONNECTED;
+                    printf("--> new control psm = 0x%04x\n", devices[0].hid_control_psm);
+                }
+            }
             break;
     }
 }
@@ -337,11 +337,11 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     printf("L2CAP_EVENT_INCOMING_CONNECTION. PSM = 0x%04x\n", psm);
                     switch (psm) {
                         case PSM_HID_CONTROL:
-                            l2cap_accept_connection(channel);
-                            break;
                         case PSM_HID_INTERRUPT:
                             l2cap_accept_connection(channel);
                             l2cap_event_incoming_connection_get_address(packet, remote_addr); 
+                            devices[0].con_handle = l2cap_event_incoming_connection_get_handle(packet);
+                            devices[0].incoming = 1;
                             break;
                             // FIXME: we decline connection, and we connect to them
                             // l2cap_decline_connection(channel);
@@ -367,31 +367,34 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     printf("PSM: 0x%04x\n", psm);
                     switch (psm){
                         case PSM_HID_CONTROL:
-                            l2cap_hid_control_cid = devices[0].hid_control_psm = l2cap_event_channel_opened_get_local_cid(packet);
+                            devices[0].hid_control_psm = l2cap_event_channel_opened_get_local_cid(packet);
                             printf("HID Control opened, cid 0x%02x\n", devices[0].hid_control_psm);
                             break;
                         case PSM_HID_INTERRUPT:
-                            l2cap_hid_interrupt_cid = devices[0].hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
+                            devices[0].hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
                             printf("HID Interrupt opened, cid 0x%02x\n", devices[0].hid_interrupt_psm);
                             sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
                         default:
                             break;
                     }
- 
-                    // l2cap_cid = little_endian_read_16(packet, 13);
-                    // if (!l2cap_cid) break;
-                    // if (l2cap_cid == l2cap_hid_control_cid){
-                    //     status = l2cap_create_channel(packet_handler, remote_addr, hid_interrupt_psm, MTU, &l2cap_hid_interrupt_cid);
-                    //     if (status){
-                    //         printf("Connecting to HID Control failed: 0x%02x\n", status);
-                    //         break;
-                    //     }
-                    // }                        
-                    // if (l2cap_cid == l2cap_hid_interrupt_cid){
-                    //     printf("HID Connection established\n");
-                    //     hid_host_state = HID_HOST_CONNECTED;
-                    // }
+                    if (devices[0].incoming == 0) {
+                        l2cap_cid = little_endian_read_16(packet, 13);
+                        if (!l2cap_cid) break;
+                        if (l2cap_cid == devices[0].hid_control_psm){
+                            printf("Creating HID INTERRUPT channel\n");
+                            status = l2cap_create_channel(packet_handler, remote_addr, PSM_HID_INTERRUPT, MTU, &devices[0].hid_interrupt_psm);
+                            if (status){
+                                printf("Connecting to HID Control failed: 0x%02x\n", status);
+                                break;
+                            }
+                            printf("---> new hid interrupt psm = 0x%04x\n", devices[0].hid_interrupt_psm); 
+                        }                        
+                        if (l2cap_cid == devices[0].hid_interrupt_psm){
+                            printf("HID Connection established\n");
+                            hid_host_state = HID_HOST_CONNECTED;
+                        }
+                    }
                     break;
                 }
                 case L2CAP_EVENT_CHANNEL_CLOSED:
@@ -469,12 +472,12 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
             break;
         case L2CAP_DATA_PACKET:
             // for now, just dump incoming data
-            if (channel == l2cap_hid_interrupt_cid){
+            if (channel == devices[0].hid_interrupt_psm){
                 printf("HID Packet: ");
                 printf_hexdump(packet, size);
                 hid_host_handle_interrupt_report(packet,  size);
                 print_gamepad();
-            } else if (channel == l2cap_hid_control_cid){
+            } else if (channel == devices[0].hid_control_psm){
                 printf("\nHID Control: ");
                 printf_hexdump(packet, size);
             } else {
