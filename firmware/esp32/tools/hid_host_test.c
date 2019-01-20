@@ -72,7 +72,7 @@ static uint16_t           l2cap_hid_interrupt_cid;
 // MBP 2016
 // static const char * remote_addr_string = "00-1F-20-86-DF-52";
 // iMpulse static const char * remote_addr_string = "64:6E:6C:C1:AA:B5";
-static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
+static const char * remote_addr_string = "C8:3F:26:46:62:A4";
 
 static bd_addr_t remote_addr;
 

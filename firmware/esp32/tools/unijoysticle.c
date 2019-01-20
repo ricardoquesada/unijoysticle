@@ -90,7 +90,7 @@ struct device {
 
     // SDP
     uint8_t             hid_descriptor[MAX_ATTRIBUTE_VALUE_SIZE];
-    uint8_t             hid_descriptor_len;
+    uint16_t            hid_descriptor_len;
 
     uint16_t            hid_control_psm;
     uint16_t            hid_interrupt_psm;
@@ -104,8 +104,7 @@ int deviceCount = 0;
 
 // Asus
 // static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
-
-static bd_addr_t remote_addr;
+// static bd_addr_t remote_addr;
 
 static btstack_packet_callback_registration_t hci_event_callback_registration;
 
@@ -152,6 +151,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
     uint8_t*        element;
     uint32_t        uuid;
     uint8_t         status;
+
+    // printf_hexdump(packet, size);
 
     switch (hci_event_packet_get_type(packet)){
         case SDP_EVENT_QUERY_ATTRIBUTE_VALUE:
@@ -212,8 +213,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     element = des_iterator_get_element(&additional_des_it);
                                     const uint8_t * descriptor = de_get_string(element);
                                     devices[0].hid_descriptor_len = de_get_data_size(element);
+                                    printf("SDP HID Descriptor (%d):\n", devices[0].hid_descriptor_len);
                                     memcpy(devices[0].hid_descriptor, descriptor, devices[0].hid_descriptor_len);
-                                    printf("SDP HID Descriptor:\n");
                                     printf_hexdump(devices[0].hid_descriptor, devices[0].hid_descriptor_len);
                                 }
                             }                        
@@ -248,9 +249,9 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
             }
             printf("Setup HID\n");
 
-            if (!devices[0].incoming && hid_host_state != HID_HOST_CONNECTED) {
+            if (devices[0].incoming == 0 && hid_host_state != HID_HOST_CONNECTED) {
                 printf("Creating HID CONTROL channel\n");
-                status = l2cap_create_channel(packet_handler, remote_addr, PSM_HID_CONTROL, 48, &devices[0].hid_control_psm);
+                status = l2cap_create_channel(packet_handler, devices[0].address, PSM_HID_CONTROL, 48, &devices[0].hid_control_psm);
                 if (status){
                     printf("Connecting to HID Control failed: 0x%02x\n", status);
                 } else {
@@ -311,9 +312,9 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                                 printf("Connection failed, status 0x%x\n", status);
                                 return;
                             }
-                            hid_subevent_connection_opened_get_bd_addr(packet, remote_addr);
+                            hid_subevent_connection_opened_get_bd_addr(packet, devices[0].address);
                             uint16_t hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
-                            printf("HID Connected to %s - %d\n", bd_addr_to_str(remote_addr), hid_cid);
+                            printf("HID Connected to %s - %d\n", bd_addr_to_str(devices[0].address), hid_cid);
                             break;
                         case HID_SUBEVENT_CONNECTION_CLOSED:
                             printf("HID Disconnected\n");
@@ -339,7 +340,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         case PSM_HID_CONTROL:
                         case PSM_HID_INTERRUPT:
                             l2cap_accept_connection(channel);
-                            l2cap_event_incoming_connection_get_address(packet, remote_addr); 
+                            l2cap_event_incoming_connection_get_address(packet, devices[0].address); 
                             devices[0].con_handle = l2cap_event_incoming_connection_get_handle(packet);
                             devices[0].incoming = 1;
                             break;
@@ -373,7 +374,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         case PSM_HID_INTERRUPT:
                             devices[0].hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
                             printf("HID Interrupt opened, cid 0x%02x\n", devices[0].hid_interrupt_psm);
-                            sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            sdp_client_query_uuid16(&handle_sdp_client_query_result, devices[0].address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                             break;
                         default:
                             break;
@@ -383,7 +384,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         if (!l2cap_cid) break;
                         if (l2cap_cid == devices[0].hid_control_psm){
                             printf("Creating HID INTERRUPT channel\n");
-                            status = l2cap_create_channel(packet_handler, remote_addr, PSM_HID_INTERRUPT, MTU, &devices[0].hid_interrupt_psm);
+                            status = l2cap_create_channel(packet_handler, devices[0].address, PSM_HID_INTERRUPT, 48, &devices[0].hid_interrupt_psm);
                             if (status){
                                 printf("Connecting to HID Control failed: 0x%02x\n", status);
                                 break;
@@ -436,8 +437,8 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                             devices[deviceCount].state = REMOTE_NAME_REQUEST;
                         }
                         deviceCount++;
-                        memcpy(remote_addr, event_addr, 6);
-                        sdp_client_query_uuid16(&handle_sdp_client_query_result, event_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                        memcpy(devices[0].address, event_addr, 6);
+                        sdp_client_query_uuid16(&handle_sdp_client_query_result, devices[0].address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
 
                     }
                     printf("\n");
@@ -775,6 +776,8 @@ int btstack_main(int argc, const char * argv[]){
 
     (void)argc;
     (void)argv;
+    
+    memset(devices, 0, sizeof(devices));
 
     // Initialize L2CAP 
     l2cap_init();
