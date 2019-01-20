@@ -35,6 +35,15 @@
  *
  */
 
+/*
+ * Unijoysticle code:
+ * Code based on BlueKitchen examples / tests. In particular:
+ *   - hid_host_test.c
+ *   - hid_device.c
+ *   - gap_inquire.c
+ *   - hid_device_test.c
+ */
+
 #define __BTSTACK_FILE__ "hid_host_demo.c"
 
 /*
@@ -58,34 +67,26 @@
 
 #define INQUIRY_INTERVAL          5
 #define MASK_COD_MAJOR_PERIPHERAL 0x0500   // 0b0000_0101_0000_0000
-#define MASK_COD_MINOR_ALL        0x003c   // 0b0011_1100
-#define MASK_COD_MINOR_GAMEPAD    0x0008
-#define MASK_COD_MINOR_JOYSTICK   0x0004
-#define MAX_ATTRIBUTE_VALUE_SIZE  512
+#define MASK_COD_MINOR_ALL        0x003c   //             0011_1100
+#define MASK_COD_MINOR_GAMEPAD    0x0008   //             0000_1000
+#define MASK_COD_MINOR_JOYSTICK   0x0004   //             0000_0100
+#define MAX_ATTRIBUTE_VALUE_SIZE  512      // Apparently PS4 has a 470-bytes report
 #define MAX_DEVICES               4
 #define MTU                       100
-
-static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
-static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
-static void print_gamepad(void);
-static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len);
-static int getDeviceIndexForAddress(bd_addr_t addr);
-static void continue_remote_names(void);
-static void start_scan(void);
-static int is_device_gamepad(uint32_t cod);
-int btstack_main(int argc, const char * argv[]);
 
 // SDP
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
 
 enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
-struct device {
+typedef struct  {
     bd_addr_t           address;
     hci_con_handle_t    con_handle;
     uint8_t             page_scan_repetition_mode;
     uint16_t            clock_offset;
     uint32_t            cod;
+
+    // state
     uint8_t             incoming;
     uint8_t             connected;
 
@@ -93,14 +94,15 @@ struct device {
     uint8_t             hid_descriptor[MAX_ATTRIBUTE_VALUE_SIZE];
     uint16_t            hid_descriptor_len;
 
+    // Channels
     uint16_t            hid_control_psm;
     uint16_t            hid_interrupt_psm;
     uint16_t            remote_hid_control_psm;         // must be PSM_HID_CONTROL
     uint16_t            remote_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
     enum DEVICE_STATE  state;
-};
+} my_hid_device_t;
 
-struct device devices[MAX_DEVICES];
+my_hid_device_t devices[MAX_DEVICES];
 int deviceCount = 0;
 
 // Asus
@@ -118,6 +120,18 @@ static btstack_packet_callback_registration_t hci_event_callback_registration;
 
 static hid_host_state_t hid_host_state = HID_HOST_IDLE;
 
+static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
+static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
+static void print_gamepad(void);
+static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len);
+static int getDeviceIndexForAddress(bd_addr_t addr);
+static void continue_remote_names(void);
+static void start_scan(void);
+static int is_device_gamepad(uint32_t cod);
+static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
+void my_hid_device_disconnect(my_hid_device_t* device);
+int btstack_main(int argc, const char * argv[]);
+
 static void hid_host_setup(void){
 
     // register for HCI events
@@ -130,7 +144,6 @@ static void hid_host_setup(void){
     // Disable stdout buffering
     setbuf(stdout, NULL);
 }
-/* LISTING_END */
 
 /* @section SDP parser callback 
  * 
@@ -271,6 +284,8 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
     uint8_t   status;
     uint16_t  l2cap_cid;
     int       index;
+    my_hid_device_t* device;
+
 
     switch (packet_type) {
 		case HCI_EVENT_PACKET:
@@ -397,7 +412,13 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                 }
                 case L2CAP_EVENT_CHANNEL_CLOSED:
                     printf("L2CAP_EVENT_CHANNEL_CLOSED\n");
-                    break;                 
+                    l2cap_cid = l2cap_event_channel_closed_get_local_cid(packet);
+                    device = my_hid_device_get_instance_for_cid(l2cap_cid);
+                    if (device == NULL) {
+                        printf("ERROR: couldn't not find hid_device for cid = 0x%04x\n", l2cap_cid);
+                    }
+                    my_hid_device_disconnect(device);
+                    break;
                 // GAP related
                 case GAP_EVENT_INQUIRY_RESULT:
                     // print info
@@ -764,6 +785,28 @@ static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t re
                 break;
         }
     }
+}
+
+// Hid device related
+static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid){
+    if (cid == 0)
+        return NULL;
+
+    for (int i=0; i<MAX_DEVICES; i++) {
+        if (devices[i].hid_interrupt_psm == cid || devices[i].hid_control_psm == cid) {
+            return &devices[i];
+        }
+    }
+    return NULL;
+}
+
+void my_hid_device_disconnect(my_hid_device_t* device) {
+    device->connected = 0;
+    device->incoming = 0;
+    device->hid_control_psm = 0;
+    device->hid_interrupt_psm = 0;
+    device->remote_hid_control_psm = 0;
+    device->remote_hid_interrupt_psm = 0;
 }
 
 int btstack_main(int argc, const char * argv[]){
