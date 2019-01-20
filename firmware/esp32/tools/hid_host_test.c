@@ -429,8 +429,10 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
         case L2CAP_DATA_PACKET:
             // for now, just dump incoming data
             if (channel == l2cap_hid_interrupt_cid){
+                printf("interrupt: 0x%04x\n", channel);
                 hid_host_handle_interrupt_report(packet,  size);
             } else if (channel == l2cap_hid_control_cid){
+                printf("Control: 0x%04x\n", channel);
                 printf("\nHID Control: ");
                 printf_hexdump(packet, size);
             } else {
