@@ -386,7 +386,10 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                         case PSM_HID_INTERRUPT:
                             devices[0].hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
                             printf("HID Interrupt opened, cid 0x%02x\n", devices[0].hid_interrupt_psm);
-                            sdp_client_query_uuid16(&handle_sdp_client_query_result, devices[0].address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            status = sdp_client_query_uuid16(&handle_sdp_client_query_result, devices[0].address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            if (status != 0) {
+                                printf("FAILED to perform sdp query\n");
+                            }
                             break;
                         default:
                             break;
