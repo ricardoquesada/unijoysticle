@@ -103,7 +103,7 @@ typedef struct  {
 } my_hid_device_t;
 
 my_hid_device_t devices[MAX_DEVICES];
-int deviceCount = 0;
+int device_count = 0;
 
 // Asus
 // static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
@@ -123,13 +123,15 @@ static hid_host_state_t hid_host_state = HID_HOST_IDLE;
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void print_gamepad(void);
-static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len);
-static int getDeviceIndexForAddress(bd_addr_t addr);
+static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len);
 static void continue_remote_names(void);
 static void start_scan(void);
 static int is_device_gamepad(uint32_t cod);
 static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
-void my_hid_device_disconnect(my_hid_device_t* device);
+static int my_hid_device_get_index_for_address(bd_addr_t addr);
+static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr);
+static void my_hid_device_disconnect(my_hid_device_t* device);
+static my_hid_device_t* my_hid_device_create_entry_for_address(bd_addr_t addr);
 int btstack_main(int argc, const char * argv[]);
 
 static void hid_host_setup(void){
@@ -277,7 +279,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
     }
 }
 
-static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
+static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
 {
     uint8_t   event;
     bd_addr_t event_addr;
@@ -285,7 +287,6 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
     uint16_t  l2cap_cid;
     int       index;
     my_hid_device_t* device;
-
 
     switch (packet_type) {
 		case HCI_EVENT_PACKET:
@@ -351,17 +352,19 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     switch (psm) {
                         case PSM_HID_CONTROL:
                         case PSM_HID_INTERRUPT:
+                            l2cap_event_incoming_connection_get_address(packet, event_addr);
+                            device = my_hid_device_get_instance_for_address(event_addr);
+                            if (device == NULL) {
+                                device = my_hid_device_create_entry_for_address(event_addr);
+                                if (device == NULL) {
+                                    printf("ERROR: no more available free devices\n");
+                                    l2cap_decline_connection(channel);
+                                    break;
+                                }
+                            }
                             l2cap_accept_connection(channel);
-                            l2cap_event_incoming_connection_get_address(packet, devices[0].address); 
-                            devices[0].con_handle = l2cap_event_incoming_connection_get_handle(packet);
-                            devices[0].incoming = 1;
-                            break;
-                            // FIXME: we decline connection, and we connect to them
-                            // l2cap_decline_connection(channel);
-                            // l2cap_accept_connection(channel);
-                            // l2cap_event_incoming_connection_get_address(packet, remote_addr); 
-                            // hid_host_state = HID_HOST_CONNECTED;
-                            // sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                            device->con_handle = l2cap_event_incoming_connection_get_handle(packet);
+                            device->incoming = 1;
                             break;
                         default:
                             printf("Unknown PSM = 0x%02x\n", psm);
@@ -439,25 +442,25 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     }
 
                     if (is_device_gamepad(cod)) {
-                        if (deviceCount >= MAX_DEVICES) break;  // already full
-                        index = getDeviceIndexForAddress(event_addr);
+                        if (device_count >= MAX_DEVICES) break;  // already full
+                        index = my_hid_device_get_index_for_address(event_addr);
                         if (index >= 0) break;   // already in our list
 
-                        memcpy(devices[deviceCount].address, event_addr, 6);
-                        devices[deviceCount].page_scan_repetition_mode = page_scan_repetition_mode;
-                        devices[deviceCount].clock_offset = clock_offset;
-                        devices[deviceCount].cod = cod;
+                        memcpy(devices[device_count].address, event_addr, 6);
+                        devices[device_count].page_scan_repetition_mode = page_scan_repetition_mode;
+                        devices[device_count].clock_offset = clock_offset;
+                        devices[device_count].cod = cod;
                         if (gap_event_inquiry_result_get_name_available(packet)){
                             char name_buffer[240];
                             int name_len = gap_event_inquiry_result_get_name_len(packet);
                             memcpy(name_buffer, gap_event_inquiry_result_get_name(packet), name_len);
                             name_buffer[name_len] = 0;
                             printf(", name '%s'", name_buffer);
-                            devices[deviceCount].state = REMOTE_NAME_FETCHED;;
+                            devices[device_count].state = REMOTE_NAME_FETCHED;;
                         } else {
-                            devices[deviceCount].state = REMOTE_NAME_REQUEST;
+                            devices[device_count].state = REMOTE_NAME_REQUEST;
                         }
-                        deviceCount++;
+                        device_count++;
                         memcpy(devices[0].address, event_addr, 6);
                         sdp_client_query_uuid16(&handle_sdp_client_query_result, devices[0].address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
 
@@ -465,7 +468,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
                     printf("\n");
                     break;
                 case GAP_EVENT_INQUIRY_COMPLETE:
-                    for (int i=0;i<deviceCount;i++) {
+                    for (int i=0;i<device_count;i++) {
                         // retry remote name request
                         if (devices[i].state == REMOTE_NAME_INQUIRED) {
                             devices[i].state = REMOTE_NAME_REQUEST;
@@ -476,7 +479,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 case HCI_EVENT_REMOTE_NAME_REQUEST_COMPLETE:
                     reverse_bd_addr(&packet[3], event_addr);
-                    index = getDeviceIndexForAddress(event_addr);
+                    index = my_hid_device_get_index_for_address(event_addr);
                     if (index >= 0) {
                         if (packet[2] == 0) {
                             printf("Name: '%s'\n", &packet[9]);
@@ -494,14 +497,18 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
             break;
         case L2CAP_DATA_PACKET:
             // for now, just dump incoming data
-            if (channel == devices[0].hid_interrupt_psm){
+            device = my_hid_device_get_instance_for_cid(channel);
+            if (device == NULL) {
+                printf("Invalid cid: 0x%04x\n", channel);
+                break;
+            }
+            if (channel == device->hid_interrupt_psm){
                 printf("HID Interrupt Packet: ");
                 printf_hexdump(packet, size);
-                hid_host_handle_interrupt_report(packet,  size);
+                hid_host_handle_interrupt_report(device, packet,  size);
                 print_gamepad();
-            } else if (channel == devices[0].hid_control_psm){
-                printf("\nHID Control: ");
-                printf_hexdump(packet, size);
+            } else if (channel == device->hid_control_psm){
+                printf("HID Control\n");
             } else {
                 printf("Packet from unknown cid: 0x%04x\n", channel);
                 printf_hexdump(packet, size);
@@ -522,19 +529,9 @@ static int is_device_gamepad(uint32_t cod) {
     return 0;
 }
 
-static int getDeviceIndexForAddress( bd_addr_t addr){
-    int j;
-    for (j=0; j< deviceCount; j++){
-        if (bd_addr_cmp(addr, devices[j].address) == 0){
-            return j;
-        }
-    }
-    return -1;
-}
-
 static int has_more_remote_name_requests(void){
     int i;
-    for (i=0;i<deviceCount;i++) {
+    for (i=0;i<device_count;i++) {
         if (devices[i].state == REMOTE_NAME_REQUEST) return 1;
     }
     return 0;
@@ -542,7 +539,7 @@ static int has_more_remote_name_requests(void){
 
 static void do_next_remote_name_request(void){
     int i;
-    for (i=0;i<deviceCount;i++) {
+    for (i=0;i<device_count;i++) {
         // remote name request
         if (devices[i].state == REMOTE_NAME_REQUEST){
             devices[i].state = REMOTE_NAME_INQUIRED;
@@ -633,14 +630,14 @@ static void print_gamepad(void) {
     // gpio_set_level(GPIO_NUM_23, g_gamepad.buttons[1] != 0);
 }
 
-static void hid_host_handle_interrupt_report(const uint8_t * report, uint16_t report_len) {
+static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len) {
     // check if HID Input Report
     if (report_len < 1) return;
     if (*report != 0xa1) return;
     report++;
     report_len--;
     btstack_hid_parser_t parser;
-    btstack_hid_parser_init(&parser, devices[0].hid_descriptor, devices[0].hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
+    btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
     while (btstack_hid_parser_has_more(&parser)){
         uint16_t usage_page;
         uint16_t usage;
@@ -803,7 +800,34 @@ static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid){
     return NULL;
 }
 
-void my_hid_device_disconnect(my_hid_device_t* device) {
+static int my_hid_device_get_index_for_address(bd_addr_t addr){
+    for (int j=0; j< MAX_DEVICES; j++){
+        if (bd_addr_cmp(addr, devices[j].address) == 0){
+            return j;
+        }
+    }
+    return -1;
+}
+
+static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr) {
+    int idx = my_hid_device_get_index_for_address(addr);
+    if (idx == -1)
+        return NULL;
+    return &devices[idx];
+}
+
+static my_hid_device_t* my_hid_device_create_entry_for_address(bd_addr_t addr) {
+    static const bd_addr_t zero_addr = {0,0,0,0,0,0};
+    for (int j=0; j< MAX_DEVICES; j++){
+        if (bd_addr_cmp(devices[j].address, zero_addr) == 0){
+            memcpy(devices[j].address, addr, 6);
+            return &devices[j];
+        }
+    }
+    return NULL;
+}
+
+static void my_hid_device_disconnect(my_hid_device_t* device) {
     device->connected = 0;
     device->incoming = 0;
     device->hid_control_psm = 0;
