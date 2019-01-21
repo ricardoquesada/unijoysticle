@@ -1,24 +1,28 @@
 # Unijoysticle v2.0
 
-
 Unijoysticle + bluetooth.
 
-Current status:
+## About
 
-- firmware works on PC
+Used modern bluetooth gamepads / mouse in old computers like the Commodore 64, Atari ST, Amiga 500, Apple 2, Tandy 1000, IBM PC Jr., Atari 800, etc.
+
+## Status
+
+Early develop stages. PoC working on PC. Need the rest.
+
+- firmware works on PC.
 - missing all the rest.
 
 
-## Wanna help?.
+## Want to help ?
 
-- Download libusb: https://libusb.info/
+- Download libusb: https://libusb.info/ (needed to test on PC with bluetooth dongle).
 - Download BlueKitchen: https://github.com/bluekitchen/btstack
 - Download Unijoysticle code: https://gitlab.com/ricardoquesada/unijoysticle
 - Get any bluetooth gamepad (iOS, Android, Xbox tested. PS4 not supported ATM)
 - For ESP32:
   - Download ESP-IDF: https://github.com/espressif/esp-idf
-  - Get an ESP32 module, like [the MH-ET Live][1] which is compatible with Unijoysticle v1
-
+  - Get an ESP32 module, like [the MH-ET Live][1] which is pin-compatible with [Wemos D1 Mini][2] (used by Unijoysticle v0.4.2 PCB).
 
 ### Compile BTstack
 
@@ -35,7 +39,7 @@ $ ./gap_inquiry
 Put your gamepad in bluetooth discovery mode and you should see it.
 
 
-### Compile unijoysticle
+### Compile Unijoysticle
 
 ```sh
 $ cd src/unijoysticle/firmware/esp32/tools
@@ -43,28 +47,27 @@ $ make
 ./unijoysticle
 ```
 
-The gamepad should be recognized and when you press buttons, you should see them on the console.
+Put the gamepad in discovery mode. The gamepad should be recognized and when you press buttons, you should see them on the console.
 
 ## What works:
 
-- PC only for the moment
-- It supports up until 4 gamepads at the sametime.
+- PC + Bluetooth dongle for the moment
+- It supports up until 4 gamepads at the same time.
 - Discovery/Connect/Disconnect/Reconnects works
-
+- Parses HID and identifies all possible gamepad buttons / pads / hats.
 
 ## What's missing
 
-
-### firmware:
-- Create mapping code. Something that correctly maps the different controllers to the desired code
-- support multi gamepad / single gamepad modes:
+### Firmware:
+- Create mapping code. Something that correctly maps the different gamepad buttons to the desired ones.
+- Support Class / Extended modes:
    - Mode Classic: traditional modes with 1 or 2 gamepads (like one or two joysticks)
-   - Mode extended: one gamepad emulates 2 joysticks
-- test everything on esp32
-  - disable non required features like WiFi
+   - Mode extended: one gamepad controls 2 joysticks
+- Test everything on esp32
+  - Disable non required features like WiFi that it takes less current.
 - Support mouse/pads: ideally a bluetooth mouse could be used.
 
-### hardware:
+### Hardware:
 
 - it is possible that the board could get current from the c64/atari's joystick ports?
 - design new board, if possible one that doesn't use devkits
@@ -77,3 +80,4 @@ The gamepad should be recognized and when you press buttons, you should see them
 
 
 [1]: https://www.aliexpress.com/item/MH-ET-LIVE-ESP32-MINI-KIT-WiFi-Bluetooth-Internet-of-Things-development-board-based-ESP8266-Fully/32819107932.html
+[2]: https://wiki.wemos.cc/products:d1:d1_mini
