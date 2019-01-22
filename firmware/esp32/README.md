@@ -41,10 +41,18 @@ Put your gamepad in bluetooth discovery mode and you should see it.
 
 ### Compile Unijoysticle
 
+To try it using the Bluetooth dongle on the PC/Linux/Mac (faster development workflow):
 ```sh
 $ cd src/unijoysticle/firmware/esp32/tools
 $ make
 ./unijoysticle
+```
+
+To try on the ESP32:
+```sh
+$ cd src/unijoysticle/firmware/esp32
+$ make menuconfig
+$ make flash monitor
 ```
 
 Put the gamepad in discovery mode. The gamepad should be recognized and when you press buttons, you should see them on the console.
