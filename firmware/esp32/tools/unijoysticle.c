@@ -112,15 +112,6 @@ static int device_count = 0;
 
 static btstack_packet_callback_registration_t hci_event_callback_registration;
 
-// Needed for queries
-    typedef enum {
-    HID_HOST_IDLE,              // host is doing nothing
-    HID_HOST_SCAN,              // host is scanning
-    HID_HOST_CONNECTED,         // host has a device connected
-} hid_host_state_t;
-
-static hid_host_state_t hid_host_state = HID_HOST_IDLE;
-
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void print_gamepad(void);
@@ -873,7 +864,6 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
         }                        
         if (local_cid == device->hid_interrupt_psm){
             printf("HID Connection established\n");
-            hid_host_state = HID_HOST_CONNECTED;
         }
     }
 }

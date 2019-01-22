@@ -26,8 +26,10 @@ Early develop stages. PoC working on PC. Need the rest.
 
 ### Compile BTstack
 
+#### For PC/Linux/Mac development
+
 - Install the Bluetooth USB dongle on your PC/Mac/Linux
-- libusb: Compile and install. Don't use master if you are on macOS. Use 1.0.22 or earlier
+- libusb: Compile and install. Don't use `master` tip-of-tree if you are on macOS. Use 1.0.22 or earlier
 - bluekitchen: Compile the libusb port to make sure everything works.
 
 ```sh
@@ -38,17 +40,30 @@ $ ./gap_inquiry
 
 Put your gamepad in bluetooth discovery mode and you should see it.
 
+#### For ESP32 development
+```sh
+$ cd src/btstack/port/esp32
+$ ./integrate_btstack.py
+$ cd example/gap_inquiry
+$ make menuconfig
+$ make flash monitor
+```
+And just in case, read the `README.md` that is in the `src/btstack/port/esp32` folder.
+
+Put your gamepad in bluetooth discovery mode and you should see it.
 
 ### Compile Unijoysticle
 
-To try it using the Bluetooth dongle on the PC/Linux/Mac (faster development workflow):
+Once you know that BTStack is working as expected, you can try with the UniJoystiCle code.
+
+For PC/Linux/Mac development:
 ```sh
 $ cd src/unijoysticle/firmware/esp32/tools
 $ make
 ./unijoysticle
 ```
 
-To try on the ESP32:
+For ESP32 development:
 ```sh
 $ cd src/unijoysticle/firmware/esp32
 $ make menuconfig
@@ -59,7 +74,8 @@ Put the gamepad in discovery mode. The gamepad should be recognized and when you
 
 ## What works:
 
-- PC + Bluetooth dongle for the moment
+- PC + Bluetooth dongle. Ideal for rapid development. Eastier to test new Bluetooth features and debug.
+- Works on ESP32 as well
 - It supports up until 4 gamepads at the same time.
 - Discovery/Connect/Disconnect/Reconnects works
 - Parses HID and identifies all possible gamepad buttons / pads / hats.
