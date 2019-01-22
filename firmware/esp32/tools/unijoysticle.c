@@ -97,8 +97,8 @@ typedef struct  {
     // Channels
     uint16_t            hid_control_psm;
     uint16_t            hid_interrupt_psm;
-    uint16_t            remote_hid_control_psm;         // must be PSM_HID_CONTROL
-    uint16_t            remote_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
+    uint16_t            expected_hid_control_psm;         // must be PSM_HID_CONTROL
+    uint16_t            expected_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
     enum DEVICE_STATE  state;
 } my_hid_device_t;
 
@@ -197,8 +197,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     case BLUETOOTH_PROTOCOL_L2CAP:
                                         if (!des_iterator_has_more(&prot_it)) continue;
                                         des_iterator_next(&prot_it);
-                                        de_element_get_uint16(des_iterator_get_element(&prot_it), &current_device->remote_hid_control_psm);
-                                        printf("SDP HID Control PSM: 0x%04x\n", (int) current_device->remote_hid_control_psm);
+                                        de_element_get_uint16(des_iterator_get_element(&prot_it), &current_device->expected_hid_control_psm);
+                                        printf("SDP HID Control PSM: 0x%04x\n", (int) current_device->expected_hid_control_psm);
                                         break;
                                     default:
                                         break;
@@ -220,8 +220,8 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                         case BLUETOOTH_PROTOCOL_L2CAP:
                                             if (!des_iterator_has_more(&prot_it)) continue;
                                             des_iterator_next(&prot_it);
-                                            de_element_get_uint16(des_iterator_get_element(&prot_it), &current_device->remote_hid_interrupt_psm);
-                                            printf("SDP HID Interrupt PSM: 0x%04x\n", (int) current_device->remote_hid_interrupt_psm);
+                                            de_element_get_uint16(des_iterator_get_element(&prot_it), &current_device->expected_hid_interrupt_psm);
+                                            printf("SDP HID Interrupt PSM: 0x%04x\n", (int) current_device->expected_hid_interrupt_psm);
                                             break;
                                         default:
                                             break;
@@ -264,12 +264,12 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
             break;
         case SDP_EVENT_QUERY_COMPLETE:
             printf("SDP_EVENT_QUERY_COMPLETE\n");
-            if (current_device->remote_hid_control_psm != PSM_HID_CONTROL) {
-                printf("Invalid Control PSM missing. Expecting = 0x%04x, got = 0x%04x\n", PSM_HID_CONTROL, current_device->remote_hid_control_psm);
+            if (current_device->expected_hid_control_psm != PSM_HID_CONTROL) {
+                printf("Invalid Control PSM missing. Expecting = 0x%04x, got = 0x%04x\n", PSM_HID_CONTROL, current_device->expected_hid_control_psm);
                 break;
             }
-            if (current_device->remote_hid_interrupt_psm != PSM_HID_INTERRUPT) {
-                printf("Invalid Control PSM missing. Expecting = 0x%04x, got = 0x%04x\n", PSM_HID_INTERRUPT, current_device->remote_hid_interrupt_psm);
+            if (current_device->expected_hid_interrupt_psm != PSM_HID_INTERRUPT) {
+                printf("Invalid Control PSM missing. Expecting = 0x%04x, got = 0x%04x\n", PSM_HID_INTERRUPT, current_device->expected_hid_interrupt_psm);
                 break;
             }
             printf("Setup HID completed.\n");
@@ -771,9 +771,15 @@ static my_hid_device_t* my_hid_device_create(void) {
 static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel) {
     bd_addr_t event_addr;
     my_hid_device_t* device;
+    uint16_t local_cid;
+    uint16_t remote_cid;
 
     uint16_t psm = l2cap_event_incoming_connection_get_psm(packet);
-    printf("L2CAP_EVENT_INCOMING_CONNECTION. PSM = 0x%04x (channel=0x%04x)\n", psm, channel);
+    hci_con_handle_t handle = l2cap_event_incoming_connection_get_handle(packet);
+    local_cid = l2cap_event_incoming_connection_get_local_cid(packet);
+    remote_cid = l2cap_event_incoming_connection_get_remote_cid(packet);
+    
+    printf("L2CAP_EVENT_INCOMING_CONNECTION (psm=0x%04x, local_cid=0x%04x, remote_cid=0x%04x, handle=0x%04x, channel=0x%04x\n", psm, local_cid, remote_cid, handle, channel);
     switch (psm) {
         case PSM_HID_CONTROL:
             l2cap_event_incoming_connection_get_address(packet, event_addr);
@@ -902,8 +908,8 @@ static void my_hid_device_set_disconnected(my_hid_device_t* device) {
     device->incoming = 0;
     device->hid_control_psm = 0;
     device->hid_interrupt_psm = 0;
-    device->remote_hid_control_psm = 0;
-    device->remote_hid_interrupt_psm = 0;
+    device->expected_hid_control_psm = 0;
+    device->expected_hid_interrupt_psm = 0;
 }
 
 int btstack_main(int argc, const char * argv[]){
