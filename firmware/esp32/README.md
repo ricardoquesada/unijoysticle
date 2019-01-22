@@ -4,7 +4,7 @@ Unijoysticle + bluetooth.
 
 ## About
 
-Used modern bluetooth gamepads / mouse in old computers like the Commodore 64, Atari ST, Amiga 500, Apple 2, Tandy 1000, IBM PC Jr., Atari 800, etc.
+Use modern bluetooth gamepads / mouse in old computers like the Commodore 64, Atari ST, Amiga 500, Apple 2, Tandy 1000, IBM PC Jr., Atari 800, etc.
 
 ## Status
 
@@ -67,11 +67,12 @@ Put the gamepad in discovery mode. The gamepad should be recognized and when you
   - Disable non required features like WiFi that it takes less current.
 - Support mouse/pads: ideally a bluetooth mouse could be used.
 
-### Hardware:
+### Hardware
 
 - it is possible that the board could get current from the c64/atari's joystick ports?
 - design new board, if possible one that doesn't use devkits
-- add lines for pots so that mouse/pad could be emulated
+- lines for the C64 / Atari pots
+- PC Jr. / Tandy 1000 / Apple II: investigate, they use analog lines
 
 ### Mobile application
 
