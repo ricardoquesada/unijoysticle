@@ -298,7 +298,6 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                     if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
                         printf("Start SDP HID query for remote HID Device.\n");
                         start_scan();
-                        // sdp_client_query_uuid16(&handle_sdp_client_query_result, remote_addr, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                     }
                     break;
 
@@ -438,6 +437,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                 print_gamepad();
             } else if (channel == device->hid_control_psm){
                 printf("HID Control\n");
+                printf_hexdump(packet, size);
             } else {
                 printf("Packet from unknown cid: 0x%04x\n", channel);
                 printf_hexdump(packet, size);
@@ -677,6 +677,7 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
             case 0x09:  // Button
             {
                 // we start with usage - 1 since "button 0" seems that is not being used
+                // and we only support 32 buttons.
                 const uint16_t button_idx = usage-1;
                 if (button_idx < 32) {
                     if (value)
@@ -759,9 +760,11 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
     my_hid_device_t* device;
     uint16_t local_cid;
     uint16_t remote_cid;
+    uint16_t psm;
+    hci_con_handle_t handle;
 
-    uint16_t psm = l2cap_event_incoming_connection_get_psm(packet);
-    hci_con_handle_t handle = l2cap_event_incoming_connection_get_handle(packet);
+    psm = l2cap_event_incoming_connection_get_psm(packet);
+    handle = l2cap_event_incoming_connection_get_handle(packet);
     local_cid = l2cap_event_incoming_connection_get_local_cid(packet);
     remote_cid = l2cap_event_incoming_connection_get_remote_cid(packet);
     
@@ -802,7 +805,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
 
 static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     uint16_t psm;
-    uint8_t   status;
+    uint8_t status;
     uint16_t local_cid;
     uint16_t remote_cid;
     hci_con_handle_t handle;
@@ -841,10 +844,14 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             // Don't request HID descriptor if we already have it.
             if (device->hid_descriptor_len == 0) {
                 // Needed for the SDP query since it doesn't have context
-                current_device = device;
-                status = sdp_client_query_uuid16(&handle_sdp_client_query_result, device->address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
-                if (status != 0) {
-                    printf("FAILED to perform sdp query\n");
+                if (current_device != NULL) {
+                    printf("Error: Ouch, another SDP query is in progress... try later...\n");
+                } else {
+                    current_device = device;
+                    status = sdp_client_query_uuid16(&handle_sdp_client_query_result, device->address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                    if (status != 0) {
+                        printf("FAILED to perform sdp query\n");
+                    }
                 }
             }
             break;
