@@ -36,8 +36,8 @@
  */
 
 /*
- * Unijoysticle code:
- * Code based on BlueKitchen examples / tests. In particular:
+ * Copyright (C) 2019 Ricardo Quesada
+ * Unijoysticle additions based on the following BlueKitchen's test/example files:
  *   - hid_host_test.c
  *   - hid_device.c
  *   - gap_inquire.c
@@ -805,7 +805,7 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     uint8_t incoming;
 
     printf("L2CAP_EVENT_CHANNEL_OPENED (channel=0x%04x)\n", channel);
-    status = packet[2];
+    status = l2cap_event_channel_opened_get_status(packet);
     if (status){
         printf("L2CAP Connection failed: 0x%02x\n", status);
         return;
@@ -869,14 +869,15 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
 }
 
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel) {
-    uint16_t  l2cap_cid;
+    uint16_t local_cid;
     my_hid_device_t* device;
 
-    l2cap_cid = l2cap_event_channel_closed_get_local_cid(packet);
-    printf("L2CAP_EVENT_CHANNEL_CLOSED: 0x%04x (channel=0x%04x)\n", l2cap_cid, channel);
-    device = my_hid_device_get_instance_for_cid(l2cap_cid);
+    local_cid = l2cap_event_channel_closed_get_local_cid(packet);
+    printf("L2CAP_EVENT_CHANNEL_CLOSED: 0x%04x (channel=0x%04x)\n", local_cid, channel);
+    device = my_hid_device_get_instance_for_cid(local_cid);
     if (device == NULL) {
-        printf("INFO: couldn't not find hid_device for cid = 0x%04x\n", l2cap_cid);
+        // Device might already been closed if the Control or Interrupt PSM was closed first.
+        printf("INFO: couldn't not find hid_device for cid = 0x%04x\n", local_cid);
         return;
     }
     my_hid_device_set_disconnected(device);
