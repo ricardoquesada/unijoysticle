@@ -170,7 +170,6 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
     uint8_t*        des_element;
     uint8_t*        element;
     uint32_t        uuid;
-    uint8_t         status;
 
     // printf_hexdump(packet, size);
 
@@ -273,21 +272,9 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 break;
             }
             printf("Setup HID completed.\n");
-
-            if (current_device->incoming == 0 && hid_host_state != HID_HOST_CONNECTED) {
-                printf("Creating HID CONTROL channel\n");
-                status = l2cap_create_channel(packet_handler, current_device->address, PSM_HID_CONTROL, 48, &current_device->hid_control_psm);
-                if (status){
-                    printf("Connecting to HID Control failed: 0x%02x\n", status);
-                } else {
-                    hid_host_state = HID_HOST_CONNECTED;
-                    printf("--> new control psm = 0x%04x\n", current_device->hid_control_psm);
-                }
-            } else {
-                // We assume that connection + HID discovery is done. set current_device to NULL so that another
-                // client can connect to the host.
-                current_device = NULL;
-            }
+            // We assume that connection + HID discovery is done. set current_device to NULL so that another
+            // SDP query can be done.
+            current_device = NULL;
             break;
     }
 }
@@ -387,7 +374,6 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                         if (index >= 0) break;   // already in our list
 
                         device = my_hid_device_create();
-                        current_device = device;
                         memcpy(device->address, event_addr, 6);
                         device->page_scan_repetition_mode = page_scan_repetition_mode;
                         device->clock_offset = clock_offset;
@@ -402,7 +388,11 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                         } else {
                             device->state = REMOTE_NAME_REQUEST;
                         }
-                        sdp_client_query_uuid16(&handle_sdp_client_query_result, device->address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
+                        printf("\n");
+                        status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_psm);
+                        if (status){
+                            printf("\nConnecting to HID Control failed: 0x%02x", status);
+                        }
                     }
                     printf("\n");
                     break;
@@ -756,10 +746,6 @@ static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr) {
 
 static my_hid_device_t* my_hid_device_create(void) {
     static const bd_addr_t zero_addr = {0,0,0,0,0,0};
-    if (current_device != NULL) {
-        printf("my_hid_device_create: there is another device in progress. try later\n");
-        return NULL;
-    }
     for (int j=0; j< MAX_DEVICES; j++){
         if (bd_addr_cmp(devices[j].address, zero_addr) == 0){
             return &devices[j];
@@ -854,14 +840,12 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             printf("HID Interrupt opened, cid 0x%02x\n", device->hid_interrupt_psm);
             // Don't request HID descriptor if we already have it.
             if (device->hid_descriptor_len == 0) {
+                // Needed for the SDP query since it doesn't have context
                 current_device = device;
                 status = sdp_client_query_uuid16(&handle_sdp_client_query_result, device->address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                 if (status != 0) {
                     printf("FAILED to perform sdp query\n");
                 }
-            } else if (device->incoming == 1) {
-                // if incoming and SDP not needed, set "current_device" as NULL
-                current_device = NULL;
             }
             break;
         default:
@@ -884,8 +868,6 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             printf("HID Connection established\n");
             hid_host_state = HID_HOST_CONNECTED;
         }
-        // reset current_device so that another device can connect to us
-        current_device = NULL;
     }
 }
 
