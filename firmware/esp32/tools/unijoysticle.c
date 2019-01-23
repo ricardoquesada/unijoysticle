@@ -94,6 +94,7 @@ typedef struct  {
 static my_hid_device_t devices[MAX_DEVICES];
 static my_hid_device_t* current_device = NULL;
 static int device_count = 0;
+static const bd_addr_t zero_addr = {0,0,0,0,0,0};
 
 // Asus
 // static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
@@ -114,8 +115,10 @@ static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr);
 static void my_hid_device_set_disconnected(my_hid_device_t* device);
 static my_hid_device_t* my_hid_device_create(void);
 static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel);
-static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel);
+static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel);
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel);
+static void my_hid_device_remote_entry_with_channel(uint16_t channel);
+
 int btstack_main(int argc, const char * argv[]);
 
 static void hid_host_setup(void){
@@ -327,7 +330,8 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                     my_hid_device_incoming_connection(packet, channel);
                     break;
                 case L2CAP_EVENT_CHANNEL_OPENED: 
-                    my_hid_device_channel_opened(packet, channel);
+                    if (my_hid_device_channel_opened(packet, channel) != 0)
+                        my_hid_device_remote_entry_with_channel(channel);
                     break;
                 case L2CAP_EVENT_CHANNEL_CLOSED:
                     my_hid_device_channel_closed(packet, channel);
@@ -358,11 +362,10 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                         device->clock_offset = clock_offset;
                         device->cod = cod;
                         if (gap_event_inquiry_result_get_name_available(packet)){
-                            char name_buffer[240];
                             int name_len = gap_event_inquiry_result_get_name_len(packet);
-                            memcpy(name_buffer, gap_event_inquiry_result_get_name(packet), name_len);
-                            name_buffer[name_len] = 0;
-                            printf(", name '%s'", name_buffer);
+                            memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
+                            device->name[name_len] = 0;
+                            printf(", name '%s'", device->name);
                             device->state = REMOTE_NAME_FETCHED;;
                         } else {
                             device->state = REMOTE_NAME_REQUEST;
@@ -726,7 +729,6 @@ static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr) {
 }
 
 static my_hid_device_t* my_hid_device_create(void) {
-    static const bd_addr_t zero_addr = {0,0,0,0,0,0};
     for (int j=0; j< MAX_DEVICES; j++){
         if (bd_addr_cmp(devices[j].address, zero_addr) == 0){
             return &devices[j];
@@ -783,7 +785,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
     }
 }
 
-static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
+static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     uint16_t psm;
     uint8_t status;
     uint16_t local_cid;
@@ -797,7 +799,7 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     status = l2cap_event_channel_opened_get_status(packet);
     if (status){
         printf("L2CAP Connection failed: 0x%02x\n", status);
-        return;
+        return -1;
     }
     psm = l2cap_event_channel_opened_get_psm(packet);
     local_cid = l2cap_event_channel_opened_get_local_cid(packet);
@@ -810,7 +812,7 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     device = my_hid_device_get_instance_for_address(address);
     if (device == NULL) {
         printf("could not find device for address\n");
-        return;
+        return -1;
     }
 
     switch (psm){
@@ -823,13 +825,14 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             printf("HID Interrupt opened, cid 0x%02x\n", device->hid_interrupt_cid);
             // Don't request HID descriptor if we already have it.
             if (device->hid_descriptor_len == 0) {
-                // Needed for the SDP query since it doesn't have context
+                // Needed for the SDP query since it only supports oe SDP query at the time.
                 if (current_device != NULL) {
-                    printf("Error: Ouch, another SDP query is in progress... try later...\n");
+                    printf("Error: Ouch, another SDP query is in progress. Try again later.\n");
                 } else {
                     current_device = device;
                     status = sdp_client_query_uuid16(&handle_sdp_client_query_result, device->address, BLUETOOTH_SERVICE_CLASS_HUMAN_INTERFACE_DEVICE_SERVICE);
                     if (status != 0) {
+                        current_device = NULL;
                         printf("FAILED to perform sdp query\n");
                     }
                 }
@@ -839,15 +842,15 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             break;
     }
 
-    if (device->incoming == 0) {
+    if (!device->incoming) {
         if (local_cid == 0)
-            return;
+            return -1;
         if (local_cid == device->hid_control_cid){
             printf("Creating HID INTERRUPT channel\n");
             status = l2cap_create_channel(packet_handler, device->address, PSM_HID_INTERRUPT, 48, &device->hid_interrupt_cid);
             if (status){
                 printf("Connecting to HID Control failed: 0x%02x\n", status);
-                return;
+                return -1;
             }
             printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_cid); 
         }                        
@@ -855,6 +858,7 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
             printf("HID Connection established\n");
         }
     }
+    return 0;
 }
 
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel) {
@@ -870,6 +874,20 @@ static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel) {
         return;
     }
     my_hid_device_set_disconnected(device);
+}
+
+static void my_hid_device_remote_entry_with_channel(uint16_t channel) {
+    if (channel == 0)
+        return;
+    for (int i=0; i<MAX_DEVICES; i++) {
+        if (devices[i].hid_control_cid == channel || devices[i].hid_interrupt_cid == channel) {
+            // Just in case the key is outdated. Proves that it fixes some connection/reconnection issues
+            // on certain devices.
+            gap_drop_link_key_for_bd_addr(devices[i].address);
+            memset(&devices[i], 0, sizeof(devices[i]));
+            break;
+        }
+    }
 }
 
 static void my_hid_device_set_disconnected(my_hid_device_t* device) {
