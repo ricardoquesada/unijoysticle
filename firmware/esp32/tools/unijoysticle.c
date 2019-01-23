@@ -44,18 +44,6 @@
  *   - hid_device_test.c
  */
 
-#define __BTSTACK_FILE__ "hid_host_demo.c"
-
-/*
- * hid_host_demo.c
- */
-
-/* EXAMPLE_START(hid_host_demo): HID Host Demo
- *
- * @text This example implements an HID Host. For now, it connnects to a fixed device, queries the HID SDP
- * record and opens the HID Control + Interrupt channels
- */
-
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -85,6 +73,7 @@ typedef struct  {
     uint8_t             page_scan_repetition_mode;
     uint16_t            clock_offset;
     uint32_t            cod;
+    char                name[240];
 
     // state
     uint8_t             incoming;
@@ -95,11 +84,11 @@ typedef struct  {
     uint16_t            hid_descriptor_len;
 
     // Channels
-    uint16_t            hid_control_psm;
-    uint16_t            hid_interrupt_psm;
+    uint16_t            hid_control_cid;
+    uint16_t            hid_interrupt_cid;
     uint16_t            expected_hid_control_psm;         // must be PSM_HID_CONTROL
     uint16_t            expected_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
-    enum DEVICE_STATE  state;
+    enum DEVICE_STATE   state;
 } my_hid_device_t;
 
 static my_hid_device_t devices[MAX_DEVICES];
@@ -379,7 +368,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                             device->state = REMOTE_NAME_REQUEST;
                         }
                         printf("\n");
-                        status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_psm);
+                        status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_cid);
                         if (status){
                             printf("\nConnecting to HID Control failed: 0x%02x", status);
                         }
@@ -421,12 +410,12 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                 printf("Invalid cid: 0x%04x\n", channel);
                 break;
             }
-            if (channel == device->hid_interrupt_psm){
+            if (channel == device->hid_interrupt_cid){
                 printf("HID Interrupt Packet: ");
                 printf_hexdump(packet, size);
                 hid_host_handle_interrupt_report(device, packet,  size);
                 print_gamepad();
-            } else if (channel == device->hid_control_psm){
+            } else if (channel == device->hid_control_cid){
                 printf("HID Control\n");
                 printf_hexdump(packet, size);
             } else {
@@ -713,7 +702,7 @@ static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid){
     if (cid == 0)
         return NULL;
     for (int i=0; i<MAX_DEVICES; i++) {
-        if (devices[i].hid_interrupt_psm == cid || devices[i].hid_control_psm == cid) {
+        if (devices[i].hid_interrupt_cid == cid || devices[i].hid_control_cid == cid) {
             return &devices[i];
         }
     }
@@ -776,7 +765,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
             l2cap_accept_connection(channel);
             device->con_handle = l2cap_event_incoming_connection_get_handle(packet);
             device->incoming = 1;
-            device->hid_control_psm = channel;
+            device->hid_control_cid = channel;
             break;
         case PSM_HID_INTERRUPT:
             l2cap_event_incoming_connection_get_address(packet, event_addr);
@@ -786,7 +775,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
                 l2cap_decline_connection(channel);
                 break;
             }
-            device->hid_interrupt_psm = channel;
+            device->hid_interrupt_cid = channel;
             l2cap_accept_connection(channel);
             break;
         default:
@@ -826,12 +815,12 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
 
     switch (psm){
         case PSM_HID_CONTROL:
-            device->hid_control_psm = l2cap_event_channel_opened_get_local_cid(packet);
-            printf("HID Control opened, cid 0x%02x\n", device->hid_control_psm);
+            device->hid_control_cid = l2cap_event_channel_opened_get_local_cid(packet);
+            printf("HID Control opened, cid 0x%02x\n", device->hid_control_cid);
             break;
         case PSM_HID_INTERRUPT:
-            device->hid_interrupt_psm = l2cap_event_channel_opened_get_local_cid(packet);
-            printf("HID Interrupt opened, cid 0x%02x\n", device->hid_interrupt_psm);
+            device->hid_interrupt_cid = l2cap_event_channel_opened_get_local_cid(packet);
+            printf("HID Interrupt opened, cid 0x%02x\n", device->hid_interrupt_cid);
             // Don't request HID descriptor if we already have it.
             if (device->hid_descriptor_len == 0) {
                 // Needed for the SDP query since it doesn't have context
@@ -853,16 +842,16 @@ static void my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
     if (device->incoming == 0) {
         if (local_cid == 0)
             return;
-        if (local_cid == device->hid_control_psm){
+        if (local_cid == device->hid_control_cid){
             printf("Creating HID INTERRUPT channel\n");
-            status = l2cap_create_channel(packet_handler, device->address, PSM_HID_INTERRUPT, 48, &device->hid_interrupt_psm);
+            status = l2cap_create_channel(packet_handler, device->address, PSM_HID_INTERRUPT, 48, &device->hid_interrupt_cid);
             if (status){
                 printf("Connecting to HID Control failed: 0x%02x\n", status);
                 return;
             }
-            printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_psm); 
+            printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_cid); 
         }                        
-        if (local_cid == device->hid_interrupt_psm){
+        if (local_cid == device->hid_interrupt_cid){
             printf("HID Connection established\n");
         }
     }
@@ -886,8 +875,8 @@ static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel) {
 static void my_hid_device_set_disconnected(my_hid_device_t* device) {
     device->connected = 0;
     device->incoming = 0;
-    device->hid_control_psm = 0;
-    device->hid_interrupt_psm = 0;
+    device->hid_control_cid = 0;
+    device->hid_interrupt_cid = 0;
     device->expected_hid_control_psm = 0;
     device->expected_hid_interrupt_psm = 0;
 }
