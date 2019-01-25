@@ -118,7 +118,7 @@ static my_hid_device_t* my_hid_device_create(void);
 static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel);
 static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel);
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel);
-static void my_hid_device_remote_entry_with_channel(uint16_t channel);
+static void my_hid_device_remove_entry_with_channel(uint16_t channel);
 
 int btstack_main(int argc, const char * argv[]);
 
@@ -335,7 +335,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                     break;
                 case L2CAP_EVENT_CHANNEL_OPENED: 
                     if (my_hid_device_channel_opened(packet, channel) != 0)
-                        my_hid_device_remote_entry_with_channel(channel);
+                        my_hid_device_remove_entry_with_channel(channel);
                     break;
                 case L2CAP_EVENT_CHANNEL_CLOSED:
                     my_hid_device_channel_closed(packet, channel);
@@ -885,7 +885,7 @@ static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel) {
     my_hid_device_set_disconnected(device);
 }
 
-static void my_hid_device_remote_entry_with_channel(uint16_t channel) {
+static void my_hid_device_remove_entry_with_channel(uint16_t channel) {
     if (channel == 0)
         return;
     for (int i=0; i<MAX_DEVICES; i++) {
