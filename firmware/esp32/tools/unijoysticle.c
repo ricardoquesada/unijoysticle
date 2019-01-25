@@ -53,14 +53,15 @@
 #include "btstack_config.h"
 #include "btstack.h"
 
-#define INQUIRY_INTERVAL          5
-#define MASK_COD_MAJOR_PERIPHERAL 0x0500   // 0b0000_0101_0000_0000
-#define MASK_COD_MINOR_ALL        0x003c   //             0011_1100
-#define MASK_COD_MINOR_GAMEPAD    0x0008   //             0000_1000
-#define MASK_COD_MINOR_JOYSTICK   0x0004   //             0000_0100
-#define MAX_ATTRIBUTE_VALUE_SIZE  512      // Apparently PS4 has a 470-bytes report
-#define MAX_DEVICES               4
-#define MTU                       100
+#define INQUIRY_INTERVAL            5
+#define MASK_COD_MAJOR_PERIPHERAL   0x0500   // 0b0000_0101_0000_0000
+#define MASK_COD_MINOR_MASK         0x00FC   //             1111_1100
+#define MASK_COD_MINOR_POINT_DEVICE 0x0080   //             1000_0000
+#define MASK_COD_MINOR_GAMEPAD      0x0008   //             0000_1000
+#define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
+#define MAX_ATTRIBUTE_VALUE_SIZE    512      // Apparently PS4 has a 470-bytes report
+#define MAX_DEVICES                 4
+#define MTU                         100
 
 // SDP
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
@@ -108,7 +109,7 @@ static void print_gamepad(void);
 static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len);
 static void continue_remote_names(void);
 static void start_scan(void);
-static int is_device_gamepad(uint32_t cod);
+static int is_device_supported(uint32_t cod);
 static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
 static int my_hid_device_get_index_for_address(bd_addr_t addr);
 static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr);
@@ -122,6 +123,9 @@ static void my_hid_device_remote_entry_with_channel(uint16_t channel);
 int btstack_main(int argc, const char * argv[]);
 
 static void hid_host_setup(void){
+
+    // enabled EIR
+    hci_set_inquiry_mode(INQUIRY_MODE_RSSI_AND_EIR);
 
     // register for HCI events
     hci_event_callback_registration.callback = &packet_handler;
@@ -352,9 +356,12 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                         printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
                     }
 
-                    if (is_device_gamepad(cod)) {
+                    if (is_device_supported(cod)) {
                         index = my_hid_device_get_index_for_address(event_addr);
-                        if (index >= 0) break;   // already in our list
+                        if (index >= 0) {
+                            printf(" ...device already in our list\n");
+                            break;   // already in our list
+                        }
 
                         device = my_hid_device_create();
                         memcpy(device->address, event_addr, 6);
@@ -431,12 +438,14 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
     }
 }
 
-static int is_device_gamepad(uint32_t cod) {
+static int is_device_supported(uint32_t cod) {
     if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
         // device is a peripheral: keyboard, mouse, joystick, gamepad...
         // but we only care about joysticks and gamepads
-        uint32_t minor_cod = cod & MASK_COD_MINOR_ALL;
-        return (minor_cod == MASK_COD_MINOR_GAMEPAD || minor_cod == MASK_COD_MINOR_JOYSTICK);
+        uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
+        return (minor_cod & MASK_COD_MINOR_GAMEPAD) || 
+                (minor_cod & MASK_COD_MINOR_JOYSTICK) ||
+                (minor_cod & MASK_COD_MINOR_POINT_DEVICE);
     }
     return 0;
 }
@@ -548,6 +557,7 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
     if (*report != 0xa1) return;
     report++;
     report_len--;
+
     btstack_hid_parser_t parser;
     btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
     while (btstack_hid_parser_has_more(&parser)){
@@ -555,7 +565,6 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
         uint16_t usage;
         int32_t  value;
         btstack_hid_parser_get_field(&parser, &usage_page, &usage, &value);
-
 
         /*
         printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
