@@ -60,7 +60,7 @@
 #define MASK_COD_MINOR_GAMEPAD      0x0008   //             0000_1000
 #define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
 #define MAX_ATTRIBUTE_VALUE_SIZE    512      // Apparently PS4 has a 470-bytes report
-#define MAX_DEVICES                 4
+#define MAX_DEVICES                 8
 #define MTU                         100
 
 // SDP
@@ -92,6 +92,17 @@ typedef struct  {
     enum DEVICE_STATE   state;
 } my_hid_device_t;
 
+// btstack bug:
+// see: https://github.com/bluekitchen/btstack/issues/187
+typedef struct {
+    int32_t         logical_minimum;
+    int32_t         logical_maximum;
+    uint16_t        usage_page; 
+    uint8_t         report_size;
+    uint8_t         report_count;
+    uint8_t         report_id;
+} hid_globals_t;
+
 static my_hid_device_t devices[MAX_DEVICES];
 static my_hid_device_t* current_device = NULL;
 static int device_count = 0;
@@ -106,6 +117,8 @@ static btstack_packet_callback_registration_t hci_event_callback_registration;
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void print_gamepad(void);
+static void print_descriptor_item(hid_descriptor_item_t* item);
+static void print_parser_globals(hid_globals_t* globals);
 static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len);
 static void continue_remote_names(void);
 static void start_scan(void);
@@ -119,6 +132,9 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
 static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel);
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel);
 static void my_hid_device_remove_entry_with_channel(uint16_t channel);
+static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
+static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
+static void process_usage(btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
 
 int btstack_main(int argc, const char * argv[]);
 
@@ -509,12 +525,12 @@ enum {
 typedef struct gamepad {
     // Usage Page: 0x01 (Generic Desktop Controls)
     uint8_t hat;
-    int16_t x;
-    int16_t y;
-    int16_t z;
-    int16_t rx;
-    int16_t ry;
-    int16_t rz;
+    int32_t x;
+    int32_t y;
+    int32_t z;
+    int32_t rx;
+    int32_t ry;
+    int32_t rz;
     uint8_t dpad;
 
     // Usage Page: 0x02 (Sim controls)
@@ -551,6 +567,21 @@ static void print_gamepad(void) {
     // gpio_set_level(GPIO_NUM_23, g_gamepad.buttons[1] != 0);
 }
 
+static void print_descriptor_item(hid_descriptor_item_t* item) {
+    printf("val=0x%04x, size=%d, type=%d, tag=%d, data_size=%d\n",
+        item->item_value, item->item_size, item->item_type, item->item_tag, item->data_size);
+}
+
+static void print_parser_globals(hid_globals_t* globals) {
+    printf("log_min=%d, log_max=%d, usage_page=%d, rep_size=%d, rep_cnt=%d, rep_id=%d\n",
+        globals->logical_minimum,
+        globals->logical_maximum,
+        globals->usage_page,
+        globals->report_size,
+        globals->report_count,
+        globals->report_id);
+}
+
 static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len) {
     // check if HID Input Report
     if (report_len < 1) return;
@@ -559,155 +590,187 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
     report_len--;
 
     btstack_hid_parser_t parser;
+    hid_globals_t globals;
     btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
     while (btstack_hid_parser_has_more(&parser)){
         uint16_t usage_page;
         uint16_t usage;
         int32_t  value;
+
+        globals.logical_minimum = parser.global_logical_minimum;
+        globals.logical_maximum = parser.global_logical_maximum;
+        globals.report_count = parser.global_report_count;
+        globals.report_id = parser.global_report_id;
+        globals.report_size = parser.global_report_size;
+        globals.usage_page = parser.global_usage_page;
+
         btstack_hid_parser_get_field(&parser, &usage_page, &usage, &value);
-
-        /*
+        
         printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
-        printf("min=%d, max=%d, lmin=%d, lmax=%d\n", parser.usage_minimum, parser.usage_maximum, parser.global_logical_minimum, parser.global_logical_maximum);
-        */
-
-        switch (usage_page) {
-            case 0x01:  // Generic Desktop controls
-                switch (usage) {
-                    case 0x30:  // x
-                        g_gamepad.x = value; //- (parser.global_logical_maximum/2);
-                        break;
-                    case 0x31:  // y
-                        g_gamepad.y = value; //- (parser.global_logical_maximum/2);
-                        break;
-                    case 0x32:  // z
-                        g_gamepad.z = value; // - (parser.global_logical_maximum/2);
-                        break;
-                    case 0x33:  // rx
-                        g_gamepad.rx = value; // - (parser.global_logical_maximum/2);
-                        break;
-                    case 0x34:  // ry
-                        g_gamepad.ry = value; // - (parser.global_logical_maximum/2);
-                        break;
-                    case 0x35:  // rz
-                        g_gamepad.rz = value; // - (parser.global_logical_maximum/2);
-                        break;
-                    case 0x39:  // switch hat
-                        g_gamepad.hat = value;
-                        break;
-                    case 0x85: // system main menu
-                        if (value)
-                            g_gamepad.misc_buttons |= MISC_SYS_MAIN_MENU;
-                        else
-                            g_gamepad.misc_buttons &= ~MISC_SYS_MAIN_MENU;
-                        break;
-                    case 0x90:  // dpad up
-                        if (value)
-                            g_gamepad.dpad |= DPAD_UP;
-                        else
-                            g_gamepad.dpad &= ~DPAD_UP;
-                        break;
-                    case 0x91:  // dpad down
-                        if (value)
-                            g_gamepad.dpad |= DPAD_DOWN;
-                        else
-                            g_gamepad.dpad &= ~DPAD_DOWN;
-                        break;
-                    case 0x92:  // dpad right
-                        if (value)
-                            g_gamepad.dpad |= DPAD_RIGHT;
-                        else
-                            g_gamepad.dpad &= ~DPAD_RIGHT;
-                        break;
-                    case 0x93:  // dpad left
-                        if (value)
-                            g_gamepad.dpad |= DPAD_LEFT;
-                        else
-                            g_gamepad.dpad &= ~DPAD_LEFT;
-                        break;
-                    default:
-                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                        break;
-                }
-                break;
-            case 0x02:  // Simulation controls
-                switch (usage) {
-                    case 0xc4:  // accelerator
-                        g_gamepad.accelerator = value;
-                        break;
-                    case 0xc5:  // brake
-                        g_gamepad.brake = value;
-                        break;
-                    default:
-                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                        break;
-                };
-                break;
-            case 0x06: // Generic Device Controls Page
-                switch (usage) {
-                    case 0x20: // Battery Strength
-                        g_gamepad.battery = value;
-                        break;
-                    default:
-                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                        break;
-                }
-                break;
-            case 0x08:  // LEDs
-            {
-                const uint8_t led_idx = usage - 1;
-                if (led_idx < 8) {
-                    if (value)
-                        g_gamepad.leds |= (1 << led_idx);
-                    else
-                        g_gamepad.leds &= ~(1 << led_idx);
-                } else {
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                }
-                break;
-            }
-            case 0x09:  // Button
-            {
-                // we start with usage - 1 since "button 0" seems that is not being used
-                // and we only support 32 buttons.
-                const uint16_t button_idx = usage-1;
-                if (button_idx < 32) {
-                    if (value)
-                        g_gamepad.buttons |= (1 << button_idx);
-                    else
-                        g_gamepad.buttons &= ~(1 << button_idx);
-                } else {
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                }
-                break;
-            }
-            case 0x0c:  // Consumer
-                switch (usage) {
-                    case 0x0223:    // home
-                        if (value)
-                            g_gamepad.misc_buttons |= MISC_AC_HOME;
-                        else
-                            g_gamepad.misc_buttons &= ~MISC_AC_HOME;
-                        break;
-                    case 0x0224:    // back
-                        if (value)
-                            g_gamepad.misc_buttons |= MISC_AC_BACK;
-                        else
-                            g_gamepad.misc_buttons &= ~MISC_AC_BACK;
-                        break;
-                    default:
-                        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                        break;
-                }
-                break;
-
-            // unknown usage page
-            default:
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                break;
-        }
+        process_usage(&parser, &globals, usage_page, usage, value);
+        // printf("min=%d, max=%d, lmin=%d, lmax=%d\n", parser.usage_minimum, parser.usage_maximum, parser.global_logical_minimum, parser.global_logical_maximum);
     }
 }
+
+static void process_usage(btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value) {
+    print_parser_globals(globals);
+    switch (usage_page) {
+        case 0x01:  // Generic Desktop controls
+            switch (usage) {
+                case 0x30:  // x
+                    g_gamepad.x = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x31:  // y
+                    g_gamepad.y = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x32:  // z
+                    g_gamepad.z = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x33:  // rx
+                    g_gamepad.rx = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x34:  // ry
+                    g_gamepad.ry = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x35:  // rz
+                    g_gamepad.rz = hid_process_thumbstick(parser, globals, value);
+                    break;
+                case 0x39:  // switch hat
+                    g_gamepad.hat = hid_process_hat(parser, globals, value);
+                    break;
+                case 0x85: // system main menu
+                    if (value)
+                        g_gamepad.misc_buttons |= MISC_SYS_MAIN_MENU;
+                    else
+                        g_gamepad.misc_buttons &= ~MISC_SYS_MAIN_MENU;
+                    break;
+                case 0x90:  // dpad up
+                    if (value)
+                        g_gamepad.dpad |= DPAD_UP;
+                    else
+                        g_gamepad.dpad &= ~DPAD_UP;
+                    break;
+                case 0x91:  // dpad down
+                    if (value)
+                        g_gamepad.dpad |= DPAD_DOWN;
+                    else
+                        g_gamepad.dpad &= ~DPAD_DOWN;
+                    break;
+                case 0x92:  // dpad right
+                    if (value)
+                        g_gamepad.dpad |= DPAD_RIGHT;
+                    else
+                        g_gamepad.dpad &= ~DPAD_RIGHT;
+                    break;
+                case 0x93:  // dpad left
+                    if (value)
+                        g_gamepad.dpad |= DPAD_LEFT;
+                    else
+                        g_gamepad.dpad &= ~DPAD_LEFT;
+                    break;
+                default:
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                    break;
+            }
+            break;
+        case 0x02:  // Simulation controls
+            switch (usage) {
+                case 0xc4:  // accelerator
+                    g_gamepad.accelerator = value;
+                    break;
+                case 0xc5:  // brake
+                    g_gamepad.brake = value;
+                    break;
+                default:
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                    break;
+            };
+            break;
+        case 0x06: // Generic Device Controls Page
+            switch (usage) {
+                case 0x20: // Battery Strength
+                    g_gamepad.battery = value;
+                    break;
+                default:
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                    break;
+            }
+            break;
+        case 0x08:  // LEDs
+        {
+            const uint8_t led_idx = usage - 1;
+            if (led_idx < 8) {
+                if (value)
+                    g_gamepad.leds |= (1 << led_idx);
+                else
+                    g_gamepad.leds &= ~(1 << led_idx);
+            } else {
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            }
+            break;
+        }
+        case 0x09:  // Button
+        {
+            // we start with usage - 1 since "button 0" seems that is not being used
+            // and we only support 32 buttons.
+            const uint16_t button_idx = usage-1;
+            if (button_idx < 32) {
+                if (value)
+                    g_gamepad.buttons |= (1 << button_idx);
+                else
+                    g_gamepad.buttons &= ~(1 << button_idx);
+            } else {
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            }
+            break;
+        }
+        case 0x0c:  // Consumer
+            switch (usage) {
+                case 0x0223:    // home
+                    if (value)
+                        g_gamepad.misc_buttons |= MISC_AC_HOME;
+                    else
+                        g_gamepad.misc_buttons &= ~MISC_AC_HOME;
+                    break;
+                case 0x0224:    // back
+                    if (value)
+                        g_gamepad.misc_buttons |= MISC_AC_BACK;
+                    else
+                        g_gamepad.misc_buttons &= ~MISC_AC_BACK;
+                    break;
+                default:
+                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                    break;
+            }
+            break;
+
+        // unknown usage page
+        default:
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            break;
+    }
+}
+
+// Converts a possible value between (0, x) to (-x/2, x/2)
+static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
+    UNUSED(parser);
+    // Assumes if logical minimum is < 0, then it is already in the scale that we want
+    // if (parser->global_logical_minimum < 0)
+    //     return value;
+    // printf("thumstick size = %d\n", parser->global_report_size);
+    // print_descriptor_item(&parser->descriptor_item);
+    return value - (globals->logical_maximum - globals->logical_minimum) / 2 - globals->logical_minimum;
+}
+
+static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
+    UNUSED(parser);
+    // Assumes if value is outside valid range, then it is a "null value"
+    if (value < globals->logical_minimum || value > globals->logical_maximum)
+        return 0xff;
+    // 0 is the first value for hat, meaning that 0 is the "up" position.
+    return value - globals->logical_minimum;
+}
+
 
 // Hid device related
 static my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid){
