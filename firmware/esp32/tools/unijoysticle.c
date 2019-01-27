@@ -540,9 +540,6 @@ typedef struct gamepad {
     // Usage Page: 0x06 (Generic dev controls)
     uint16_t    battery;
 
-    // Usage Page: 0x08 (LED)
-    uint8_t     leds;
-
     // Usage Page: 0x09 (Button)
     uint32_t    buttons;
 
@@ -553,15 +550,14 @@ typedef struct gamepad {
 static gamepad_t g_gamepad;
 
 static void print_gamepad(void) {
-    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x, leds=0x%02x\n",
+    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x\n",
             g_gamepad.x, g_gamepad.y, g_gamepad.z,
             g_gamepad.rx, g_gamepad.ry, g_gamepad.rz,
             g_gamepad.hat,
             g_gamepad.dpad,
             g_gamepad.accelerator, g_gamepad.brake,
             g_gamepad.buttons,
-            g_gamepad.misc_buttons,
-            g_gamepad.leds
+            g_gamepad.misc_buttons
           );
 
     // gpio_set_level(GPIO_NUM_23, g_gamepad.buttons[1] != 0);
@@ -605,7 +601,7 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
         globals.usage_page = parser.global_usage_page;
 
         btstack_hid_parser_get_field(&parser, &usage_page, &usage, &value);
-        
+
         printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         process_usage(&parser, &globals, usage_page, usage, value);
         // printf("min=%d, max=%d, lmin=%d, lmax=%d\n", parser.usage_minimum, parser.usage_maximum, parser.global_logical_minimum, parser.global_logical_maximum);
@@ -696,19 +692,6 @@ static void process_usage(btstack_hid_parser_t* parser, hid_globals_t* globals, 
                     break;
             }
             break;
-        case 0x08:  // LEDs
-        {
-            const uint8_t led_idx = usage - 1;
-            if (led_idx < 8) {
-                if (value)
-                    g_gamepad.leds |= (1 << led_idx);
-                else
-                    g_gamepad.leds &= ~(1 << led_idx);
-            } else {
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-            }
-            break;
-        }
         case 0x09:  // Button
         {
             // we start with usage - 1 since "button 0" seems that is not being used
