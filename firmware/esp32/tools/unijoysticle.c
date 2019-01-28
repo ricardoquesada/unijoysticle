@@ -55,10 +55,12 @@
 
 #define INQUIRY_INTERVAL            5
 #define MASK_COD_MAJOR_PERIPHERAL   0x0500   // 0b0000_0101_0000_0000
+#define MASK_COD_MAJOR_AUDIO        0x0400   // 0b0000_0100_0000_0000
 #define MASK_COD_MINOR_MASK         0x00FC   //             1111_1100
 #define MASK_COD_MINOR_POINT_DEVICE 0x0080   //             1000_0000
 #define MASK_COD_MINOR_GAMEPAD      0x0008   //             0000_1000
 #define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
+#define MASK_COD_MINOR_HANDS_FREE   0x0008   //             0000_1000
 #define MAX_ATTRIBUTE_VALUE_SIZE    512      // Apparently PS4 has a 470-bytes report
 #define MAX_DEVICES                 8
 #define MTU                         100
@@ -532,13 +534,21 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
 }
 
 static int is_device_supported(uint32_t cod) {
+    const uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
+    // Joysticks, mice, gamepads are valid.
     if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
         // device is a peripheral: keyboard, mouse, joystick, gamepad...
         // but we only care about joysticks and gamepads
-        uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
         return (minor_cod & MASK_COD_MINOR_GAMEPAD) || 
                 (minor_cod & MASK_COD_MINOR_JOYSTICK) ||
                 (minor_cod & MASK_COD_MINOR_POINT_DEVICE);
+    }
+
+    // TV remote controls are valid as well
+    // Amazon TV remote control reports as CoD: 0x00400408
+    //    Audio + Telephony : Hands free
+    if ((cod & MASK_COD_MAJOR_AUDIO) == MASK_COD_MAJOR_AUDIO) {
+        return (minor_cod & MASK_COD_MINOR_HANDS_FREE);
     }
     return 0;
 }
@@ -587,16 +597,18 @@ static void start_scan(void){
  * 
  */
 enum {
-    DPAD_UP = 1 << 0,
-    DPAD_DOWN = 1 << 1,
-    DPAD_RIGHT = 1 << 2,
-    DPAD_LEFT = 1 << 3,
+    DPAD_UP     = 1 << 0,
+    DPAD_DOWN   = 1 << 1,
+    DPAD_RIGHT  = 1 << 2,
+    DPAD_LEFT   = 1 << 3,
 };
 
 enum {
-    MISC_AC_HOME = 1 << 0,
-    MISC_AC_BACK = 1 << 1,
-    MISC_SYS_MAIN_MENU = 1 << 2,
+    MISC_AC_SEARCH  = 1 << 0,
+    MISC_AC_HOME    = 1 << 1,
+    MISC_AC_BACK    = 1 << 2,
+
+    MISC_SYS_MAIN_MENU = 1 << 3,
 };
 
 static void print_gamepad(gamepad_t *gamepad) {
@@ -653,108 +665,159 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
 
         btstack_hid_parser_get_field(&parser, &usage_page, &usage, &value);
 
-        printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
+        // printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         process_usage(device, &parser, &globals, usage_page, usage, value);
         update_joystick(device);
     }
 }
 
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value) {
-    print_parser_globals(globals);
+    // print_parser_globals(globals);
     device->gamepad.updated_states = 0;
     switch (usage_page) {
-        case 0x01:  // Generic Desktop controls
-            switch (usage) {
-                case 0x30:  // x
-                    device->gamepad.x = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_X;
-                    break;
-                case 0x31:  // y
-                    device->gamepad.y = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_Y;
-                    break;
-                case 0x32:  // z
-                    device->gamepad.z = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_Z;
-                    break;
-                case 0x33:  // rx
-                    device->gamepad.rx = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_RX;
-                    break;
-                case 0x34:  // ry
-                    device->gamepad.ry = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_RY;
-                    break;
-                case 0x35:  // rz
-                    device->gamepad.rz = hid_process_thumbstick(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_RZ;
-                    break;
-                case 0x39:  // switch hat
-                    device->gamepad.hat = hid_process_hat(parser, globals, value);
-                    device->gamepad.updated_states |= GAMEPAD_HAT;
-                    break;
-                case 0x85: // system main menu
-                    if (value)
-                        device->gamepad.misc_buttons |= MISC_SYS_MAIN_MENU;
-                    else
-                        device->gamepad.misc_buttons &= ~MISC_SYS_MAIN_MENU;
-                    break;
-                case 0x90:  // dpad up
-                    if (value)
-                        device->gamepad.dpad |= DPAD_UP;
-                    else
-                        device->gamepad.dpad &= ~DPAD_UP;
-                    device->gamepad.updated_states |= GAMEPAD_DPAD;
-                    break;
-                case 0x91:  // dpad down
-                    if (value)
-                        device->gamepad.dpad |= DPAD_DOWN;
-                    else
-                        device->gamepad.dpad &= ~DPAD_DOWN;
-                    device->gamepad.updated_states |= GAMEPAD_DPAD;
-                    break;
-                case 0x92:  // dpad right
-                    if (value)
-                        device->gamepad.dpad |= DPAD_RIGHT;
-                    else
-                        device->gamepad.dpad &= ~DPAD_RIGHT;
-                    device->gamepad.updated_states |= GAMEPAD_DPAD;    
-                    break;
-                case 0x93:  // dpad left
-                    if (value)
-                        device->gamepad.dpad |= DPAD_LEFT;
-                    else
-                        device->gamepad.dpad &= ~DPAD_LEFT;
-                    device->gamepad.updated_states |= GAMEPAD_DPAD;                        
-                    break;
-                default:
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                    break;
-            }
+    case 0x01:  // Generic Desktop controls
+        switch (usage) {
+        case 0x30:  // x
+            device->gamepad.x = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_X;
             break;
+        case 0x31:  // y
+            device->gamepad.y = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_Y;
+            break;
+        case 0x32:  // z
+            device->gamepad.z = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_Z;
+            break;
+        case 0x33:  // rx
+            device->gamepad.rx = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_RX;
+            break;
+        case 0x34:  // ry
+            device->gamepad.ry = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_RY;
+            break;
+        case 0x35:  // rz
+            device->gamepad.rz = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_RZ;
+            break;
+        case 0x39:  // switch hat
+            device->gamepad.hat = hid_process_hat(parser, globals, value);
+            device->gamepad.updated_states |= GAMEPAD_HAT;
+            break;
+        case 0x85: // system main menu
+            if (value)
+                device->gamepad.misc_buttons |= MISC_SYS_MAIN_MENU;
+            else
+                device->gamepad.misc_buttons &= ~MISC_SYS_MAIN_MENU;
+            break;
+        case 0x90:  // dpad up
+            if (value)
+                device->gamepad.dpad |= DPAD_UP;
+            else
+                device->gamepad.dpad &= ~DPAD_UP;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x91:  // dpad down
+            if (value)
+                device->gamepad.dpad |= DPAD_DOWN;
+            else
+                device->gamepad.dpad &= ~DPAD_DOWN;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x92:  // dpad right
+            if (value)
+                device->gamepad.dpad |= DPAD_RIGHT;
+            else
+                device->gamepad.dpad &= ~DPAD_RIGHT;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;    
+            break;
+        case 0x93:  // dpad left
+            if (value)
+                device->gamepad.dpad |= DPAD_LEFT;
+            else
+                device->gamepad.dpad &= ~DPAD_LEFT;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;                        
+            break;
+        default:
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            break;
+        }
+        break;
         case 0x02:  // Simulation controls
             switch (usage) {
-                case 0xc4:  // accelerator
-                    device->gamepad.accelerator = value;
-                    device->gamepad.updated_states |= GAMEPAD_ACCELERATOR;
-                    break;
-                case 0xc5:  // brake
-                    device->gamepad.brake = value;
-                    device->gamepad.updated_states |= GAMEPAD_BRAKE;
-                    break;
-                default:
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                    break;
+            case 0xc4:  // accelerator
+                device->gamepad.accelerator = value;
+                device->gamepad.updated_states |= GAMEPAD_ACCELERATOR;
+                break;
+            case 0xc5:  // brake
+                device->gamepad.brake = value;
+                device->gamepad.updated_states |= GAMEPAD_BRAKE;
+                break;
+            default:
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                break;
             };
             break;
         case 0x06: // Generic Device Controls Page
             switch (usage) {
-                case 0x20: // Battery Strength
-                    device->gamepad.battery = value;
-                    break;
-                default:
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                    break;
+            case 0x20: // Battery Strength
+                device->gamepad.battery = value;
+                break;
+            default:
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                break;
+            }
+            break;
+        case 0x07:  // Keypad / Keyboard
+            // FIXME: It is unlikely a device has both a dpap a keyboard, so we report certain keys
+            // as dpad, just to avoid having a entry entry in the gamepad_t type.
+            switch (usage) {
+            case 0x4f:  // Right arrow
+            case 0x5e:  // Keypad right arrow
+                if (value)
+                    device->gamepad.dpad |= DPAD_RIGHT;
+                else
+                    device->gamepad.dpad &= ~DPAD_RIGHT;
+                device->gamepad.updated_states |= GAMEPAD_DPAD;
+                break;
+            case 0x50:  // Left arrow
+            case 0x5c:  // Keypad left arrow
+                if (value)
+                    device->gamepad.dpad |= DPAD_LEFT;
+                else
+                    device->gamepad.dpad &= ~DPAD_LEFT;
+                device->gamepad.updated_states |= GAMEPAD_DPAD;
+                break;
+            case 0x51:  // Down arrow
+            case 0x5a:  // Keypad down arrow
+                if (value)
+                    device->gamepad.dpad |= DPAD_DOWN;
+                else
+                    device->gamepad.dpad &= ~DPAD_DOWN;
+                device->gamepad.updated_states |= GAMEPAD_DPAD;
+                break;
+            case 0x52:  // Up arrow
+            case 0x60:  // Keypad up arrow
+                if (value)
+                    device->gamepad.dpad |= DPAD_UP;
+                else
+                    device->gamepad.dpad &= ~DPAD_UP;
+                device->gamepad.updated_states |= GAMEPAD_DPAD;
+                break;
+            case 0x1d:  // z
+            case 0x28:  // Enter
+            case 0x2c:  // spacebar
+            case 0x58:  // Keypad enter
+                if (value)
+                    device->gamepad.buttons |= (1 << 0);
+                else
+                    device->gamepad.buttons &= ~(1 << 0);
+                device->gamepad.updated_states |= GAMEPAD_BUTTON0;
+                break;
+            default:
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                break;
             }
             break;
         case 0x09:  // Button
@@ -775,21 +838,26 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
         }
         case 0x0c:  // Consumer
             switch (usage) {
-                case 0x0223:    // home
-                    if (value)
-                        device->gamepad.misc_buttons |= MISC_AC_HOME;
-                    else
-                        device->gamepad.misc_buttons &= ~MISC_AC_HOME;
-                    break;
-                case 0x0224:    // back
-                    if (value)
-                        device->gamepad.misc_buttons |= MISC_AC_BACK;
-                    else
-                        device->gamepad.misc_buttons &= ~MISC_AC_BACK;
-                    break;
-                default:
-                    printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                    break;
+            case 0x221:     // search
+                if (value)
+                    device->gamepad.misc_buttons |= MISC_AC_SEARCH;
+                else
+                    device->gamepad.misc_buttons &= ~MISC_AC_SEARCH;
+            case 0x0223:    // home
+                if (value)
+                    device->gamepad.misc_buttons |= MISC_AC_HOME;
+                else
+                    device->gamepad.misc_buttons &= ~MISC_AC_HOME;
+                break;
+            case 0x0224:    // back
+                if (value)
+                    device->gamepad.misc_buttons |= MISC_AC_BACK;
+                else
+                    device->gamepad.misc_buttons &= ~MISC_AC_BACK;
+                break;
+            default:
+                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+                break;
             }
             break;
 
