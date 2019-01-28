@@ -210,6 +210,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
 static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel);
 static void my_hid_device_channel_closed(uint8_t* packet, uint16_t channel);
 static void my_hid_device_remove_entry_with_channel(uint16_t channel);
+static void my_hid_device_assign_joystick_port(my_hid_device_t* device);
 static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
@@ -370,166 +371,171 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
     my_hid_device_t* device;
 
     switch (packet_type) {
-		case HCI_EVENT_PACKET:
-            event = hci_event_packet_get_type(packet);
-            switch (event) {            
-                /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
-                 * is received and the example is started in client mode, the remote SDP HID query is started.
-                 */
-                case BTSTACK_EVENT_STATE:
-                    if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
-                        printf("Start SDP HID query for remote HID Device.\n");
-                        start_scan();
-                    }
-                    break;
-
-                case HCI_EVENT_PIN_CODE_REQUEST:
-					// inform about pin code request
-                    printf("Pin code request - using '0000'\n");
-                    hci_event_pin_code_request_get_bd_addr(packet, event_addr);
-                    gap_pin_code_response(event_addr, "0000");
-					break;
-
-                case HCI_EVENT_USER_CONFIRMATION_REQUEST:
-                    // inform about user confirmation request
-                    printf("SSP User Confirmation Request with numeric value '%"PRIu32"'\n", little_endian_read_32(packet, 8));
-                    printf("SSP User Confirmation Auto accept\n");
-                    break;
-
-                case HCI_EVENT_HID_META:
-                    printf("HCI_EVENT_HID_META\n");
-                    switch (hci_event_hid_meta_get_subevent_code(packet)){
-                        case HID_SUBEVENT_CONNECTION_OPENED:
-                            status = hid_subevent_connection_opened_get_status(packet);
-                            if (status) {
-                                // outgoing connection failed
-                                printf("Connection failed, status 0x%x\n", status);
-                                return;
-                            }
-                            hid_subevent_connection_opened_get_bd_addr(packet, devices[0].address);
-                            uint16_t hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
-                            printf("HID Connected to %s - %d\n", bd_addr_to_str(devices[0].address), hid_cid);
-                            break;
-                        case HID_SUBEVENT_CONNECTION_CLOSED:
-                            printf("HID Disconnected\n");
-                            break;
-                        case HID_SUBEVENT_SUSPEND:
-                            printf("HID Suspend\n");
-                            break;
-                        case HID_SUBEVENT_EXIT_SUSPEND:
-                            printf("HID Exit Suspend\n");
-                            break;
-                        case HID_SUBEVENT_CAN_SEND_NOW:
-                            printf("HID_SUBEVENT_CAN_SEND_NOW\n");
-                            break;
-                        default:
-                            break;
-                    }
-                case L2CAP_EVENT_INCOMING_CONNECTION:
-                    my_hid_device_incoming_connection(packet, channel);
-                    break;
-                case L2CAP_EVENT_CHANNEL_OPENED: 
-                    if (my_hid_device_channel_opened(packet, channel) != 0)
-                        my_hid_device_remove_entry_with_channel(channel);
-                    break;
-                case L2CAP_EVENT_CHANNEL_CLOSED:
-                    my_hid_device_channel_closed(packet, channel);
-                    break;
-                // GAP related
-                case GAP_EVENT_INQUIRY_RESULT:
-                    // print info
-                    gap_event_inquiry_result_get_bd_addr(packet, event_addr);
-                    uint8_t page_scan_repetition_mode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
-                    uint16_t clock_offset = gap_event_inquiry_result_get_clock_offset(packet);
-                    uint32_t cod = gap_event_inquiry_result_get_class_of_device(packet);
-
-                    printf("Device found: %s ",  bd_addr_to_str(event_addr));
-                    printf("with COD: 0x%06x, ", (unsigned int) cod);
-                    printf("pageScan %d, ",      page_scan_repetition_mode);
-                    printf("clock offset 0x%04x", clock_offset);
-                    if (gap_event_inquiry_result_get_rssi_available(packet)){
-                        printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
-                    }
-
-                    if (is_device_supported(cod)) {
-                        index = my_hid_device_get_index_for_address(event_addr);
-                        if (index >= 0) {
-                            printf(" ...device already in our list\n");
-                            break;   // already in our list
-                        }
-
-                        device = my_hid_device_create();
-                        memcpy(device->address, event_addr, 6);
-                        device->page_scan_repetition_mode = page_scan_repetition_mode;
-                        device->clock_offset = clock_offset;
-                        device->cod = cod;
-                        if (gap_event_inquiry_result_get_name_available(packet)){
-                            int name_len = gap_event_inquiry_result_get_name_len(packet);
-                            memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
-                            device->name[name_len] = 0;
-                            printf(", name '%s'", device->name);
-                            device->state = REMOTE_NAME_FETCHED;;
-                        } else {
-                            device->state = REMOTE_NAME_REQUEST;
-                        }
-                        printf("\n");
-                        status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_cid);
-                        if (status){
-                            printf("\nConnecting to HID Control failed: 0x%02x", status);
-                        }
-                    }
-                    printf("\n");
-                    break;
-                case GAP_EVENT_INQUIRY_COMPLETE:
-                    for (int i=0;i<MAX_DEVICES;i++) {
-                        // retry remote name request
-                        if (devices[i].state == REMOTE_NAME_INQUIRED) {
-                            devices[i].state = REMOTE_NAME_REQUEST;
-                        }
-                    }
-                    continue_remote_names();
-                    break;
-
-                case HCI_EVENT_REMOTE_NAME_REQUEST_COMPLETE:
-                    reverse_bd_addr(&packet[3], event_addr);
-                    index = my_hid_device_get_index_for_address(event_addr);
-                    if (index >= 0) {
-                        if (packet[2] == 0) {
-                            printf("Name: '%s'\n", &packet[9]);
-                            devices[index].state = REMOTE_NAME_FETCHED;
-                        } else {
-                            printf("Failed to get name: page timeout\n");
-                        }
-                    }
-                    continue_remote_names();
-                    break;
-
-                default:
-                    break;
+    case HCI_EVENT_PACKET:
+        event = hci_event_packet_get_type(packet);
+        switch (event) {            
+        /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
+            * is received and the example is started in client mode, the remote SDP HID query is started.
+            */
+        case BTSTACK_EVENT_STATE:
+            if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
+                printf("Start SDP HID query for remote HID Device.\n");
+                start_scan();
             }
             break;
-        case L2CAP_DATA_PACKET:
-            // for now, just dump incoming data
-            device = my_hid_device_get_instance_for_cid(channel);
-            if (device == NULL) {
-                printf("Invalid cid: 0x%04x\n", channel);
+
+        case HCI_EVENT_PIN_CODE_REQUEST:
+            // inform about pin code request
+            printf("Pin code request - using '0000'\n");
+            hci_event_pin_code_request_get_bd_addr(packet, event_addr);
+            gap_pin_code_response(event_addr, "0000");
+            break;
+
+        case HCI_EVENT_USER_CONFIRMATION_REQUEST:
+            // inform about user confirmation request
+            printf("SSP User Confirmation Request with numeric value '%"PRIu32"'\n", little_endian_read_32(packet, 8));
+            printf("SSP User Confirmation Auto accept\n");
+            break;
+
+        case HCI_EVENT_HID_META:
+            printf("HCI_EVENT_HID_META\n");
+            switch (hci_event_hid_meta_get_subevent_code(packet)){
+            case HID_SUBEVENT_CONNECTION_OPENED:
+                status = hid_subevent_connection_opened_get_status(packet);
+                if (status) {
+                    // outgoing connection failed
+                    printf("Connection failed, status 0x%x\n", status);
+                    return;
+                }
+                hid_subevent_connection_opened_get_bd_addr(packet, devices[0].address);
+                uint16_t hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
+                printf("HID Connected to %s - %d\n", bd_addr_to_str(devices[0].address), hid_cid);
+                break;
+            case HID_SUBEVENT_CONNECTION_CLOSED:
+                printf("HID Disconnected\n");
+                break;
+            case HID_SUBEVENT_SUSPEND:
+                printf("HID Suspend\n");
+                break;
+            case HID_SUBEVENT_EXIT_SUSPEND:
+                printf("HID Exit Suspend\n");
+                break;
+            case HID_SUBEVENT_CAN_SEND_NOW:
+                printf("HID_SUBEVENT_CAN_SEND_NOW\n");
+                break;
+            default:
                 break;
             }
-            if (channel == device->hid_interrupt_cid){
-                printf("HID Interrupt Packet: ");
-                printf_hexdump(packet, size);
-                hid_host_handle_interrupt_report(device, packet,  size);
-                print_gamepad(&device->gamepad);
-            } else if (channel == device->hid_control_cid){
-                printf("HID Control\n");
-                printf_hexdump(packet, size);
-            } else {
-                printf("Packet from unknown cid: 0x%04x\n", channel);
-                printf_hexdump(packet, size);
-                break;
+        case L2CAP_EVENT_INCOMING_CONNECTION:
+            my_hid_device_incoming_connection(packet, channel);
+            break;
+        case L2CAP_EVENT_CHANNEL_OPENED: 
+            if (my_hid_device_channel_opened(packet, channel) != 0)
+                my_hid_device_remove_entry_with_channel(channel);
+            break;
+        case L2CAP_EVENT_CHANNEL_CLOSED:
+            my_hid_device_channel_closed(packet, channel);
+            break;
+        // GAP related
+        case GAP_EVENT_INQUIRY_RESULT:
+            // print info
+            gap_event_inquiry_result_get_bd_addr(packet, event_addr);
+            uint8_t page_scan_repetition_mode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
+            uint16_t clock_offset = gap_event_inquiry_result_get_clock_offset(packet);
+            uint32_t cod = gap_event_inquiry_result_get_class_of_device(packet);
+
+            printf("Device found: %s ",  bd_addr_to_str(event_addr));
+            printf("with COD: 0x%06x, ", (unsigned int) cod);
+            printf("pageScan %d, ",      page_scan_repetition_mode);
+            printf("clock offset 0x%04x", clock_offset);
+            if (gap_event_inquiry_result_get_rssi_available(packet)){
+                printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
             }
+
+            if (is_device_supported(cod)) {
+                index = my_hid_device_get_index_for_address(event_addr);
+                if (index >= 0) {
+                    printf(" ...device already in our list\n");
+                    break;   // already in our list
+                }
+
+                device = my_hid_device_create();
+                if (device == NULL) {
+                    printf("\nERROR: no more available device slots\n");
+                    break;
+                }
+                memcpy(device->address, event_addr, 6);
+                device->page_scan_repetition_mode = page_scan_repetition_mode;
+                device->clock_offset = clock_offset;
+                device->cod = cod;
+                my_hid_device_assign_joystick_port(device);
+                if (gap_event_inquiry_result_get_name_available(packet)){
+                    int name_len = gap_event_inquiry_result_get_name_len(packet);
+                    memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
+                    device->name[name_len] = 0;
+                    printf(", name '%s'", device->name);
+                    device->state = REMOTE_NAME_FETCHED;;
+                } else {
+                    device->state = REMOTE_NAME_REQUEST;
+                }
+                printf("\n");
+                status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_cid);
+                if (status){
+                    printf("\nConnecting to HID Control failed: 0x%02x", status);
+                }
+            }
+            printf("\n");
+            break;
+        case GAP_EVENT_INQUIRY_COMPLETE:
+            for (int i=0;i<MAX_DEVICES;i++) {
+                // retry remote name request
+                if (devices[i].state == REMOTE_NAME_INQUIRED) {
+                    devices[i].state = REMOTE_NAME_REQUEST;
+                }
+            }
+            continue_remote_names();
+            break;
+
+        case HCI_EVENT_REMOTE_NAME_REQUEST_COMPLETE:
+            reverse_bd_addr(&packet[3], event_addr);
+            index = my_hid_device_get_index_for_address(event_addr);
+            if (index >= 0) {
+                if (packet[2] == 0) {
+                    printf("Name: '%s'\n", &packet[9]);
+                    devices[index].state = REMOTE_NAME_FETCHED;
+                } else {
+                    printf("Failed to get name: page timeout\n");
+                }
+            }
+            continue_remote_names();
+            break;
+
         default:
             break;
+        }
+        break;
+    case L2CAP_DATA_PACKET:
+        // for now, just dump incoming data
+        device = my_hid_device_get_instance_for_cid(channel);
+        if (device == NULL) {
+            printf("Invalid cid: 0x%04x\n", channel);
+            break;
+        }
+        if (channel == device->hid_interrupt_cid){
+            printf("HID Interrupt Packet: ");
+            printf_hexdump(packet, size);
+            hid_host_handle_interrupt_report(device, packet,  size);
+            print_gamepad(&device->gamepad);
+        } else if (channel == device->hid_control_cid){
+            printf("HID Control\n");
+            printf_hexdump(packet, size);
+        } else {
+            printf("Packet from unknown cid: 0x%04x\n", channel);
+            printf_hexdump(packet, size);
+            break;
+        }
+    default:
+        break;
     }
 }
 
@@ -744,127 +750,127 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
             break;
         }
         break;
-        case 0x02:  // Simulation controls
-            switch (usage) {
-            case 0xc4:  // accelerator
-                device->gamepad.accelerator = value;
-                device->gamepad.updated_states |= GAMEPAD_ACCELERATOR;
-                break;
-            case 0xc5:  // brake
-                device->gamepad.brake = value;
-                device->gamepad.updated_states |= GAMEPAD_BRAKE;
-                break;
-            default:
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                break;
-            };
+    case 0x02:  // Simulation controls
+        switch (usage) {
+        case 0xc4:  // accelerator
+            device->gamepad.accelerator = value;
+            device->gamepad.updated_states |= GAMEPAD_ACCELERATOR;
             break;
-        case 0x06: // Generic Device Controls Page
-            switch (usage) {
-            case 0x20: // Battery Strength
-                device->gamepad.battery = value;
-                break;
-            default:
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                break;
-            }
+        case 0xc5:  // brake
+            device->gamepad.brake = value;
+            device->gamepad.updated_states |= GAMEPAD_BRAKE;
             break;
-        case 0x07:  // Keypad / Keyboard
-            // FIXME: It is unlikely a device has both a dpap a keyboard, so we report certain keys
-            // as dpad, just to avoid having a entry entry in the gamepad_t type.
-            switch (usage) {
-            case 0x4f:  // Right arrow
-            case 0x5e:  // Keypad right arrow
-                if (value)
-                    device->gamepad.dpad |= DPAD_RIGHT;
-                else
-                    device->gamepad.dpad &= ~DPAD_RIGHT;
-                device->gamepad.updated_states |= GAMEPAD_DPAD;
-                break;
-            case 0x50:  // Left arrow
-            case 0x5c:  // Keypad left arrow
-                if (value)
-                    device->gamepad.dpad |= DPAD_LEFT;
-                else
-                    device->gamepad.dpad &= ~DPAD_LEFT;
-                device->gamepad.updated_states |= GAMEPAD_DPAD;
-                break;
-            case 0x51:  // Down arrow
-            case 0x5a:  // Keypad down arrow
-                if (value)
-                    device->gamepad.dpad |= DPAD_DOWN;
-                else
-                    device->gamepad.dpad &= ~DPAD_DOWN;
-                device->gamepad.updated_states |= GAMEPAD_DPAD;
-                break;
-            case 0x52:  // Up arrow
-            case 0x60:  // Keypad up arrow
-                if (value)
-                    device->gamepad.dpad |= DPAD_UP;
-                else
-                    device->gamepad.dpad &= ~DPAD_UP;
-                device->gamepad.updated_states |= GAMEPAD_DPAD;
-                break;
-            case 0x1d:  // z
-            case 0x28:  // Enter
-            case 0x2c:  // spacebar
-            case 0x58:  // Keypad enter
-                if (value)
-                    device->gamepad.buttons |= (1 << 0);
-                else
-                    device->gamepad.buttons &= ~(1 << 0);
-                device->gamepad.updated_states |= GAMEPAD_BUTTON0;
-                break;
-            default:
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                break;
-            }
-            break;
-        case 0x09:  // Button
-        {
-            // we start with usage - 1 since "button 0" seems that is not being used
-            // and we only support 32 buttons.
-            const uint16_t button_idx = usage-1;
-            if (button_idx < 16) {
-                if (value)
-                    device->gamepad.buttons |= (1 << button_idx);
-                else
-                    device->gamepad.buttons &= ~(1 << button_idx);
-                device->gamepad.updated_states |= (GAMEPAD_BUTTON0 << button_idx);
-            } else {
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-            }
-            break;
-        }
-        case 0x0c:  // Consumer
-            switch (usage) {
-            case 0x221:     // search
-                if (value)
-                    device->gamepad.misc_buttons |= MISC_AC_SEARCH;
-                else
-                    device->gamepad.misc_buttons &= ~MISC_AC_SEARCH;
-            case 0x0223:    // home
-                if (value)
-                    device->gamepad.misc_buttons |= MISC_AC_HOME;
-                else
-                    device->gamepad.misc_buttons &= ~MISC_AC_HOME;
-                break;
-            case 0x0224:    // back
-                if (value)
-                    device->gamepad.misc_buttons |= MISC_AC_BACK;
-                else
-                    device->gamepad.misc_buttons &= ~MISC_AC_BACK;
-                break;
-            default:
-                printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
-                break;
-            }
-            break;
-
-        // unknown usage page
         default:
             printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
             break;
+        };
+        break;
+    case 0x06: // Generic Device Controls Page
+        switch (usage) {
+        case 0x20: // Battery Strength
+            device->gamepad.battery = value;
+            break;
+        default:
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            break;
+        }
+        break;
+    case 0x07:  // Keypad / Keyboard
+        // FIXME: It is unlikely a device has both a dpap a keyboard, so we report certain keys
+        // as dpad, just to avoid having a entry entry in the gamepad_t type.
+        switch (usage) {
+        case 0x4f:  // Right arrow
+        case 0x5e:  // Keypad right arrow
+            if (value)
+                device->gamepad.dpad |= DPAD_RIGHT;
+            else
+                device->gamepad.dpad &= ~DPAD_RIGHT;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x50:  // Left arrow
+        case 0x5c:  // Keypad left arrow
+            if (value)
+                device->gamepad.dpad |= DPAD_LEFT;
+            else
+                device->gamepad.dpad &= ~DPAD_LEFT;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x51:  // Down arrow
+        case 0x5a:  // Keypad down arrow
+            if (value)
+                device->gamepad.dpad |= DPAD_DOWN;
+            else
+                device->gamepad.dpad &= ~DPAD_DOWN;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x52:  // Up arrow
+        case 0x60:  // Keypad up arrow
+            if (value)
+                device->gamepad.dpad |= DPAD_UP;
+            else
+                device->gamepad.dpad &= ~DPAD_UP;
+            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            break;
+        case 0x1d:  // z
+        case 0x28:  // Enter
+        case 0x2c:  // spacebar
+        case 0x58:  // Keypad enter
+            if (value)
+                device->gamepad.buttons |= (1 << 0);
+            else
+                device->gamepad.buttons &= ~(1 << 0);
+            device->gamepad.updated_states |= GAMEPAD_BUTTON0;
+            break;
+        default:
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            break;
+        }
+        break;
+    case 0x09:  // Button
+    {
+        // we start with usage - 1 since "button 0" seems that is not being used
+        // and we only support 32 buttons.
+        const uint16_t button_idx = usage-1;
+        if (button_idx < 16) {
+            if (value)
+                device->gamepad.buttons |= (1 << button_idx);
+            else
+                device->gamepad.buttons &= ~(1 << button_idx);
+            device->gamepad.updated_states |= (GAMEPAD_BUTTON0 << button_idx);
+        } else {
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+        }
+        break;
+    }
+    case 0x0c:  // Consumer
+        switch (usage) {
+        case 0x221:     // search
+            if (value)
+                device->gamepad.misc_buttons |= MISC_AC_SEARCH;
+            else
+                device->gamepad.misc_buttons &= ~MISC_AC_SEARCH;
+        case 0x0223:    // home
+            if (value)
+                device->gamepad.misc_buttons |= MISC_AC_HOME;
+            else
+                device->gamepad.misc_buttons &= ~MISC_AC_HOME;
+            break;
+        case 0x0224:    // back
+            if (value)
+                device->gamepad.misc_buttons |= MISC_AC_BACK;
+            else
+                device->gamepad.misc_buttons &= ~MISC_AC_BACK;
+            break;
+        default:
+            printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+            break;
+        }
+        break;
+
+    // unknown usage page
+    default:
+        printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
+        break;
     }
 }
 
@@ -1148,12 +1154,27 @@ static void my_hid_device_remove_entry_with_channel(uint16_t channel) {
 }
 
 static void my_hid_device_set_disconnected(my_hid_device_t* device) {
+    // Connection oriented
     device->connected = 0;
     device->incoming = 0;
     device->hid_control_cid = 0;
     device->hid_interrupt_cid = 0;
     device->expected_hid_control_psm = 0;
     device->expected_hid_interrupt_psm = 0;
+
+    // Joystick-state oriented
+    device->joystick_port = JOYSTICK_PORT_NONE;
+    memset(&device->gamepad, 0, sizeof(device->gamepad));
+}
+
+static void my_hid_device_assign_joystick_port(my_hid_device_t* device) {
+    const uint32_t cod = device->cod;
+    const uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
+    if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
+        if ((minor_cod & MASK_COD_MINOR_POINT_DEVICE) == MASK_COD_MINOR_POINT_DEVICE)
+            device->joystick_port = JOYSTICK_PORT_A;
+    }
+    device->joystick_port = JOYSTICK_PORT_B;
 }
 
 int btstack_main(int argc, const char * argv[]){
