@@ -100,7 +100,13 @@ enum GAMEPAD_STATES {
     GAMEPAD_BUTTON6 = 1 << 16,
     GAMEPAD_BUTTON7 = 1 << 17,
     GAMEPAD_BUTTON8 = 1 << 18,
-    GAMEPAD_BUTTON9 = 1 << 19
+    GAMEPAD_BUTTON9 = 1 << 19,
+    GAMEPAD_BUTTON10 = 1 << 20,
+    GAMEPAD_BUTTON11 = 1 << 21,
+    GAMEPAD_BUTTON12 = 1 << 22,
+    GAMEPAD_BUTTON13 = 1 << 23,
+    GAMEPAD_BUTTON14 = 1 << 24,
+    GAMEPAD_BUTTON15 = 1 << 25,
 };
 
 typedef struct gamepad {
@@ -756,11 +762,12 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
             // we start with usage - 1 since "button 0" seems that is not being used
             // and we only support 32 buttons.
             const uint16_t button_idx = usage-1;
-            if (button_idx < 32) {
+            if (button_idx < 16) {
                 if (value)
                     device->gamepad.buttons |= (1 << button_idx);
                 else
                     device->gamepad.buttons &= ~(1 << button_idx);
+                device->gamepad.updated_states |= (GAMEPAD_BUTTON0 << button_idx);
             } else {
                 printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
             }
@@ -801,6 +808,69 @@ static void update_joystick(my_hid_device_t* device) {
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
     joy = device->joystick_port == JOYSTICK_PORT_A ? &joysticks[0] : &joysticks[1];
+
+    // reset state
+    memset(joy, 0, sizeof(*joy));
+
+    const gamepad_t* gp = &device->gamepad;
+    if (gp->updated_states & GAMEPAD_HAT) {
+        switch (gp->hat) {
+        case 0xff:
+            joy->up = joy->down = joy->left = joy->right = 0;
+            break;
+        case 0:
+            joy->up = 1;
+            break;
+        case 1:
+            joy->up = joy->right = 1;
+            break;
+        case 2:
+            joy->right = 1;
+            break;
+        case 3:
+            joy->right = joy->down = 1;
+            break;
+        case 4:
+            joy->down = 1;
+            break;
+        case 5:
+            joy->down = joy->left = 1;
+            break;
+        case 6:
+            joy->left = 1;
+            break;
+        case 7:
+            joy->left = joy->up = 1;
+            break;
+        default:
+            printf("Error parsing hat values\n");
+            break;
+        }
+    }
+
+    if (gp->updated_states & GAMEPAD_DPAD) {
+        if (gp->dpad & 0x01)
+            joy->up = 1;
+        if (gp->dpad & 0x02)
+            joy->down = 2;
+        if (gp->dpad & 0x04)
+            joy->right = 1;
+        if (gp->dpad & 0x08)
+            joy->left = 1;
+    }
+
+    if (gp->updated_states & GAMEPAD_BUTTON0) {
+        joy->fire = gp->buttons & 1;
+    }
+
+    if (gp->updated_states & GAMEPAD_X) {
+        joy->left = (gp->x < -128);
+        joy->right = (gp->x > 128);
+    }
+    if (gp->updated_states & GAMEPAD_Y) {
+        joy->up = (gp->y < -128);
+        joy->down = (gp->y > 128);
+    }
 }
 
 // Converts a possible value between (0, x) to (-x/2, x/2)
