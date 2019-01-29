@@ -56,29 +56,21 @@ void gpio_joy_init(void) {
         (1ULL << GPIO_JOY_A_LEFT) | (1ULL << GPIO_JOY_A_RIGHT) |
         (1ULL << GPIO_JOY_A_FIRE)
         );
-    ESP_ERROR_CHECK( gpio_config(&io_conf) );
-
     // Port B.
-    io_conf.pin_bit_mask = (
+    io_conf.pin_bit_mask |= (
         (1ULL << GPIO_JOY_B_UP) | (1ULL << GPIO_JOY_B_DOWN) |
         (1ULL << GPIO_JOY_B_LEFT) | (1ULL << GPIO_JOY_B_RIGHT) |
         (1ULL << GPIO_JOY_B_FIRE)
         );
+
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
 
-
     // Set low all GPIOs... just in case.
-    gpio_num_t all_gpios[] = {
-        GPIO_JOY_A_UP, GPIO_JOY_A_DOWN, GPIO_JOY_A_LEFT, GPIO_JOY_A_RIGHT, GPIO_JOY_A_FIRE,
-        GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LEFT, GPIO_JOY_B_RIGHT, GPIO_JOY_B_FIRE
-        };
-    const int MAX_GPIOS = sizeof(all_gpios)/sizeof(all_gpios[0]);
+    const int MAX_GPIOS = sizeof(JOY_A_PORTS)/sizeof(JOY_A_PORTS[0]);
     for (int i=0; i<MAX_GPIOS; i++) {
-        printf("Setting GPIO %d\n", all_gpios[i]);
-        ESP_ERROR_CHECK( gpio_set_level(all_gpios[i], 0));
+        ESP_ERROR_CHECK( gpio_set_level(JOY_A_PORTS[i], 0));
+        ESP_ERROR_CHECK( gpio_set_level(JOY_B_PORTS[i], 0));
     }
-    ESP_ERROR_CHECK( gpio_set_level(GPIO_JOY_A_UP, 1));
-    ESP_ERROR_CHECK( gpio_set_level(GPIO_JOY_B_UP, 1));
 }
 
 void gpio_joy_update_port_a(joystick_t* joy) {
