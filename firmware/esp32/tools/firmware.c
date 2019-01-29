@@ -53,6 +53,8 @@
 #include "btstack_config.h"
 #include "btstack.h"
 
+#include "gpio_joy.h"
+
 #define INQUIRY_INTERVAL            5
 #define MASK_COD_MAJOR_PERIPHERAL   0x0500   // 0b0000_0101_0000_0000
 #define MASK_COD_MAJOR_AUDIO        0x0400   // 0b0000_0100_0000_0000
@@ -68,19 +70,6 @@
 // SDP
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
-
-// Valid for Amiga, Atari 8-bit, Atari St, C64 and others...
-typedef struct {
-    uint8_t up;             // line 1 - Y2 for quad mouse
-    uint8_t down;           // line 2 - X1 for quad mouse
-    uint8_t left;           // line 3 - Y1 for quad mouse
-    uint8_t right;          // line 4 - X2 for quad mouse
-    uint8_t pot_y;          // line 5 - Middle button for mouse
-    uint8_t fire;           // line 6 - Left button for mouse
-    uint8_t _power;         // line 7 - +5v. added as ref only
-    uint8_t _ground;        // line 8 - addes as ref only
-    uint8_t pot_x;          // line 9 - Right button for mouse
-} joystick_t;
 
 enum GAMEPAD_STATES {
     GAMEPAD_HAT = 1 << 0,
@@ -180,7 +169,6 @@ typedef struct {
     uint8_t         report_id;
 } hid_globals_t;
 
-static joystick_t joysticks[2];
 static my_hid_device_t devices[MAX_DEVICES];
 static my_hid_device_t* current_device = NULL;
 static int device_count = 0;
@@ -214,7 +202,7 @@ static void my_hid_device_assign_joystick_port(my_hid_device_t* device);
 static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
-static void update_joystick(my_hid_device_t* device);
+static void joystick_update(my_hid_device_t* device);
 
 int btstack_main(int argc, const char * argv[]);
 
@@ -673,7 +661,7 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
 
         // printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         process_usage(device, &parser, &globals, usage_page, usage, value);
-        update_joystick(device);
+        joystick_update(device);
     }
 }
 
@@ -875,46 +863,45 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
 }
 
 // Converts gamepad to joystick.
-static void update_joystick(my_hid_device_t* device) {
-    joystick_t* joy = NULL;
+static void joystick_update(my_hid_device_t* device) {
     if (device->joystick_port == JOYSTICK_PORT_NONE)
         return;
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
-    joy = device->joystick_port == JOYSTICK_PORT_A ? &joysticks[0] : &joysticks[1];
+    joystick_t joy;
 
     // reset state
-    memset(joy, 0, sizeof(*joy));
+    memset(&joy, 0, sizeof(joy));
 
     const gamepad_t* gp = &device->gamepad;
     if (gp->updated_states & GAMEPAD_HAT) {
         switch (gp->hat) {
         case 0xff:
-            joy->up = joy->down = joy->left = joy->right = 0;
+            joy.up = joy.down = joy.left = joy.right = 0;
             break;
         case 0:
-            joy->up = 1;
+            joy.up = 1;
             break;
         case 1:
-            joy->up = joy->right = 1;
+            joy.up = joy.right = 1;
             break;
         case 2:
-            joy->right = 1;
+            joy.right = 1;
             break;
         case 3:
-            joy->right = joy->down = 1;
+            joy.right = joy.down = 1;
             break;
         case 4:
-            joy->down = 1;
+            joy.down = 1;
             break;
         case 5:
-            joy->down = joy->left = 1;
+            joy.down = joy.left = 1;
             break;
         case 6:
-            joy->left = 1;
+            joy.left = 1;
             break;
         case 7:
-            joy->left = joy->up = 1;
+            joy.left = joy.up = 1;
             break;
         default:
             printf("Error parsing hat values\n");
@@ -924,27 +911,33 @@ static void update_joystick(my_hid_device_t* device) {
 
     if (gp->updated_states & GAMEPAD_DPAD) {
         if (gp->dpad & 0x01)
-            joy->up = 1;
+            joy.up = 1;
         if (gp->dpad & 0x02)
-            joy->down = 2;
+            joy.down = 2;
         if (gp->dpad & 0x04)
-            joy->right = 1;
+            joy.right = 1;
         if (gp->dpad & 0x08)
-            joy->left = 1;
+            joy.left = 1;
     }
 
     if (gp->updated_states & GAMEPAD_BUTTON0) {
-        joy->fire = gp->buttons & 1;
+        joy.fire = gp->buttons & 1;
     }
 
     if (gp->updated_states & GAMEPAD_X) {
-        joy->left = (gp->x < -128);
-        joy->right = (gp->x > 128);
+        joy.left = (gp->x < -128);
+        joy.right = (gp->x > 128);
     }
     if (gp->updated_states & GAMEPAD_Y) {
-        joy->up = (gp->y < -128);
-        joy->down = (gp->y > 128);
+        joy.up = (gp->y < -128);
+        joy.down = (gp->y > 128);
     }
+
+    // FIXME: Add support for JOYSTICK_PORT_AB.
+    if (device->joystick_port == JOYSTICK_PORT_A)
+        gpio_joy_update_port_a(&joy);
+    else
+        gpio_joy_update_port_b(&joy);    
 }
 
 // Converts a possible value between (0, x) to (-x/2, x/2)
@@ -1183,8 +1176,10 @@ int btstack_main(int argc, const char * argv[]){
     (void)argv;
     
     memset(devices, 0, sizeof(devices));
-    memset(joysticks, 0, sizeof(joysticks));
 
+    // gpio init
+    gpio_joy_init();
+    
     // Initialize L2CAP 
     l2cap_init();
 

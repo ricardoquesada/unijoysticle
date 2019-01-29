@@ -52,7 +52,7 @@ clean_src:
 
 #all: ${EXAMPLES}
 
-unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o btstack_hid_parser.o unijoysticle.c
+unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o btstack_hid_parser.o firmware.c gpio_joy.c
 	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
 
 gap_inquiry: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_inquiry.c
