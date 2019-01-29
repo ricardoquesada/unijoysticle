@@ -30,7 +30,7 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * Please inquire about commercial licensing options at 
+ * Please inquire about commercial licensing options at
  * contact@bluekitchen-gmbh.com
  *
  */
@@ -72,32 +72,32 @@ static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
 
 enum GAMEPAD_STATES {
-    GAMEPAD_HAT = 1 << 0,
-    GAMEPAD_X = 1 << 1,
-    GAMEPAD_Y = 1 << 2,
-    GAMEPAD_Z = 1 << 3,
-    GAMEPAD_RX = 1 << 4,
-    GAMEPAD_RY = 1 << 5,
-    GAMEPAD_RZ = 1 << 6,
-    GAMEPAD_DPAD = 1 << 7,
-    GAMEPAD_BRAKE = 1 << 8,
-    GAMEPAD_ACCELERATOR = 1 << 9,
-    GAMEPAD_BUTTON0 = 1 << 10,
-    GAMEPAD_BUTTON1 = 1 << 11,
-    GAMEPAD_BUTTON2 = 1 << 12,
-    GAMEPAD_BUTTON3 = 1 << 13,
-    GAMEPAD_BUTTON4 = 1 << 14,
-    GAMEPAD_BUTTON5 = 1 << 15,
-    GAMEPAD_BUTTON6 = 1 << 16,
-    GAMEPAD_BUTTON7 = 1 << 17,
-    GAMEPAD_BUTTON8 = 1 << 18,
-    GAMEPAD_BUTTON9 = 1 << 19,
-    GAMEPAD_BUTTON10 = 1 << 20,
-    GAMEPAD_BUTTON11 = 1 << 21,
-    GAMEPAD_BUTTON12 = 1 << 22,
-    GAMEPAD_BUTTON13 = 1 << 23,
-    GAMEPAD_BUTTON14 = 1 << 24,
-    GAMEPAD_BUTTON15 = 1 << 25,
+    GAMEPAD_STATE_HAT = 1 << 0,
+    GAMEPAD_STATE_X = 1 << 1,
+    GAMEPAD_STATE_Y = 1 << 2,
+    GAMEPAD_STATE_Z = 1 << 3,
+    GAMEPAD_STATE_RX = 1 << 4,
+    GAMEPAD_STATE_RY = 1 << 5,
+    GAMEPAD_STATE_RZ = 1 << 6,
+    GAMEPAD_STATE_DPAD = 1 << 7,
+    GAMEPAD_STATE_BRAKE = 1 << 8,
+    GAMEPAD_STATE_ACCELERATOR = 1 << 9,
+    GAMEPAD_STATE_BUTTON0 = 1 << 10,
+    GAMEPAD_STATE_BUTTON1 = 1 << 11,
+    GAMEPAD_STATE_BUTTON2 = 1 << 12,
+    GAMEPAD_STATE_BUTTON3 = 1 << 13,
+    GAMEPAD_STATE_BUTTON4 = 1 << 14,
+    GAMEPAD_STATE_BUTTON5 = 1 << 15,
+    GAMEPAD_STATE_BUTTON6 = 1 << 16,
+    GAMEPAD_STATE_BUTTON7 = 1 << 17,
+    GAMEPAD_STATE_BUTTON8 = 1 << 18,
+    GAMEPAD_STATE_BUTTON9 = 1 << 19,
+    GAMEPAD_STATE_BUTTON10 = 1 << 20,
+    GAMEPAD_STATE_BUTTON11 = 1 << 21,
+    GAMEPAD_STATE_BUTTON12 = 1 << 22,
+    GAMEPAD_STATE_BUTTON13 = 1 << 23,
+    GAMEPAD_STATE_BUTTON14 = 1 << 24,
+    GAMEPAD_STATE_BUTTON15 = 1 << 25,
 };
 
 typedef struct gamepad {
@@ -163,7 +163,7 @@ typedef struct  {
 typedef struct {
     int32_t         logical_minimum;
     int32_t         logical_maximum;
-    uint16_t        usage_page; 
+    uint16_t        usage_page;
     uint8_t         report_size;
     uint8_t         report_count;
     uint8_t         report_id;
@@ -216,15 +216,15 @@ static void hid_host_setup(void){
     hci_add_event_handler(&hci_event_callback_registration);
 
     l2cap_register_service(packet_handler, PSM_HID_INTERRUPT, MTU, LEVEL_2);
-    l2cap_register_service(packet_handler, PSM_HID_CONTROL,   MTU, LEVEL_2);                                      
+    l2cap_register_service(packet_handler, PSM_HID_CONTROL,   MTU, LEVEL_2);
 
     // Disable stdout buffering
     setbuf(stdout, NULL);
 }
 
-/* @section SDP parser callback 
- * 
- * @text The SDP parsers retrieves the BNEP PAN UUID as explained in  
+/* @section SDP parser callback
+ *
+ * @text The SDP parsers retrieves the BNEP PAN UUID as explained in
  * Section [on SDP BNEP Query example](#sec:sdpbnepqueryExample}.
  */
 
@@ -256,7 +256,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 if ((uint16_t)(sdp_event_query_attribute_byte_get_data_offset(packet)+1) == sdp_event_query_attribute_byte_get_attribute_length(packet)) {
                     switch(sdp_event_query_attribute_byte_get_attribute_id(packet)) {
                         case BLUETOOTH_ATTRIBUTE_PROTOCOL_DESCRIPTOR_LIST:
-                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {                                    
+                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
                                 des_iterator_init(&prot_it, des_element);
@@ -276,10 +276,10 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                             }
                             break;
                         case BLUETOOTH_ATTRIBUTE_ADDITIONAL_PROTOCOL_DESCRIPTOR_LISTS:
-                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {                                    
+                            for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
-                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {                                    
+                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {
                                     if (des_iterator_get_type(&additional_des_it) != DE_DES) continue;
                                     des_element = des_iterator_get_element(&additional_des_it);
                                     des_iterator_init(&prot_it, des_element);
@@ -303,7 +303,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                             for (des_iterator_init(&attribute_list_it, attribute_value); des_iterator_has_more(&attribute_list_it); des_iterator_next(&attribute_list_it)) {
                                 if (des_iterator_get_type(&attribute_list_it) != DE_DES) continue;
                                 des_element = des_iterator_get_element(&attribute_list_it);
-                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {                                    
+                                for (des_iterator_init(&additional_des_it, des_element); des_iterator_has_more(&additional_des_it); des_iterator_next(&additional_des_it)) {
                                     if (des_iterator_get_type(&additional_des_it) != DE_STRING) continue;
                                     element = des_iterator_get_element(&additional_des_it);
                                     const uint8_t * descriptor = de_get_string(element);
@@ -312,7 +312,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     memcpy(current_device->hid_descriptor, descriptor, current_device->hid_descriptor_len);
                                     printf_hexdump(current_device->hid_descriptor, current_device->hid_descriptor_len);
                                 }
-                            }                        
+                            }
                             break;
                         default:
                             break;
@@ -322,7 +322,7 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                 fprintf(stderr, "SDP attribute value buffer size exceeded: available %d, required %d\n", attribute_value_buffer_size, sdp_event_query_attribute_byte_get_attribute_length(packet));
             }
             break;
-            
+
         case SDP_EVENT_QUERY_RFCOMM_SERVICE:
             printf("SDP_EVENT_QUERY_RFCOMM_SERVICE\n");
             break;
@@ -361,7 +361,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
     switch (packet_type) {
     case HCI_EVENT_PACKET:
         event = hci_event_packet_get_type(packet);
-        switch (event) {            
+        switch (event) {
         /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
             * is received and the example is started in client mode, the remote SDP HID query is started.
             */
@@ -417,7 +417,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
         case L2CAP_EVENT_INCOMING_CONNECTION:
             my_hid_device_incoming_connection(packet, channel);
             break;
-        case L2CAP_EVENT_CHANNEL_OPENED: 
+        case L2CAP_EVENT_CHANNEL_OPENED:
             if (my_hid_device_channel_opened(packet, channel) != 0)
                 my_hid_device_remove_entry_with_channel(channel);
             break;
@@ -533,7 +533,7 @@ static int is_device_supported(uint32_t cod) {
     if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
         // device is a peripheral: keyboard, mouse, joystick, gamepad...
         // but we only care about joysticks and gamepads
-        return (minor_cod & MASK_COD_MINOR_GAMEPAD) || 
+        return (minor_cod & MASK_COD_MINOR_GAMEPAD) ||
                 (minor_cod & MASK_COD_MINOR_JOYSTICK) ||
                 (minor_cod & MASK_COD_MINOR_POINT_DEVICE);
     }
@@ -584,11 +584,11 @@ static void start_scan(void){
 
 /*
  * @section HID Report Handler
- * 
+ *
  * @text Use BTstack's compact HID Parser to process incoming HID Report
  * Iterate over all fields and process fields with usage page = 0x07 / Keyboard
  * Check if SHIFT is down and process first character (don't handle multiple key presses)
- * 
+ *
  */
 enum {
     DPAD_UP     = 1 << 0,
@@ -606,7 +606,8 @@ enum {
 };
 
 static void print_gamepad(gamepad_t *gamepad) {
-    printf("x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x\n",
+    printf("(0x%04x) x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x\n",
+            gamepad->updated_states,
             gamepad->x, gamepad->y, gamepad->z,
             gamepad->rx, gamepad->ry, gamepad->rz,
             gamepad->hat,
@@ -644,6 +645,7 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
     btstack_hid_parser_t parser;
     hid_globals_t globals;
     btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
+    device->gamepad.updated_states = 0;
     while (btstack_hid_parser_has_more(&parser)){
         uint16_t usage_page;
         uint16_t usage;
@@ -661,43 +663,42 @@ static void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint
 
         // printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         process_usage(device, &parser, &globals, usage_page, usage, value);
-        joystick_update(device);
     }
+    joystick_update(device);
 }
 
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value) {
     // print_parser_globals(globals);
-    device->gamepad.updated_states = 0;
     switch (usage_page) {
     case 0x01:  // Generic Desktop controls
         switch (usage) {
         case 0x30:  // x
             device->gamepad.x = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_X;
+            device->gamepad.updated_states |= GAMEPAD_STATE_X;
             break;
         case 0x31:  // y
             device->gamepad.y = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_Y;
+            device->gamepad.updated_states |= GAMEPAD_STATE_Y;
             break;
         case 0x32:  // z
             device->gamepad.z = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_Z;
+            device->gamepad.updated_states |= GAMEPAD_STATE_Z;
             break;
         case 0x33:  // rx
             device->gamepad.rx = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_RX;
+            device->gamepad.updated_states |= GAMEPAD_STATE_RX;
             break;
         case 0x34:  // ry
             device->gamepad.ry = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_RY;
+            device->gamepad.updated_states |= GAMEPAD_STATE_RY;
             break;
         case 0x35:  // rz
             device->gamepad.rz = hid_process_thumbstick(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_RZ;
+            device->gamepad.updated_states |= GAMEPAD_STATE_RZ;
             break;
         case 0x39:  // switch hat
             device->gamepad.hat = hid_process_hat(parser, globals, value);
-            device->gamepad.updated_states |= GAMEPAD_HAT;
+            device->gamepad.updated_states |= GAMEPAD_STATE_HAT;
             break;
         case 0x85: // system main menu
             if (value)
@@ -710,28 +711,28 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.dpad |= DPAD_UP;
             else
                 device->gamepad.dpad &= ~DPAD_UP;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x91:  // dpad down
             if (value)
                 device->gamepad.dpad |= DPAD_DOWN;
             else
                 device->gamepad.dpad &= ~DPAD_DOWN;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x92:  // dpad right
             if (value)
                 device->gamepad.dpad |= DPAD_RIGHT;
             else
                 device->gamepad.dpad &= ~DPAD_RIGHT;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;    
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x93:  // dpad left
             if (value)
                 device->gamepad.dpad |= DPAD_LEFT;
             else
                 device->gamepad.dpad &= ~DPAD_LEFT;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;                        
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         default:
             printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
@@ -742,11 +743,11 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
         switch (usage) {
         case 0xc4:  // accelerator
             device->gamepad.accelerator = value;
-            device->gamepad.updated_states |= GAMEPAD_ACCELERATOR;
+            device->gamepad.updated_states |= GAMEPAD_STATE_ACCELERATOR;
             break;
         case 0xc5:  // brake
             device->gamepad.brake = value;
-            device->gamepad.updated_states |= GAMEPAD_BRAKE;
+            device->gamepad.updated_states |= GAMEPAD_STATE_BRAKE;
             break;
         default:
             printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
@@ -773,7 +774,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.dpad |= DPAD_RIGHT;
             else
                 device->gamepad.dpad &= ~DPAD_RIGHT;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x50:  // Left arrow
         case 0x5c:  // Keypad left arrow
@@ -781,7 +782,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.dpad |= DPAD_LEFT;
             else
                 device->gamepad.dpad &= ~DPAD_LEFT;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x51:  // Down arrow
         case 0x5a:  // Keypad down arrow
@@ -789,7 +790,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.dpad |= DPAD_DOWN;
             else
                 device->gamepad.dpad &= ~DPAD_DOWN;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x52:  // Up arrow
         case 0x60:  // Keypad up arrow
@@ -797,7 +798,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.dpad |= DPAD_UP;
             else
                 device->gamepad.dpad &= ~DPAD_UP;
-            device->gamepad.updated_states |= GAMEPAD_DPAD;
+            device->gamepad.updated_states |= GAMEPAD_STATE_DPAD;
             break;
         case 0x1d:  // z
         case 0x28:  // Enter
@@ -807,7 +808,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.buttons |= (1 << 0);
             else
                 device->gamepad.buttons &= ~(1 << 0);
-            device->gamepad.updated_states |= GAMEPAD_BUTTON0;
+            device->gamepad.updated_states |= GAMEPAD_STATE_BUTTON0;
             break;
         default:
             printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
@@ -824,7 +825,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
                 device->gamepad.buttons |= (1 << button_idx);
             else
                 device->gamepad.buttons &= ~(1 << button_idx);
-            device->gamepad.updated_states |= (GAMEPAD_BUTTON0 << button_idx);
+            device->gamepad.updated_states |= (GAMEPAD_STATE_BUTTON0 << button_idx);
         } else {
             printf("Unsupported usage: 0x%04x for page: 0x%04x. value=0x%x\n", usage, usage_page, value);
         }
@@ -874,34 +875,38 @@ static void joystick_update(my_hid_device_t* device) {
     memset(&joy, 0, sizeof(joy));
 
     const gamepad_t* gp = &device->gamepad;
-    if (gp->updated_states & GAMEPAD_HAT) {
+    if (gp->updated_states & GAMEPAD_STATE_HAT) {
         switch (gp->hat) {
         case 0xff:
-            joy.up = joy.down = joy.left = joy.right = 0;
+            // joy.up = joy.down = joy.left = joy.right = 0;
             break;
         case 0:
-            joy.up = 1;
+            joy.up |= 1;
             break;
         case 1:
-            joy.up = joy.right = 1;
+            joy.up |= 1;
+            joy.right |= 1;
             break;
         case 2:
-            joy.right = 1;
+            joy.right |= 1;
             break;
         case 3:
-            joy.right = joy.down = 1;
+            joy.right |= 1;
+            joy.down |= 1;
             break;
         case 4:
-            joy.down = 1;
+            joy.down |= 1;
             break;
         case 5:
-            joy.down = joy.left = 1;
+            joy.down |= 1;
+            joy.left |= 1;
             break;
         case 6:
-            joy.left = 1;
+            joy.left |= 1;
             break;
         case 7:
-            joy.left = joy.up = 1;
+            joy.left |= 1;
+            joy.up |= 1;
             break;
         default:
             printf("Error parsing hat values\n");
@@ -909,35 +914,36 @@ static void joystick_update(my_hid_device_t* device) {
         }
     }
 
-    if (gp->updated_states & GAMEPAD_DPAD) {
+    if (gp->updated_states & GAMEPAD_STATE_DPAD) {
         if (gp->dpad & 0x01)
-            joy.up = 1;
+            joy.up |= 1;
         if (gp->dpad & 0x02)
-            joy.down = 2;
+            joy.down |= 1;
         if (gp->dpad & 0x04)
-            joy.right = 1;
+            joy.right |= 1;
         if (gp->dpad & 0x08)
-            joy.left = 1;
+            joy.left |= 1;
     }
 
-    if (gp->updated_states & GAMEPAD_BUTTON0) {
-        joy.fire = gp->buttons & 1;
+    if (gp->updated_states & GAMEPAD_STATE_BUTTON0) {
+        joy.fire |= gp->buttons & 1;
     }
 
-    if (gp->updated_states & GAMEPAD_X) {
-        joy.left = (gp->x < -128);
-        joy.right = (gp->x > 128);
+    if (gp->updated_states & GAMEPAD_STATE_X) {
+        joy.left |= (gp->x < -64);
+        joy.right |= (gp->x > 64);
     }
-    if (gp->updated_states & GAMEPAD_Y) {
-        joy.up = (gp->y < -128);
-        joy.down = (gp->y > 128);
+    if (gp->updated_states & GAMEPAD_STATE_Y) {
+        joy.down |= (gp->y < -64);
+        joy.up |= (gp->y > 64);
     }
 
+    printf("joy state: 0x%04x\n", gp->updated_states);
     // FIXME: Add support for JOYSTICK_PORT_AB.
     if (device->joystick_port == JOYSTICK_PORT_A)
         gpio_joy_update_port_a(&joy);
     else
-        gpio_joy_update_port_b(&joy);    
+        gpio_joy_update_port_b(&joy);
 }
 
 // Converts a possible value between (0, x) to (-x/2, x/2)
@@ -1007,7 +1013,7 @@ static void my_hid_device_incoming_connection(uint8_t *packet, uint16_t channel)
     handle = l2cap_event_incoming_connection_get_handle(packet);
     local_cid = l2cap_event_incoming_connection_get_local_cid(packet);
     remote_cid = l2cap_event_incoming_connection_get_remote_cid(packet);
-    
+
     printf("L2CAP_EVENT_INCOMING_CONNECTION (psm=0x%04x, local_cid=0x%04x, remote_cid=0x%04x, handle=0x%04x, channel=0x%04x\n", psm, local_cid, remote_cid, handle, channel);
     switch (psm) {
         case PSM_HID_CONTROL:
@@ -1110,8 +1116,8 @@ static int my_hid_device_channel_opened(uint8_t* packet, uint16_t channel) {
                 printf("Connecting to HID Control failed: 0x%02x\n", status);
                 return -1;
             }
-            printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_cid); 
-        }                        
+            printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_cid);
+        }
         if (local_cid == device->hid_interrupt_cid){
             printf("HID Connection established\n");
         }
@@ -1176,20 +1182,20 @@ int btstack_main(int argc, const char * argv[]){
 
     (void)argc;
     (void)argv;
-    
+
     memset(devices, 0, sizeof(devices));
 
     // gpio init
     gpio_joy_init();
-    
-    // Initialize L2CAP 
+
+    // Initialize L2CAP
     l2cap_init();
 
     // hid_device_setup();
     hid_host_setup();
 
     // btstack_stdin_setup(stdin_process);
-    // Turn on the device 
+    // Turn on the device
     hci_power_control(HCI_POWER_ON);
     return 0;
 }
