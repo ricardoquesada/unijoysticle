@@ -27,7 +27,7 @@ limitations under the License.
 enum {
     GPIO_JOY_A_UP       = GPIO_NUM_26,      // D0
     GPIO_JOY_A_DOWN     = GPIO_NUM_22,      // D1
-    GPIO_JOY_A_LEFT     = GPIO_NUM_11,      // D2
+    GPIO_JOY_A_LEFT     = GPIO_NUM_21,      // D2
     GPIO_JOY_A_RIGHT    = GPIO_NUM_17,      // D3
     GPIO_JOY_A_FIRE     = GPIO_NUM_16,      // D4
 
@@ -77,6 +77,8 @@ void gpio_joy_init(void) {
         printf("Setting GPIO %d\n", all_gpios[i]);
         ESP_ERROR_CHECK( gpio_set_level(all_gpios[i], 0));
     }
+    ESP_ERROR_CHECK( gpio_set_level(GPIO_JOY_A_UP, 1));
+    ESP_ERROR_CHECK( gpio_set_level(GPIO_JOY_B_UP, 1));
 }
 
 void gpio_joy_update_port_a(joystick_t* joy) {

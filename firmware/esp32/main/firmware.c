@@ -456,7 +456,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                 device->page_scan_repetition_mode = page_scan_repetition_mode;
                 device->clock_offset = clock_offset;
                 device->cod = cod;
-                my_hid_device_assign_joystick_port(device);
+                // my_hid_device_assign_joystick_port(device);
                 if (gap_event_inquiry_result_get_name_available(packet)){
                     int name_len = gap_event_inquiry_result_get_name_len(packet);
                     memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
@@ -987,6 +987,8 @@ static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr) {
 static my_hid_device_t* my_hid_device_create(void) {
     for (int j=0; j< MAX_DEVICES; j++){
         if (bd_addr_cmp(devices[j].address, zero_addr) == 0){
+            // FIXME: hack
+            devices[j].joystick_port = JOYSTICK_PORT_B;
             return &devices[j];
         }
     }
