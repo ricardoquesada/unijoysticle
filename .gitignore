@@ -39,3 +39,5 @@ ui_*.h
 # Object files
 *.o
 
+# Vagrant stuff
+.vagrant
