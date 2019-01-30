@@ -941,7 +941,6 @@ static void joystick_update(my_hid_device_t* device) {
         joy.up |= (gp->y > 64);
     }
 
-    printf("joy state: 0x%04x\n", gp->updated_states);
     // FIXME: Add support for JOYSTICK_PORT_AB.
     if (device->joystick_port == JOYSTICK_PORT_A)
         gpio_joy_update_port_a(&joy);
@@ -996,7 +995,11 @@ static my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr) {
 static my_hid_device_t* my_hid_device_create(void) {
     for (int j=0; j< MAX_DEVICES; j++){
         if (bd_addr_cmp(devices[j].address, zero_addr) == 0){
-            // FIXME: hack
+            // FIXME: hack. Assign gamepad to joystick based
+            // on this:
+            //   1st device that is gamepad to port B
+            //   1st device that is gamepad to port A
+            //   2nd device, regardless what it is, to available port
             devices[j].joystick_port = JOYSTICK_PORT_B;
             return &devices[j];
         }

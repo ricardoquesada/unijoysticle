@@ -35,7 +35,11 @@ enum {
     GPIO_JOY_B_DOWN     = GPIO_NUM_19,      // D6
     GPIO_JOY_B_LEFT     = GPIO_NUM_23,      // D7
     GPIO_JOY_B_RIGHT    = GPIO_NUM_5,       // D8
-    GPIO_JOY_B_FIRE     = GPIO_NUM_3,       // RX
+    // GPIO_NUM_3 is assigned to the UART. And although it is possible to
+    // rewire the GPIOs for the UART in software, the devkits expects that GPIOS 1 and 3
+    // are assigned to UART 0. And I cannot use it.
+    // Using GPIO 27 instead, which is the one that is closer to GPIO 3.
+    GPIO_JOY_B_FIRE     = GPIO_NUM_27,      // RX
 };
 
 static gpio_num_t JOY_A_PORTS[] = {GPIO_JOY_A_UP, GPIO_JOY_A_DOWN, GPIO_JOY_A_LEFT, GPIO_JOY_A_RIGHT, GPIO_JOY_A_FIRE};
