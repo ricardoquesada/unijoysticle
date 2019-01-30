@@ -768,6 +768,9 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
         // FIXME: It is unlikely a device has both a dpap a keyboard, so we report certain keys
         // as dpad, just to avoid having a entry entry in the gamepad_t type.
         switch (usage) {
+        case 0x00:  // Reserved
+            // empty on purpose
+            break;
         case 0x4f:  // Right arrow
         case 0x5e:  // Keypad right arrow
             if (value)
