@@ -71,9 +71,10 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void continue_remote_names(void);
 static void start_scan(void);
-static void on_channel_closed(uint8_t* packet, uint16_t channel);
-static int on_channel_opened(uint8_t* packet, uint16_t channel);
-static void on_incoming_connection(uint8_t *packet, uint16_t channel);
+static void on_l2cap_channel_closed(uint8_t* packet, uint16_t channel);
+static int on_l2cap_channel_opened(uint8_t* packet, uint16_t channel);
+static void on_l2cap_incoming_connection(uint8_t *packet, uint16_t channel);
+static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel);
 
 int btstack_main(int argc, const char * argv[]);
 
@@ -222,12 +223,9 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
     }
 }
 
-static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size)
-{
+static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size) {
     uint8_t   event;
     bd_addr_t event_addr;
-    uint8_t   status;
-    int       index;
     my_hid_device_t* device;
 
     switch (packet_type) {
@@ -261,64 +259,18 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             printf("UNSUPPORTED ---> HCI_EVENT_HID_META <---\n");
             break;
         case L2CAP_EVENT_INCOMING_CONNECTION:
-            on_incoming_connection(packet, channel);
+            on_l2cap_incoming_connection(packet, channel);
             break;
         case L2CAP_EVENT_CHANNEL_OPENED:
-            if (on_channel_opened(packet, channel) != 0)
+            if (on_l2cap_channel_opened(packet, channel) != 0)
                 my_hid_device_remove_entry_with_channel(channel);
             break;
         case L2CAP_EVENT_CHANNEL_CLOSED:
-            on_channel_closed(packet, channel);
+            on_l2cap_channel_closed(packet, channel);
             break;
         // GAP related
         case GAP_EVENT_INQUIRY_RESULT:
-            // print info
-            gap_event_inquiry_result_get_bd_addr(packet, event_addr);
-            uint8_t page_scan_repetition_mode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
-            uint16_t clock_offset = gap_event_inquiry_result_get_clock_offset(packet);
-            uint32_t cod = gap_event_inquiry_result_get_class_of_device(packet);
-
-            printf("Device found: %s ",  bd_addr_to_str(event_addr));
-            printf("with COD: 0x%06x, ", (unsigned int) cod);
-            printf("pageScan %d, ",      page_scan_repetition_mode);
-            printf("clock offset 0x%04x", clock_offset);
-            if (gap_event_inquiry_result_get_rssi_available(packet)){
-                printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
-            }
-
-            if (my_hid_device_is_cod_supported(cod)) {
-                index = my_hid_device_get_index_for_address(event_addr);
-                if (index >= 0) {
-                    printf(" ...device already in our list\n");
-                    break;   // already in our list
-                }
-
-                device = my_hid_device_create();
-                if (device == NULL) {
-                    printf("\nERROR: no more available device slots\n");
-                    break;
-                }
-                memcpy(device->address, event_addr, 6);
-                device->page_scan_repetition_mode = page_scan_repetition_mode;
-                device->clock_offset = clock_offset;
-                device->cod = cod;
-                // my_hid_device_assign_joystick_port(device);
-                if (gap_event_inquiry_result_get_name_available(packet)){
-                    int name_len = gap_event_inquiry_result_get_name_len(packet);
-                    memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
-                    device->name[name_len] = 0;
-                    printf(", name '%s'", device->name);
-                    device->state = REMOTE_NAME_FETCHED;;
-                } else {
-                    device->state = REMOTE_NAME_REQUEST;
-                }
-                printf("\n");
-                status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_cid);
-                if (status){
-                    printf("\nConnecting to HID Control failed: 0x%02x", status);
-                }
-            }
-            printf("\n");
+            on_gap_inquiry_result(packet, channel);
             break;
         case GAP_EVENT_INQUIRY_COMPLETE:
             my_hid_device_request_inquire();
@@ -368,7 +320,59 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
     }
 }
 
-static int on_channel_opened(uint8_t* packet, uint16_t channel) {
+static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel) {
+    bd_addr_t addr;
+    uint8_t   status;
+    my_hid_device_t* device;
+
+    gap_event_inquiry_result_get_bd_addr(packet, addr);
+    uint8_t page_scan_repetition_mode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
+    uint16_t clock_offset = gap_event_inquiry_result_get_clock_offset(packet);
+    uint32_t cod = gap_event_inquiry_result_get_class_of_device(packet);
+
+    printf("Device found: %s ",  bd_addr_to_str(addr));
+    printf("with COD: 0x%06x, ", (unsigned int) cod);
+    printf("pageScan %d, ",      page_scan_repetition_mode);
+    printf("clock offset 0x%04x", clock_offset);
+    if (gap_event_inquiry_result_get_rssi_available(packet)){
+        printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
+    }
+
+    if (my_hid_device_is_cod_supported(cod)) {
+        int index = my_hid_device_get_index_for_address(addr);
+        if (index >= 0) {
+            printf(" ...device already in our list\n");
+            return;   // already in our list
+        }
+
+        device = my_hid_device_create();
+        if (device == NULL) {
+            printf("\nERROR: no more available device slots\n");
+            return;
+        }
+        memcpy(device->address, addr, 6);
+        device->page_scan_repetition_mode = page_scan_repetition_mode;
+        device->clock_offset = clock_offset;
+        device->cod = cod;
+        // my_hid_device_assign_joystick_port(device);
+        if (gap_event_inquiry_result_get_name_available(packet)){
+            int name_len = gap_event_inquiry_result_get_name_len(packet);
+            memcpy(device->name, gap_event_inquiry_result_get_name(packet), name_len);
+            device->name[name_len] = 0;
+            printf(", name '%s'", device->name);
+            device->state = REMOTE_NAME_FETCHED;;
+        } else {
+            device->state = REMOTE_NAME_REQUEST;
+        }
+        printf("\n");
+        status = l2cap_create_channel(packet_handler, device->address, PSM_HID_CONTROL, 48, &device->hid_control_cid);
+        if (status){
+            printf("\nConnecting to HID Control failed: 0x%02x", status);
+        }
+    }
+    printf("\n");
+}
+static int on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
     uint16_t psm;
     uint8_t status;
     uint16_t local_cid;
@@ -444,7 +448,7 @@ static int on_channel_opened(uint8_t* packet, uint16_t channel) {
     return 0;
 }
 
-static void on_channel_closed(uint8_t* packet, uint16_t channel) {
+static void on_l2cap_channel_closed(uint8_t* packet, uint16_t channel) {
     uint16_t local_cid;
     my_hid_device_t* device;
 
@@ -459,7 +463,7 @@ static void on_channel_closed(uint8_t* packet, uint16_t channel) {
     my_hid_device_set_disconnected(device);
 }
 
-static void on_incoming_connection(uint8_t *packet, uint16_t channel) {
+static void on_l2cap_incoming_connection(uint8_t *packet, uint16_t channel) {
     bd_addr_t event_addr;
     my_hid_device_t* device;
     uint16_t local_cid;
