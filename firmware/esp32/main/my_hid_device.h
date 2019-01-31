@@ -122,4 +122,5 @@ void my_hid_device_request_inquire(void);
 my_hid_device_t* my_hid_device_get_first_device_with_state(int state);
 my_hid_device_t* my_hid_device_get_current_device(void);
 void my_hid_device_set_current_device(my_hid_device_t* device);
+int my_hid_device_is_cod_supported(uint32_t cod);
 #endif // MY_HID_DEVICE_H

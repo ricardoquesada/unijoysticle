@@ -58,13 +58,6 @@
 #include "hid_parser.h"
 
 #define INQUIRY_INTERVAL            5
-#define MASK_COD_MAJOR_PERIPHERAL   0x0500   // 0b0000_0101_0000_0000
-#define MASK_COD_MAJOR_AUDIO        0x0400   // 0b0000_0100_0000_0000
-#define MASK_COD_MINOR_MASK         0x00FC   //             1111_1100
-#define MASK_COD_MINOR_POINT_DEVICE 0x0080   //             1000_0000
-#define MASK_COD_MINOR_GAMEPAD      0x0008   //             0000_1000
-#define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
-#define MASK_COD_MINOR_HANDS_FREE   0x0008   //             0000_1000
 #define MAX_ATTRIBUTE_VALUE_SIZE    512      // Apparently PS4 has a 470-bytes report
 #define MTU                         100
 
@@ -72,21 +65,15 @@
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
 
-// Asus
-// static const char * remote_addr_string = "54:A0:50:CD:A6:2F";
-// static bd_addr_t remote_addr;
-
 static btstack_packet_callback_registration_t hci_event_callback_registration;
 
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
-static void print_descriptor_item(hid_descriptor_item_t* item);
 static void continue_remote_names(void);
 static void start_scan(void);
-static int is_device_supported(uint32_t cod);
-static void channel_closed(uint8_t* packet, uint16_t channel);
-static int channel_opened(uint8_t* packet, uint16_t channel);
-static void incoming_connection(uint8_t *packet, uint16_t channel);
+static void on_channel_closed(uint8_t* packet, uint16_t channel);
+static int on_channel_opened(uint8_t* packet, uint16_t channel);
+static void on_incoming_connection(uint8_t *packet, uint16_t channel);
 
 int btstack_main(int argc, const char * argv[]);
 
@@ -274,14 +261,14 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             printf("UNSUPPORTED ---> HCI_EVENT_HID_META <---\n");
             break;
         case L2CAP_EVENT_INCOMING_CONNECTION:
-            incoming_connection(packet, channel);
+            on_incoming_connection(packet, channel);
             break;
         case L2CAP_EVENT_CHANNEL_OPENED:
-            if (channel_opened(packet, channel) != 0)
+            if (on_channel_opened(packet, channel) != 0)
                 my_hid_device_remove_entry_with_channel(channel);
             break;
         case L2CAP_EVENT_CHANNEL_CLOSED:
-            channel_closed(packet, channel);
+            on_channel_closed(packet, channel);
             break;
         // GAP related
         case GAP_EVENT_INQUIRY_RESULT:
@@ -299,7 +286,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
                 printf(", rssi %d dBm", (int8_t) gap_event_inquiry_result_get_rssi(packet));
             }
 
-            if (is_device_supported(cod)) {
+            if (my_hid_device_is_cod_supported(cod)) {
                 index = my_hid_device_get_index_for_address(event_addr);
                 if (index >= 0) {
                     printf(" ...device already in our list\n");
@@ -381,8 +368,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
     }
 }
 
-
-static int channel_opened(uint8_t* packet, uint16_t channel) {
+static int on_channel_opened(uint8_t* packet, uint16_t channel) {
     uint16_t psm;
     uint8_t status;
     uint16_t local_cid;
@@ -458,7 +444,7 @@ static int channel_opened(uint8_t* packet, uint16_t channel) {
     return 0;
 }
 
-static void channel_closed(uint8_t* packet, uint16_t channel) {
+static void on_channel_closed(uint8_t* packet, uint16_t channel) {
     uint16_t local_cid;
     my_hid_device_t* device;
 
@@ -473,7 +459,7 @@ static void channel_closed(uint8_t* packet, uint16_t channel) {
     my_hid_device_set_disconnected(device);
 }
 
-static void incoming_connection(uint8_t *packet, uint16_t channel) {
+static void on_incoming_connection(uint8_t *packet, uint16_t channel) {
     bd_addr_t event_addr;
     my_hid_device_t* device;
     uint16_t local_cid;
@@ -521,28 +507,6 @@ static void incoming_connection(uint8_t *packet, uint16_t channel) {
     }
 }
 
-
-
-static int is_device_supported(uint32_t cod) {
-    const uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
-    // Joysticks, mice, gamepads are valid.
-    if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
-        // device is a peripheral: keyboard, mouse, joystick, gamepad...
-        // but we only care about joysticks and gamepads
-        return (minor_cod & MASK_COD_MINOR_GAMEPAD) ||
-                (minor_cod & MASK_COD_MINOR_JOYSTICK) ||
-                (minor_cod & MASK_COD_MINOR_POINT_DEVICE);
-    }
-
-    // TV remote controls are valid as well
-    // Amazon TV remote control reports as CoD: 0x00400408
-    //    Audio + Telephony : Hands free
-    if ((cod & MASK_COD_MAJOR_AUDIO) == MASK_COD_MAJOR_AUDIO) {
-        return (minor_cod & MASK_COD_MINOR_HANDS_FREE);
-    }
-    return 0;
-}
-
 static int has_more_remote_name_requests(void){
     my_hid_device_t* device;
 
@@ -574,7 +538,6 @@ static void start_scan(void){
     gap_inquiry_start(INQUIRY_INTERVAL);
 }
 
-
 /*
  * @section HID Report Handler
  *
@@ -583,10 +546,6 @@ static void start_scan(void){
  * Check if SHIFT is down and process first character (don't handle multiple key presses)
  *
  */
-static void print_descriptor_item(hid_descriptor_item_t* item) {
-    printf("val=0x%04x, size=%d, type=%d, tag=%d, data_size=%d\n",
-        item->item_value, item->item_size, item->item_type, item->item_tag, item->data_size);
-}
 
 int btstack_main(int argc, const char * argv[]){
 

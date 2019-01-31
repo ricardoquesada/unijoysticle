@@ -20,6 +20,14 @@ limitations under the License.
 
 #define MAX_DEVICES                 8
 
+#define MASK_COD_MAJOR_PERIPHERAL   0x0500   // 0b0000_0101_0000_0000
+#define MASK_COD_MAJOR_AUDIO        0x0400   // 0b0000_0100_0000_0000
+#define MASK_COD_MINOR_MASK         0x00FC   //             1111_1100
+#define MASK_COD_MINOR_POINT_DEVICE 0x0080   //             1000_0000
+#define MASK_COD_MINOR_GAMEPAD      0x0008   //             0000_1000
+#define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
+#define MASK_COD_MINOR_HANDS_FREE   0x0008   //             0000_1000
+
 static my_hid_device_t devices[MAX_DEVICES];
 static my_hid_device_t* current_device = NULL;
 static int device_count = 0;
@@ -127,3 +135,22 @@ my_hid_device_t* my_hid_device_get_current_device(void) {
     return current_device;
 }
 
+int my_hid_device_is_cod_supported(uint32_t cod) {
+    const uint32_t minor_cod = cod & MASK_COD_MINOR_MASK;
+    // Joysticks, mice, gamepads are valid.
+    if ((cod & MASK_COD_MAJOR_PERIPHERAL) == MASK_COD_MAJOR_PERIPHERAL) {
+        // device is a peripheral: keyboard, mouse, joystick, gamepad...
+        // but we only care about joysticks and gamepads
+        return (minor_cod & MASK_COD_MINOR_GAMEPAD) ||
+                (minor_cod & MASK_COD_MINOR_JOYSTICK) ||
+                (minor_cod & MASK_COD_MINOR_POINT_DEVICE);
+    }
+
+    // TV remote controls are valid as well
+    // Amazon TV remote control reports as CoD: 0x00400408
+    //    Audio + Telephony : Hands free
+    if ((cod & MASK_COD_MAJOR_AUDIO) == MASK_COD_MAJOR_AUDIO) {
+        return (minor_cod & MASK_COD_MINOR_HANDS_FREE);
+    }
+    return 0;
+}
