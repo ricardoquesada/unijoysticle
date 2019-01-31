@@ -360,8 +360,14 @@ static void joystick_update(my_hid_device_t* device) {
             joy.left |= 1;
     }
 
+    // Button A is "fire"
     if (gp->updated_states & GAMEPAD_STATE_BUTTON0) {
-        joy.fire |= gp->buttons & 1;
+        joy.fire |= gp->buttons & 0x1;
+    }
+
+    // Button B is "jump"
+    if (gp->updated_states & GAMEPAD_STATE_BUTTON1) {
+        joy.up |= gp->buttons & 0x2;
     }
 
     if (gp->updated_states & GAMEPAD_STATE_X) {

@@ -45,7 +45,10 @@ my_hid_device_t* my_hid_device_create(void) {
             //   1st device that is gamepad to port B
             //   1st device that is gamepad to port A
             //   2nd device, regardless what it is, to available port
-            devices[j].joystick_port = JOYSTICK_PORT_B;
+            if (j == 0)
+                devices[j].joystick_port = JOYSTICK_PORT_B;
+            else
+                devices[j].joystick_port = JOYSTICK_PORT_A;
             return &devices[j];
         }
     }
