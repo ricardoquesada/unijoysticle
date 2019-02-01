@@ -325,6 +325,8 @@ static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel) {
     uint8_t   status;
     my_hid_device_t* device;
 
+    UNUSED(channel);
+
     gap_event_inquiry_result_get_bd_addr(packet, addr);
     uint8_t page_scan_repetition_mode = gap_event_inquiry_result_get_page_scan_repetition_mode(packet);
     uint16_t clock_offset = gap_event_inquiry_result_get_clock_offset(packet);

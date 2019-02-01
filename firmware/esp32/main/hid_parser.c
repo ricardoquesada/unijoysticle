@@ -47,7 +47,7 @@ typedef struct {
     uint8_t         report_id;
 } hid_globals_t;
 
-static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
+static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static void joystick_update(my_hid_device_t* device);
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
@@ -91,27 +91,27 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
     case 0x01:  // Generic Desktop controls
         switch (usage) {
         case 0x30:  // x
-            device->gamepad.x = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.x = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_X;
             break;
         case 0x31:  // y
-            device->gamepad.y = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.y = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_Y;
             break;
         case 0x32:  // z
-            device->gamepad.z = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.z = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_Z;
             break;
         case 0x33:  // rx
-            device->gamepad.rx = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.rx = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_RX;
             break;
         case 0x34:  // ry
-            device->gamepad.ry = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.ry = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_RY;
             break;
         case 0x35:  // rz
-            device->gamepad.rz = hid_process_thumbstick(parser, globals, value);
+            device->gamepad.rz = hid_process_axis(parser, globals, value);
             device->gamepad.updated_states |= GAMEPAD_STATE_RZ;
             break;
         case 0x39:  // switch hat
@@ -367,16 +367,17 @@ static void joystick_update(my_hid_device_t* device) {
 
     // Button B is "jump"
     if (gp->updated_states & GAMEPAD_STATE_BUTTON1) {
-        joy.up |= gp->buttons & 0x2;
+        joy.up |= ((gp->buttons & 0x2) == 0x2);
     }
 
+    // Axis: x and y
     if (gp->updated_states & GAMEPAD_STATE_X) {
         joy.left |= (gp->x < -64);
         joy.right |= (gp->x > 64);
     }
     if (gp->updated_states & GAMEPAD_STATE_Y) {
-        joy.down |= (gp->y < -64);
-        joy.up |= (gp->y > 64);
+        joy.up |= (gp->y < -64);
+        joy.down |= (gp->y > 64);
     }
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
@@ -386,17 +387,37 @@ static void joystick_update(my_hid_device_t* device) {
         gpio_joy_update_port_b(&joy);
 }
 
-// Converts a possible value between (0, x) to (-x/2, x/2)
-static int32_t hid_process_thumbstick(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
+// Converts a possible value between (0, x) to (-x/2, x/2), and normalizes it between -127 and 127.
+static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
     UNUSED(parser);
-    return value - (globals->logical_maximum - globals->logical_minimum) / 2 - globals->logical_minimum;
+
+    int32_t max = globals->logical_maximum;
+    int32_t min = globals->logical_minimum;
+
+    // Amazon Fire 1st Gen reports max value as unsigned (0xff == 255) but the spec says they are signed.
+    // So the parser correctly treats it as -1 (0xff).
+    if (max == -1) {
+        max = (1 << globals->report_size) - 1;
+    }
+
+    // Get the range: how big can be the number
+    const int32_t range = max - min;
+
+    // First we "center" the value, meaning that 0 is when the axis is not used.
+    const int32_t centered = value - range / 2 - min;
+
+    // Then we normalize between -127 and 127.
+    int32_t normalized = centered * 255 / range;
+
+    return normalized;
 }
 
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
     UNUSED(parser);
+    const int32_t v = (int32_t) value;
     // Assumes if value is outside valid range, then it is a "null value"
-    if (value < globals->logical_minimum || value > globals->logical_maximum)
+    if (v < globals->logical_minimum || v > globals->logical_maximum)
         return 0xff;
     // 0 should be the first value for hat, meaning that 0 is the "up" position.
-    return value - globals->logical_minimum;
+    return v - globals->logical_minimum;
 }
