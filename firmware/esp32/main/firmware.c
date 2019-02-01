@@ -306,7 +306,6 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             printf("HID Interrupt Packet: ");
             printf_hexdump(packet, size);
             hid_host_handle_interrupt_report(device, packet,  size);
-            print_gamepad(&device->gamepad);
         } else if (channel == device->hid_control_cid){
             printf("HID Control\n");
             printf_hexdump(packet, size);

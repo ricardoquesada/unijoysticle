@@ -23,6 +23,5 @@ limitations under the License.
 #include "my_hid_device.h"
 
 void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t* report, uint16_t report_len);
-void print_gamepad(gamepad_t *gamepad);
 
 #endif // HID_PARSER_H

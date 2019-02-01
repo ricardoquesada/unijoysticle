@@ -51,7 +51,7 @@ static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* glo
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static void joystick_update(my_hid_device_t* device);
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
-
+static void print_gamepad(gamepad_t* gamepad);
 
 void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len) {
     // check if HID Input Report
@@ -82,6 +82,9 @@ void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * r
         // printf("usage_page = 0x%04x, usage = 0x%04x, value = 0x%x - ", usage_page, usage, value);
         process_usage(device, &parser, &globals, usage_page, usage, value);
     }
+    // Debug info
+    print_gamepad(&device->gamepad);
+
     joystick_update(device);
 }
 
@@ -284,7 +287,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
     }
 }
 
-void print_gamepad(gamepad_t *gamepad) {
+static void print_gamepad(gamepad_t* gamepad) {
     printf("(0x%04x) x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x\n",
         gamepad->updated_states,
         gamepad->x, gamepad->y, gamepad->z,
@@ -407,9 +410,7 @@ static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* glo
     const int32_t centered = value - range / 2 - min;
 
     // Then we normalize between -127 and 127.
-    int32_t normalized = centered * 255 / range;
-
-    return normalized;
+    return centered * 255 / range;
 }
 
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
