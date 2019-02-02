@@ -615,7 +615,7 @@ int btstack_main(int argc, const char * argv[]) {
     (void)argv;
 
     // Honoring with BT copyright + adding own message to avoid confusion
-    printf("Unijoysticle (C) 2016-2019 Ricardo Quesada and contributors.\n")
+    printf("Unijoysticle (C) 2016-2019 Ricardo Quesada and contributors.\n");
     printf("Bluetooth stack: Copyright (C) 2017 BlueKitchen GmbH.\n");
 
     gpio_joy_init();
