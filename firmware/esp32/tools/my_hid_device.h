@@ -52,6 +52,7 @@ enum GAMEPAD_STATES {
     GAMEPAD_STATE_BUTTON15 = 1 << 25,
 };
 
+#define MAX_NAME_LEN 240
 typedef struct gamepad {
     // Usage Page: 0x01 (Generic Desktop Controls)
     uint8_t hat;
@@ -88,11 +89,9 @@ typedef struct  {
     uint8_t             page_scan_repetition_mode;
     uint16_t            clock_offset;
     uint32_t            cod;
-    char                name[240];
+    char                name[MAX_NAME_LEN];
 
-    // state
-    uint8_t             incoming;
-    uint8_t             connected;
+    uint32_t            flags;
 
     // SDP
     uint8_t             hid_descriptor[512];            // FIXME: use constant
@@ -123,4 +122,10 @@ my_hid_device_t* my_hid_device_get_first_device_with_state(int state);
 my_hid_device_t* my_hid_device_get_current_device(void);
 void my_hid_device_set_current_device(my_hid_device_t* device);
 int my_hid_device_is_cod_supported(uint32_t cod);
+void my_hid_device_set_cod(my_hid_device_t* device, uint32_t cod);
+uint8_t my_hid_device_is_incoming(my_hid_device_t* device);
+void my_hid_device_set_incoming(my_hid_device_t* device, uint8_t incoming);
+void my_hid_device_set_address(my_hid_device_t* device, bd_addr_t address);
+uint8_t my_hid_device_has_name(my_hid_device_t* device);
+void my_hid_device_set_name(my_hid_device_t* device, const uint8_t* name, int name_len);
 #endif // MY_HID_DEVICE_H

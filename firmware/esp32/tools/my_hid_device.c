@@ -28,6 +28,15 @@ limitations under the License.
 #define MASK_COD_MINOR_JOYSTICK     0x0004   //             0000_0100
 #define MASK_COD_MINOR_HANDS_FREE   0x0008   //             0000_1000
 
+enum {
+    FLAGS_INCOMING = (1 << 0),
+    FLAGS_CONNECTED = (1 << 1),
+
+    FLAGS_HAS_COD = (1 << 8),
+    FLAGS_HAS_HID = (1 << 9),
+    FLAGS_HAS_NAME = (1 << 10)
+};
+
 static my_hid_device_t devices[MAX_DEVICES];
 static my_hid_device_t* current_device = NULL;
 static int device_count = 0;
@@ -98,8 +107,7 @@ void my_hid_device_remove_entry_with_channel(uint16_t channel) {
 
 void my_hid_device_set_disconnected(my_hid_device_t* device) {
     // Connection oriented
-    device->connected = 0;
-    device->incoming = 0;
+    device->flags &= ~(FLAGS_CONNECTED | FLAGS_INCOMING);
     device->hid_control_cid = 0;
     device->hid_interrupt_cid = 0;
     device->expected_hid_control_psm = 0;
@@ -156,4 +164,44 @@ int my_hid_device_is_cod_supported(uint32_t cod) {
         return (minor_cod & MASK_COD_MINOR_HANDS_FREE);
     }
     return 0;
+}
+
+void my_hid_device_set_cod(my_hid_device_t* device, uint32_t cod) {
+    device->cod = cod;
+    if (cod == 0)
+        device->flags &= ~FLAGS_HAS_COD;
+    else
+        device->flags |= FLAGS_HAS_COD;
+}
+
+uint8_t my_hid_device_is_incoming(my_hid_device_t* device) {
+    return !!(device->flags & FLAGS_INCOMING);
+}
+
+void my_hid_device_set_incoming(my_hid_device_t* device, uint8_t incoming) {
+    if (incoming)
+        device->flags |= FLAGS_INCOMING;
+    else
+        device->flags &= ~FLAGS_INCOMING;
+}
+
+void my_hid_device_set_address(my_hid_device_t* device, bd_addr_t address) {
+    memcpy(device->address, address, 6);
+}
+
+uint8_t my_hid_device_has_name(my_hid_device_t* device) {
+    return !!(device->flags & FLAGS_HAS_NAME);
+}
+
+void my_hid_device_set_name(my_hid_device_t* device, const uint8_t* name, int name_len) {
+    if (name != NULL) {
+        int min = btstack_min(MAX_NAME_LEN-1, name_len);
+        memcpy(device->name, name, min);
+        device->name[min] = 0;
+
+        device->flags |= FLAGS_HAS_NAME;
+    } else {
+        strncpy(device->name, "no-name", 7);
+        device->flags &= ~FLAGS_HAS_NAME;
+    }
 }
