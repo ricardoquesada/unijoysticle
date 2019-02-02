@@ -327,8 +327,8 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             break;
         }
         if (channel == device->hid_interrupt_cid){
-            printf("HID Interrupt Packet: ");
-            printf_hexdump(packet, size);
+            // printf("HID Interrupt Packet: ");
+            // printf_hexdump(packet, size);
             hid_host_handle_interrupt_report(device, packet,  size);
         } else if (channel == device->hid_control_cid){
             printf("HID Control\n");

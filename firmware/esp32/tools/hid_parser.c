@@ -88,7 +88,7 @@ void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * r
         process_usage(device, &parser, &globals, usage_page, usage, value);
     }
     // Debug info
-    print_gamepad(&device->gamepad);
+    // print_gamepad(&device->gamepad);
 
     joystick_update(device);
 }
