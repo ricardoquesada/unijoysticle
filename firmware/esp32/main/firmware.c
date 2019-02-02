@@ -62,6 +62,7 @@
 #define MAX_ATTRIBUTE_VALUE_SIZE    512      // Apparently PS4 has a 470-bytes report
 #define MTU                         100
 
+// globals
 // SDP
 static uint8_t            attribute_value[MAX_ATTRIBUTE_VALUE_SIZE];
 static const unsigned int attribute_value_buffer_size = MAX_ATTRIBUTE_VALUE_SIZE;
@@ -182,10 +183,10 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                     if (des_iterator_get_type(&additional_des_it) != DE_STRING) continue;
                                     element = des_iterator_get_element(&additional_des_it);
                                     const uint8_t * descriptor = de_get_string(element);
-                                    device->hid_descriptor_len = de_get_data_size(element);
-                                    printf("SDP HID Descriptor (%d):\n", device->hid_descriptor_len);
-                                    memcpy(device->hid_descriptor, descriptor, device->hid_descriptor_len);
-                                    printf_hexdump(device->hid_descriptor, device->hid_descriptor_len);
+                                    int descriptor_len = de_get_data_size(element);
+                                    printf("SDP HID Descriptor (%d):\n", descriptor_len);
+                                    my_hid_device_set_hid_descriptor(device, descriptor, descriptor_len);
+                                    printf_hexdump(descriptor, descriptor_len);
                                 }
                             }
                             break;
@@ -226,19 +227,27 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
 }
 
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size) {
+    static uint8_t bt_ready = 0;
+
     uint8_t   event;
     bd_addr_t event_addr;
     my_hid_device_t* device;
+
+    // Ignore all packet events if bt is not ready, with the exception of the "bt is ready" event.
+    if ((!bt_ready) &&
+        !((packet_type == HCI_EVENT_PACKET) && (hci_event_packet_get_type(packet) == BTSTACK_EVENT_STATE))
+        ) {
+            // printf("Ignoring packet. BT not ready yet\n");
+        return;
+    }
 
     switch (packet_type) {
     case HCI_EVENT_PACKET:
         event = hci_event_packet_get_type(packet);
         switch (event) {
-        /* @text When BTSTACK_EVENT_STATE with state HCI_STATE_WORKING
-            * is received and the example is started in client mode, the remote SDP HID query is started.
-            */
         case BTSTACK_EVENT_STATE:
-            if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
+            if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING) {
+                bt_ready = 1;
                 printf("Btstack ready!\n");
                 list_link_keys();
                 start_scan();
@@ -344,16 +353,14 @@ static void on_hci_connection_request(uint8_t* packet, uint16_t channel) {
 
     device = my_hid_device_get_instance_for_address(event_addr);
     if (device == NULL) {
-        device = my_hid_device_create();
+        device = my_hid_device_create(event_addr);
         if (device == NULL) {
             printf("Cannot create new device... no more slots available\n");
             return;
         }
-        my_hid_device_set_address(device, event_addr);
     }
     my_hid_device_set_cod(device, cod);
-
-    printf("Created new device entry for: address = %s, cod=0x%04x\n", bd_addr_to_str(event_addr), cod);
+    printf("on_hci_connection_request from: address = %s, cod=0x%04x\n", bd_addr_to_str(event_addr), cod);
 }
 
 static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel) {
@@ -382,18 +389,17 @@ static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel) {
             printf("Device already in added...\n");
             return;
         }
-        device = my_hid_device_create();
+        device = my_hid_device_create(addr);
         if (device == NULL) {
             printf("\nERROR: no more available device slots\n");
             return;
         }
-        my_hid_device_set_address(device, addr);
         my_hid_device_set_cod(device, cod);
         device->page_scan_repetition_mode = page_scan_repetition_mode;
         device->clock_offset = clock_offset;
 
         if (!my_hid_device_has_name(device)) {
-            if (gap_event_inquiry_result_get_name_available(packet)){
+            if (gap_event_inquiry_result_get_name_available(packet)) {
                 int name_len = gap_event_inquiry_result_get_name_len(packet);
                 my_hid_device_set_name(device, gap_event_inquiry_result_get_name(packet), name_len);
                 printf(", name '%s'", device->name);
@@ -451,7 +457,7 @@ static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
             device->hid_interrupt_cid = l2cap_event_channel_opened_get_local_cid(packet);
             printf("HID Interrupt opened, cid 0x%02x\n", device->hid_interrupt_cid);
             // Don't request HID descriptor if we already have it.
-            if (device->hid_descriptor_len == 0) {
+            if (!my_hid_device_has_hid_descriptor(device)) {
                 // Needed for the SDP query since it only supports oe SDP query at the time.
                 if (my_hid_device_get_current_device() != NULL) {
                     printf("Error: Ouch, another SDP query is in progress. Try again later.\n");
@@ -484,7 +490,7 @@ static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
             }
             printf("---> new hid interrupt psm = 0x%04x\n", device->hid_interrupt_cid);
         }
-        if (local_cid == device->hid_interrupt_cid){
+        if (local_cid == device->hid_interrupt_cid) {
             printf("HID Connection established\n");
         }
     }
@@ -524,13 +530,12 @@ static void on_l2cap_incoming_connection(uint8_t *packet, uint16_t channel) {
             l2cap_event_incoming_connection_get_address(packet, event_addr);
             device = my_hid_device_get_instance_for_address(event_addr);
             if (device == NULL) {
-                device = my_hid_device_create();
+                device = my_hid_device_create(event_addr);
                 if (device == NULL) {
                     printf("ERROR: no more available free devices\n");
                     l2cap_decline_connection(channel);
                     break;
                 }
-                memcpy(device->address, event_addr, 6);
             }
             l2cap_accept_connection(channel);
             device->con_handle = l2cap_event_incoming_connection_get_handle(packet);
@@ -553,14 +558,14 @@ static void on_l2cap_incoming_connection(uint8_t *packet, uint16_t channel) {
     }
 }
 
-static int has_more_remote_name_requests(void){
+static int has_more_remote_name_requests(void) {
     my_hid_device_t* device;
 
     device = my_hid_device_get_first_device_with_state(REMOTE_NAME_REQUEST);
     return (device != NULL);
 }
 
-static void do_next_remote_name_request(void){
+static void do_next_remote_name_request(void) {
     my_hid_device_t* device;
 
     device = my_hid_device_get_first_device_with_state(REMOTE_NAME_REQUEST);
@@ -571,20 +576,20 @@ static void do_next_remote_name_request(void){
     }
 }
 
-static void continue_remote_names(void){
-    if (has_more_remote_name_requests()){
+static void continue_remote_names(void) {
+    if (has_more_remote_name_requests()) {
         do_next_remote_name_request();
         return;
     }
     start_scan();
 }
 
-static void start_scan(void){
+static void start_scan(void) {
     printf("Starting inquiry scan..\n");
     gap_inquiry_start(INQUIRY_INTERVAL);
 }
 
-static void list_link_keys(void){
+static void list_link_keys(void) {
     bd_addr_t  addr;
     link_key_t link_key;
     link_key_type_t type;
@@ -604,16 +609,7 @@ static void list_link_keys(void){
     gap_link_key_iterator_done(&it);
 }
 
-/*
- * @section HID Report Handler
- *
- * @text Use BTstack's compact HID Parser to process incoming HID Report
- * Iterate over all fields and process fields with usage page = 0x07 / Keyboard
- * Check if SHIFT is down and process first character (don't handle multiple key presses)
- *
- */
-
-int btstack_main(int argc, const char * argv[]){
+int btstack_main(int argc, const char * argv[]) {
 
     (void)argc;
     (void)argv;
@@ -624,7 +620,6 @@ int btstack_main(int argc, const char * argv[]){
     // Initialize L2CAP
     l2cap_init();
 
-    // hid_device_setup();
     hid_host_setup();
 
     // btstack_stdin_setup(stdin_process);

@@ -53,6 +53,7 @@ enum GAMEPAD_STATES {
 };
 
 #define MAX_NAME_LEN 240
+#define MAX_DESCRIPTOR_LEN 512
 typedef struct gamepad {
     // Usage Page: 0x01 (Generic Desktop Controls)
     uint8_t hat;
@@ -94,7 +95,7 @@ typedef struct  {
     uint32_t            flags;
 
     // SDP
-    uint8_t             hid_descriptor[512];            // FIXME: use constant
+    uint8_t             hid_descriptor[MAX_DESCRIPTOR_LEN];
     uint16_t            hid_descriptor_len;
 
     // Channels
@@ -110,21 +111,33 @@ typedef struct  {
 } my_hid_device_t;
 
 void my_hid_device_init(void);
-my_hid_device_t* my_hid_device_create(void);
-my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
+
+my_hid_device_t* my_hid_device_create(bd_addr_t address);
 my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr);
-void my_hid_device_set_disconnected(my_hid_device_t* device);
-void my_hid_device_remove_entry_with_channel(uint16_t channel);
-void my_hid_device_assign_joystick_port(my_hid_device_t* device);
-void my_hid_device_request_inquire(void);
+my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
 my_hid_device_t* my_hid_device_get_first_device_with_state(int state);
-my_hid_device_t* my_hid_device_get_current_device(void);
+
 void my_hid_device_set_current_device(my_hid_device_t* device);
-int my_hid_device_is_cod_supported(uint32_t cod);
+my_hid_device_t* my_hid_device_get_current_device(void);
+
+void my_hid_device_assign_joystick_port(my_hid_device_t* device);
+
+void my_hid_device_remove_entry_with_channel(uint16_t channel);
+
+void my_hid_device_request_inquire(void);
+
+void my_hid_device_set_disconnected(my_hid_device_t* device);
+
 void my_hid_device_set_cod(my_hid_device_t* device, uint32_t cod);
-uint8_t my_hid_device_is_incoming(my_hid_device_t* device);
+uint8_t my_hid_device_is_cod_supported(uint32_t cod);
+
+void my_hid_device_set_hid_descriptor(my_hid_device_t* device, const uint8_t* descriptor, int len);
+uint8_t my_hid_device_has_hid_descriptor(my_hid_device_t* device);
+
 void my_hid_device_set_incoming(my_hid_device_t* device, uint8_t incoming);
-void my_hid_device_set_address(my_hid_device_t* device, bd_addr_t address);
-uint8_t my_hid_device_has_name(my_hid_device_t* device);
+uint8_t my_hid_device_is_incoming(my_hid_device_t* device);
+
 void my_hid_device_set_name(my_hid_device_t* device, const uint8_t* name, int name_len);
+uint8_t my_hid_device_has_name(my_hid_device_t* device);
+
 #endif // MY_HID_DEVICE_H

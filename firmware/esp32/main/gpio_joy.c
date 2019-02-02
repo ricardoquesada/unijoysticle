@@ -86,6 +86,9 @@ void gpio_joy_update_port_b(joystick_t* joy) {
 }
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios) {
+    printf("up=%d, down=%d, left=%d, right=%d, fire=%d\n",
+        joy->up, joy->down, joy->left, joy->right, joy->fire);
+
     gpio_set_level(gpios[0], !!joy->up);
     gpio_set_level(gpios[1], !!joy->down);
     gpio_set_level(gpios[2], !!joy->left);

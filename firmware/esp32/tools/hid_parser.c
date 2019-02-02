@@ -60,6 +60,11 @@ void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * r
     report++;
     report_len--;
 
+    if (!my_hid_device_has_hid_descriptor(device)) {
+        printf("Device without HID descriptor yet. Ignoring report\n");
+        return;
+    }
+
     btstack_hid_parser_t parser;
     hid_globals_t globals;
     btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
@@ -243,7 +248,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
     {
         // we start with usage - 1 since "button 0" seems that is not being used
         // and we only support 32 buttons.
-        const uint16_t button_idx = usage-1;
+        uint16_t button_idx = usage-1;
         if (button_idx < 16) {
             if (value)
                 device->gamepad.buttons |= (1 << button_idx);
@@ -298,8 +303,6 @@ static void print_gamepad(gamepad_t* gamepad) {
         gamepad->buttons,
         gamepad->misc_buttons);
 }
-
-
 
 // Converts gamepad to joystick.
 static void joystick_update(my_hid_device_t* device) {
@@ -404,10 +407,10 @@ static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* glo
     }
 
     // Get the range: how big can be the number
-    const int32_t range = max - min;
+    int32_t range = max - min;
 
     // First we "center" the value, meaning that 0 is when the axis is not used.
-    const int32_t centered = value - range / 2 - min;
+    int32_t centered = value - range / 2 - min;
 
     // Then we normalize between -127 and 127.
     return centered * 255 / range;
@@ -415,7 +418,7 @@ static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* glo
 
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
     UNUSED(parser);
-    const int32_t v = (int32_t) value;
+    int32_t v = (int32_t) value;
     // Assumes if value is outside valid range, then it is a "null value"
     if (v < globals->logical_minimum || v > globals->logical_maximum)
         return 0xff;
