@@ -113,7 +113,6 @@ void my_hid_device_init(void);
 my_hid_device_t* my_hid_device_create(void);
 my_hid_device_t* my_hid_device_get_instance_for_cid(uint16_t cid);
 my_hid_device_t* my_hid_device_get_instance_for_address(bd_addr_t addr);
-int my_hid_device_get_index_for_address(bd_addr_t addr);
 void my_hid_device_set_disconnected(my_hid_device_t* device);
 void my_hid_device_remove_entry_with_channel(uint16_t channel);
 void my_hid_device_assign_joystick_port(my_hid_device_t* device);
