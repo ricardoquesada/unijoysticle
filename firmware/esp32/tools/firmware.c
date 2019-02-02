@@ -42,6 +42,7 @@
  *   - hid_device.c
  *   - gap_inquire.c
  *   - hid_device_test.c
+ *   - gap_link_keys.c
  */
 
 #include <inttypes.h>
@@ -71,6 +72,8 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
 static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size);
 static void continue_remote_names(void);
 static void start_scan(void);
+static void list_link_keys(void);
+
 static void on_l2cap_channel_closed(uint8_t* packet, uint16_t channel);
 static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel);
 static void on_l2cap_incoming_connection(uint8_t *packet, uint16_t channel);
@@ -237,6 +240,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
         case BTSTACK_EVENT_STATE:
             if (btstack_event_state_get_state(packet) == HCI_STATE_WORKING){
                 printf("Btstack ready!\n");
+                list_link_keys();
                 start_scan();
             }
             break;
@@ -257,17 +261,17 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             printf("UNSUPPORTED ---> HCI_EVENT_HID_META <---\n");
             break;
         case HCI_EVENT_INQUIRY_RESULT:
-            printf("--> HCI_EVENT_INQUIRY_RESULT <--\n");
+            // printf("--> HCI_EVENT_INQUIRY_RESULT <--\n");
             break;
         case HCI_EVENT_CONNECTION_REQUEST:
             printf("--> HCI_EVENT_CONNECTION_REQUEST <--\n");
             on_hci_connection_request(packet, channel);
             break;
         case HCI_EVENT_INQUIRY_RESULT_WITH_RSSI:
-            printf("--> HCI_EVENT_INQUIRY_RESULT_WITH_RSSI <--\n");
+            // printf("--> HCI_EVENT_INQUIRY_RESULT_WITH_RSSI <--\n");
             break;
         case HCI_EVENT_EXTENDED_INQUIRY_RESPONSE:
-            printf("--> HCI_EVENT_EXTENDED_INQUIRY_RESPONSE <--\n");
+            // printf("--> HCI_EVENT_EXTENDED_INQUIRY_RESPONSE <--\n");
             break;
         case HCI_EVENT_REMOTE_NAME_REQUEST_COMPLETE:
             reverse_bd_addr(&packet[3], event_addr);
@@ -374,19 +378,19 @@ static void on_gap_inquiry_result(uint8_t* packet, uint16_t channel) {
 
     if (my_hid_device_is_cod_supported(cod)) {
         device = my_hid_device_get_instance_for_address(addr);
-        if (device == NULL) {
-            device = my_hid_device_create();
-            if (device == NULL) {
-                printf("\nERROR: no more available device slots\n");
-                return;
-            }
-            my_hid_device_set_address(device, addr);
-            my_hid_device_set_cod(device, cod);
-            device->page_scan_repetition_mode = page_scan_repetition_mode;
-            device->clock_offset = clock_offset;
-        } else {
-            printf("Device already in added... trying to connect again\n");
+        if (device != NULL) {
+            printf("Device already in added...\n");
+            return;
         }
+        device = my_hid_device_create();
+        if (device == NULL) {
+            printf("\nERROR: no more available device slots\n");
+            return;
+        }
+        my_hid_device_set_address(device, addr);
+        my_hid_device_set_cod(device, cod);
+        device->page_scan_repetition_mode = page_scan_repetition_mode;
+        device->clock_offset = clock_offset;
 
         if (!my_hid_device_has_name(device)) {
             if (gap_event_inquiry_result_get_name_available(packet)){
@@ -578,6 +582,26 @@ static void continue_remote_names(void){
 static void start_scan(void){
     printf("Starting inquiry scan..\n");
     gap_inquiry_start(INQUIRY_INTERVAL);
+}
+
+static void list_link_keys(void){
+    bd_addr_t  addr;
+    link_key_t link_key;
+    link_key_type_t type;
+    btstack_link_key_iterator_t it;
+
+    int ok = gap_link_key_iterator_init(&it);
+    if (!ok) {
+        printf("Link key iterator not implemented\n");
+        return;
+    }
+    printf("Stored link keys: \n");
+    while (gap_link_key_iterator_get_next(&it, addr, link_key, &type)){
+        printf("%s - type %u, key: ", bd_addr_to_str(addr), (int) type);
+        printf_hexdump(link_key, 16);
+    }
+    printf(".\n");
+    gap_link_key_iterator_done(&it);
 }
 
 /*
