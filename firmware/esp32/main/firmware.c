@@ -51,6 +51,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "unijoysticle_config.h"
+
 #include "btstack_config.h"
 #include "btstack.h"
 
@@ -327,8 +329,10 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             break;
         }
         if (channel == device->hid_interrupt_cid){
-            // printf("HID Interrupt Packet: ");
-            // printf_hexdump(packet, size);
+#if ENABLE_VERBOSE_LOG
+            printf("HID Interrupt Packet: ");
+            printf_hexdump(packet, size);
+#endif // ENABLE_VERBOSE_LOG
             hid_host_handle_interrupt_report(device, packet,  size);
         } else if (channel == device->hid_control_cid){
             printf("HID Control\n");
@@ -427,10 +431,15 @@ static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
     uint8_t incoming;
 
     printf("L2CAP_EVENT_CHANNEL_OPENED (channel=0x%04x)\n", channel);
+    
+    l2cap_event_channel_opened_get_address(packet, address);
     status = l2cap_event_channel_opened_get_status(packet);
     if (status){
-        printf("L2CAP Connection failed: 0x%02x\n", status);
+        printf("L2CAP Connection failed: 0x%02x. Removing previous link key.\n", status);
         my_hid_device_remove_entry_with_channel(channel);
+        // Just in case the key is outdated we remove it. If fixes some l2cap_channel_opened issues.
+        // It proves that it works when the status is 0x6a (L2CAP_CONNECTION_BASEBAND_DISCONNECT).
+        gap_drop_link_key_for_bd_addr(address);
         return;
     }
     psm = l2cap_event_channel_opened_get_psm(packet);
@@ -438,7 +447,6 @@ static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
     remote_cid = l2cap_event_channel_opened_get_remote_cid(packet);
     handle = l2cap_event_channel_opened_get_handle(packet);
     incoming = l2cap_event_channel_opened_get_incoming(packet);
-    l2cap_event_channel_opened_get_address(packet, address);
     printf("PSM: 0x%04x, Local CID=0x%04x, Remote CID=0x%04x, handle=0x%04x, incoming=%d\n", psm, local_cid, remote_cid, handle, incoming);
 
     device = my_hid_device_get_instance_for_address(address);

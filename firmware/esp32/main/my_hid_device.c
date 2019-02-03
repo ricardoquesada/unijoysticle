@@ -112,9 +112,6 @@ void my_hid_device_remove_entry_with_channel(uint16_t channel) {
         return;
     for (int i=0; i<MAX_DEVICES; i++) {
         if (devices[i].hid_control_cid == channel || devices[i].hid_interrupt_cid == channel) {
-            // Just in case the key is outdated. Proves that it fixes some connection/reconnection issues
-            // on certain devices.
-            // gap_drop_link_key_for_bd_addr(devices[i].address);
             memset(&devices[i], 0, sizeof(devices[i]));
             break;
         }

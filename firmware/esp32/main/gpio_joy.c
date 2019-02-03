@@ -20,6 +20,8 @@ limitations under the License.
 
 #include "gpio_joy.h"
 
+#include "unijoysticle_config.h"
+
 #include "driver/gpio.h"
 
 // GPIO map for MH-ET Live mini-kit board.
@@ -48,7 +50,6 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 
 void gpio_joy_init(void) {
-    printf("gpio_joy_init()\n");
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
@@ -86,8 +87,10 @@ void gpio_joy_update_port_b(joystick_t* joy) {
 }
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios) {
-    // printf("up=%d, down=%d, left=%d, right=%d, fire=%d\n",
-    //     joy->up, joy->down, joy->left, joy->right, joy->fire);
+#if ENABLE_VERBOSE_LOG
+    printf("up=%d, down=%d, left=%d, right=%d, fire=%d\n",
+        joy->up, joy->down, joy->left, joy->right, joy->fire);
+#endif // ENABLE_VERBOSE_LOG
 
     gpio_set_level(gpios[0], !!joy->up);
     gpio_set_level(gpios[1], !!joy->down);

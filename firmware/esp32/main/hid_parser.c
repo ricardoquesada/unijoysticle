@@ -18,6 +18,7 @@ limitations under the License.
 
 #include "hid_parser.h"
 
+#include "unijoysticle_config.h"
 #include "my_hid_device.h"
 #include "gpio_joy.h"
 
@@ -88,7 +89,7 @@ void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * r
         process_usage(device, &parser, &globals, usage_page, usage, value);
     }
     // Debug info
-    // print_gamepad(&device->gamepad);
+    print_gamepad(&device->gamepad);
 
     joystick_update(device);
 }
@@ -293,6 +294,7 @@ static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser,
 }
 
 static void print_gamepad(gamepad_t* gamepad) {
+#ifdef ENABLE_VERBOSE_LOG
     printf("(0x%04x) x=%d, y=%d, z=%d, rx=%d, ry=%d, rz=%d, hat=0x%02x, dpad=0x%02x, accel=%d, brake=%d, buttons=0x%08x, misc=0x%02x\n",
         gamepad->updated_states,
         gamepad->x, gamepad->y, gamepad->z,
@@ -302,6 +304,9 @@ static void print_gamepad(gamepad_t* gamepad) {
         gamepad->accelerator, gamepad->brake,
         gamepad->buttons,
         gamepad->misc_buttons);
+#else
+    UNUSED(gamepad);
+#endif
 }
 
 // Converts gamepad to joystick.
