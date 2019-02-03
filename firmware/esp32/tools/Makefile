@@ -52,22 +52,10 @@ clean_src:
 
 #all: ${EXAMPLES}
 
-unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o btstack_hid_parser.o firmware.c gpio_joy.c my_hid_device.o hid_parser.o
+unijoysticle: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o btstack_hid_parser.o ../main/firmware.c ../main/my_hid_device.c  ../main/hid_parser.c gpio_joy.c 
 	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
 
 gap_inquiry: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_inquiry.c
 	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
 
-gap_link_keys: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} gap_link_keys.c
-	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
-
-hid_device_test: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o btstack_ring_buffer.o hid_device.o hid_device_test.c
-	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
-
-hid_host_test: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_hid_parser.o hid_host_test.c
-	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
-
-hid_keyboard_demo: ${CORE_OBJ} ${COMMON_OBJ} ${CLASSIC_OBJ} ${SDP_CLIENT} btstack_ring_buffer.o hid_device.o btstack_hid_parser.o hid_keyboard_demo.o
-	${CC} $^ ${CFLAGS} ${LDFLAGS} -o $@
-
-all: unijoysticle gap_inquiry gap_link_keys hid_device_test hid_host_test hid_keyboard_demo
+all: unijoysticle gap_inquiry
