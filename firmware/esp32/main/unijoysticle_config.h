@@ -21,6 +21,6 @@ limitations under the License.
 
 // Enable it when testing development. In practice, too much
 // log will trigger the watchdog on the ESP32 (if done in the main thread).
-// #define ENABLE_VERBOSE_LOG  1
+#define ENABLE_VERBOSE_LOG  1
 
 #endif // UNIJOYSTICLE_CONFIG_H
