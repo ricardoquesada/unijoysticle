@@ -20,6 +20,8 @@ limitations under the License.
 
 #include "gpio_joy.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
 #include "driver/gpio.h"
 
 #include "unijoysticle_config.h"
@@ -45,10 +47,18 @@ enum {
     GPIO_JOY_B_FIRE     = GPIO_NUM_27,      // RX
 };
 
+enum {
+    EVENT_BIT_JOYSTICK = (1 << 0),
+};
+
 static gpio_num_t JOY_A_PORTS[] = {GPIO_JOY_A_UP, GPIO_JOY_A_DOWN, GPIO_JOY_A_LEFT, GPIO_JOY_A_RIGHT, GPIO_JOY_A_FIRE};
 static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LEFT, GPIO_JOY_B_RIGHT, GPIO_JOY_B_FIRE};
 
+// Mouse related
+static EventGroupHandle_t g_mouse_event_group;
+
 static void gpio_joy_update_port(joystick_t* joy, int device_type, gpio_num_t* gpios);
+static void mouse_loop(void* arg);
 
 void gpio_joy_init(void) {
     gpio_config_t io_conf;
@@ -77,6 +87,10 @@ void gpio_joy_init(void) {
         ESP_ERROR_CHECK( gpio_set_level(JOY_A_PORTS[i], 0));
         ESP_ERROR_CHECK( gpio_set_level(JOY_B_PORTS[i], 0));
     }
+
+    // Mouse related
+    g_mouse_event_group = xEventGroupCreate();
+    xTaskCreate(mouse_loop, "mouse_loop", 2048, NULL, 10, NULL);
 }
 
 void gpio_joy_update_port_a(joystick_t* joy, int controller_type) {
@@ -102,5 +116,24 @@ static void gpio_joy_update_port(joystick_t* joy, int controller_type, gpio_num_
         gpio_set_level(gpios[4], !!joy->fire);
     } else {
         // if it is a mouse, implement quad-thing for Atari ST / Amiga
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xEventGroupSetBitsFromISR(g_mouse_event_group, EVENT_BIT_JOYSTICK, &xHigherPriorityTaskWoken);
+    }
+}
+
+// Mouse handler
+void mouse_loop(void* arg) {
+    (void)arg;
+
+    // timeout of 10s
+    const TickType_t xTicksToWait = 10000 / portTICK_PERIOD_MS;
+    while(1) {
+        EventBits_t uxBits = xEventGroupWaitBits(g_mouse_event_group, EVENT_BIT_JOYSTICK, pdTRUE, pdFALSE, xTicksToWait);
+
+        // if not timeout, change the state
+        if (uxBits != 0) {
+        } else {
+            // timeout
+        }
     }
 }
