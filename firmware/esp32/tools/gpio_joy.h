@@ -35,7 +35,8 @@ typedef struct {
 } joystick_t;
 
 void gpio_joy_init(void);
-void gpio_joy_update_port_a(joystick_t* joy, int controller_type);
-void gpio_joy_update_port_b(joystick_t* joy, int controller_type);
+void gpio_joy_update_port_a(joystick_t* joy);
+void gpio_joy_update_port_b(joystick_t* joy);
+void gpio_joy_update_mouse(int32_t delta_x, int32_t delta_y);
 
 #endif // GPIO_JOY_H

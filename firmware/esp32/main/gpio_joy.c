@@ -57,8 +57,17 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
 
-static void gpio_joy_update_port(joystick_t* joy, int device_type, gpio_num_t* gpios);
+static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
+static void send_move(int pin_a, int pin_b, int delay_ms);
+static void move_left(int delay_ms);
+static void move_right(int delay_ms);
+static void move_up(int delay_ms);
+static void move_down(int delay_ms);
+
+// Mouse "shared data from main task to mouse task.
+static int32_t g_delta_x = 0;
+static int32_t g_delta_y = 0;
 
 void gpio_joy_init(void) {
     gpio_config_t io_conf;
@@ -93,32 +102,39 @@ void gpio_joy_init(void) {
     xTaskCreate(mouse_loop, "mouse_loop", 2048, NULL, 10, NULL);
 }
 
-void gpio_joy_update_port_a(joystick_t* joy, int controller_type) {
-    gpio_joy_update_port(joy, controller_type, JOY_A_PORTS);
+void gpio_joy_update_mouse(int32_t delta_x, int32_t delta_y) {
+#if ENABLE_VERBOSE_LOG
+    printf("mouse x=%d, y=%d\n", delta_x, delta_y);
+#endif // ENABLE_VERBOSE_LOG
+
+    // Mouse is implemented using a quadrature encoding
+    // FIXMI: Passing values to mouse task using global variables. This is, of course,
+    // error-prone to raaces and what not, but seeems to be good enough for our purpose.
+    g_delta_x = delta_x;
+    g_delta_y = delta_y;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xEventGroupSetBitsFromISR(g_mouse_event_group, EVENT_BIT_JOYSTICK, &xHigherPriorityTaskWoken);
 }
 
-void gpio_joy_update_port_b(joystick_t* joy, int controller_type) {
-    gpio_joy_update_port(joy, controller_type, JOY_B_PORTS);
+void gpio_joy_update_port_a(joystick_t* joy) {
+    gpio_joy_update_port(joy, JOY_A_PORTS);
 }
 
-static void gpio_joy_update_port(joystick_t* joy, int controller_type, gpio_num_t* gpios) {
+void gpio_joy_update_port_b(joystick_t* joy) {
+    gpio_joy_update_port(joy, JOY_B_PORTS);
+}
+
+static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios) {
 #if ENABLE_VERBOSE_LOG
     printf("up=%d, down=%d, left=%d, right=%d, fire=%d\n",
         joy->up, joy->down, joy->left, joy->right, joy->fire);
 #endif // ENABLE_VERBOSE_LOG
 
-    if (controller_type == CONTROLLER_JOYSTICK) {
-        // if it is a joystick, no emulation is needed
-        gpio_set_level(gpios[0], !!joy->up);
-        gpio_set_level(gpios[1], !!joy->down);
-        gpio_set_level(gpios[2], !!joy->left);
-        gpio_set_level(gpios[3], !!joy->right);
-        gpio_set_level(gpios[4], !!joy->fire);
-    } else {
-        // if it is a mouse, implement quad-thing for Atari ST / Amiga
-        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-        xEventGroupSetBitsFromISR(g_mouse_event_group, EVENT_BIT_JOYSTICK, &xHigherPriorityTaskWoken);
-    }
+    gpio_set_level(gpios[0], !!joy->up);
+    gpio_set_level(gpios[1], !!joy->down);
+    gpio_set_level(gpios[2], !!joy->left);
+    gpio_set_level(gpios[3], !!joy->right);
+    gpio_set_level(gpios[4], !!joy->fire);
 }
 
 // Mouse handler
@@ -132,8 +148,48 @@ void mouse_loop(void* arg) {
 
         // if not timeout, change the state
         if (uxBits != 0) {
+            if (g_delta_x < 0)
+                move_left(28);
+            else if (g_delta_x > 0)
+                move_right(28);
+            if (g_delta_y < 0)
+                move_down(28);
+            else if (g_delta_y > 0)
+                move_up(28);
         } else {
             // timeout
         }
     }
+}
+
+static void send_move(int pin_a, int pin_b, int delay_ms) {
+    gpio_set_level(pin_a, 1);
+    ets_delay_us(delay_ms);
+    gpio_set_level(pin_b, 1);
+    ets_delay_us(delay_ms);
+
+    gpio_set_level(pin_a, 0);
+    ets_delay_us(delay_ms);
+    gpio_set_level(pin_b, 0);
+    ets_delay_us(delay_ms);
+}
+
+static void  move_left(int delay_ms) {
+    // up, down, left, right, fire
+    send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], delay_ms);
+}
+
+static void move_right(int delay_ms) {
+    // up, down, left, right, fire
+    send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], delay_ms);
+}
+
+static void  move_up(int delay_ms) {
+    // up, down, left, right, fire
+    send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], delay_ms);
+}
+
+static void  move_down(int delay_ms) {
+    // up, down, left, right, fire
+    send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], delay_ms);
 }

@@ -396,10 +396,20 @@ static void joystick_update(my_hid_device_t* device) {
     }
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
-    if (device->joystick_port == JOYSTICK_PORT_A)
-        gpio_joy_update_port_a(&joy, device->controller_type);
-    else
-        gpio_joy_update_port_b(&joy, device->controller_type);
+    switch(device->controller_type) {
+    case CONTROLLER_JOYSTICK:
+        if (device->joystick_port == JOYSTICK_PORT_A)
+            gpio_joy_update_port_a(&joy);
+        else
+            gpio_joy_update_port_b(&joy);
+        break;
+    case CONTROLLER_MOUSE:
+        gpio_joy_update_mouse(gp->x, gp->y);
+        break;
+    default:
+        printf("Unsupported controller type: %d\n", device->controller_type);
+        break;
+    }
 }
 
 // Converts a possible value between (0, x) to (-x/2, x/2), and normalizes it between -127 and 127.
