@@ -30,10 +30,12 @@ static void print_joystick(joystick_t* joy) {
 void gpio_joy_init(void) {    
 }
 
-void gpio_joy_update_port_a(joystick_t* joy) {
+void gpio_joy_update_port_a(joystick_t* joy, int controller_type) {
+    (void)controller_type;
     print_joystick(joy);
 }
 
-void gpio_joy_update_port_b(joystick_t* joy) {
+void gpio_joy_update_port_b(joystick_t* joy, int controller_type) {
+    (void)controller_type;
     print_joystick(joy);
 }

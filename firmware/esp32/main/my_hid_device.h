@@ -59,6 +59,13 @@ enum JOYSTICK_PORT {
     JOYSTICK_PORT_AB    = (JOYSTICK_PORT_A | JOYSTICK_PORT_B),
 };
 
+enum CONTROLLER_TYPE {
+    CONTROLLER_JOYSTICK,
+    CONTROLLER_MOUSE,
+    CONTROLLER_DOUBLE_JOYSTICK,
+    CONTROLLER_JOYSTICK_MOUSE,
+};
+
 #define MAX_NAME_LEN 240
 #define MAX_DESCRIPTOR_LEN 512
 typedef struct gamepad {
@@ -91,29 +98,30 @@ typedef struct gamepad {
 
 enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
 typedef struct  {
-    bd_addr_t           address;
-    hci_con_handle_t    con_handle;
-    uint8_t             page_scan_repetition_mode;
-    uint16_t            clock_offset;
-    uint32_t            cod;
-    char                name[MAX_NAME_LEN];
+    bd_addr_t               address;
+    hci_con_handle_t        con_handle;
+    uint8_t                 page_scan_repetition_mode;
+    uint16_t                clock_offset;
+    uint32_t                cod;
+    char                    name[MAX_NAME_LEN];
 
-    uint32_t            flags;
+    uint32_t                flags;
 
     // SDP
-    uint8_t             hid_descriptor[MAX_DESCRIPTOR_LEN];
-    uint16_t            hid_descriptor_len;
+    uint8_t                 hid_descriptor[MAX_DESCRIPTOR_LEN];
+    uint16_t                hid_descriptor_len;
 
     // Channels
-    uint16_t            hid_control_cid;
-    uint16_t            hid_interrupt_cid;
-    uint16_t            expected_hid_control_psm;         // must be PSM_HID_CONTROL
-    uint16_t            expected_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
-    enum DEVICE_STATE   state;
+    uint16_t                hid_control_cid;
+    uint16_t                hid_interrupt_cid;
+    uint16_t                expected_hid_control_psm;         // must be PSM_HID_CONTROL
+    uint16_t                expected_hid_interrupt_psm;       // must be PSM_HID_INTERRUPT
+    enum DEVICE_STATE       state;
 
     // gamepad
-    gamepad_t           gamepad;
-    enum JOYSTICK_PORT  joystick_port;
+    gamepad_t               gamepad;
+    enum JOYSTICK_PORT      joystick_port;                  // which port does it control, A or B?
+    enum CONTROLLER_TYPE    controller_type;                // type of controller: joystick or mouse?
 } my_hid_device_t;
 
 void my_hid_device_init(void);

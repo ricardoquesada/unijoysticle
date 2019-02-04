@@ -20,9 +20,10 @@ limitations under the License.
 
 #include "gpio_joy.h"
 
-#include "unijoysticle_config.h"
-
 #include "driver/gpio.h"
+
+#include "unijoysticle_config.h"
+#include "my_hid_device.h"
 
 // GPIO map for MH-ET Live mini-kit board.
 // Same GPIOs as Wemos D1 mini (used in Unijoysticle v0.4)
@@ -47,7 +48,7 @@ enum {
 static gpio_num_t JOY_A_PORTS[] = {GPIO_JOY_A_UP, GPIO_JOY_A_DOWN, GPIO_JOY_A_LEFT, GPIO_JOY_A_RIGHT, GPIO_JOY_A_FIRE};
 static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LEFT, GPIO_JOY_B_RIGHT, GPIO_JOY_B_FIRE};
 
-static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
+static void gpio_joy_update_port(joystick_t* joy, int device_type, gpio_num_t* gpios);
 
 void gpio_joy_init(void) {
     gpio_config_t io_conf;
@@ -78,23 +79,28 @@ void gpio_joy_init(void) {
     }
 }
 
-void gpio_joy_update_port_a(joystick_t* joy) {
-    gpio_joy_update_port(joy, JOY_A_PORTS);
+void gpio_joy_update_port_a(joystick_t* joy, int controller_type) {
+    gpio_joy_update_port(joy, controller_type, JOY_A_PORTS);
 }
 
-void gpio_joy_update_port_b(joystick_t* joy) {
-    gpio_joy_update_port(joy, JOY_B_PORTS);
+void gpio_joy_update_port_b(joystick_t* joy, int controller_type) {
+    gpio_joy_update_port(joy, controller_type, JOY_B_PORTS);
 }
 
-static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios) {
+static void gpio_joy_update_port(joystick_t* joy, int controller_type, gpio_num_t* gpios) {
 #if ENABLE_VERBOSE_LOG
     printf("up=%d, down=%d, left=%d, right=%d, fire=%d\n",
         joy->up, joy->down, joy->left, joy->right, joy->fire);
 #endif // ENABLE_VERBOSE_LOG
 
-    gpio_set_level(gpios[0], !!joy->up);
-    gpio_set_level(gpios[1], !!joy->down);
-    gpio_set_level(gpios[2], !!joy->left);
-    gpio_set_level(gpios[3], !!joy->right);
-    gpio_set_level(gpios[4], !!joy->fire);
+    if (controller_type == CONTROLLER_JOYSTICK) {
+        // if it is a joystick, no emulation is needed
+        gpio_set_level(gpios[0], !!joy->up);
+        gpio_set_level(gpios[1], !!joy->down);
+        gpio_set_level(gpios[2], !!joy->left);
+        gpio_set_level(gpios[3], !!joy->right);
+        gpio_set_level(gpios[4], !!joy->fire);
+    } else {
+        // if it is a mouse, implement quad-thing for Atari ST / Amiga
+    }
 }

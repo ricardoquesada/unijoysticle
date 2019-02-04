@@ -397,9 +397,9 @@ static void joystick_update(my_hid_device_t* device) {
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
     if (device->joystick_port == JOYSTICK_PORT_A)
-        gpio_joy_update_port_a(&joy);
+        gpio_joy_update_port_a(&joy, device->controller_type);
     else
-        gpio_joy_update_port_b(&joy);
+        gpio_joy_update_port_b(&joy, device->controller_type);
 }
 
 // Converts a possible value between (0, x) to (-x/2, x/2), and normalizes it between -127 and 127.

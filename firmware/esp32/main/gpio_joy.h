@@ -30,12 +30,12 @@ typedef struct {
     uint8_t pot_y;          // line 5 - Middle button for mouse
     uint8_t fire;           // line 6 - Left button for mouse
     uint8_t _power;         // line 7 - +5v. added as ref only
-    uint8_t _ground;        // line 8 - addes as ref only
+    uint8_t _ground;        // line 8 - ground. added as ref only
     uint8_t pot_x;          // line 9 - Right button for mouse
 } joystick_t;
 
 void gpio_joy_init(void);
-void gpio_joy_update_port_a(joystick_t* joy);
-void gpio_joy_update_port_b(joystick_t* joy);
+void gpio_joy_update_port_a(joystick_t* joy, int controller_type);
+void gpio_joy_update_port_b(joystick_t* joy, int controller_type);
 
 #endif // GPIO_JOY_H

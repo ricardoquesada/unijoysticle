@@ -105,14 +105,17 @@ void my_hid_device_try_assign_joystick_port(my_hid_device_t* device) {
     if (device->joystick_port != JOYSTICK_PORT_NONE)
         return;
 
-    // Try with Port B
+    // Try with Port B, assume it is a joystick
     int wanted_port = JOYSTICK_PORT_B;
+    device->controller_type = CONTROLLER_JOYSTICK;
 
     // ... unless it is a mouse which should try with PORT A. Amiga/Atari ST use mice in PORT A.
     // Undefined on the C64, but most apps use it in PORT A as well.
     uint32_t mouse_cod = MASK_COD_MAJOR_PERIPHERAL | MASK_COD_MINOR_POINT_DEVICE;
-    if ((device->cod & mouse_cod) == mouse_cod)
+    if ((device->cod & mouse_cod) == mouse_cod) {
         wanted_port = JOYSTICK_PORT_A;
+        device->controller_type = CONTROLLER_MOUSE;
+    }
 
     // If wanted port is already assigned, try with the next one
     if (used_joystick_ports & wanted_port) {
