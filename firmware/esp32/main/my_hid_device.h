@@ -52,6 +52,13 @@ enum GAMEPAD_STATES {
     GAMEPAD_STATE_BUTTON15 = 1 << 25,
 };
 
+enum JOYSTICK_PORT {
+    JOYSTICK_PORT_NONE  = 0,
+    JOYSTICK_PORT_A     = (1 << 0),
+    JOYSTICK_PORT_B     = (1 << 1),
+    JOYSTICK_PORT_AB    = (JOYSTICK_PORT_A | JOYSTICK_PORT_B),
+};
+
 #define MAX_NAME_LEN 240
 #define MAX_DESCRIPTOR_LEN 512
 typedef struct gamepad {
@@ -83,7 +90,6 @@ typedef struct gamepad {
 } gamepad_t;
 
 enum DEVICE_STATE { REMOTE_NAME_REQUEST, REMOTE_NAME_INQUIRED, REMOTE_NAME_FETCHED };
-enum JOYSTICK_PORT { JOYSTICK_PORT_NONE, JOYSTICK_PORT_A, JOYSTICK_PORT_B, JOYSTICK_PORT_AB};
 typedef struct  {
     bd_addr_t           address;
     hci_con_handle_t    con_handle;
@@ -120,7 +126,7 @@ my_hid_device_t* my_hid_device_get_first_device_with_state(int state);
 void my_hid_device_set_current_device(my_hid_device_t* device);
 my_hid_device_t* my_hid_device_get_current_device(void);
 
-void my_hid_device_assign_joystick_port(my_hid_device_t* device);
+void my_hid_device_try_assign_joystick_port(my_hid_device_t* device);
 
 void my_hid_device_remove_entry_with_channel(uint16_t channel);
 

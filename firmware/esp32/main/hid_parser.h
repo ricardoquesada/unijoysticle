@@ -22,6 +22,6 @@ limitations under the License.
 #include <stdint.h>
 #include "my_hid_device.h"
 
-void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t* report, uint16_t report_len);
+void hid_parser_handle_interrupt_report(my_hid_device_t* device, const uint8_t* report, uint16_t report_len);
 
 #endif // HID_PARSER_H

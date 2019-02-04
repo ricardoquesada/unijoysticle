@@ -333,7 +333,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t *packe
             printf("HID Interrupt Packet: ");
             printf_hexdump(packet, size);
 #endif // ENABLE_VERBOSE_LOG
-            hid_host_handle_interrupt_report(device, packet,  size);
+            hid_parser_handle_interrupt_report(device, packet,  size);
         } else if (channel == device->hid_control_cid){
             printf("HID Control\n");
             printf_hexdump(packet, size);
@@ -485,6 +485,7 @@ static void on_l2cap_channel_opened(uint8_t* packet, uint16_t channel) {
 
     if (!my_hid_device_is_incoming(device)) {
         if (local_cid == 0) {
+            printf("local_cid == 0. Abort\n");
             my_hid_device_remove_entry_with_channel(channel);
             return;
         }

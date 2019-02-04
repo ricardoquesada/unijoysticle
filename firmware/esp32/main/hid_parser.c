@@ -54,7 +54,9 @@ static void joystick_update(my_hid_device_t* device);
 static void process_usage(my_hid_device_t* device, btstack_hid_parser_t* parser, hid_globals_t* globals, uint16_t usage_page, uint16_t usage, int32_t value);
 static void print_gamepad(gamepad_t* gamepad);
 
-void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len) {
+void hid_parser_handle_interrupt_report(my_hid_device_t* device, const uint8_t * report, uint16_t report_len) {
+    btstack_hid_parser_t parser;
+
     // check if HID Input Report
     if (report_len < 1) return;
     if (*report != 0xa1) return;
@@ -66,14 +68,16 @@ void hid_host_handle_interrupt_report(my_hid_device_t* device, const uint8_t * r
         return;
     }
 
-    btstack_hid_parser_t parser;
-    hid_globals_t globals;
+    // In case a joystick port hasn't been assign yet, assign one.
+    my_hid_device_try_assign_joystick_port(device);
+
     btstack_hid_parser_init(&parser, device->hid_descriptor, device->hid_descriptor_len, HID_REPORT_TYPE_INPUT, report, report_len);
     device->gamepad.updated_states = 0;
     while (btstack_hid_parser_has_more(&parser)){
         uint16_t usage_page;
         uint16_t usage;
         int32_t  value;
+        hid_globals_t globals;
 
         // Save globals, otherwise they are going to get destroyed by btstack_hid_parser_get_field()
         globals.logical_minimum = parser.global_logical_minimum;
