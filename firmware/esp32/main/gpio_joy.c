@@ -60,9 +60,9 @@ static const int MOUSE_DELAY_BETWEEN_EVENT = 20;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
-static void send_move(int pin_a, int pin_b, int32_t speed);
-static void move_x(int32_t speed);
-static void move_y(int32_t speed);
+static void send_move(int pin_a, int pin_b, int delay);
+static void move_x(int dir, int delay);
+static void move_y(int dir, int delay);
 
 // Mouse "shared data from main task to mouse task.
 static int32_t g_delta_x = 0;
@@ -145,52 +145,101 @@ void mouse_loop(void* arg) {
     while(1) {
         EventBits_t uxBits = xEventGroupWaitBits(g_mouse_event_group, EVENT_BIT_JOYSTICK, pdTRUE, pdFALSE, xTicksToWait);
 
-        // if not timeout, change the state
-        if (uxBits != 0) {
-            if (g_delta_x != 0)
-                move_x(g_delta_x);
+        // Exit by timeout ? then just continue.
+        if (uxBits == 0)
+            continue;
 
-            if (g_delta_y != 0)
-                move_y(g_delta_y);
-        } else {
-            // timeout
+        // Base on the deltas, generate a line. It uses Bresenham's algorithm.
+        // We consider these 4 cases:
+        // Y = 0, X = 0, X > Y, Y > X
+        int abs_x = abs(g_delta_x);
+        int abs_y = abs(g_delta_y);
+        // dir_x / dir_y have the same values as the global delta, but they are easy
+        // to understand its meaning when being passed to move_x() / move_y().
+        int dir_x = g_delta_x;
+        int dir_y = g_delta_y;
+        // Y = 0
+        if (g_delta_x && !g_delta_y) {
+            // Horizontal movment
+            // The faster it moves, the less delay it has.
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_x) + 1;
+            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            for (int i=0; i<abs_x;i++) {
+                move_x(dir_x, delay);
+            }
+        }
+        // X = 0
+        else if (!g_delta_x && g_delta_y) {
+            // Vertical movement
+            // The faster it moves, the less delay it has.
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_y) + 1;
+            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            for (int i=0; i<abs_y;i++) {
+                move_y(dir_y, delay);
+            }
+        }
+        else if (abs_x > abs_y) {
+            // X is the driving the loop.
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / (abs_x+abs_y)) + 1;
+            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            // Avoid floating points to make it more portable between microcontrollers.
+            int inc_y = abs_y * 100 / abs_x;
+            int accum_y = 0;
+
+            for (int i=0; i<abs_x;i++) {
+                move_x(dir_x, delay);
+                accum_y += inc_y;
+                if (accum_y > 100) {
+                    move_y(dir_y, delay);
+                    accum_y -= 100;
+                }
+            }
+        }
+        else  {
+            // Y is the driving the loop.
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / (abs_x+abs_y)) + 1;
+            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            // Avoid floating points to make it more portable between microcontrollers.
+            int inc_x = abs_x * 100 / abs_y;
+            int accum_x = 0;
+
+            for (int i=0; i<abs_y; i++) {
+                move_y(dir_y, delay);
+                accum_x += inc_x;
+                if (accum_x > 100) {
+                    move_x(dir_x, delay);
+                    accum_x -= 100;
+                }
+            }
         }
     }
 }
 
-static void send_move(int pin_a, int pin_b, int speed) {
-    // The faster it moves, the less delay it has.
-    int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / speed) + 1;
+static void send_move(int pin_a, int pin_b, int delay) {
+    gpio_set_level(pin_a, 1);
+    vTaskDelay(delay);
+    gpio_set_level(pin_b, 1);
+    vTaskDelay(delay);
 
-    // Convert time into CPU ticks.
-    TickType_t xDelay = delay_for_speed / portTICK_PERIOD_MS;
-
-    for (int i=0; i<speed; i++) {
-        gpio_set_level(pin_a, 1);
-        vTaskDelay(xDelay);
-        gpio_set_level(pin_b, 1);
-        vTaskDelay(xDelay);
-
-        gpio_set_level(pin_a, 0);
-        vTaskDelay(xDelay);
-        gpio_set_level(pin_b, 0);
-        vTaskDelay(xDelay);
-    }
+    gpio_set_level(pin_a, 0);
+    vTaskDelay(delay);
+    gpio_set_level(pin_b, 0);
+    vTaskDelay(delay);
 }
 
-static void move_x(int32_t speed) {
+static void move_x(int dir, int delay) {
     // up, down, left, right, fire
-    if (speed < 0)
-        send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], abs(speed));
+    if (dir < 0)
+        send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], delay);
     else
-        send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], speed);
+        send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], delay);
 }
 
-static void move_y(int32_t speed) {
+static void move_y(int dir, int delay) {
     // up, down, left, right, fire
-    if (speed < 0)
-        send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], abs(speed));
+    if (dir < 0)
+        send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], delay);
     else
-        send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], abs(speed));
+        send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], delay);
 }
 
