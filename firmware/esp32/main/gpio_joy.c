@@ -56,14 +56,13 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
+static const int MOUSE_DELAY_BETWEEN_EVENT = 28;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
-static void send_move(int pin_a, int pin_b, int delay_ms);
-static void move_left(int delay_ms);
-static void move_right(int delay_ms);
-static void move_up(int delay_ms);
-static void move_down(int delay_ms);
+static void send_move(int pin_a, int pin_b, int32_t speed);
+static void move_x(int32_t speed);
+static void move_y(int32_t speed);
 
 // Mouse "shared data from main task to mouse task.
 static int32_t g_delta_x = 0;
@@ -148,48 +147,47 @@ void mouse_loop(void* arg) {
 
         // if not timeout, change the state
         if (uxBits != 0) {
-            if (g_delta_x < 0)
-                move_left(28);
-            else if (g_delta_x > 0)
-                move_right(28);
-            if (g_delta_y < 0)
-                move_down(28);
-            else if (g_delta_y > 0)
-                move_up(28);
+            if (g_delta_x != 0)
+                move_x(g_delta_x);
+
+            if (g_delta_y != 0)
+                move_y(g_delta_y);
         } else {
             // timeout
         }
     }
 }
 
-static void send_move(int pin_a, int pin_b, int delay_ms) {
-    gpio_set_level(pin_a, 1);
-    ets_delay_us(delay_ms);
-    gpio_set_level(pin_b, 1);
-    ets_delay_us(delay_ms);
+static void send_move(int pin_a, int pin_b, int speed) {
+    const TickType_t xDelay = MOUSE_DELAY_BETWEEN_EVENT / portTICK_PERIOD_MS;
 
-    gpio_set_level(pin_a, 0);
-    ets_delay_us(delay_ms);
-    gpio_set_level(pin_b, 0);
-    ets_delay_us(delay_ms);
+    int times = (speed / 8) + 1;
+    for (int i=0; i<times; i++) {
+        gpio_set_level(pin_a, 1);
+        vTaskDelay(xDelay);
+        gpio_set_level(pin_b, 1);
+        vTaskDelay(xDelay);
+
+        gpio_set_level(pin_a, 0);
+        vTaskDelay(xDelay);
+        gpio_set_level(pin_b, 0);
+        vTaskDelay(xDelay);
+    }
 }
 
-static void  move_left(int delay_ms) {
+static void move_x(int32_t speed) {
     // up, down, left, right, fire
-    send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], delay_ms);
+    if (speed < 0)
+        send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], abs(speed));
+    else
+        send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], speed);
 }
 
-static void move_right(int delay_ms) {
+static void move_y(int32_t speed) {
     // up, down, left, right, fire
-    send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], delay_ms);
+    if (speed < 0)
+        send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], abs(speed));
+    else
+        send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], abs(speed));
 }
 
-static void  move_up(int delay_ms) {
-    // up, down, left, right, fire
-    send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], delay_ms);
-}
-
-static void  move_down(int delay_ms) {
-    // up, down, left, right, fire
-    send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], delay_ms);
-}
