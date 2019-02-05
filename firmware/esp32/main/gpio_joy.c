@@ -56,7 +56,7 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
-static const int MOUSE_DELAY_BETWEEN_EVENT = 28;
+static const int MOUSE_DELAY_BETWEEN_EVENT = 20;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
@@ -159,10 +159,13 @@ void mouse_loop(void* arg) {
 }
 
 static void send_move(int pin_a, int pin_b, int speed) {
-    const TickType_t xDelay = MOUSE_DELAY_BETWEEN_EVENT / portTICK_PERIOD_MS;
+    // The faster it moves, the less delay it has.
+    int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / speed) + 1;
 
-    int times = (speed / 8) + 1;
-    for (int i=0; i<times; i++) {
+    // Convert time into CPU ticks.
+    TickType_t xDelay = delay_for_speed / portTICK_PERIOD_MS;
+
+    for (int i=0; i<speed; i++) {
         gpio_set_level(pin_a, 1);
         vTaskDelay(xDelay);
         gpio_set_level(pin_b, 1);
@@ -178,16 +181,16 @@ static void send_move(int pin_a, int pin_b, int speed) {
 static void move_x(int32_t speed) {
     // up, down, left, right, fire
     if (speed < 0)
-        send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], abs(speed));
+        send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], abs(speed));
     else
-        send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], speed);
+        send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], speed);
 }
 
 static void move_y(int32_t speed) {
     // up, down, left, right, fire
     if (speed < 0)
-        send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], abs(speed));
+        send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], abs(speed));
     else
-        send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], abs(speed));
+        send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], abs(speed));
 }
 
