@@ -192,6 +192,18 @@ static void handle_sdp_client_query_result(uint8_t packet_type, uint16_t channel
                                 }
                             }
                             break;
+                        case BLUETOOTH_ATTRIBUTE_VENDOR_ID:
+                            printf("Vendor ID: \n");
+                            printf_hexdump(packet, size);
+                            break;
+                        case BLUETOOTH_ATTRIBUTE_PRODUCT_ID:
+                            printf("Product ID: \n");
+                            printf_hexdump(packet, size);
+                            break;
+                        case BLUETOOTH_ATTRIBUTE_VERSION:
+                            printf("Version: \n");
+                            printf_hexdump(packet, size);
+                            break;
                         default:
                             break;
                     }
@@ -613,6 +625,7 @@ static void list_link_keys(void) {
     while (gap_link_key_iterator_get_next(&it, addr, link_key, &type)){
         printf("%s - type %u, key: ", bd_addr_to_str(addr), (int) type);
         printf_hexdump(link_key, 16);
+        gap_drop_link_key_for_bd_addr(addr);
     }
     printf(".\n");
     gap_link_key_iterator_done(&it);

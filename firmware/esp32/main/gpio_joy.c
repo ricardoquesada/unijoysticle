@@ -57,6 +57,7 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
 static const int MOUSE_DELAY_BETWEEN_EVENT = 20;
+static const int MOUSE_MAX_DELTA = 20;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
@@ -109,10 +110,12 @@ void gpio_joy_update_mouse(int32_t delta_x, int32_t delta_y) {
     // Mouse is implemented using a quadrature encoding
     // FIXMI: Passing values to mouse task using global variables. This is, of course,
     // error-prone to raaces and what not, but seeems to be good enough for our purpose.
-    g_delta_x = delta_x;
-    g_delta_y = delta_y;
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xEventGroupSetBitsFromISR(g_mouse_event_group, EVENT_BIT_JOYSTICK, &xHigherPriorityTaskWoken);
+    if (delta_x || delta_y) {
+        g_delta_x = delta_x;
+        g_delta_y = delta_y;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xEventGroupSetBitsFromISR(g_mouse_event_group, EVENT_BIT_JOYSTICK, &xHigherPriorityTaskWoken);
+    }
 }
 
 void gpio_joy_update_port_a(joystick_t* joy) {
@@ -149,17 +152,26 @@ void mouse_loop(void* arg) {
         if (uxBits == 0)
             continue;
 
-        // Base on the deltas, generate a line. It uses Bresenham's algorithm.
+        // Should not happen, but better safe than sorry
+        if (g_delta_x == 0 && g_delta_y == 0)
+            return;
+
+        // Based on the deltas, generate a line. It uses Bresenham-sort-of algorithm.
         // We consider these 4 cases:
         // Y = 0, X = 0, X > Y, Y > X
+        // Any delta greater than MOUSE_MAX_DELTA is capped to MOUSE_MAX_DELTA
         int abs_x = abs(g_delta_x);
+        if (abs_x > MOUSE_MAX_DELTA)
+            abs_x = MOUSE_MAX_DELTA;
         int abs_y = abs(g_delta_y);
+        if (abs_y > MOUSE_MAX_DELTA)
+            abs_y = MOUSE_MAX_DELTA;
         // dir_x / dir_y have the same values as the global delta, but they are easy
         // to understand its meaning when being passed to move_x() / move_y().
         int dir_x = g_delta_x;
         int dir_y = g_delta_y;
         // Y = 0
-        if (g_delta_x && !g_delta_y) {
+        if (g_delta_x != 0 && g_delta_y == 0) {
             // Horizontal movment
             // The faster it moves, the less delay it has.
             int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_x) + 1;
@@ -169,7 +181,7 @@ void mouse_loop(void* arg) {
             }
         }
         // X = 0
-        else if (!g_delta_x && g_delta_y) {
+        else if (g_delta_x == 0 && g_delta_y !=0 ) {
             // Vertical movement
             // The faster it moves, the less delay it has.
             int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_y) + 1;
@@ -189,7 +201,7 @@ void mouse_loop(void* arg) {
             for (int i=0; i<abs_x;i++) {
                 move_x(dir_x, delay);
                 accum_y += inc_y;
-                if (accum_y > 100) {
+                if (accum_y >= 100) {
                     move_y(dir_y, delay);
                     accum_y -= 100;
                 }
@@ -206,7 +218,7 @@ void mouse_loop(void* arg) {
             for (int i=0; i<abs_y; i++) {
                 move_y(dir_y, delay);
                 accum_x += inc_x;
-                if (accum_x > 100) {
+                if (accum_x >= 100) {
                     move_x(dir_x, delay);
                     accum_x -= 100;
                 }

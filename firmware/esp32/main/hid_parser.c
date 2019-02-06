@@ -48,6 +48,9 @@ typedef struct {
     uint8_t         report_id;
 } hid_globals_t;
 
+static const int AXIS_NORMALIZE_RANGE = 1024;  // 10-bit resolution (1024)
+static const int AXIS_THRESHOLD = 1024 / 4;
+
 static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value);
 static void joystick_update(my_hid_device_t* device);
@@ -387,12 +390,12 @@ static void joystick_update(my_hid_device_t* device) {
 
     // Axis: x and y
     if (gp->updated_states & GAMEPAD_STATE_X) {
-        joy.left |= (gp->x < -64);
-        joy.right |= (gp->x > 64);
+        joy.left |= (gp->x < -AXIS_THRESHOLD);
+        joy.right |= (gp->x > AXIS_THRESHOLD);
     }
     if (gp->updated_states & GAMEPAD_STATE_Y) {
-        joy.up |= (gp->y < -64);
-        joy.down |= (gp->y > 64);
+        joy.up |= (gp->y < -AXIS_THRESHOLD);
+        joy.down |= (gp->y > AXIS_THRESHOLD);
     }
 
     // FIXME: Add support for JOYSTICK_PORT_AB.
@@ -412,7 +415,17 @@ static void joystick_update(my_hid_device_t* device) {
     }
 }
 
-// Converts a possible value between (0, x) to (-x/2, x/2), and normalizes it between -127 and 127.
+// static uint32_t next_pot(uint32_t n) {
+//     n--;
+//     n |= n >> 1;
+//     n |= n >> 2;
+//     n |= n >> 4;
+//     n |= n >> 8;
+//     n |= n >> 16;
+//     return n + 1;    
+// }
+
+// Converts a possible value between (0, x) to (-x/2, x/2), and normalizes it between -512 and 511.
 static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
     UNUSED(parser);
 
@@ -427,12 +440,16 @@ static int32_t hid_process_axis(btstack_hid_parser_t* parser, hid_globals_t* glo
 
     // Get the range: how big can be the number
     int32_t range = max - min;
+    // range = next_pot(range);
 
     // First we "center" the value, meaning that 0 is when the axis is not used.
     int32_t centered = value - range / 2 - min;
 
-    // Then we normalize between -127 and 127.
-    return centered * 255 / range;
+    // Then we normalize between -512 and 511
+    int32_t normalized = centered * AXIS_NORMALIZE_RANGE / range;
+    // printf("original = %d, centered = %d, normalized = %d (range = %d, min=%d, max=%d)\n", value, centered, normalized, range, min, max);
+
+    return normalized;
 }
 
 static uint8_t hid_process_hat(btstack_hid_parser_t* parser, hid_globals_t* globals, uint32_t value) {
