@@ -51,13 +51,14 @@ enum {
     EVENT_BIT_JOYSTICK = (1 << 0),
 };
 
+static const int MOUSE_DELAY_BETWEEN_EVENT_US = 12000;  // microseconds
+static const int MOUSE_MAX_DELTA = 32;
+
 static gpio_num_t JOY_A_PORTS[] = {GPIO_JOY_A_UP, GPIO_JOY_A_DOWN, GPIO_JOY_A_LEFT, GPIO_JOY_A_RIGHT, GPIO_JOY_A_FIRE};
 static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LEFT, GPIO_JOY_B_RIGHT, GPIO_JOY_B_FIRE};
 
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
-static const int MOUSE_DELAY_BETWEEN_EVENT_US = 10000;  // microseconds
-static const int MOUSE_MAX_DELTA = 10;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
@@ -69,6 +70,16 @@ static void delay_us(uint32_t delay);
 // Mouse "shared data from main task to mouse task.
 static int32_t g_delta_x = 0;
 static int32_t g_delta_y = 0;
+
+ #define MAX(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
+ #define MIN(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })     
 
 void gpio_joy_init(void) {
     gpio_config_t io_conf;
@@ -162,39 +173,37 @@ void mouse_loop(void* arg) {
         // Y = 0, X = 0, X > Y, Y > X
         // Any delta greater than MOUSE_MAX_DELTA is capped to MOUSE_MAX_DELTA
         int abs_x = abs(g_delta_x);
-        if (abs_x > MOUSE_MAX_DELTA)
-            abs_x = MOUSE_MAX_DELTA;
+        if (abs_x > 2)
+            abs_x = MIN(15, MAX(1, abs_x >> 3));
         int abs_y = abs(g_delta_y);
-        if (abs_y > MOUSE_MAX_DELTA)
-            abs_y = MOUSE_MAX_DELTA;
+        if (abs_y > 2)
+            abs_y = MIN(15, MAX(1, abs_y >> 3));
+
         // dir_x / dir_y have the same values as the global delta, but they are easy
         // to understand its meaning when being passed to move_x() / move_y().
         int dir_x = g_delta_x;
         int dir_y = g_delta_y;
         // Y = 0
-        if (g_delta_x != 0 && g_delta_y == 0) {
+        if (abs_x != 0 && abs_y == 0) {
             // Horizontal movment
             // The faster it moves, the less delay it has.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_x) + 1;
-            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            uint32_t delay = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_x) + 1;
             for (int i=0; i<abs_x;i++) {
                 move_x(dir_x, delay);
             }
         }
         // X = 0
-        else if (g_delta_x == 0 && g_delta_y !=0 ) {
+        else if (abs_x == 0 && abs_y !=0 ) {
             // Vertical movement
             // The faster it moves, the less delay it has.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_y) + 1;
-            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            uint32_t delay = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_y) + 1;
             for (int i=0; i<abs_y;i++) {
                 move_y(dir_y, delay);
             }
         }
         else if (abs_x > abs_y) {
             // X is the driving the loop.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
-            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            uint32_t delay = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
             // Avoid floating points to make it more portable between microcontrollers.
             int inc_y = abs_y * 100 / abs_x;
             int accum_y = 0;
@@ -210,8 +219,7 @@ void mouse_loop(void* arg) {
         }
         else  {
             // Y is the driving the loop.
-            uint32_t delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
-            TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
+            uint32_t delay = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
             // Avoid floating points to make it more portable between microcontrollers.
             int inc_x = abs_x * 100 / abs_y;
             int accum_x = 0;
