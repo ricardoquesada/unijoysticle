@@ -56,14 +56,15 @@ static gpio_num_t JOY_B_PORTS[] = {GPIO_JOY_B_UP, GPIO_JOY_B_DOWN, GPIO_JOY_B_LE
 
 // Mouse related
 static EventGroupHandle_t g_mouse_event_group;
-static const int MOUSE_DELAY_BETWEEN_EVENT = 20;
-static const int MOUSE_MAX_DELTA = 20;
+static const int MOUSE_DELAY_BETWEEN_EVENT_US = 10000;  // microseconds
+static const int MOUSE_MAX_DELTA = 10;
 
 static void gpio_joy_update_port(joystick_t* joy, gpio_num_t* gpios);
 static void mouse_loop(void* arg);
-static void send_move(int pin_a, int pin_b, int delay);
-static void move_x(int dir, int delay);
-static void move_y(int dir, int delay);
+static void send_move(int pin_a, int pin_b, uint32_t delay);
+static void move_x(int dir, uint32_t delay);
+static void move_y(int dir, uint32_t delay);
+static void delay_us(uint32_t delay);
 
 // Mouse "shared data from main task to mouse task.
 static int32_t g_delta_x = 0;
@@ -174,7 +175,7 @@ void mouse_loop(void* arg) {
         if (g_delta_x != 0 && g_delta_y == 0) {
             // Horizontal movment
             // The faster it moves, the less delay it has.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_x) + 1;
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_x) + 1;
             TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
             for (int i=0; i<abs_x;i++) {
                 move_x(dir_x, delay);
@@ -184,7 +185,7 @@ void mouse_loop(void* arg) {
         else if (g_delta_x == 0 && g_delta_y !=0 ) {
             // Vertical movement
             // The faster it moves, the less delay it has.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / abs_y) + 1;
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / abs_y) + 1;
             TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
             for (int i=0; i<abs_y;i++) {
                 move_y(dir_y, delay);
@@ -192,7 +193,7 @@ void mouse_loop(void* arg) {
         }
         else if (abs_x > abs_y) {
             // X is the driving the loop.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / (abs_x+abs_y)) + 1;
+            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
             TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
             // Avoid floating points to make it more portable between microcontrollers.
             int inc_y = abs_y * 100 / abs_x;
@@ -209,7 +210,7 @@ void mouse_loop(void* arg) {
         }
         else  {
             // Y is the driving the loop.
-            int delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT / (abs_x+abs_y)) + 1;
+            uint32_t delay_for_speed = (MOUSE_DELAY_BETWEEN_EVENT_US / (abs_x+abs_y)) + 1;
             TickType_t delay = delay_for_speed / portTICK_PERIOD_MS;
             // Avoid floating points to make it more portable between microcontrollers.
             int inc_x = abs_x * 100 / abs_y;
@@ -227,19 +228,19 @@ void mouse_loop(void* arg) {
     }
 }
 
-static void send_move(int pin_a, int pin_b, int delay) {
+static void send_move(int pin_a, int pin_b, uint32_t delay) {
     gpio_set_level(pin_a, 1);
-    vTaskDelay(delay);
+    delay_us(delay);
     gpio_set_level(pin_b, 1);
-    vTaskDelay(delay);
+    delay_us(delay);
 
     gpio_set_level(pin_a, 0);
-    vTaskDelay(delay);
+    delay_us(delay);
     gpio_set_level(pin_b, 0);
-    vTaskDelay(delay);
+    delay_us(delay);
 }
 
-static void move_x(int dir, int delay) {
+static void move_x(int dir, uint32_t delay) {
     // up, down, left, right, fire
     if (dir < 0)
         send_move(JOY_A_PORTS[0], JOY_A_PORTS[1], delay);
@@ -247,7 +248,7 @@ static void move_x(int dir, int delay) {
         send_move(JOY_A_PORTS[1], JOY_A_PORTS[0], delay);
 }
 
-static void move_y(int dir, int delay) {
+static void move_y(int dir, uint32_t delay) {
     // up, down, left, right, fire
     if (dir < 0)
         send_move(JOY_A_PORTS[2], JOY_A_PORTS[3], delay);
@@ -255,3 +256,12 @@ static void move_y(int dir, int delay) {
         send_move(JOY_A_PORTS[3], JOY_A_PORTS[2], delay);
 }
 
+// Delay in microseconds. Anything bigger than 1000 microseconds (1 millisecond)
+// should be scheduled using vTaskDelay(), which will allow context-switch and allow
+// other tasks to run.
+static void delay_us(uint32_t delay) {
+    if (delay > 1000)
+        vTaskDelay(delay / 1000);
+    else
+        ets_delay_us(delay);
+}
